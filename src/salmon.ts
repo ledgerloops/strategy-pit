@@ -72,6 +72,8 @@ export class Salmon {
       const probeMessage = message as Probe;
       if (typeof this.probes[probeMessage.getId()] === 'undefined') {
         this.probes[probeMessage.getId()] = {};
+      } else {
+        console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
       }
       this.probes[probeMessage.getId()][message.getSender().getName()] = true;
 
