@@ -103,7 +103,7 @@ describe('triangle', () => {
           expect(alice.getProbes()).toEqual({
             AliceBob: { Bob: true, Charlie: true },
             BobCharlie: { Bob: true, Charlie: true },
-            CharlieAlice: { Charlie: true }
+            CharlieAlice: { Bob: true, Charlie: true }
           });
     
         });
@@ -112,7 +112,7 @@ describe('triangle', () => {
           expect(bob.getProbes()).toEqual({
             AliceBob: { Alice: true, Charlie: true },
             BobCharlie: { Alice: true, Charlie: true },
-            CharlieAlice: { Charlie: true }
+            CharlieAlice: { Alice: true, Charlie: true }
           });  
         });
         it('Charlie is friends with Bob and Alice', () => {

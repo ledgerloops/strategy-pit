@@ -56,12 +56,32 @@ export class Salmon {
     console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
     if (message.getMessageType() === `meet`) {
       this.addFriend(message.getSender());
+
+    //   console.log(`${this.name} may send some probes to her new friend ${message.getSender().getName()}`, Object.keys(this.probes));
+    //   // send existing probes to new friend
+    //   Object.entries(this.probes).forEach(([id, probes]) => {
+    //     if (typeof probes[message.getSender().getName()] === 'undefined') {
+    //       console.log(`${this.name} needs to add ${message.getSender().getName()} in probe ${id}`);
+    //       this.probes[id][message.getSender().getName()] = true;
+    //       message.getSender().receiveMessage(new Probe(this, id));
+    //     } else {
+    //       console.log(`${this.name} already has ${message.getSender().getName()} in probe ${id}`);
+    //     }
+    //   });
     } else if (message.getMessageType() === `probe`) {
       const probeMessage = message as Probe;
       if (typeof this.probes[probeMessage.getId()] === 'undefined') {
         this.probes[probeMessage.getId()] = {};
       }
       this.probes[probeMessage.getId()][message.getSender().getName()] = true;
+
+      // check if we can forward this to anyone
+      Object.values(this.friends).forEach(friend => {
+        if (typeof this.probes[probeMessage.getId()][friend.getName()] === 'undefined') {
+          this.probes[probeMessage.getId()][friend.getName()] = true;
+          friend.receiveMessage(new Probe(this, probeMessage.getId()));
+        }
+      });
       // this.addFriend(message.getSender());
     }
   }
