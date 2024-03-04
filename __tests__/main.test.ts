@@ -46,51 +46,82 @@ describe('triangle', () => {
     beforeAll(() => {
       stage = "AliceBob";
       alice.meet(bob);
-      // bob.meet(alice);
     });
     it('Alice is friends with Bob', () => {
       expect(alice.getFriends()).toEqual([ 'Bob' ]);
-    }); // Alice is friends with Bob
+      expect(alice.getProbes()).toEqual({
+        AliceBob: { Bob: true }
+      });
+    });
     it('Bob is friends with Alice', () => {
       expect(bob.getFriends()).toEqual([ 'Alice' ]);
-    }); // Alice is friends with Bob
+      expect(bob.getProbes()).toEqual({
+        AliceBob: { Alice: true }
+      });
+    });
     it('Charlie is friends with nobody', () => {
       expect(charlie.getFriends()).toEqual([]);
-    }); // Alice is friends with Bob
+      expect(charlie.getProbes()).toEqual({
+      });
+    });
 
     describe('Bob and Charlie meet', () => {
       beforeAll(() => {
         stage = "BobCharlie";
         bob.meet(charlie);
-        // charlie.meet(bob);
       });
       it('Alice is friends with Bob', () => {
         expect(alice.getFriends()).toEqual([ 'Bob' ]);
-      }); // Alice is friends with Bob
+        expect(alice.getProbes()).toEqual({
+          AliceBob: { Bob: true },
+          BobCharlie: { Bob: true }
+        });
+      });
       it('Bob is friends with Alice and Charlie', () => {
         expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
-      }); // Alice is friends with Bob
+        expect(bob.getProbes()).toEqual({
+          AliceBob: { Alice: true },
+          BobCharlie: { Alice: true, Charlie: true }
+        });
+      });
       it('Charlie is friends with Bob', () => {
         expect(charlie.getFriends()).toEqual([ 'Bob' ]);
-      }); // Alice is friends with Bob
+        expect(charlie.getProbes()).toEqual({
+          BobCharlie: { Bob: true }
+        });
+      });
     
       describe('Charlie and Alice meet', () => {
         beforeAll(() => {
           stage = "CharlieAlice";
           charlie.meet(alice);
-          // alice.meet(charlie);
         });
 
         it('Alice is friends with Bob and Charlie', () => {
           expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
-        }); // Alice is friends with Bob
+          expect(alice.getProbes()).toEqual({
+            AliceBob: { Bob: true },
+            BobCharlie: { Bob: true },
+            CharlieAlice: { Charlie: true }
+          });
+    
+        });
         it('Bob is friends with Alice and Charlie', () => {
           expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
-        }); // Alice is friends with Bob
+          expect(bob.getProbes()).toEqual({
+            AliceBob: { Alice: true },
+            BobCharlie: { Alice: true, Charlie: true },
+            CharlieAlice: { Charlie: true }
+          });  
+        });
         it('Charlie is friends with Bob and Alice', () => {
           expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
-        }); // Alice is friends with Bob
-        }); // Charlie meets Alice
+          expect(charlie.getProbes()).toEqual({
+            BobCharlie: { Bob: true },
+            CharlieAlice: { Alice: true, Bob: true }
+          });  
+        });
+      }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
 }); // triangle

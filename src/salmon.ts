@@ -24,13 +24,23 @@ export class Salmon {
     this.addFriend(other);
     other.receiveMessage(new Meet(this));
     const probeForNewLink = genRanHex(8);
-    Object.values(this.friends).forEach(friend => friend.receiveMessage(new Probe(this, probeForNewLink)));
+    if (typeof this.probes[probeForNewLink] === 'undefined') {
+      this.probes[probeForNewLink] = {};
+    }
+    
+    Object.values(this.friends).forEach(friend => {
+      this.probes[probeForNewLink][friend.getName()] = true;
+      friend.receiveMessage(new Probe(this, probeForNewLink))
+    });
   }
   getName(): string {
     return this.name;
   }
   getFriends(): string[] {
     return Object.keys(this.friends);
+  }
+  getProbes(): { [id: string]: { [name: string]: boolean } } {
+    return this.probes;
   }
   receiveMessage(message: Message): void {
     console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
