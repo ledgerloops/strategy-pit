@@ -1,3 +1,5 @@
+import { Message, Meet } from "./messages.js";
+
 export class Salmon {
   private name: string;
   private friends: {
@@ -16,7 +18,7 @@ export class Salmon {
   }
   meet(other: Salmon): void {
     this.addFriend(other);
-    other.receiveMessage(this, `meet`);
+    other.receiveMessage(new Meet(this));
   }
   getName(): string {
     return this.name;
@@ -24,10 +26,10 @@ export class Salmon {
   getFriends(): string[] {
     return Object.keys(this.friends);
   }
-  receiveMessage(from: Salmon, message: string): void {
-    console.log(`${this.name} receives message from ${from.getName()}`, message);
-    if (message === `meet`) {
-      this.addFriend(from);
+  receiveMessage(message: Message): void {
+    console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
+    if (message.getMessageType() === `meet`) {
+      this.addFriend(message.getSender());
     }
   }
 }
