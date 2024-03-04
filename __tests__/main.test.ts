@@ -1,25 +1,10 @@
 
 import { jest } from '@jest/globals';
 
-import { Salmon } from '../src/main.js';
+let stage: string = "setup";
 
-describe('Salmon', () => {
-  describe('already friends', () => {
-    it('throws an error', () => {
-      const alice = new Salmon('Alice');
-      const bob = new Salmon('Bob');
-      alice.meet(bob);
-      expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
-    });
-  });
-});
-describe('triangle', () => {
-  const alice = new Salmon('Alice');
-  const bob = new Salmon('Bob');
-  const charlie = new Salmon('Charlie');
-
-  let stage: string = "setup";
-  beforeAll(() => {
+describe('already friends', () => {
+  it('throws an error', async () => {
     jest.unstable_mockModule('../src/util.js', () => {
       return{
         genRanHex: jest.fn((): string => {
@@ -27,7 +12,36 @@ describe('triangle', () => {
         })
       };
     });
+    const { Salmon } = await import('../src/main.js');
+    stage = 'already-friends-test';
+    const alice = new Salmon('Alice');
+    const bob = new Salmon('Bob');
+
+    alice.meet(bob);
+    expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
   });
+});
+
+describe('triangle', () => {
+  // let Salmon: unknown;
+  let alice: any;
+  let bob: any;
+  let charlie: any;
+  beforeAll(async () => {
+    jest.unstable_mockModule('../src/util.js', () => {
+      return{
+        genRanHex: jest.fn((): string => {
+          return stage 
+        })
+      };
+    });
+    const { Salmon } = await import('../src/main.js');
+    stage = "triangle-setup"
+    alice = new Salmon('Alice');
+    bob = new Salmon('Bob');
+    charlie = new Salmon('Charlie');
+  });
+
   describe('Alice and Bob meet', () => {
     beforeAll(() => {
       stage = "AliceBob";
