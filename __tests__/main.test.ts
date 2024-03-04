@@ -1,3 +1,6 @@
+
+import { jest } from '@jest/globals';
+
 import { Salmon } from '../src/main.js';
 
 describe('Salmon', () => {
