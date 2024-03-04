@@ -6,6 +6,9 @@ export class Salmon {
   private friends: {
    [name: string]: Salmon
   }  = {};
+  private probes: {
+    [id: string]: { [name: string]: boolean }
+  } = {};
   constructor(name: string) {
     this.name = name;
   }
@@ -34,7 +37,12 @@ export class Salmon {
     if (message.getMessageType() === `meet`) {
       this.addFriend(message.getSender());
     } else if (message.getMessageType() === `probe`) {
-      this.addFriend(message.getSender());
+      const probeMessage = message as Probe;
+      if (typeof this.probes[probeMessage.getId()] === 'undefined') {
+        this.probes[probeMessage.getId()] = {};
+      }
+      this.probes[probeMessage.getId()][message.getSender().getName()] = true;
+      // this.addFriend(message.getSender());
     }
   }
 }
