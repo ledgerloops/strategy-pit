@@ -30,3 +30,17 @@ export class Probe extends Message {
     return this.id;
   }
 }
+
+export class Loop extends Message {
+  private id: string;
+  constructor(sender: Salmon, id: string) {
+      super(sender);
+      this.id = id;
+  }
+  getMessageType(): string {
+    return 'loop';
+  }
+  getId(): string {
+    return this.id;
+  }
+}

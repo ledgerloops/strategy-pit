@@ -49,9 +49,14 @@ describe('triangle', () => {
     });
     it('Alice is friends with Bob', () => {
       expect(alice.getFriends()).toEqual([ 'Bob' ]);
+    });
+    it('Alice has an AliceBob probe for Bob', () => {
       expect(alice.getProbes()).toEqual({
         AliceBob: { Bob: true }
       });
+    });
+    it('Alice has no loops', () => {
+      expect(alice.getLoops()).toEqual([]);
     });
     it('Bob is friends with Alice', () => {
       expect(bob.getFriends()).toEqual([ 'Alice' ]);
@@ -77,6 +82,9 @@ describe('triangle', () => {
           BobCharlie: { Bob: true }
         });
       });
+      it('Alice has no loops', () => {
+        expect(alice.getLoops()).toEqual([]);
+      });  
       it('Bob is friends with Alice and Charlie', () => {
         expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
         expect(bob.getProbes()).toEqual({
@@ -105,8 +113,15 @@ describe('triangle', () => {
             BobCharlie: { Bob: true, Charlie: true },
             CharlieAlice: { Bob: true, Charlie: true }
           });
-    
         });
+        it('Alice has 3 loops', () => {
+          expect(alice.getLoops().sort()).toEqual([
+            'AliceBob',
+            'BobCharlie',
+            'CharlieAlice'
+          ].sort());
+        });
+    
         it('Bob is friends with Alice and Charlie', () => {
           expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
           expect(bob.getProbes()).toEqual({
@@ -115,13 +130,28 @@ describe('triangle', () => {
             CharlieAlice: { Alice: true, Charlie: true }
           });  
         });
+        it('Bob has 3 loops', () => {
+          expect(bob.getLoops().sort()).toEqual([
+            'CharlieAlice',
+            'BobCharlie',
+            'AliceBob'
+          ].sort());
+        });
+
         it('Charlie is friends with Bob and Alice', () => {
           expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
           expect(charlie.getProbes()).toEqual({
             AliceBob: { Alice: true, Bob: true },
             BobCharlie: { Alice: true, Bob: true },
             CharlieAlice: { Alice: true, Bob: true }
-          });  
+          });
+        });
+        it('Charlie has 3 loops', () => {
+          expect(charlie.getLoops().sort()).toEqual([
+            'AliceBob',
+            'BobCharlie',
+            'CharlieAlice'
+          ].sort());
         });
       }); // Charlie meets Alice
     }); // Bob meets Charlie
