@@ -1,6 +1,7 @@
 import { Message, Meet, Probe } from "./messages.js";
 import { genRanHex } from "./util.js";
 
+// Salmon nodes always send all the probes they can to all their friends.
 export class Salmon {
   private name: string;
   private friends: {
@@ -23,14 +24,23 @@ export class Salmon {
   meet(other: Salmon): void {
     this.addFriend(other);
     other.receiveMessage(new Meet(this));
+  
+    // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
       this.probes[probeForNewLink] = {};
     }
-    
     Object.values(this.friends).forEach(friend => {
       this.probes[probeForNewLink][friend.getName()] = true;
       friend.receiveMessage(new Probe(this, probeForNewLink))
+    });
+
+    // send existing probes to new friend
+    Object.entries(this.probes).forEach(([id, probes]) => {
+      if (typeof probes[other.getName()] === 'undefined') {
+        this.probes[id][other.getName()] = true;
+        other.receiveMessage(new Probe(this, id));
+      }
     });
   }
   getName(): string {
