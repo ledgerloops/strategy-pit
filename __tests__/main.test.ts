@@ -1,5 +1,15 @@
 import { Salmon } from '../src/main.js';
 
+describe('Salmon', () => {
+  describe('already friends', () => {
+    it('throws an error', () => {
+      const alice = new Salmon('Alice');
+      const bob = new Salmon('Bob');
+      alice.meet(bob);
+      expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
+    });
+  });
+});
 describe('triangle', () => {
   const alice = new Salmon('Alice');
   const bob = new Salmon('Bob');
