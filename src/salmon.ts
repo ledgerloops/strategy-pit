@@ -7,7 +7,7 @@ export class Salmon {
   constructor(name: string) {
     this.name = name;
   }
-  meet(other: Salmon) {
+  meet(other: Salmon): void {
     const otherName = other.getName();
     console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[other.name] !== 'undefined') {
@@ -15,10 +15,10 @@ export class Salmon {
     }    
     this.friends[otherName] = other;
   }
-  getName() {
+  getName(): string {
     return this.name;
   }
-  getFriends() {
+  getFriends(): string[] {
     return Object.keys(this.friends);
   }
 }

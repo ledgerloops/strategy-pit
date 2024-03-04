@@ -1,4 +1,4 @@
-import { Salmon } from '../src/salmon.js';
+import { Salmon } from '../src/main.js';
 
 describe('triangle', () => {
   const alice = new Salmon('Alice');
