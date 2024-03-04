@@ -18,7 +18,7 @@ describe('triangle', () => {
   describe('Alice and Bob meet', () => {
     beforeAll(() => {
       alice.meet(bob);
-      bob.meet(alice);
+      // bob.meet(alice);
     });
     it('Alice is friends with Bob', () => {
       expect(alice.getFriends()).toEqual([ 'Bob' ]);
@@ -33,7 +33,7 @@ describe('triangle', () => {
     describe('Bob and Charlie meet', () => {
       beforeAll(() => {
         bob.meet(charlie);
-        charlie.meet(bob);
+        // charlie.meet(bob);
       });
       it('Alice is friends with Bob', () => {
         expect(alice.getFriends()).toEqual([ 'Bob' ]);
@@ -48,7 +48,7 @@ describe('triangle', () => {
       describe('Charlie and Alice meet', () => {
         beforeAll(() => {
           charlie.meet(alice);
-          alice.meet(charlie);
+          // alice.meet(charlie);
         });
 
         it('Alice is friends with Bob and Charlie', () => {

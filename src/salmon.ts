@@ -6,7 +6,7 @@ export class Salmon {
   constructor(name: string) {
     this.name = name;
   }
-  meet(other: Salmon): void {
+  private addFriend(other: Salmon): void {
     const otherName = other.getName();
     console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[other.name] !== 'undefined') {
@@ -14,10 +14,20 @@ export class Salmon {
     }    
     this.friends[otherName] = other;
   }
+  meet(other: Salmon): void {
+    this.addFriend(other);
+    other.receiveMessage(this, `meet`);
+  }
   getName(): string {
     return this.name;
   }
   getFriends(): string[] {
     return Object.keys(this.friends);
+  }
+  receiveMessage(from: Salmon, message: string): void {
+    console.log(`${this.name} receives message from ${from.getName()}`, message);
+    if (message === `meet`) {
+      this.addFriend(from);
+    }
   }
 }
