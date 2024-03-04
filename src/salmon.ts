@@ -1,4 +1,3 @@
-
 export class Salmon {
   private name: string;
   private friends: {
