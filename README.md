@@ -1,113 +1,107 @@
-# node-typescript-boilerplate
+# LedgerLoops Strategy Pit
 
-[![Sponsor][sponsor-badge]][sponsor]
-[![TypeScript version][ts-badge]][typescript-5-3]
-[![Node.js version][nodejs-badge]][nodejs]
-[![APLv2][license-badge]][license]
-[![Build Status - GitHub Actions][gha-badge]][gha-ci]
+This repository is an experimentation ground for LedgerLoops strategies.
+Some strategies will integrate discovery of loops with negotiation of exchange rates, others may keep them separate.
 
-👩🏻‍💻 Developer Ready: A comprehensive template. Works out of the box for most [Node.js][nodejs] projects.
+The strategies are tested in different network models and with different network topologies.
 
-🏃🏽 Instant Value: All basic tools included and configured:
-
-- [TypeScript][typescript] [5.3][typescript-5-3]
-- [ESM][esm]
-- [ESLint][eslint] with some initial rules recommendation
-- [Jest][jest] for fast unit testing and code coverage
-- Type definitions for Node.js and Jest
-- [Prettier][prettier] to enforce consistent code style
-- NPM [scripts](#available-scripts) for common operations
-- [EditorConfig][editorconfig] for consistent coding style
-- Reproducible environments thanks to [Volta][volta]
-- Example configuration for [GitHub Actions][gh-actions]
-- Simple example of TypeScript code and unit test
-
-🤲 Free as in speech: available under the APLv2 license.
-
-## Getting Started
-
-This project is intended to be used with the latest Active LTS release of [Node.js][nodejs].
-
-### Use as a repository template
-
-To start, just click the **[Use template][repo-template-action]** link (or the green button). Start adding your code in the `src` and unit tests in the `__tests__` directories.
-
-### Clone repository
-
-To clone the repository, use the following commands:
-
-```sh
-git clone https://github.com/jsynowiec/node-typescript-boilerplate
-cd node-typescript-boilerplate
-npm install
+## Network simulators
+### Basic
+In the basic network simulator, nodes Alice and Bob can become neighbours with:
+```js
+const alice = new Node('alice');
+const bob = new Node('bob');
+alice.meet(bob);
 ```
-
-### Download latest release
-
-Download and unzip the current **main** branch or one of the tags:
-
-```sh
-wget https://github.com/jsynowiec/node-typescript-boilerplate/archive/main.zip -O node-typescript-boilerplate.zip
-unzip node-typescript-boilerplate.zip && rm node-typescript-boilerplate.zip
+After that, Alice can contact Bob, for instance with a `Meet` message:
+```js
+class MyStrategy extends Node {
+  meet(other: Node): void {
+    this.addFriend(other);
+    other.receiveMessage(new Meet(this));
+  }
+  receiveMessage(message: Message): void {
+    if (message.getMessageType() === `meet`) {
+      this.addFriend(message.getSender());
+    }
+  }
+}
 ```
+The `Meet` message will give Bob a handle to Alice, so now they can send each other
+any message they want:
+```js
+bob.receiveMessage(this, new Probe('435af3b4'));
+```
+A `Node#receiveMessage` call may trigger other messages to be sent, so make sure that this doesn't get into an infinite loop.
+This in itself means that this network simulator is not Byzantine fault tolerant, because nodes have infinite patience in this model.
+Only one node is acting at a time, and while it is acting, all other nodes are completely asleep until the acting node responds.
 
-## Available Scripts
+### Message ticks
+The message ticks model (not implemented yet) improves upon the basic network simulator in that each node gets a change to execute on each clock tick,
+and messages sent during clock tick `n` will be delivered in clock tick `n+1`.
+Each node is allowed to act on each of the events that have been queued up for it (messages or otherwise), for unlimited time, so if one node gets into an infinite loop
+or long sleep, all other nodes will sleep too.
 
-- `clean` - remove coverage data, Jest cache and transpiled files,
-- `prebuild` - lint source files and tests before building,
-- `build` - transpile TypeScript to ES6,
-- `build:watch` - interactive watch mode to automatically transpile source files,
-- `lint` - lint source files and tests,
-- `prettier` - reformat files,
-- `test` - run tests,
-- `test:watch` - interactive watch mode to automatically re-run tests
+### Message ticks with timeouts
+The message ticks with timeouts model (not implemented yet) improves upon the message ticks network simulator in that on each clock tick, each node is allowed to act on each of the events that have been queued up for it (messages or otherwise), for up to a set limit (e.g. 1000ms per event).
 
-## Additional Information
+## Network Topologies
+### Triangle
+The simplest network topology has 3 nodes (Alice, Bob and Charlie), and its links evolve as follows:
+1. None.
+2. Alice->Bob.
+3. Alice->Bob, Bob->Charlie.
+4. Alice->Bob, Bob->Charlie, Charlie->Alice.
 
-### Why include Volta
+### Hour Glass
+This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and its links evolve as follows (Alice is at the center where two triangles meet):
+1. None.
+2. Alice->Bob.
+3. Alice->Bob, Bob->Charlie.
+4. Alice->Bob, Bob->Charlie, Charlie->Alice.
+5. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave.
+6. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward.
+7. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward, Edward->Alice.
 
-[Volta][volta]’s toolchain always keeps track of where you are, it makes sure the tools you use always respect the settings of the project you’re working on. This means you don’t have to worry about changing the state of your installed software when switching between projects. For example, it's [used by engineers at LinkedIn][volta-tomdale] to standardize tools and have reproducible development environments.
+## Strategies
+### Salmon
+The Salmon strategy works as follows:
+When a Salmon Node meets a new node, it:
+* adds this node as a contact
+* sends that new a Meet message
+* mints a new Probe message
+* sends it to all
+* considers its chronological list of contacts (including the new one)
+* sends the probe to the oldest contact
+* unless this results in a loop being found from this probe, sends it to the next contact in the list
+* repeat for all contacts in the list (including the new one)
 
-I recommend to [install][volta-getting-started] Volta and use it to manage your project's toolchain.
+When a Salmon Node receives a Meet message:
+* add this node as a contact
+* deduplicate on `node->getName()`
+* throw an error in case a contact by that name already exists)
 
-### ES Modules
+When a Salmon Node receives a Probe message:
+* store it
+* deduplicate on Probe Id
+* if a probe by this Probe Id already exists, conclude that a loop is found (see below)
+* else forward this probe to all other contacts
 
-This template uses native [ESM][esm]. Make sure to read [this][nodejs-esm], and [this][ts47-esm] first.
+When a Salmon Node finds a loop:
+* send a Loop message for this loop's Probe Id to all contacts
+* mark this loop as known (deduplicate on Probe Id)
 
-If your project requires CommonJS, you will have to [convert to ESM][sindresorhus-esm].
+When a Salmon Node receives a Loop message:
+* if it is already marked as known, do nothing
+* otherwise, mark it as known, and
+* forward it to all other contacts (note that this is a bug, see below)
 
-Please do not open issues for questions regarding CommonJS or ESM on this repo.
+Three Salmons in a Triangle in the Basic simulator will successfully find three loops.
+They will not be able to detect that the three loops have exact overlap.
+They rely on the fact that a triangle has no forks.
+Forwarding a Loop message to all other contacts is a bug unless the number of other contacts is exactly one. This bug goes undetected in the Triangle topology, but Salmon loop detection would break if you put them in an Hourglass topology.
 
-## Backers & Sponsors
+Also, Salmons don't implement exchange rate negotiation.
 
-Support this project by becoming a [sponsor][sponsor].
-
-## License
-
-Licensed under the APLv2. See the [LICENSE](https://github.com/jsynowiec/node-typescript-boilerplate/blob/main/LICENSE) file for details.
-
-[ts-badge]: https://img.shields.io/badge/TypeScript-5.3-blue.svg
-[nodejs-badge]: https://img.shields.io/badge/Node.js->=%2020.9-blue.svg
-[nodejs]: https://nodejs.org/dist/latest-v20.x/docs/api/
-[gha-badge]: https://github.com/jsynowiec/node-typescript-boilerplate/actions/workflows/nodejs.yml/badge.svg
-[gha-ci]: https://github.com/jsynowiec/node-typescript-boilerplate/actions/workflows/nodejs.yml
-[typescript]: https://www.typescriptlang.org/
-[typescript-5-3]: https://devblogs.microsoft.com/typescript/announcing-typescript-5-3/
-[license-badge]: https://img.shields.io/badge/license-APLv2-blue.svg
-[license]: https://github.com/jsynowiec/node-typescript-boilerplate/blob/main/LICENSE
-[sponsor-badge]: https://img.shields.io/badge/♥-Sponsor-fc0fb5.svg
-[sponsor]: https://github.com/sponsors/jsynowiec
-[jest]: https://facebook.github.io/jest/
-[eslint]: https://github.com/eslint/eslint
-[wiki-js-tests]: https://github.com/jsynowiec/node-typescript-boilerplate/wiki/Unit-tests-in-plain-JavaScript
-[prettier]: https://prettier.io
-[volta]: https://volta.sh
-[volta-getting-started]: https://docs.volta.sh/guide/getting-started
-[volta-tomdale]: https://twitter.com/tomdale/status/1162017336699838467
-[gh-actions]: https://github.com/features/actions
-[repo-template-action]: https://github.com/jsynowiec/node-typescript-boilerplate/generate
-[esm]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules
-[sindresorhus-esm]: https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-[nodejs-esm]: https://nodejs.org/docs/latest-v16.x/api/esm.html
-[ts47-esm]: https://devblogs.microsoft.com/typescript/announcing-typescript-4-7/#esm-nodejs
-[editorconfig]: https://editorconfig.org
+### Pelican
+Pelicans (not implemented yet) differ from Salmons in that they create multiple Loops per Probe - forking them whenever the network forks. This means they can handle not only the Triangle but also the Hourglass topology.
