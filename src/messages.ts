@@ -32,15 +32,20 @@ export class Probe extends Message {
 }
 
 export class Loop extends Message {
-  private id: string;
-  constructor(sender: Node, id: string) {
+  private loopId: string;
+  private probeId: string;
+  constructor(sender: Node, probeId: string, loopId?: string) {
       super(sender);
-      this.id = id;
+      this.probeId = probeId;
+      this.loopId = loopId;
   }
   getMessageType(): string {
     return 'loop';
   }
-  getId(): string {
-    return this.id;
+  getProbeId(): string {
+    return this.probeId;
+  }
+  getLoopId(): string {
+    return this.loopId;
   }
 }

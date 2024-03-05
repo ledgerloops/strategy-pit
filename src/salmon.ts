@@ -95,16 +95,16 @@ export class Salmon extends Node {
       // this.addFriend(message.getSender());
     } else if (message.getMessageType() === `loop`) {
       const loopMessage = message as Loop;
-      if (!this.loops[loopMessage.getId()]) {
-        console.log(`${this.name} received loop message about ${loopMessage.getId()} from ${message.getSender().getName()}`);
-        Object.keys(this.probes[loopMessage.getId()]).forEach(name => {
+      if (!this.loops[loopMessage.getProbeId()]) {
+        console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()}`);
+        Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
           if (name !== message.getSender().getName()) {
-            this.friends[name].receiveMessage(new Loop(this, loopMessage.getId()));
+            this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId()));
           }
         });
-        this.loops[loopMessage.getId()] = true;
+        this.loops[loopMessage.getProbeId()] = true;
       } else {
-        console.log(`LOOP ${loopMessage.getId()} IS NOT NEW TO ME`);
+        console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
       }
     }
   }

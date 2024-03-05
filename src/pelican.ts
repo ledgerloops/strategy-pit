@@ -80,8 +80,9 @@ export class Pelican extends Node {
       } else {
         console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
         this.loops[probeMessage.getId()] = true;
+        const initialLoopId = genRanHex(8);
         Object.keys(this.probes[probeMessage.getId()]).forEach(name => {
-          this.friends[name].receiveMessage(new Loop(this, probeMessage.getId()));
+          this.friends[name].receiveMessage(new Loop(this, probeMessage.getId(), initialLoopId));
         });
       }
       this.probes[probeMessage.getId()][message.getSender().getName()] = true;
@@ -95,17 +96,19 @@ export class Pelican extends Node {
       });
       // this.addFriend(message.getSender());
     } else if (message.getMessageType() === `loop`) {
-      const loopMessage = message as Loop;
-      if (!this.loops[loopMessage.getId()]) {
-        console.log(`${this.name} received loop message about ${loopMessage.getId()} from ${message.getSender().getName()}`);
-        Object.keys(this.probes[loopMessage.getId()]).forEach(name => {
+      // when a loop is detected, 
+      const loopMessage = message as Loop; 
+      if (!this.loops[loopMessage.getProbeId()]) {
+        console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
+        const initialLoopId = genRanHex(8);
+        Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
           if (name !== message.getSender().getName()) {
-            this.friends[name].receiveMessage(new Loop(this, loopMessage.getId()));
+            this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId(), initialLoopId));
           }
         });
-        this.loops[loopMessage.getId()] = true;
+        this.loops[loopMessage.getProbeId()] = true;
       } else {
-        console.log(`LOOP ${loopMessage.getId()} IS NOT NEW TO ME`);
+        console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
       }
     }
   }
