@@ -1,11 +1,11 @@
-import { Salmon } from "./salmon.js";
+import { Node } from "./node.js";
 
 export abstract class Message {
-  private sender: Salmon;
-  constructor(sender: Salmon) {
+  private sender: Node;
+  constructor(sender: Node) {
     this.sender = sender;
   }
-  getSender(): Salmon {
+  getSender(): Node {
     return this.sender;
   }
   abstract getMessageType(): string;
@@ -19,7 +19,7 @@ export class Meet extends Message {
 
 export class Probe extends Message {
   private id: string;
-  constructor(sender: Salmon, id: string) {
+  constructor(sender: Node, id: string) {
       super(sender);
       this.id = id;
   }
@@ -33,7 +33,7 @@ export class Probe extends Message {
 
 export class Loop extends Message {
   private id: string;
-  constructor(sender: Salmon, id: string) {
+  constructor(sender: Node, id: string) {
       super(sender);
       this.id = id;
   }

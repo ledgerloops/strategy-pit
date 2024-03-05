@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { jest } from '@jest/globals';
 
@@ -13,10 +12,10 @@ describe('already friends', () => {
         })
       };
     });
-    const { Pelican } = await import('../src/main.js');
+    const { Salmon } = await import('../src/main.js');
     stage = 'already-friends-test';
-    const alice = new Pelican('Alice');
-    const bob = new Pelican('Bob');
+    const alice = new Salmon('Alice');
+    const bob = new Salmon('Bob');
 
     alice.meet(bob);
     expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
@@ -24,7 +23,7 @@ describe('already friends', () => {
 });
 
 describe('triangle', () => {
-  // let Pelican: unknown;
+  // let Salmon: unknown;
   let alice: any;
   let bob: any;
   let charlie: any;
@@ -36,11 +35,11 @@ describe('triangle', () => {
         })
       };
     });
-    const { Pelican } = await import('../src/main.js');
+    const { Salmon } = await import('../src/main.js');
     stage = "triangle-setup"
-    alice = new Pelican('Alice');
-    bob = new Pelican('Bob');
-    charlie = new Pelican('Charlie');
+    alice = new Salmon('Alice');
+    bob = new Salmon('Bob');
+    charlie = new Salmon('Charlie');
   });
 
   describe('Alice and Bob meet', () => {

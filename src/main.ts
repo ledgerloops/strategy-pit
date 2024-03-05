@@ -1,2 +1,2 @@
 export { Salmon } from './salmon.js';
-// Path: src/salmon.ts
+export { Pelican } from './pelican.js';

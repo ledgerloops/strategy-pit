@@ -2,8 +2,9 @@ import { Message, Meet, Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node } from "./node.js";
 
-// Salmon nodes always send all the probes they can to all their friends.
-export class Salmon extends Node {
+// Pelican nodes always send all the probes they can to all their friends.
+// Unlike Salmons, Pelicans are able to fork multiple Loop messages from one successful Probe.
+export class Pelican extends Node {
   private friends: {
    [name: string]: Node
   }  = {};
@@ -13,7 +14,7 @@ export class Salmon extends Node {
   private loops: {
     [id: string]: boolean
   } = {};
-  constructor(name: string) {
+ constructor(name: string) {
     super(name);
   }
   private addFriend(other: Node): void {
@@ -26,7 +27,7 @@ export class Salmon extends Node {
   }
   meet(other: Node): void {
     this.addFriend(other);
-    other.receiveMessage(new Meet(this));
+    other.receiveMessage(new Meet(this as Node));
   
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
@@ -36,7 +37,7 @@ export class Salmon extends Node {
     Object.values(this.friends).forEach(friend => {
       if (typeof this.probes[probeForNewLink][friend.getName()] === 'undefined') {
         this.probes[probeForNewLink][friend.getName()] = true;
-        friend.receiveMessage(new Probe(this, probeForNewLink));
+        friend.receiveMessage(new Probe(this as Node, probeForNewLink));
         return;
       }
       if (this.loops[probeForNewLink]) {
