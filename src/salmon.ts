@@ -4,10 +4,10 @@ import { Node } from "./node.js";
 
 // Salmon nodes always send all the probes they can to all their friends.
 export class Salmon extends Node {
-  private friends: {
+  protected friends: {
    [name: string]: Node
   }  = {};
-  private probes: {
+  protected probes: {
     [id: string]: { [name: string]: boolean }
   } = {};
   private loops: {
@@ -16,7 +16,7 @@ export class Salmon extends Node {
   constructor(name: string) {
     super(name);
   }
-  private addFriend(other: Node): void {
+  protected addFriend(other: Node): void {
     const otherName = other.getName();
     // console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[other.getName()] !== 'undefined') {

@@ -1,31 +1,18 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node } from "./node.js";
+import { Salmon } from "./salmon.js";
 
 // Pelican nodes always send all the probes they can to all their friends.
 // Unlike Salmons, Pelicans are able to fork multiple Loop messages from one successful Probe.
-export class Pelican extends Node {
-  private friends: {
-   [name: string]: Node
-  }  = {};
-  private probes: {
-    [id: string]: { [name: string]: boolean }
-  } = {};
-  private loops: {
+export class Pelican extends Salmon {
+  private pelicanLoops: {
     [probeId: string]: {
       [loopId: string]: boolean
     }
   } = {};
  constructor(name: string) {
     super(name);
-  }
-  private addFriend(other: Node): void {
-    const otherName = other.getName();
-    // console.log(`${this.name} meets ${otherName}`);
-    if (typeof this.friends[other.getName()] !== 'undefined') {
-      throw new Error(`${this.name} is already friends with ${otherName}`);
-    }
-    this.friends[otherName] = other;
   }
   meet(other: Node): void {
     this.addFriend(other);
@@ -46,7 +33,7 @@ export class Pelican extends Node {
 
     // send existing probes to new friend
     Object.entries(this.probes).forEach(([id, probes]) => {
-      if (this.loops[id]) {
+      if (this.pelicanLoops[id]) {
         // console.log(`existing probe apparently looped back`);
       } else {
         if (typeof probes[other.getName()] === 'undefined') {
@@ -64,7 +51,7 @@ export class Pelican extends Node {
   }
   getLoops(): string[] {
     const loops: string[] = [];
-    Object.keys(this.loops).forEach(probeId => Object.keys(this.loops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
+    Object.keys(this.pelicanLoops).forEach(probeId => Object.keys(this.pelicanLoops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
     return loops;
   }
   receiveMessage(message: Message): void {
@@ -78,10 +65,10 @@ export class Pelican extends Node {
       } else {
         // console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
         const initialLoopId = genRanHex(8);
-        if (typeof this.loops[probeMessage.getId()] === 'undefined') {
-          this.loops[probeMessage.getId()] = {};
+        if (typeof this.pelicanLoops[probeMessage.getId()] === 'undefined') {
+          this.pelicanLoops[probeMessage.getId()] = {};
         }
-        this.loops[probeMessage.getId()][initialLoopId] = true;
+        this.pelicanLoops[probeMessage.getId()][initialLoopId] = true;
         Object.keys(this.probes[probeMessage.getId()]).forEach(name => {
           this.friends[name].receiveMessage(new Loop(this, probeMessage.getId(), initialLoopId));
         });
@@ -99,16 +86,16 @@ export class Pelican extends Node {
     } else if (message.getMessageType() === `loop`) {
       // when a loop message is received:
       const loopMessage = message as Loop;
-      if (!this.loops[loopMessage.getProbeId()] || !this.loops[loopMessage.getProbeId()][loopMessage.getLoopId()]) {
+      if (!this.pelicanLoops[loopMessage.getProbeId()] || !this.pelicanLoops[loopMessage.getProbeId()][loopMessage.getLoopId()]) {
           // console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
         let loopId = loopMessage.getLoopId();
         Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
           if (name !== message.getSender().getName()) {
             this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId(), loopId));
-            if (typeof this.loops[loopMessage.getProbeId()] === 'undefined') {
-              this.loops[loopMessage.getProbeId()] = {};
+            if (typeof this.pelicanLoops[loopMessage.getProbeId()] === 'undefined') {
+              this.pelicanLoops[loopMessage.getProbeId()] = {};
             }
-            this.loops[loopMessage.getProbeId()][loopId] = true;
+            this.pelicanLoops[loopMessage.getProbeId()][loopId] = true;
 
             // Make sure the next forward (in case of a fork) will use a different loop id
             loopId = genRanHex(8);
