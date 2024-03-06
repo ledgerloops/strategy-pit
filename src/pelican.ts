@@ -12,7 +12,9 @@ export class Pelican extends Node {
     [id: string]: { [name: string]: boolean }
   } = {};
   private loops: {
-    [id: string]: boolean
+    [probeId: string]: {
+      [loopId: string]: boolean
+    }
   } = {};
  constructor(name: string) {
     super(name);
@@ -67,7 +69,9 @@ export class Pelican extends Node {
     return this.probes;
   }
   getLoops(): string[] {
-    return Object.keys(this.loops);
+    const loops: string[] = [];
+    Object.keys(this.loops).forEach(probeId => Object.keys(this.loops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
+    return loops;
   }
   receiveMessage(message: Message): void {
     console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
@@ -79,8 +83,11 @@ export class Pelican extends Node {
         this.probes[probeMessage.getId()] = {};
       } else {
         console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
-        this.loops[probeMessage.getId()] = true;
         const initialLoopId = genRanHex(8);
+        if (typeof this.loops[probeMessage.getId()] === 'undefined') {
+          this.loops[probeMessage.getId()] = {};
+        }
+        this.loops[probeMessage.getId()][initialLoopId] = true;
         Object.keys(this.probes[probeMessage.getId()]).forEach(name => {
           this.friends[name].receiveMessage(new Loop(this, probeMessage.getId(), initialLoopId));
         });
@@ -96,17 +103,23 @@ export class Pelican extends Node {
       });
       // this.addFriend(message.getSender());
     } else if (message.getMessageType() === `loop`) {
-      // when a loop is detected, 
+      // when a loop message is received:
       const loopMessage = message as Loop; 
-      if (!this.loops[loopMessage.getProbeId()]) {
-        console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
-        const initialLoopId = genRanHex(8);
+      if (!this.loops[loopMessage.getProbeId()] || !this.loops[loopMessage.getProbeId()][loopMessage.getLoopId()]) {
+          console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
+        let loopId = loopMessage.getLoopId();
         Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
           if (name !== message.getSender().getName()) {
-            this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId(), initialLoopId));
+            this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId(), loopId));
+            if (typeof this.loops[loopMessage.getProbeId()] === 'undefined') {
+              this.loops[loopMessage.getProbeId()] = {};
+            }
+            this.loops[loopMessage.getProbeId()][loopId] = true;
+    
+            // Make sure the next forward (in case of a fork) will use a different loop id
+            loopId = genRanHex(8);
           }
         });
-        this.loops[loopMessage.getProbeId()] = true;
       } else {
         console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
       }

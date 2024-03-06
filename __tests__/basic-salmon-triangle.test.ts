@@ -117,9 +117,9 @@ describe('triangle', () => {
         });
         it('Alice has 3 loops', () => {
           expect(alice.getLoops().sort()).toEqual([
-            'AliceBob',
-            'BobCharlie',
-            'CharlieAlice'
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice'
           ].sort());
         });
     
@@ -133,9 +133,9 @@ describe('triangle', () => {
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([
-            'CharlieAlice',
-            'BobCharlie',
-            'AliceBob'
+            'CharlieAlice:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'AliceBob:CharlieAlice'
           ].sort());
         });
 
@@ -149,9 +149,9 @@ describe('triangle', () => {
         });
         it('Charlie has 3 loops', () => {
           expect(charlie.getLoops().sort()).toEqual([
-            'AliceBob',
-            'BobCharlie',
-            'CharlieAlice'
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice'
           ].sort());
         });
       }); // Charlie meets Alice
