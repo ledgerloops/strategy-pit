@@ -121,60 +121,93 @@ describe('Basic Pelican Hourglass', () => {
         });
       });
    
-    //   describe('Charlie meets Alice', () => {
-    //     beforeAll(() => {
-    //       stage = "EdwardAlice";
-    //       edward.meet(alice);
-    //     });
+      describe('Edward meets Alice', () => {
+        beforeAll(() => {
+          stage = "EdwardAlice";
+          edward.meet(alice);
+        });
 
-    //     it('Alice is friends with Bob and Charlie', () => {
-    //       expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
-    //       expect(alice.getProbes()).toEqual({
-    //         AliceBob: { Bob: true, Charlie: true },
-    //         BobCharlie: { Bob: true, Charlie: true },
-    //         CharlieAlice: { Bob: true, Charlie: true }
-    //       });
-    //     });
-    //     it('Alice has 3 loops', () => {
-    //       expect(alice.getLoops().sort()).toEqual([
-    //         'AliceBob:CharlieAlice',
-    //         'BobCharlie:CharlieAlice',
-    //         'CharlieAlice:CharlieAlice'
-    //       ].sort());
-    //     });
+        it('Alice is friends with everyone', () => {
+          expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie', 'Dave', 'Edward' ]);
+        });
+
+        it('Alice has probes for each hourglass edge', () => {
+          expect(alice.getProbes()).toEqual({
+            AliceBob: { Bob: true, Charlie: true }, // probes from the first triangle don't travel into the second triangle 
+            BobCharlie: { Bob: true, Charlie: true }, // probes from the first triangle don't travel into the second triangle
+            CharlieAlice: { Bob: true, Charlie: true }, // probes from the first triangle don't travel into the second triangle
+            AliceDave: { Bob: true, Charlie: true, Dave: true, Edward: true },
+            DaveEdward: { Bob: true, Charlie: true, Dave: true, Edward: true },
+            EdwardAlice: { Bob: true, Charlie: true, Dave: true, Edward: true }
+          });
+        });
+        it('Alice has 8 loops', () => {
+          expect(alice.getLoops().sort()).toEqual([
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice',
+            'AliceDave:AliceDave',
+            'AliceDave:EdwardAlice',
+            'DaveEdward:DaveEdward',
+            'DaveEdward:EdwardAlice',
+            'EdwardAlice:EdwardAlice'
+          ].sort());
+        });
    
-    //     it('Bob is friends with Alice and Charlie', () => {
-    //       expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
-    //       expect(bob.getProbes()).toEqual({
-    //         AliceBob: { Alice: true, Charlie: true },
-    //         BobCharlie: { Alice: true, Charlie: true },
-    //         CharlieAlice: { Alice: true, Charlie: true }
-    //       }); 
-    //     });
-    //     it('Bob has 3 loops', () => {
-    //       expect(bob.getLoops().sort()).toEqual([
-    //         'CharlieAlice:CharlieAlice',
-    //         'BobCharlie:CharlieAlice',
-    //         'AliceBob:CharlieAlice'
-    //       ].sort());
-    //     });
+        it('Bob is friends with Alice and Charlie', () => {
+          expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+        });
+   
+        it('Bob has one probe for each hourglass edge', () => {
+          expect(bob.getProbes()).toEqual({
+            AliceBob: { Alice: true, Charlie: true },
+            BobCharlie: { Alice: true, Charlie: true },
+            CharlieAlice: { Alice: true, Charlie: true },
+            AliceDave: { Alice: true, Charlie: true },
+            DaveEdward: { Alice: true, Charlie: true },
+            EdwardAlice: { Alice: true, Charlie: true }
+          }); 
+        });
+        it('Bob has 8 loops', () => {
+          expect(bob.getLoops().sort()).toEqual([
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice',
+            'AliceDave:AliceDave',
+            'AliceDave:EdwardAlice',
+            'DaveEdward:DaveEdward',
+            'DaveEdward:EdwardAlice',
+            'EdwardAlice:EdwardAlice'
+          ].sort());
+        });
 
-    //     it('Charlie is friends with Bob and Alice', () => {
-    //       expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
-    //       expect(charlie.getProbes()).toEqual({
-    //         AliceBob: { Alice: true, Bob: true },
-    //         BobCharlie: { Alice: true, Bob: true },
-    //         CharlieAlice: { Alice: true, Bob: true }
-    //       });
-    //     });
-    //     it('Charlie has 3 loops', () => {
-    //       expect(charlie.getLoops().sort()).toEqual([
-    //         'AliceBob:CharlieAlice',
-    //         'BobCharlie:CharlieAlice',
-    //         'CharlieAlice:CharlieAlice'
-    //       ].sort());
-    //     });
-    //   }); // Edward meets Alice
+        it('Charlie is friends with Bob and Alice', () => {
+          expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+        });
+
+        it('Charlie has one probe for each hourglass edge', () => {
+          expect(charlie.getProbes()).toEqual({
+            AliceBob: { Alice: true, Bob: true },
+            BobCharlie: { Alice: true, Bob: true },
+            CharlieAlice: { Alice: true, Bob: true },
+            AliceDave: { Alice: true, Bob: true },
+            DaveEdward: { Alice: true, Bob: true },
+            EdwardAlice: { Alice: true, Bob: true }
+          });
+        });
+        it('Charlie has 8 loops', () => {
+          expect(charlie.getLoops().sort()).toEqual([
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice',
+            'AliceDave:AliceDave',
+            'AliceDave:EdwardAlice',
+            'DaveEdward:DaveEdward',
+            'DaveEdward:EdwardAlice',
+            'EdwardAlice:EdwardAlice'
+          ].sort());
+        });
+      }); // Edward meets Alice
     }); // Dave meets Edward
   }); // Alice meets Dave
 }); // basic pelican hourglass

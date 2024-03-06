@@ -68,7 +68,7 @@ export class Pelican extends Node {
     return loops;
   }
   receiveMessage(message: Message): void {
-    console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
+    // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
     if (message.getMessageType() === `meet`) {
       this.addFriend(message.getSender());
     } else if (message.getMessageType() === `probe`) {
