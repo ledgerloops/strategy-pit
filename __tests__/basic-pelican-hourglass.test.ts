@@ -43,7 +43,7 @@ describe('Basic Pelican Hourglass', () => {
     charlie = new Pelican('Charlie');
   });
 
-  describe('Alice and Bob meet', () => {
+  describe('Triangle, then Alice meets Dave', () => {
     beforeAll(() => {
       stage = "AliceBob";
       alice.meet(bob);
@@ -71,7 +71,7 @@ describe('Basic Pelican Hourglass', () => {
       });
     });
 
-    describe('Bob and Charlie meet', () => {
+    describe('Bob meets Charlie', () => {
       beforeAll(() => {
         stage = "BobCharlie";
         bob.meet(charlie);
@@ -101,7 +101,7 @@ describe('Basic Pelican Hourglass', () => {
         });
       });
    
-      describe('Charlie and Alice meet', () => {
+      describe('Charlie meets Alice', () => {
         beforeAll(() => {
           stage = "CharlieAlice";
           charlie.meet(alice);

@@ -43,7 +43,7 @@ describe('Basic Pelican Triangle', () => {
     charlie = new Pelican('Charlie');
   });
 
-  describe('Alice and Bob meet', () => {
+  describe('Alice meets Bob', () => {
     beforeAll(() => {
       stage = "AliceBob";
       alice.meet(bob);
@@ -71,7 +71,7 @@ describe('Basic Pelican Triangle', () => {
       });
     });
 
-    describe('Bob and Charlie meet', () => {
+    describe('Bob meets Charlie', () => {
       beforeAll(() => {
         stage = "BobCharlie";
         bob.meet(charlie);
@@ -101,7 +101,7 @@ describe('Basic Pelican Triangle', () => {
         });
       });
    
-      describe('Charlie and Alice meet', () => {
+      describe('Charlie meets Alice', () => {
         beforeAll(() => {
           stage = "CharlieAlice";
           charlie.meet(alice);
