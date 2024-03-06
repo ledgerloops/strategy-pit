@@ -24,13 +24,13 @@ export class Pelican extends Node {
     console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[other.getName()] !== 'undefined') {
       throw new Error(`${this.name} is already friends with ${otherName}`);
-    }    
+    }
     this.friends[otherName] = other;
   }
   meet(other: Node): void {
     this.addFriend(other);
     other.receiveMessage(new Meet(this as Node));
-  
+
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
@@ -104,7 +104,7 @@ export class Pelican extends Node {
       // this.addFriend(message.getSender());
     } else if (message.getMessageType() === `loop`) {
       // when a loop message is received:
-      const loopMessage = message as Loop; 
+      const loopMessage = message as Loop;
       if (!this.loops[loopMessage.getProbeId()] || !this.loops[loopMessage.getProbeId()][loopMessage.getLoopId()]) {
           console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
         let loopId = loopMessage.getLoopId();
@@ -115,7 +115,7 @@ export class Pelican extends Node {
               this.loops[loopMessage.getProbeId()] = {};
             }
             this.loops[loopMessage.getProbeId()][loopId] = true;
-    
+
             // Make sure the next forward (in case of a fork) will use a different loop id
             loopId = genRanHex(8);
           }

@@ -9,7 +9,7 @@ describe('already friends', () => {
     jest.unstable_mockModule('../src/util.js', () => {
       return{
         genRanHex: jest.fn((): string => {
-          return stage 
+          return stage
         })
       };
     });
@@ -32,7 +32,7 @@ describe('Basic Salmon Triangle', () => {
     jest.unstable_mockModule('../src/util.js', () => {
       return{
         genRanHex: jest.fn((): string => {
-          return stage 
+          return stage
         })
       };
     });
@@ -85,7 +85,7 @@ describe('Basic Salmon Triangle', () => {
       });
       it('Alice has no loops', () => {
         expect(alice.getLoops()).toEqual([]);
-      });  
+      }); 
       it('Bob is friends with Alice and Charlie', () => {
         expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
         expect(bob.getProbes()).toEqual({
@@ -100,7 +100,7 @@ describe('Basic Salmon Triangle', () => {
           BobCharlie: { Bob: true }
         });
       });
-    
+   
       describe('Charlie and Alice meet', () => {
         beforeAll(() => {
           stage = "CharlieAlice";
@@ -122,14 +122,14 @@ describe('Basic Salmon Triangle', () => {
             'CharlieAlice'
           ].sort());
         });
-    
+   
         it('Bob is friends with Alice and Charlie', () => {
           expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
           expect(bob.getProbes()).toEqual({
             AliceBob: { Alice: true, Charlie: true },
             BobCharlie: { Alice: true, Charlie: true },
             CharlieAlice: { Alice: true, Charlie: true }
-          });  
+          }); 
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([

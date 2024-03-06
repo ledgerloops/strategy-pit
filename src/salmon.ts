@@ -21,13 +21,13 @@ export class Salmon extends Node {
     console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[other.getName()] !== 'undefined') {
       throw new Error(`${this.name} is already friends with ${otherName}`);
-    }    
+    }
     this.friends[otherName] = other;
   }
   meet(other: Node): void {
     this.addFriend(other);
     other.receiveMessage(new Meet(this));
-  
+
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
