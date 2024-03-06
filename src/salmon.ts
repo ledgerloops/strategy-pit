@@ -2,6 +2,22 @@ import { Message, Meet, Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node } from "./node.js";
 
+export class SalmonLoopStore {
+  private loops: {
+    [id: string]: boolean
+  } = {};
+  constructor() {}
+  has(id: string): boolean {
+    return this.loops[id] === true;
+  }
+  set(id: string): void {
+    this.loops[id] = true;
+  }
+  getKeys(): string[] {
+    return Object.keys(this.loops);
+  }
+}
+
 // Salmon nodes always send all the probes they can to all their friends.
 export class Salmon extends Node {
   protected friends: {
@@ -10,9 +26,8 @@ export class Salmon extends Node {
   protected probes: {
     [id: string]: { [name: string]: boolean }
   } = {};
-  private loops: {
-    [id: string]: boolean
-  } = {};
+  protected loopStore: SalmonLoopStore = new SalmonLoopStore();
+
   constructor(name: string) {
     super(name);
   }
@@ -43,7 +58,7 @@ export class Salmon extends Node {
 
     // send existing probes to new friend
     Object.entries(this.probes).forEach(([id, probes]) => {
-      if (this.loops[id]) {
+      if (this.loopStore.has(id)) {
         // console.log(`existing probe apparently looped back`);
       } else {
         if (typeof probes[other.getName()] === 'undefined') {
@@ -60,7 +75,7 @@ export class Salmon extends Node {
     return this.probes;
   }
   getLoops(): string[] {
-    return Object.keys(this.loops);
+    return this.loopStore.getKeys();
   }
   receiveMessage(message: Message): void {
     // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
@@ -72,7 +87,7 @@ export class Salmon extends Node {
         this.probes[probeMessage.getId()] = {};
       } else {
         // console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
-        this.loops[probeMessage.getId()] = true;
+        this.loopStore.set(probeMessage.getId());
         Object.keys(this.probes[probeMessage.getId()]).forEach(name => {
           this.friends[name].receiveMessage(new Loop(this, probeMessage.getId()));
         });
@@ -89,14 +104,14 @@ export class Salmon extends Node {
       // this.addFriend(message.getSender());
     } else if (message.getMessageType() === `loop`) {
       const loopMessage = message as Loop;
-      if (!this.loops[loopMessage.getProbeId()]) {
+      if (!this.loopStore.has(loopMessage.getProbeId())) {
         // console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()}`);
         Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
           if (name !== message.getSender().getName()) {
             this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId()));
           }
         });
-        this.loops[loopMessage.getProbeId()] = true;
+        this.loopStore.set(loopMessage.getProbeId());
       } else {
         // console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
       }
