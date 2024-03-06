@@ -13,18 +13,18 @@ describe('already friends', () => {
         })
       };
     });
-    const { Salmon } = await import('../src/main.js');
+    const { Pelican } = await import('../src/main.js');
     stage = 'already-friends-test';
-    const alice = new Salmon('Alice');
-    const bob = new Salmon('Bob');
+    const alice = new Pelican('Alice');
+    const bob = new Pelican('Bob');
 
     alice.meet(bob);
     expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
   });
 });
 
-describe('Basic Salmon Triangle', () => {
-  // let Salmon: unknown;
+describe('Basic Pelican Hourglass', () => {
+  // let Pelican: unknown;
   let alice: any;
   let bob: any;
   let charlie: any;
@@ -36,11 +36,11 @@ describe('Basic Salmon Triangle', () => {
         })
       };
     });
-    const { Salmon } = await import('../src/main.js');
-    stage = "triangle-setup"
-    alice = new Salmon('Alice');
-    bob = new Salmon('Bob');
-    charlie = new Salmon('Charlie');
+    const { Pelican } = await import('../src/main.js');
+    stage = "hourglass-setup"
+    alice = new Pelican('Alice');
+    bob = new Pelican('Bob');
+    charlie = new Pelican('Charlie');
   });
 
   describe('Alice and Bob meet', () => {
@@ -117,9 +117,9 @@ describe('Basic Salmon Triangle', () => {
         });
         it('Alice has 3 loops', () => {
           expect(alice.getLoops().sort()).toEqual([
-            'AliceBob',
-            'BobCharlie',
-            'CharlieAlice'
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice'
           ].sort());
         });
     
@@ -133,9 +133,9 @@ describe('Basic Salmon Triangle', () => {
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([
-            'CharlieAlice',
-            'BobCharlie',
-            'AliceBob'
+            'CharlieAlice:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'AliceBob:CharlieAlice'
           ].sort());
         });
 
@@ -149,12 +149,12 @@ describe('Basic Salmon Triangle', () => {
         });
         it('Charlie has 3 loops', () => {
           expect(charlie.getLoops().sort()).toEqual([
-            'AliceBob',
-            'BobCharlie',
-            'CharlieAlice'
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice'
           ].sort());
         });
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
-}); // triangle
+}); // hourglass

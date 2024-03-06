@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { jest } from '@jest/globals';
 
@@ -12,18 +13,18 @@ describe('already friends', () => {
         })
       };
     });
-    const { Salmon } = await import('../src/main.js');
+    const { Pelican } = await import('../src/main.js');
     stage = 'already-friends-test';
-    const alice = new Salmon('Alice');
-    const bob = new Salmon('Bob');
+    const alice = new Pelican('Alice');
+    const bob = new Pelican('Bob');
 
     alice.meet(bob);
     expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
   });
 });
 
-describe('triangle', () => {
-  // let Salmon: unknown;
+describe('Basic Pelican Triangle', () => {
+  // let Pelican: unknown;
   let alice: any;
   let bob: any;
   let charlie: any;
@@ -35,11 +36,11 @@ describe('triangle', () => {
         })
       };
     });
-    const { Salmon } = await import('../src/main.js');
+    const { Pelican } = await import('../src/main.js');
     stage = "triangle-setup"
-    alice = new Salmon('Alice');
-    bob = new Salmon('Bob');
-    charlie = new Salmon('Charlie');
+    alice = new Pelican('Alice');
+    bob = new Pelican('Bob');
+    charlie = new Pelican('Charlie');
   });
 
   describe('Alice and Bob meet', () => {
@@ -116,9 +117,9 @@ describe('triangle', () => {
         });
         it('Alice has 3 loops', () => {
           expect(alice.getLoops().sort()).toEqual([
-            'AliceBob',
-            'BobCharlie',
-            'CharlieAlice'
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice'
           ].sort());
         });
     
@@ -132,9 +133,9 @@ describe('triangle', () => {
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([
-            'CharlieAlice',
-            'BobCharlie',
-            'AliceBob'
+            'CharlieAlice:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'AliceBob:CharlieAlice'
           ].sort());
         });
 
@@ -148,9 +149,9 @@ describe('triangle', () => {
         });
         it('Charlie has 3 loops', () => {
           expect(charlie.getLoops().sort()).toEqual([
-            'AliceBob',
-            'BobCharlie',
-            'CharlieAlice'
+            'AliceBob:CharlieAlice',
+            'BobCharlie:CharlieAlice',
+            'CharlieAlice:CharlieAlice'
           ].sort());
         });
       }); // Charlie meets Alice
