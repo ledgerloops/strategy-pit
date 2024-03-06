@@ -23,7 +23,7 @@ describe('already friends', () => {
   });
 });
 
-describe('Basic Salmon Triangle', () => {
+describe('Basic Salmon Triangle - step-by-step', () => {
   // let Salmon: unknown;
   let alice: any;
   let bob: any;
@@ -133,9 +133,9 @@ describe('Basic Salmon Triangle', () => {
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([
-            'CharlieAlice',
+            'AliceBob',
             'BobCharlie',
-            'AliceBob'
+            'CharlieAlice'
           ].sort());
         });
 
@@ -157,4 +157,71 @@ describe('Basic Salmon Triangle', () => {
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
-}); // triangle
+}); // basic salmon triangle
+
+
+describe('Basic Salmon Triangle - synchronous', () => {
+  // let Salmon: unknown;
+  let alice: any;
+  let bob: any;
+  let charlie: any;
+  beforeAll(async () => {
+    jest.unstable_mockModule('../src/util.js', () => {
+      return{
+        genRanHex: jest.fn((): string => {
+          return stage
+        })
+      };
+    });
+    const { Salmon } = await import('../src/main.js');
+    stage = "triangle-setup"
+    alice = new Salmon('Alice');
+    bob = new Salmon('Bob');
+    charlie = new Salmon('Charlie');
+  });
+
+  describe('Alice meets Bob', () => {
+    beforeAll(() => {
+      stage = "AliceBobCharlieAlice";
+      alice.meet(bob);
+      bob.meet(charlie);
+      charlie.meet(alice);
+    });
+
+    it('Alice is friends with Bob and Charlie', () => {
+      expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+      expect(alice.getProbes()).toEqual({
+        AliceBobCharlieAlice: { Bob: true, Charlie: true }
+      });
+    });
+    it('Alice has 3 loops', () => {
+      expect(alice.getLoops().sort()).toEqual([
+        'AliceBobCharlieAlice'
+      ].sort());
+    });
+
+    it('Bob is friends with Alice and Charlie', () => {
+      expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+      expect(bob.getProbes()).toEqual({
+        AliceBobCharlieAlice: { Alice: true, Charlie: true }
+      }); 
+    });
+    it('Bob has 3 loops', () => {
+      expect(bob.getLoops().sort()).toEqual([
+        'AliceBobCharlieAlice'
+      ].sort());
+    });
+
+    it('Charlie is friends with Bob and Alice', () => {
+      expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+      expect(charlie.getProbes()).toEqual({
+        AliceBobCharlieAlice: { Alice: true, Bob: true }
+      });
+    });
+    it('Charlie has 3 loops', () => {
+      expect(charlie.getLoops().sort()).toEqual([
+        'AliceBobCharlieAlice'
+      ].sort());
+    });
+  }); // Alice meest Bob meets Charlie meets Alice
+}); // basic salmon triangle

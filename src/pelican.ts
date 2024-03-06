@@ -42,12 +42,6 @@ export class Pelican extends Node {
         friend.receiveMessage(new Probe(this as Node, probeForNewLink));
         return;
       }
-      if (this.loops[probeForNewLink]) {
-        // console.log(`new probe apparently looped back`);
-        return;
-      }
-      /* istanbul ignore next */
-      throw new Error(`unexpected!`);
     });
 
     // send existing probes to new friend
@@ -74,7 +68,7 @@ export class Pelican extends Node {
     return loops;
   }
   receiveMessage(message: Message): void {
-    // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
+    console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
     if (message.getMessageType() === `meet`) {
       this.addFriend(message.getSender());
     } else if (message.getMessageType() === `probe`) {

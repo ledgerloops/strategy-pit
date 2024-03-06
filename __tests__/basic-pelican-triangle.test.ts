@@ -157,4 +157,4 @@ describe('Basic Pelican Triangle', () => {
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
-}); // triangle
+}); // basic pelican triangle

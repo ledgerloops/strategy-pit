@@ -39,12 +39,6 @@ export class Salmon extends Node {
         friend.receiveMessage(new Probe(this, probeForNewLink));
         return;
       }
-      if (this.loops[probeForNewLink]) {
-        // console.log(`new probe apparently looped back`);
-        return;
-      }
-      /* istanbul ignore next */
-      throw new Error(`unexpected!`);
     });
 
     // send existing probes to new friend
