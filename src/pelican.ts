@@ -21,7 +21,7 @@ export class Pelican extends Node {
   }
   private addFriend(other: Node): void {
     const otherName = other.getName();
-    console.log(`${this.name} meets ${otherName}`);
+    // console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[other.getName()] !== 'undefined') {
       throw new Error(`${this.name} is already friends with ${otherName}`);
     }
@@ -43,7 +43,7 @@ export class Pelican extends Node {
         return;
       }
       if (this.loops[probeForNewLink]) {
-        console.log(`new probe apparently looped back`);
+        // console.log(`new probe apparently looped back`);
         return;
       }
       /* istanbul ignore next */
@@ -53,7 +53,7 @@ export class Pelican extends Node {
     // send existing probes to new friend
     Object.entries(this.probes).forEach(([id, probes]) => {
       if (this.loops[id]) {
-        console.log(`existing probe apparently looped back`);
+        // console.log(`existing probe apparently looped back`);
       } else {
         if (typeof probes[other.getName()] === 'undefined') {
           this.probes[id][other.getName()] = true;
@@ -74,7 +74,7 @@ export class Pelican extends Node {
     return loops;
   }
   receiveMessage(message: Message): void {
-    console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
+    // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
     if (message.getMessageType() === `meet`) {
       this.addFriend(message.getSender());
     } else if (message.getMessageType() === `probe`) {
@@ -82,7 +82,7 @@ export class Pelican extends Node {
       if (typeof this.probes[probeMessage.getId()] === 'undefined') {
         this.probes[probeMessage.getId()] = {};
       } else {
-        console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
+        // console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
         const initialLoopId = genRanHex(8);
         if (typeof this.loops[probeMessage.getId()] === 'undefined') {
           this.loops[probeMessage.getId()] = {};
@@ -106,7 +106,7 @@ export class Pelican extends Node {
       // when a loop message is received:
       const loopMessage = message as Loop;
       if (!this.loops[loopMessage.getProbeId()] || !this.loops[loopMessage.getProbeId()][loopMessage.getLoopId()]) {
-          console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
+          // console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
         let loopId = loopMessage.getLoopId();
         Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
           if (name !== message.getSender().getName()) {
@@ -121,7 +121,7 @@ export class Pelican extends Node {
           }
         });
       } else {
-        console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
+        // console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
       }
     }
   }
