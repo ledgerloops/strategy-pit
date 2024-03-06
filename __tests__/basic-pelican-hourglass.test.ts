@@ -29,7 +29,7 @@ describe('Basic Pelican Hourglass', () => {
   let bob: any;
   let charlie: any;
   let dave: any;
-  // let edward: any;
+  let edward: any;
 
   beforeAll(async () => {
     jest.unstable_mockModule('../src/util.js', () => {
@@ -45,7 +45,7 @@ describe('Basic Pelican Hourglass', () => {
     bob = new Pelican('Bob');
     charlie = new Pelican('Charlie');
     dave = new Pelican('Dave');
-    // edward = new Pelican('Edward');
+    edward = new Pelican('Edward');
   });
 
   describe('Triangle, then Alice meets Dave', () => {
@@ -85,35 +85,41 @@ describe('Basic Pelican Hourglass', () => {
       ].sort());
     });
 
-    // describe('Dave meets Edward', () => {
-    //   beforeAll(() => {
-    //     stage = "DaveEdward";
-    //     dave.meet(edward);
-    //   });
-    //   it('Alice is friends with Bob', () => {
-    //     expect(alice.getFriends()).toEqual([ 'Bob' ]);
-    //     expect(alice.getProbes()).toEqual({
-    //       AliceBob: { Bob: true },
-    //       BobCharlie: { Bob: true }
-    //     });
-    //   });
-    //   it('Alice has no loops', () => {
-    //     expect(alice.getLoops()).toEqual([]);
-    //   }); 
-    //   it('Bob is friends with Alice and Charlie', () => {
-    //     expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
-    //     expect(bob.getProbes()).toEqual({
-    //       AliceBob: { Alice: true, Charlie: true },
-    //       BobCharlie: { Alice: true, Charlie: true }
-    //     });
-    //   });
-    //   it('Charlie is friends with Bob', () => {
-    //     expect(charlie.getFriends()).toEqual([ 'Bob' ]);
-    //     expect(charlie.getProbes()).toEqual({
-    //       AliceBob: { Bob: true },
-    //       BobCharlie: { Bob: true }
-    //     });
-    //   });
+    describe('Dave meets Edward', () => {
+      beforeAll(() => {
+        stage = "DaveEdward";
+        dave.meet(edward);
+      });
+      it('Alice is friends with the triangle plus Dave', () => {
+        expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie', 'Dave' ]);
+      });
+      it('Alice has probes for the triangle plus Dave and Edward', () => {
+        expect(alice.getProbes()).toEqual({
+          AliceBob: { Bob: true, Charlie: true },
+          BobCharlie: { Bob: true, Charlie: true },
+          CharlieAlice: { Bob: true, Charlie: true },
+          AliceDave: { Bob: true, Charlie: true, Dave: true },
+          DaveEdward: { Bob: true, Charlie: true, Dave: true }
+        });
+      });
+      it('Dave is friends with Alice and Edward', () => {
+        expect(dave.getFriends()).toEqual([ 'Alice', 'Edward' ]);
+      });
+      it('Dave has all the triangle probes plus one for Edward', () => {
+        expect(dave.getProbes()).toEqual({
+          AliceDave: { Alice: true, Edward: true },
+          DaveEdward: { Alice: true, Edward: true }
+        });
+      });
+      it('Edward is friends with Dave', () => {
+        expect(edward.getFriends()).toEqual([ 'Dave' ]);
+      });
+      it('Edward has all the triangle probes plus one for Dave', () => {
+        expect(edward.getProbes()).toEqual({
+          AliceDave: { Dave: true },
+          DaveEdward: { Dave: true }
+        });
+      });
    
     //   describe('Charlie meets Alice', () => {
     //     beforeAll(() => {
@@ -169,6 +175,6 @@ describe('Basic Pelican Hourglass', () => {
     //       ].sort());
     //     });
     //   }); // Edward meets Alice
-    // }); // Dave meets Edward
+    }); // Dave meets Edward
   }); // Alice meets Dave
 }); // basic pelican hourglass
