@@ -17,7 +17,9 @@ export class Pelican extends Salmon {
   meet(other: Node): void {
     this.addFriend(other);
     other.receiveMessage(new Meet(this as Node));
-
+    this.onMeet(other);
+  }
+  onMeet(other: Node): void {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
@@ -54,56 +56,62 @@ export class Pelican extends Salmon {
     Object.keys(this.pelicanLoops).forEach(probeId => Object.keys(this.pelicanLoops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
     return loops;
   }
+  handleMeetMessage(message: Meet): void {
+    this.addFriend(message.getSender());
+  }
+  handleProbeMessage(message: Probe): void {
+    if (typeof this.probes[message.getId()] === 'undefined') {
+      this.probes[message.getId()] = {};
+    } else {
+      // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
+      const initialLoopId = genRanHex(8);
+      if (typeof this.pelicanLoops[message.getId()] === 'undefined') {
+        this.pelicanLoops[message.getId()] = {};
+      }
+      this.pelicanLoops[message.getId()][initialLoopId] = true;
+      Object.keys(this.probes[message.getId()]).forEach(name => {
+        this.friends[name].receiveMessage(new Loop(this, message.getId(), initialLoopId));
+      });
+    }
+    this.probes[message.getId()][message.getSender().getName()] = true;
+
+    // check if we can forward this to anyone
+    Object.values(this.friends).forEach(friend => {
+      if (typeof this.probes[message.getId()][friend.getName()] === 'undefined') {
+        this.probes[message.getId()][friend.getName()] = true;
+        friend.receiveMessage(new Probe(this, message.getId()));
+      }
+    });
+    // this.addFriend(message.getSender());
+  }
+  handleLoopMessage(message: Loop): void {
+    if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getLoopId()]) {
+        // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()} - loop id ${message.getLoopId()}`);
+      let loopId = message.getLoopId();
+      Object.keys(this.probes[message.getProbeId()]).forEach(name => {
+        if (name !== message.getSender().getName()) {
+          this.friends[name].receiveMessage(new Loop(this, message.getProbeId(), loopId));
+          if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
+            this.pelicanLoops[message.getProbeId()] = {};
+          }
+          this.pelicanLoops[message.getProbeId()][loopId] = true;
+
+          // Make sure the next forward (in case of a fork) will use a different loop id
+          loopId = genRanHex(8);
+        }
+      });
+    } else {
+      // console.log(`LOOP ${message.getProbeId()} IS NOT NEW TO ME`);
+    }
+  }
   receiveMessage(message: Message): void {
     // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
     if (message.getMessageType() === `meet`) {
-      this.addFriend(message.getSender());
+      this.handleMeetMessage(message as Meet);
     } else if (message.getMessageType() === `probe`) {
-      const probeMessage = message as Probe;
-      if (typeof this.probes[probeMessage.getId()] === 'undefined') {
-        this.probes[probeMessage.getId()] = {};
-      } else {
-        // console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
-        const initialLoopId = genRanHex(8);
-        if (typeof this.pelicanLoops[probeMessage.getId()] === 'undefined') {
-          this.pelicanLoops[probeMessage.getId()] = {};
-        }
-        this.pelicanLoops[probeMessage.getId()][initialLoopId] = true;
-        Object.keys(this.probes[probeMessage.getId()]).forEach(name => {
-          this.friends[name].receiveMessage(new Loop(this, probeMessage.getId(), initialLoopId));
-        });
-      }
-      this.probes[probeMessage.getId()][message.getSender().getName()] = true;
-
-      // check if we can forward this to anyone
-      Object.values(this.friends).forEach(friend => {
-        if (typeof this.probes[probeMessage.getId()][friend.getName()] === 'undefined') {
-          this.probes[probeMessage.getId()][friend.getName()] = true;
-          friend.receiveMessage(new Probe(this, probeMessage.getId()));
-        }
-      });
-      // this.addFriend(message.getSender());
+      this.handleProbeMessage(message as Probe);
     } else if (message.getMessageType() === `loop`) {
-      // when a loop message is received:
-      const loopMessage = message as Loop;
-      if (!this.pelicanLoops[loopMessage.getProbeId()] || !this.pelicanLoops[loopMessage.getProbeId()][loopMessage.getLoopId()]) {
-          // console.log(`${this.name} received loop message about ${loopMessage.getProbeId()} from ${message.getSender().getName()} - loop id ${loopMessage.getLoopId()}`);
-        let loopId = loopMessage.getLoopId();
-        Object.keys(this.probes[loopMessage.getProbeId()]).forEach(name => {
-          if (name !== message.getSender().getName()) {
-            this.friends[name].receiveMessage(new Loop(this, loopMessage.getProbeId(), loopId));
-            if (typeof this.pelicanLoops[loopMessage.getProbeId()] === 'undefined') {
-              this.pelicanLoops[loopMessage.getProbeId()] = {};
-            }
-            this.pelicanLoops[loopMessage.getProbeId()][loopId] = true;
-
-            // Make sure the next forward (in case of a fork) will use a different loop id
-            loopId = genRanHex(8);
-          }
-        });
-      } else {
-        // console.log(`LOOP ${loopMessage.getProbeId()} IS NOT NEW TO ME`);
-      }
+      this.handleLoopMessage(message as Loop);
     }
   }
 }

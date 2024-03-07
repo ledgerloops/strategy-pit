@@ -7,10 +7,7 @@ export class Petrogale extends Pelican {
   constructor(name: string) {
     super(name);
   }
-  meet(other: Node): void {
-    this.addFriend(other);
-    other.receiveMessage(new Meet(this as Node));
-
+  onMeet(other: Node): void {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
@@ -31,5 +28,10 @@ export class Petrogale extends Pelican {
         other.receiveMessage(new Probe(this, id));
       }
     });
+  }
+  meet(other: Node): void {
+    this.addFriend(other);
+    other.receiveMessage(new Meet(this as Node));
+    this.onMeet(other);
   }
 }
