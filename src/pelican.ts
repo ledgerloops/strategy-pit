@@ -6,7 +6,7 @@ import { Salmon } from "./salmon.js";
 // Pelican nodes always send all the probes they can to all their friends.
 // Unlike Salmons, Pelicans are able to fork multiple Loop messages from one successful Probe.
 export class Pelican extends Salmon {
-  private pelicanLoops: {
+  protected pelicanLoops: {
     [probeId: string]: {
       [loopId: string]: boolean
     }
