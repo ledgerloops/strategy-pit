@@ -59,16 +59,33 @@ describe('Basic Salmon Triangle - step-by-step', () => {
     it('Alice has no loops', () => {
       expect(alice.getLoops()).toEqual([]);
     });
+    it('Alice has sent and received some messages', () => {
+      expect(alice.getMessageLog()).toEqual([
+        'TO[Bob] meet',
+        'TO[Bob] probe AliceBob'
+      ]);
+    });
     it('Bob is friends with Alice', () => {
       expect(bob.getFriends()).toEqual([ 'Alice' ]);
       expect(bob.getProbes()).toEqual({
         AliceBob: { Alice: true }
       });
     });
+    it('Bob has sent and received some messages', () => {
+      expect(bob.getMessageLog()).toEqual([
+        "FROM[Alice] meet",
+        "FROM[Alice] probe AliceBob",
+      ]);
+    });
+
     it('Charlie is friends with nobody', () => {
       expect(charlie.getFriends()).toEqual([]);
       expect(charlie.getProbes()).toEqual({
       });
+    });
+    it('Charlie has sent and received some messages', () => {
+      expect(charlie.getMessageLog()).toEqual([
+      ]);
     });
 
     describe('Bob meets Charlie', () => {

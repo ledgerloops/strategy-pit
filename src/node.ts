@@ -1,12 +1,7 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 
 export abstract class Node {
-    protected messageLog: {
-      [other: string]: {
-        in: Message[],
-        out: Message[]
-      }
-    } = {};
+    protected messageLog: string[] = [];
     protected name: string;
     protected friends: {
       [name: string]: Node
@@ -33,7 +28,7 @@ export abstract class Node {
   
     meet(other: Node): void {
       this.addFriend(other);
-      other.receiveMessage(new Meet(this as Node));
+      this.sendMessage(other.getName(), new Meet(this as Node));
       this.onMeet(other.getName());
     }
   
@@ -42,23 +37,11 @@ export abstract class Node {
     abstract handleLoopMessage(message: Loop): void;
 
     protected sendMessage(to: string, message: Message): void {
-      if (typeof this.messageLog[to] === 'undefined') {
-        this.messageLog[to] = {
-          in: [],
-          out: []
-        };
-      }
-      this.messageLog[to].out.push(message);
+      this.messageLog.push(`TO[${to}] ${message.toString()}`);
       this.friends[to].receiveMessage(message);
     }
     receiveMessage(message: Message): void {
-      if (typeof this.messageLog[message.getSender().getName()] === 'undefined') {
-        this.messageLog[message.getSender().getName()] = {
-          in: [],
-          out: []
-        };
-      }
-      this.messageLog[message.getSender().getName()].in.push(message);
+      this.messageLog.push(`FROM[${message.getSender().getName()}] ${message.toString()}`);
       // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
       if (message.getMessageType() === `meet`) {
         this.handleMeetMessage(message as Meet);
@@ -68,5 +51,7 @@ export abstract class Node {
         this.handleLoopMessage(message as Loop);
       }
     }
-  
+    getMessageLog(): string[] {
+      return this.messageLog;
+    }  
 }
