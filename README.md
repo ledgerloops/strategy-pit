@@ -115,3 +115,6 @@ don't get to see all the probes and loops.
 
 The Petrogale is identical to the Pelican except that it always sends all existing probes to a newly met node, even if
 loops were already found for them.
+
+I think in the hourglass test, the first triangle is found 3 times and the second triangle is found 8 times, although it's
+hard to tell because of #1 and #2.
