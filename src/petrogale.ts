@@ -1,4 +1,4 @@
-import { Meet, Probe } from "./messages.js";
+import { Probe } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node } from "./node.js";
 import { Pelican } from "./pelican.js";
@@ -28,10 +28,5 @@ export class Petrogale extends Pelican {
         other.receiveMessage(new Probe(this, id));
       }
     });
-  }
-  meet(other: Node): void {
-    this.addFriend(other);
-    other.receiveMessage(new Meet(this as Node));
-    this.onMeet(other);
   }
 }

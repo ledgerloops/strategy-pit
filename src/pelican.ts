@@ -14,11 +14,6 @@ export class Pelican extends Salmon {
  constructor(name: string) {
     super(name);
   }
-  meet(other: Node): void {
-    this.addFriend(other);
-    other.receiveMessage(new Meet(this as Node));
-    this.onMeet(other);
-  }
   onMeet(other: Node): void {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);

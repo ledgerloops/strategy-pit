@@ -20,9 +20,6 @@ export class SalmonLoopStore {
 
 // Salmon nodes always send all the probes they can to all their friends.
 export class Salmon extends Node {
-  protected friends: {
-   [name: string]: Node
-  }  = {};
   protected probes: {
     [id: string]: { [name: string]: boolean }
   } = {};
@@ -30,14 +27,6 @@ export class Salmon extends Node {
 
   constructor(name: string) {
     super(name);
-  }
-  protected addFriend(other: Node): void {
-    const otherName = other.getName();
-    // console.log(`${this.name} meets ${otherName}`);
-    if (typeof this.friends[other.getName()] !== 'undefined') {
-      throw new Error(`${this.name} is already friends with ${otherName}`);
-    }
-    this.friends[otherName] = other;
   }
   onMeet(other: Node): void {
     // create new probe for new link
