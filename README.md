@@ -104,7 +104,7 @@ Forwarding a Loop message to all other contacts is a bug unless the number of ot
 Also, Salmons don't implement exchange rate negotiation.
 
 ### Pelican
-Pelicans (not implemented yet) differ from Salmons in that they create multiple Loops per Probe - forking them whenever the network forks. This means they can handle not only the Triangle but also the Hourglass topology.
+Pelicans differ from Salmons in that they create multiple Loops per Probe - forking them whenever the network forks. This means they can handle not only the Triangle but also the Hourglass topology.
 
 Due to a bug in a mechanism that was meant to prevent unnecessary probes to a newly met node, nodes in the second triangle
 don't get to see all the probes and loops.

@@ -1,4 +1,4 @@
-import { Message, Meet, Probe, Loop } from "./messages.js";
+import { Meet, Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node } from "./node.js";
 
@@ -28,6 +28,19 @@ export class Salmon extends Node {
   constructor(name: string) {
     super(name);
   }
+  protected sendExistingProbesToNewFriend(other: Node): void {
+        // send existing probes to new friend
+        Object.entries(this.probes).forEach(([id, probes]) => {
+          if (this.loopStore.has(id)) {
+            // console.log(`existing probe apparently looped back`);
+          } else {
+            if (typeof probes[other.getName()] === 'undefined') {
+              this.probes[id][other.getName()] = true;
+              other.receiveMessage(new Probe(this, id));
+            }
+          }
+        });    
+  }
   onMeet(other: Node): void {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
@@ -41,27 +54,7 @@ export class Salmon extends Node {
         return;
       }
     });
-
-    // send existing probes to new friend
-    Object.entries(this.probes).forEach(([id, probes]) => {
-      if (this.loopStore.has(id)) {
-        // console.log(`existing probe apparently looped back`);
-      } else {
-        if (typeof probes[other.getName()] === 'undefined') {
-          this.probes[id][other.getName()] = true;
-          other.receiveMessage(new Probe(this, id));
-        }
-      }
-    });
-  }
-
-  meet(other: Node): void {
-    this.addFriend(other);
-    other.receiveMessage(new Meet(this));
-    this.onMeet(other);
-  }
-  getFriends(): string[] {
-    return Object.keys(this.friends);
+    this.sendExistingProbesToNewFriend(other);
   }
   getProbes(): { [id: string]: { [name: string]: boolean } } {
     return this.probes;
@@ -73,23 +66,22 @@ export class Salmon extends Node {
     this.addFriend(message.getSender());
   }
   handleProbeMessage(message: Probe): void {
-    const probeMessage = message as Probe;
-    if (typeof this.probes[probeMessage.getId()] === 'undefined') {
-      this.probes[probeMessage.getId()] = {};
+    if (typeof this.probes[message.getId()] === 'undefined') {
+      this.probes[message.getId()] = {};
     } else {
-      // console.log(`LOOP DETECTED!: ${this.name} already has probe ${probeMessage.getId()} from (or sent to) ${Object.keys(this.probes[probeMessage.getId()]).join(' and ')}`);
-      this.loopStore.set(probeMessage.getId());
-      Object.keys(this.probes[probeMessage.getId()]).forEach(name => {
-        this.friends[name].receiveMessage(new Loop(this, probeMessage.getId()));
+      // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
+      this.loopStore.set(message.getId());
+      Object.keys(this.probes[message.getId()]).forEach(name => {
+        this.friends[name].receiveMessage(new Loop(this, message.getId()));
       });
     }
-    this.probes[probeMessage.getId()][message.getSender().getName()] = true;
+    this.probes[message.getId()][message.getSender().getName()] = true;
 
     // check if we can forward this to anyone
     Object.values(this.friends).forEach(friend => {
-      if (typeof this.probes[probeMessage.getId()][friend.getName()] === 'undefined') {
-        this.probes[probeMessage.getId()][friend.getName()] = true;
-        friend.receiveMessage(new Probe(this, probeMessage.getId()));
+      if (typeof this.probes[message.getId()][friend.getName()] === 'undefined') {
+        this.probes[message.getId()][friend.getName()] = true;
+        friend.receiveMessage(new Probe(this, message.getId()));
       }
     });
     // this.addFriend(message.getSender());
@@ -107,15 +99,5 @@ export class Salmon extends Node {
       // console.log(`LOOP ${message.getProbeId()} IS NOT NEW TO ME`);
     }
 
-  }
-  receiveMessage(message: Message): void {
-    // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
-    if (message.getMessageType() === `meet`) {
-      this.handleMeetMessage(message as Meet);
-    } else if (message.getMessageType() === `probe`) {
-      this.handleProbeMessage(message as Probe);
-    } else if (message.getMessageType() === `loop`) {
-      this.handleLoopMessage(message as Loop);
-    }
   }
 }

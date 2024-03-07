@@ -21,6 +21,9 @@ export abstract class Node {
       }
       this.friends[otherName] = other;
     }
+    getFriends(): string[] {
+      return Object.keys(this.friends);
+    }
   
     meet(other: Node): void {
       this.addFriend(other);
@@ -31,7 +34,7 @@ export abstract class Node {
     abstract handleMeetMessage(message: Meet): void;
     abstract handleProbeMessage(message: Probe): void;
     abstract handleLoopMessage(message: Loop): void;
-    
+
     receiveMessage(message: Message): void {
       // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
       if (message.getMessageType() === `meet`) {
