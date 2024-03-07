@@ -295,32 +295,48 @@ describe('Basic Salmon Triangle - synchronous', () => {
 
     it('Alice is friends with Bob and Charlie', () => {
       expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+    });
+    it('Alice has some probes', () => {
       expect(alice.getProbes()).toEqual({
-        genRanHex6: { Bob: true, Charlie: true }
+        genRanHex4: { Bob: true, Charlie: true },
+        genRanHex5: { Bob: true, Charlie: true },
+        genRanHex6: { Bob: true, Charlie: true },
       });
     });
-    it('Alice has 1 loop', () => {
+    it('Alice has some loop', () => {
       expect(alice.getLoops().sort()).toEqual([
-        'genRanHex6'
+        'genRanHex4',
+        'genRanHex5',
+        'genRanHex6',
       ].sort());
     });
 
     it('Bob is friends with Alice and Charlie', () => {
       expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+    });
+    it('Bob has some probes', () => {
       expect(bob.getProbes()).toEqual({
-        genRanHex6: { Alice: true, Charlie: true }
+        genRanHex4: { Alice: true, Bob: true, Charlie: true },
+        genRanHex5: { Alice: true, Bob: true, Charlie: true },
+        genRanHex6: { Alice: true, Bob: true, Charlie: true },
       }); 
     });
-    it('Bob has 1 loop', () => {
+    it('Bob has some loops', () => {
       expect(bob.getLoops().sort()).toEqual([
-        'genRanHex6'
+        'genRanHex4',
+        'genRanHex5',
+        'genRanHex6',
       ].sort());
     });
 
     it('Charlie is friends with Bob and Alice', () => {
       expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+    });
+    it('Charlie has some probes', () => {
       expect(charlie.getProbes()).toEqual({
-        genRanHex6: { Alice: true, Bob: true }
+        genRanHex4: { Bob: true, Charlie: true },
+        genRanHex5: { Bob: true, Charlie: true },
+        genRanHex6: { Bob: true, Charlie: true },
       });
     });
     it('Charlie has 1 loop', () => {

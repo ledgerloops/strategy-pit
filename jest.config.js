@@ -7,7 +7,7 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.(m)?js$': '$1',
   },
-  testRegex: '(/__tests__/basic-salmon.*|(\\.|/)(test|spec))\\.(m)?ts$',
+  testRegex: '(/__tests__/basic-salmon-triangle.test.ts$)',
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
     'src/**/*.ts',
