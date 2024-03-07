@@ -1,4 +1,4 @@
-import { Meet, Probe, Loop } from "./messages.js";
+import { Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node } from "./node.js";
 
@@ -36,7 +36,7 @@ export class Salmon extends Node {
       } else {
         if (typeof probes[other] === 'undefined') {
           this.probes[id][other] = true;
-          this.sendMessage(other, new Probe(this, id));
+          this.sendMessage(other, new Probe(id));
         }
       }
     });    
@@ -50,7 +50,7 @@ export class Salmon extends Node {
     Object.values(this.friends).forEach(friend => {
       if (typeof this.probes[probeForNewLink][friend.getName()] === 'undefined') {
         this.probes[probeForNewLink][friend.getName()] = true;
-        this.sendMessage(friend.getName(), new Probe(this, probeForNewLink));
+        this.sendMessage(friend.getName(), new Probe(probeForNewLink));
         return;
       }
     });
@@ -62,39 +62,38 @@ export class Salmon extends Node {
   getLoops(): string[] {
     return this.loopStore.getKeys();
   }
-  handleMeetMessage(message: Meet): void {
-    this.addFriend(message.getSender());
+  handleMeetMessage(): void {
   }
   protected onLoopDetected(message: Probe): void {
       // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
       this.loopStore.set(message.getId());
       Object.keys(this.probes[message.getId()]).forEach(name => {
-        this.sendMessage(name, new Loop(this, message.getId()));
+        this.sendMessage(name, new Loop( message.getId()));
       });
   }
-  handleProbeMessage(message: Probe): void {
+  handleProbeMessage(sender: string, message: Probe): void {
     if (typeof this.probes[message.getId()] === 'undefined') {
       this.probes[message.getId()] = {};
     } else {
       this.onLoopDetected(message);
     }
-    this.probes[message.getId()][message.getSender().getName()] = true;
+    this.probes[message.getId()][sender] = true;
 
     // check if we can forward this to anyone
     Object.values(this.friends).forEach(friend => {
       if (typeof this.probes[message.getId()][friend.getName()] === 'undefined') {
         this.probes[message.getId()][friend.getName()] = true;
-        this.sendMessage(friend.getName(), new Probe(this, message.getId()));
+        this.sendMessage(friend.getName(), new Probe(message.getId()));
       }
     });
     // this.addFriend(message.getSender());
   }
-  handleLoopMessage(message: Loop): void {
+  handleLoopMessage(sender: string, message: Loop): void {
     if (!this.loopStore.has(message.getProbeId())) {
       // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()}`);
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
-        if (name !== message.getSender().getName()) {
-          this.sendMessage(name, new Loop(this, message.getProbeId()));
+        if (name !== sender) {
+          this.sendMessage(name, new Loop(message.getProbeId()));
         }
       });
       this.loopStore.set(message.getProbeId());

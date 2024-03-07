@@ -28,27 +28,28 @@ export abstract class Node {
   
     meet(other: Node): void {
       this.addFriend(other);
-      this.sendMessage(other.getName(), new Meet(this as Node));
+      this.sendMessage(other.getName(), new Meet());
       this.onMeet(other.getName());
     }
   
-    abstract handleMeetMessage(message: Meet): void;
-    abstract handleProbeMessage(message: Probe): void;
-    abstract handleLoopMessage(message: Loop): void;
+    abstract handleMeetMessage(sender: string, message: Meet): void;
+    abstract handleProbeMessage(sender: string, message: Probe): void;
+    abstract handleLoopMessage(sender: string, message: Loop): void;
 
     protected sendMessage(to: string, message: Message): void {
       this.messageLog.push(`TO[${to}] ${message.toString()}`);
-      this.friends[to].receiveMessage(message);
+      this.friends[to].receiveMessage(this, message);
     }
-    receiveMessage(message: Message): void {
-      this.messageLog.push(`FROM[${message.getSender().getName()}] ${message.toString()}`);
-      // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
+    receiveMessage(sender: Node, message: Message): void {
+      this.messageLog.push(`FROM[${sender.getName()}] ${message.toString()}`);
+      // console.log(`${this.name} receives message from ${sender}`, message);
       if (message.getMessageType() === `meet`) {
-        this.handleMeetMessage(message as Meet);
+        this.addFriend(sender);
+        this.handleMeetMessage(sender.getName(), message as Meet);
       } else if (message.getMessageType() === `probe`) {
-        this.handleProbeMessage(message as Probe);
+        this.handleProbeMessage(sender.getName(), message as Probe);
       } else if (message.getMessageType() === `loop`) {
-        this.handleLoopMessage(message as Loop);
+        this.handleLoopMessage(sender.getName(), message as Loop);
       }
     }
     getMessageLog(): string[] {

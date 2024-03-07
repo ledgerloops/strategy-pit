@@ -20,9 +20,9 @@ class MyStrategy extends Node {
     this.addFriend(other);
     other.receiveMessage(new Meet(this));
   }
-  receiveMessage(message: Message): void {
+  receiveMessage(sender: string message: Message): void {
     if (message.getMessageType() === `meet`) {
-      this.addFriend(message.getSender());
+      this.addFriend(sender);
     }
   }
 }

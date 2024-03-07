@@ -1,13 +1,4 @@
-import { Node } from "./node.js";
-
 export abstract class Message {
-  private sender: Node;
-  constructor(sender: Node) {
-    this.sender = sender;
-  }
-  getSender(): Node {
-    return this.sender;
-  }
   abstract getMessageType(): string;
   abstract toString(): string; 
 }
@@ -23,8 +14,8 @@ export class Meet extends Message {
 
 export class Probe extends Message {
   private id: string;
-  constructor(sender: Node, id: string) {
-      super(sender);
+  constructor(id: string) {
+      super();
       this.id = id;
   }
   getMessageType(): string {
@@ -41,8 +32,8 @@ export class Probe extends Message {
 export class Loop extends Message {
   private loopId: string;
   private probeId: string;
-  constructor(sender: Node, probeId: string, loopId?: string) {
-      super(sender);
+  constructor(probeId: string, loopId?: string) {
+      super();
       this.probeId = probeId;
       this.loopId = loopId;
   }

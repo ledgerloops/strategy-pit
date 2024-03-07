@@ -20,7 +20,7 @@ export class Pelican extends Salmon {
       } else {
         if (typeof probes[other] === 'undefined') {
           this.probes[id][other] = true;
-          this.sendMessage(other, new Probe(this, id));
+          this.sendMessage(other, new Probe(id));
         }
       }
     });
@@ -38,17 +38,17 @@ export class Pelican extends Salmon {
     }
     this.pelicanLoops[message.getId()][initialLoopId] = true;
     Object.keys(this.probes[message.getId()]).forEach(name => {
-      this.sendMessage(name, new Loop(this, message.getId(), initialLoopId));
+      this.sendMessage(name, new Loop(message.getId(), initialLoopId));
     });
   }
 
-  handleLoopMessage(message: Loop): void {
+  handleLoopMessage(sender: string, message: Loop): void {
     if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getLoopId()]) {
-        // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()} - loop id ${message.getLoopId()}`);
+        // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getLoopId()}`);
       let loopId = message.getLoopId();
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
-        if (name !== message.getSender().getName()) {
-          this.sendMessage(name, new Loop(this, message.getProbeId(), loopId));
+        if (name !== sender) {
+          this.sendMessage(name, new Loop(message.getProbeId(), loopId));
           if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
             this.pelicanLoops[message.getProbeId()] = {};
           }
