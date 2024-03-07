@@ -18,7 +18,7 @@ export abstract class Node {
     getName(): string {
         return this.name;
     }
-    abstract onMeet(other: Node): void;
+    abstract onMeet(other: string): void;
     protected addFriend(other: Node): void {
       const otherName = other.getName();
       // console.log(`${this.name} meets ${otherName}`);
@@ -34,22 +34,22 @@ export abstract class Node {
     meet(other: Node): void {
       this.addFriend(other);
       other.receiveMessage(new Meet(this as Node));
-      this.onMeet(other);
+      this.onMeet(other.getName());
     }
   
     abstract handleMeetMessage(message: Meet): void;
     abstract handleProbeMessage(message: Probe): void;
     abstract handleLoopMessage(message: Loop): void;
 
-    protected sendMessage(to: Node, message: Message): void {
-      if (typeof this.messageLog[to.getName()] === 'undefined') {
-        this.messageLog[to.getName()] = {
+    protected sendMessage(to: string, message: Message): void {
+      if (typeof this.messageLog[to] === 'undefined') {
+        this.messageLog[to] = {
           in: [],
           out: []
         };
       }
-      this.messageLog[to.getName()].out.push(message);
-      to.receiveMessage(message);
+      this.messageLog[to].out.push(message);
+      this.friends[to].receiveMessage(message);
     }
     receiveMessage(message: Message): void {
       if (typeof this.messageLog[message.getSender().getName()] === 'undefined') {

@@ -1,6 +1,5 @@
 import { Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
-import { Node } from "./node.js";
 import { Salmon } from "./salmon.js";
 
 // Pelican nodes always send all the probes they can to all their friends.
@@ -14,13 +13,13 @@ export class Pelican extends Salmon {
  constructor(name: string) {
     super(name);
   }
-  protected sendExistingProbesToNewFriend(other: Node): void {
+  protected sendExistingProbesToNewFriend(other: string): void {
     Object.entries(this.probes).forEach(([id, probes]) => {
       if (this.pelicanLoops[id]) {
         // console.log(`existing probe apparently looped back`);
       } else {
-        if (typeof probes[other.getName()] === 'undefined') {
-          this.probes[id][other.getName()] = true;
+        if (typeof probes[other] === 'undefined') {
+          this.probes[id][other] = true;
           this.sendMessage(other, new Probe(this, id));
         }
       }
@@ -39,7 +38,7 @@ export class Pelican extends Salmon {
     }
     this.pelicanLoops[message.getId()][initialLoopId] = true;
     Object.keys(this.probes[message.getId()]).forEach(name => {
-      this.sendMessage(this.friends[name], new Loop(this, message.getId(), initialLoopId));
+      this.sendMessage(name, new Loop(this, message.getId(), initialLoopId));
     });
   }
 
@@ -49,7 +48,7 @@ export class Pelican extends Salmon {
       let loopId = message.getLoopId();
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
         if (name !== message.getSender().getName()) {
-          this.sendMessage(this.friends[name], new Loop(this, message.getProbeId(), loopId));
+          this.sendMessage(name, new Loop(this, message.getProbeId(), loopId));
           if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
             this.pelicanLoops[message.getProbeId()] = {};
           }
