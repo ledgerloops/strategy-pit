@@ -316,9 +316,9 @@ describe('Basic Salmon Triangle - synchronous', () => {
     });
     it('Bob has some probes', () => {
       expect(bob.getProbes()).toEqual({
-        genRanHex4: { Alice: true, Bob: true, Charlie: true },
-        genRanHex5: { Alice: true, Bob: true, Charlie: true },
-        genRanHex6: { Alice: true, Bob: true, Charlie: true },
+        genRanHex4: { Alice: true, Charlie: true },
+        genRanHex5: { Alice: true, Charlie: true },
+        genRanHex6: { Alice: true, Charlie: true },
       }); 
     });
     it('Bob has some loops', () => {
@@ -334,44 +334,70 @@ describe('Basic Salmon Triangle - synchronous', () => {
     });
     it('Charlie has some probes', () => {
       expect(charlie.getProbes()).toEqual({
-        genRanHex4: { Bob: true, Charlie: true },
-        genRanHex5: { Bob: true, Charlie: true },
-        genRanHex6: { Bob: true, Charlie: true },
+        genRanHex4: { Bob: true, Alice: true },
+        genRanHex5: { Bob: true, Alice: true },
+        genRanHex6: { Bob: true, Alice: true },
       });
     });
     it('Charlie has 1 loop', () => {
       expect(charlie.getLoops().sort()).toEqual([
-        'genRanHex6'
+        'genRanHex4',
+        'genRanHex5',
+        'genRanHex6',        
       ].sort());
     });
     it('Alice has sent and received some messages', () => {
       expect(alice.getMessageLog()).toEqual([
         'TO[Bob] meet',
-        'TO[Bob] probe genRanHex6',
+        'TO[Bob] probe genRanHex4',
+        'FROM[Bob] probe genRanHex5',
         "FROM[Charlie] meet",
-        "FROM[Charlie] probe genRanHex6",
-        "TO[Bob] loop genRanHex6 default",
-        "FROM[Charlie] loop genRanHex6 default",
+        "FROM[Bob] probe genRanHex6",
+        "TO[Charlie] probe genRanHex6",
+        "FROM[Bob] loop genRanHex6 default",
+        "TO[Charlie] loop genRanHex6 default",
+        "FROM[Charlie] probe genRanHex5",
+        "TO[Bob] loop genRanHex5 default",
+        "FROM[Charlie] loop genRanHex5 default",
+        "FROM[Charlie] probe genRanHex4",
+        "TO[Bob] loop genRanHex4 default",
+        "FROM[Charlie] loop genRanHex4 default",
       ]);
     });
     it('Bob has sent and received some messages', () => {
       expect(bob.getMessageLog()).toEqual([
         "FROM[Alice] meet",
-        "FROM[Alice] probe genRanHex6",
+        "FROM[Alice] probe genRanHex4",
         "TO[Charlie] meet",
-        "TO[Charlie] probe genRanHex6",
-        "FROM[Alice] loop genRanHex6 default",
-        "TO[Charlie] loop genRanHex6 default",
+        "TO[Alice] probe genRanHex5",
+        "TO[Charlie] probe genRanHex5",
+        "TO[Charlie] probe genRanHex4",
+        "FROM[Charlie] probe genRanHex6",
+        "TO[Alice] probe genRanHex6",
+        "FROM[Charlie] loop genRanHex6 default",
+        "TO[Alice] loop genRanHex6 default",
+        "FROM[Alice] loop genRanHex5 default",
+        "TO[Charlie] loop genRanHex5 default",
+        "FROM[Alice] loop genRanHex4 default",
+        "TO[Charlie] loop genRanHex4 default",
       ]);
     });
     it('Charlie has sent and received some messages', () => {
       expect(charlie.getMessageLog()).toEqual([
         "FROM[Bob] meet",
-        "FROM[Bob] probe genRanHex6",
+        "FROM[Bob] probe genRanHex5",
+        "FROM[Bob] probe genRanHex4",
         "TO[Alice] meet",
-        "TO[Alice] probe genRanHex6",
-        "FROM[Bob] loop genRanHex6 default",
-        "TO[Alice] loop genRanHex6 default",
+        "TO[Bob] probe genRanHex6",
+        "FROM[Alice] probe genRanHex6",
+        "TO[Bob] loop genRanHex6 default",
+        "FROM[Alice] loop genRanHex6 default",
+        "TO[Alice] probe genRanHex5",
+        "FROM[Bob] loop genRanHex5 default",
+        "TO[Alice] loop genRanHex5 default",
+        "TO[Alice] probe genRanHex4",
+        "FROM[Bob] loop genRanHex4 default",
+        "TO[Alice] loop genRanHex4 default",
       ]);
     }); // Charlie has sent and received some messages
   }); // Alice meest Bob meets Charlie meets Alice
