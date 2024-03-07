@@ -16,10 +16,10 @@ export class MessageLogger {
   getLocalLog(name: string): string[] {
     return this.log.filter(entry => {
       if (entry.sender === name) {
-        return entry.event = 'sent';
+        return (entry.event === 'sent');
       }
       if (entry.receiver === name) {
-        return entry.event = 'received';
+        return (entry.event === 'received');
       }
       // istanbul ignore next
       return false;
@@ -28,6 +28,16 @@ export class MessageLogger {
         return `TO[${entry.receiver}] ${entry.message.toString()}`;
       } else {
         return `FROM[${entry.sender}] ${entry.message.toString()}`;
+      }
+    });
+  }
+  getFullLog(includeEachMessageTwice: boolean = false): string[] {
+    const filtered = (includeEachMessageTwice) ? this.log : this.log.filter(entry => entry.event === 'sent');
+    return filtered.map(entry => {
+      if (entry.event === 'sent') {
+        return `[${entry.sender}]->[${entry.receiver}] ${entry.message.toString()}`;
+      } else {
+        return `[${entry.sender}]>-[${entry.receiver}] ${entry.message.toString()}`;
       }
     });
   }

@@ -1,6 +1,7 @@
 import { Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Salmon } from "./salmon.js";
+import { MessageLogger } from "./node.js";
 
 // Pelican nodes always send all the probes they can to all their friends.
 // Unlike Salmons, Pelicans are able to fork multiple Loop messages from one successful Probe.
@@ -10,8 +11,8 @@ export class Pelican extends Salmon {
       [loopId: string]: boolean
     }
   } = {};
- constructor(name: string) {
-    super(name);
+  constructor(name: string, messageLogger?: MessageLogger) {
+    super(name, messageLogger);
   }
   protected sendExistingProbesToNewFriend(other: string): void {
     Object.entries(this.probes).forEach(([id, probes]) => {

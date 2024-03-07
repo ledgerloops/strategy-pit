@@ -2,26 +2,85 @@
 
 import { jest } from '@jest/globals';
 
+const triangleMessages = [
+  "[Alice]->[Bob] meet",
+  "[Alice]->[Bob] probe AliceBob",
+  "[Bob]->[Charlie] meet",
+  "[Bob]->[Alice] probe BobCharlie",
+  "[Bob]->[Charlie] probe BobCharlie",
+  "[Bob]->[Charlie] probe AliceBob",
+  "[Charlie]->[Alice] meet",
+  "[Charlie]->[Bob] probe CharlieAlice",
+  "[Bob]->[Alice] probe CharlieAlice",
+  "[Alice]->[Charlie] probe CharlieAlice",
+  "[Charlie]->[Bob] loop CharlieAlice CharlieAlice",
+  "[Bob]->[Alice] loop CharlieAlice CharlieAlice",
+  "[Alice]->[Charlie] loop CharlieAlice CharlieAlice",
+  "[Charlie]->[Alice] probe BobCharlie",
+  "[Alice]->[Bob] loop BobCharlie CharlieAlice",
+  "[Bob]->[Charlie] loop BobCharlie CharlieAlice",
+  "[Charlie]->[Alice] loop BobCharlie CharlieAlice",
+  "[Charlie]->[Alice] probe AliceBob",
+  "[Alice]->[Bob] loop AliceBob CharlieAlice",
+  "[Bob]->[Charlie] loop AliceBob CharlieAlice",
+  "[Charlie]->[Alice] loop AliceBob CharlieAlice",
+  "[Alice]->[Dave] meet",
+  "[Alice]->[Bob] probe AliceDave",
+  "[Bob]->[Charlie] probe AliceDave",
+  "[Charlie]->[Alice] probe AliceDave",
+  "[Alice]->[Bob] loop AliceDave AliceDave",
+  "[Bob]->[Charlie] loop AliceDave AliceDave",
+  "[Charlie]->[Alice] loop AliceDave AliceDave",
+];
+const messagesAliceDave = [
+    "[Alice]->[Dave] probe AliceDave",
+];
+const messagesDaveEdward = [
+  "[Dave]->[Edward] meet",
+  "[Dave]->[Alice] probe DaveEdward",
+  "[Alice]->[Bob] probe DaveEdward",
+  "[Bob]->[Charlie] probe DaveEdward",
+  "[Charlie]->[Alice] probe DaveEdward",
+  "[Alice]->[Dave] loop DaveEdward DaveEdward",
+  "[Alice]->[Bob] loop DaveEdward DaveEdward",
+  "[Bob]->[Charlie] loop DaveEdward DaveEdward",
+  "[Charlie]->[Alice] loop DaveEdward DaveEdward",
+  "[Dave]->[Edward] probe DaveEdward",
+  "[Dave]->[Edward] probe AliceDave",
+];
+const messagesEdwardAlice = [
+   "[Edward]->[Alice] meet",
+   "[Edward]->[Dave] probe EdwardAlice",
+   "[Dave]->[Alice] probe EdwardAlice",
+   "[Alice]->[Bob] probe EdwardAlice",
+   "[Bob]->[Charlie] probe EdwardAlice",
+   "[Charlie]->[Alice] probe EdwardAlice",
+   "[Alice]->[Dave] loop EdwardAlice EdwardAlice",
+   "[Dave]->[Edward] loop EdwardAlice EdwardAlice",
+   "[Alice]->[Bob] loop EdwardAlice EdwardAlice",
+   "[Bob]->[Charlie] loop EdwardAlice EdwardAlice",
+   "[Charlie]->[Alice] loop EdwardAlice EdwardAlice",
+   "[Alice]->[Edward] probe EdwardAlice",
+   "[Edward]->[Dave] loop EdwardAlice EdwardAlice",
+   "[Edward]->[Alice] probe DaveEdward",
+   "[Alice]->[Dave] loop DaveEdward EdwardAlice",
+   "[Dave]->[Edward] loop DaveEdward EdwardAlice",
+   "[Edward]->[Alice] loop DaveEdward EdwardAlice",
+   "[Alice]->[Bob] loop DaveEdward EdwardAlice",
+   "[Bob]->[Charlie] loop DaveEdward EdwardAlice",
+   "[Charlie]->[Alice] loop DaveEdward EdwardAlice",
+   "[Alice]->[Charlie] loop DaveEdward EdwardAlice",
+   "[Edward]->[Alice] probe AliceDave",
+   "[Alice]->[Bob] loop AliceDave EdwardAlice",
+   "[Bob]->[Charlie] loop AliceDave EdwardAlice",
+   "[Charlie]->[Alice] loop AliceDave EdwardAlice",
+   "[Alice]->[Charlie] loop AliceDave EdwardAlice",
+   "[Alice]->[Dave] loop AliceDave EdwardAlice",
+   "[Dave]->[Edward] loop AliceDave EdwardAlice",
+   "[Edward]->[Alice] loop AliceDave EdwardAlice",
+];
+
 let stage: string = "setup";
-
-describe('already friends', () => {
-  it('throws an error', async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Pelican } = await import('../src/main.js');
-    stage = 'already-friends-test';
-    const alice = new Pelican('Alice');
-    const bob = new Pelican('Bob');
-
-    alice.meet(bob);
-    expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
-  });
-});
 
 describe('Basic Pelican Hourglass', () => {
   // let Pelican: unknown;
@@ -30,7 +89,7 @@ describe('Basic Pelican Hourglass', () => {
   let charlie: any;
   let dave: any;
   let edward: any;
-
+  let messageLogger: any;
   beforeAll(async () => {
     jest.unstable_mockModule('../src/util.js', () => {
       return{
@@ -39,13 +98,14 @@ describe('Basic Pelican Hourglass', () => {
         })
       };
     });
-    const { Pelican } = await import('../src/main.js');
+    const { Pelican, MessageLogger } = await import('../src/main.js');
     stage = "hourglass-setup"
-    alice = new Pelican('Alice');
-    bob = new Pelican('Bob');
-    charlie = new Pelican('Charlie');
-    dave = new Pelican('Dave');
-    edward = new Pelican('Edward');
+    messageLogger = new MessageLogger();
+    alice = new Pelican('Alice', messageLogger);
+    bob = new Pelican('Bob', messageLogger);
+    charlie = new Pelican('Charlie', messageLogger);
+    dave = new Pelican('Dave', messageLogger);
+    edward = new Pelican('Edward', messageLogger);
   });
 
   describe('Triangle, then Alice meets Dave', () => {
@@ -84,6 +144,9 @@ describe('Basic Pelican Hourglass', () => {
         'AliceDave:AliceDave'
       ].sort());
     });
+    it('the message logs are as expected', () => {
+      expect(messageLogger.getFullLog()).toEqual(triangleMessages.concat(messagesAliceDave));
+    });
 
     describe('Dave meets Edward', () => {
       beforeAll(() => {
@@ -120,6 +183,15 @@ describe('Basic Pelican Hourglass', () => {
           DaveEdward: { Dave: true }
         });
       });
+      it('the message logs are as expected', () => {
+        expect(messageLogger.getFullLog()).toEqual([].concat(
+            triangleMessages,
+            messagesAliceDave,
+            messagesDaveEdward
+          )
+        );
+      });
+  
    
       describe('Edward meets Alice', () => {
         beforeAll(() => {
@@ -239,7 +311,7 @@ describe('Basic Pelican Hourglass', () => {
           expect(edward.getFriends().sort()).toEqual([ 'Dave', 'Alice' ].sort());
         });
 
-        it('Edward hasprobes for the second triangle of the hourglass edge', () => {
+        it('Edward has probes for the second triangle of the hourglass edge', () => {
           expect(edward.getProbes()).toEqual({
             // AliceBob: { Alice: true, Dave: true },
             // BobCharlie: { Alice: true, Dave: true },
@@ -261,7 +333,16 @@ describe('Basic Pelican Hourglass', () => {
             'EdwardAlice:EdwardAlice'
           ].sort());
         });
-
+        it('the message logs are as expected', () => {
+          expect(messageLogger.getFullLog()).toEqual([].concat(
+            triangleMessages,
+            messagesAliceDave,
+            messagesDaveEdward,
+            messagesEdwardAlice
+          )
+        );
+        });
+    
       }); // Edward meets Alice
     }); // Dave meets Edward
   }); // Alice meets Dave
