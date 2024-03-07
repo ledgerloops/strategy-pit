@@ -105,3 +105,10 @@ Also, Salmons don't implement exchange rate negotiation.
 
 ### Pelican
 Pelicans (not implemented yet) differ from Salmons in that they create multiple Loops per Probe - forking them whenever the network forks. This means they can handle not only the Triangle but also the Hourglass topology.
+
+Due to a bug in a mechanism that was meant to prevent unnecessary probes to a newly met node, nodes in the second triangle
+don't get to see all the probes and loops.
+
+### Petrogale
+The Petrogale is identical to the Pelican except that it always sends all existing probes to a newly met node, even if
+loops were already found for them.
