@@ -3,44 +3,59 @@
 import { jest } from '@jest/globals';
 
 const triangleMessages = [
+  // Alice meets Bob
   "[Alice]->[Bob] meet",
   "[Alice]->[Bob] probe AliceBob",
+  // Bob meets Charlie
   "[Bob]->[Charlie] meet",
+  // | New probe back
   "[Bob]->[Alice] probe BobCharlie",
+  // | Probes forward
   "[Bob]->[Charlie] probe BobCharlie",
   "[Bob]->[Charlie] probe AliceBob",
+  // Charlie meets Alice
   "[Charlie]->[Alice] meet",
+  // | New probe back
   "[Charlie]->[Bob] probe CharlieAlice",
   "[Bob]->[Alice] probe CharlieAlice",
   "[Alice]->[Charlie] probe CharlieAlice",
   "[Charlie]->[Bob] loop CharlieAlice CharlieAlice",
   "[Bob]->[Alice] loop CharlieAlice CharlieAlice",
   "[Alice]->[Charlie] loop CharlieAlice CharlieAlice",
+  // | Probes forward
+  // | | BobCharlie
   "[Charlie]->[Alice] probe BobCharlie",
   "[Alice]->[Bob] loop BobCharlie CharlieAlice",
   "[Bob]->[Charlie] loop BobCharlie CharlieAlice",
   "[Charlie]->[Alice] loop BobCharlie CharlieAlice",
+  // | | AliceBob
   "[Charlie]->[Alice] probe AliceBob",
   "[Alice]->[Bob] loop AliceBob CharlieAlice",
   "[Bob]->[Charlie] loop AliceBob CharlieAlice",
   "[Charlie]->[Alice] loop AliceBob CharlieAlice",
+];
+const messagesAliceDave = [
+  // Alice meets Dave
   "[Alice]->[Dave] meet",
+  // | New probe back
   "[Alice]->[Bob] probe AliceDave",
   "[Bob]->[Charlie] probe AliceDave",
   "[Charlie]->[Alice] probe AliceDave",
   "[Alice]->[Bob] loop AliceDave AliceDave",
   "[Bob]->[Charlie] loop AliceDave AliceDave",
   "[Charlie]->[Alice] loop AliceDave AliceDave",
-];
-const messagesAliceDave = [
+  // | Why not new probe back Alice->Charlie?
+  // | Probes forward
   "[Alice]->[Dave] probe AliceDave",
   "[Alice]->[Dave] probe AliceBob",
   "[Alice]->[Dave] probe BobCharlie",
   "[Alice]->[Dave] probe CharlieAlice",
-
 ];
 const messagesDaveEdward = [
+  // Dave meets Edward
   "[Dave]->[Edward] meet",
+  // | New probe back
+  // | | DaveEdward
   "[Dave]->[Alice] probe DaveEdward",
   "[Alice]->[Bob] probe DaveEdward",
   "[Bob]->[Charlie] probe DaveEdward",
@@ -49,6 +64,7 @@ const messagesDaveEdward = [
   "[Alice]->[Bob] loop DaveEdward DaveEdward",
   "[Bob]->[Charlie] loop DaveEdward DaveEdward",
   "[Charlie]->[Alice] loop DaveEdward DaveEdward",
+  // | Probes forward
   "[Dave]->[Edward] probe DaveEdward",
   "[Dave]->[Edward] probe AliceDave",
   "[Dave]->[Edward] probe AliceBob",
@@ -56,7 +72,9 @@ const messagesDaveEdward = [
   "[Dave]->[Edward] probe CharlieAlice",
 ];
 const messagesEdwardAlice = [
+  // Edward meets Alice
   "[Edward]->[Alice] meet",
+  // | New probe back
   "[Edward]->[Dave] probe EdwardAlice",
   "[Dave]->[Alice] probe EdwardAlice",
   "[Alice]->[Bob] probe EdwardAlice",
@@ -69,6 +87,8 @@ const messagesEdwardAlice = [
   "[Charlie]->[Alice] loop EdwardAlice EdwardAlice",
   "[Alice]->[Edward] probe EdwardAlice",
   "[Edward]->[Dave] loop EdwardAlice EdwardAlice",
+  // | Probes forward
+  // | | DaveEdward
   "[Edward]->[Alice] probe DaveEdward",
   "[Alice]->[Dave] loop DaveEdward EdwardAlice",
   "[Dave]->[Edward] loop DaveEdward EdwardAlice",
@@ -77,6 +97,7 @@ const messagesEdwardAlice = [
   "[Bob]->[Charlie] loop DaveEdward EdwardAlice",
   "[Charlie]->[Alice] loop DaveEdward EdwardAlice",
   "[Alice]->[Charlie] loop DaveEdward EdwardAlice",
+  // | | AliceDave
   "[Edward]->[Alice] probe AliceDave",
   "[Alice]->[Bob] loop AliceDave EdwardAlice",
   "[Bob]->[Charlie] loop AliceDave EdwardAlice",
@@ -85,6 +106,7 @@ const messagesEdwardAlice = [
   "[Alice]->[Dave] loop AliceDave EdwardAlice",
   "[Dave]->[Edward] loop AliceDave EdwardAlice",
   "[Edward]->[Alice] loop AliceDave EdwardAlice",
+  // | | AliceBob
   "[Edward]->[Alice] probe AliceBob",
   "[Alice]->[Bob] loop AliceBob EdwardAlice",
   "[Bob]->[Charlie] loop AliceBob EdwardAlice",
@@ -93,6 +115,7 @@ const messagesEdwardAlice = [
   "[Alice]->[Dave] loop AliceBob EdwardAlice",
   "[Dave]->[Edward] loop AliceBob EdwardAlice",
   "[Edward]->[Alice] loop AliceBob EdwardAlice",
+  // | | BobCharlie
   "[Edward]->[Alice] probe BobCharlie",
   "[Alice]->[Bob] loop BobCharlie EdwardAlice",
   "[Bob]->[Charlie] loop BobCharlie EdwardAlice",
@@ -101,6 +124,7 @@ const messagesEdwardAlice = [
   "[Alice]->[Dave] loop BobCharlie EdwardAlice",
   "[Dave]->[Edward] loop BobCharlie EdwardAlice",
   "[Edward]->[Alice] loop BobCharlie EdwardAlice",
+  // | | CharlieAlice
   "[Edward]->[Alice] probe CharlieAlice",
   "[Alice]->[Bob] loop CharlieAlice EdwardAlice",
   "[Bob]->[Charlie] loop CharlieAlice EdwardAlice",
