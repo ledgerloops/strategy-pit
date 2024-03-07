@@ -64,7 +64,8 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 7. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward, Edward->Alice.
 
 ## Strategies
-### Salmon
+### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
+
 The Salmon strategy works as follows:
 When a Salmon Node meets a new node, it:
 * adds this node as a contact
@@ -103,12 +104,14 @@ Forwarding a Loop message to all other contacts is a bug unless the number of ot
 
 Also, Salmons don't implement exchange rate negotiation.
 
-### Pelican
+### <img src="./img/pelican.png" style="width:50px;border-radius: 10px"/> Pelican
+
 Pelicans differ from Salmons in that they create multiple Loops per Probe - forking them whenever the network forks. This means they can handle not only the Triangle but also the Hourglass topology.
 
 Due to a bug in a mechanism that was meant to prevent unnecessary probes to a newly met node, nodes in the second triangle
 don't get to see all the probes and loops.
 
-### Petrogale
+###  <img src="./img/petrogale.png" style="width:50px;border-radius: 10px"/> Petrogale
+
 The Petrogale is identical to the Pelican except that it always sends all existing probes to a newly met node, even if
 loops were already found for them.
