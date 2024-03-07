@@ -7,7 +7,7 @@ export default {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.(m)?js$': '$1',
   },
-  testRegex: '(/__tests__/basic-pelican-triangle.test.ts$)',
+  testRegex: '(/__tests__/basic-pelican-hourglass.test.ts$)',
   coverageDirectory: 'coverage',
   collectCoverageFrom: [
     'src/**/*.ts',
