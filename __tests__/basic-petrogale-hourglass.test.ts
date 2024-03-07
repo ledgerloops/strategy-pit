@@ -34,6 +34,10 @@ const triangleMessages = [
 ];
 const messagesAliceDave = [
   "[Alice]->[Dave] probe AliceDave",
+  "[Alice]->[Dave] probe AliceBob",
+  "[Alice]->[Dave] probe BobCharlie",
+  "[Alice]->[Dave] probe CharlieAlice",
+
 ];
 const messagesDaveEdward = [
   "[Dave]->[Edward] meet",
@@ -47,6 +51,9 @@ const messagesDaveEdward = [
   "[Charlie]->[Alice] loop DaveEdward DaveEdward",
   "[Dave]->[Edward] probe DaveEdward",
   "[Dave]->[Edward] probe AliceDave",
+  "[Dave]->[Edward] probe AliceBob",
+  "[Dave]->[Edward] probe BobCharlie",
+  "[Dave]->[Edward] probe CharlieAlice",
 ];
 const messagesEdwardAlice = [
   "[Edward]->[Alice] meet",
@@ -78,6 +85,30 @@ const messagesEdwardAlice = [
   "[Alice]->[Dave] loop AliceDave EdwardAlice",
   "[Dave]->[Edward] loop AliceDave EdwardAlice",
   "[Edward]->[Alice] loop AliceDave EdwardAlice",
+  "[Edward]->[Alice] probe AliceBob",
+  "[Alice]->[Bob] loop AliceBob EdwardAlice",
+  "[Bob]->[Charlie] loop AliceBob EdwardAlice",
+  "[Charlie]->[Alice] loop AliceBob EdwardAlice",
+  "[Alice]->[Charlie] loop AliceBob EdwardAlice",
+  "[Alice]->[Dave] loop AliceBob EdwardAlice",
+  "[Dave]->[Edward] loop AliceBob EdwardAlice",
+  "[Edward]->[Alice] loop AliceBob EdwardAlice",
+  "[Edward]->[Alice] probe BobCharlie",
+  "[Alice]->[Bob] loop BobCharlie EdwardAlice",
+  "[Bob]->[Charlie] loop BobCharlie EdwardAlice",
+  "[Charlie]->[Alice] loop BobCharlie EdwardAlice",
+  "[Alice]->[Charlie] loop BobCharlie EdwardAlice",
+  "[Alice]->[Dave] loop BobCharlie EdwardAlice",
+  "[Dave]->[Edward] loop BobCharlie EdwardAlice",
+  "[Edward]->[Alice] loop BobCharlie EdwardAlice",
+  "[Edward]->[Alice] probe CharlieAlice",
+  "[Alice]->[Bob] loop CharlieAlice EdwardAlice",
+  "[Bob]->[Charlie] loop CharlieAlice EdwardAlice",
+  "[Charlie]->[Alice] loop CharlieAlice EdwardAlice",
+  "[Alice]->[Charlie] loop CharlieAlice EdwardAlice",
+  "[Alice]->[Dave] loop CharlieAlice EdwardAlice",
+  "[Dave]->[Edward] loop CharlieAlice EdwardAlice",
+  "[Edward]->[Alice] loop CharlieAlice EdwardAlice",
 ];
 
 let stage: string = "setup";
