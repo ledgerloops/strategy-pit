@@ -2,27 +2,54 @@ import { Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node, MessageLogger } from "./node.js";
 
-export class StingrayLoopStore {
-  private loops: {
-    [id: string]: boolean
+export class StingrayProbeStore {
+  private probes: {
+    [id: string]: {
+      from: string;
+      to: string[];
+    }
   } = {};
   constructor() {}
   has(id: string): boolean {
-    return this.loops[id] === true;
+    return (typeof this.probes[id] !== 'undefined');
   }
-  set(id: string): void {
-    this.loops[id] = true;
+  set(id: string, from: string, to: string[]): void {
+    this.probes[id] = { from, to };
   }
   getKeys(): string[] {
-    return Object.keys(this.loops);
+    return Object.keys(this.probes);
+  }
+}
+
+export class StingrayLoopStore {
+  private loops: {
+    [probeId: string]: {
+      [loopId: string]: {
+        from: string;
+        to: string[];
+      }
+    }
+  } = {};
+  constructor() {}
+  has(probeId: string, loopId: string): boolean {
+    return ((typeof this.loops[probeId] !== 'undefined') && (typeof this.loops[probeId][loopId] !== 'undefined'));
+  }
+  set(probeId: string, loopId: string, from: string, to: string[]): void {
+    if (typeof this.loops[probeId] === 'undefined') {
+      this.loops[probeId] = {};
+    }
+    this.loops[probeId][loopId] = { from, to };
+  }
+  getKeys(): string[] {
+    const loops: string[] = [];
+    Object.keys(this.loops).forEach(probeId => Object.keys(this.loops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
+    return loops;
   }
 }
 
 // Stingray nodes always send all the probes they can to all their friends.
 export class Stingray extends Node {
-  protected probes: {
-    [id: string]: { [name: string]: boolean }
-  } = {};
+  protected probeStore: StingrayProbeStore = new StingrayProbeStore();
   protected loopStore: StingrayLoopStore = new StingrayLoopStore();
 
   constructor(name: string, messageLogger?: MessageLogger) {
@@ -30,15 +57,8 @@ export class Stingray extends Node {
   }
   protected sendExistingProbesToNewFriend(other: string): void {
     // send existing probes to new friend
-    Object.entries(this.probes).forEach(([id, probes]) => {
-      if (this.loopStore.has(id)) {
-        // console.log(`existing probe apparently looped back`);
-      } else {
-        if (typeof probes[other] === 'undefined') {
-          this.probes[id][other] = true;
-          this.sendMessage(other, new Probe(id));
-        }
-      }
+    this.probeStore.getKeys().forEach(probeId) => {
+      // ...
     });    
   }
   protected sendNewProbeToExistingFriends(probeForNewLink: string): void {
