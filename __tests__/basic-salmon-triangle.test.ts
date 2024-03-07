@@ -320,7 +320,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
         AliceBobCharlieAlice: { Bob: true, Charlie: true }
       });
     });
-    it('Alice has 3 loops', () => {
+    it('Alice has 1 loop', () => {
       expect(alice.getLoops().sort()).toEqual([
         'AliceBobCharlieAlice'
       ].sort());
@@ -332,7 +332,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
         AliceBobCharlieAlice: { Alice: true, Charlie: true }
       }); 
     });
-    it('Bob has 3 loops', () => {
+    it('Bob has 1 loop', () => {
       expect(bob.getLoops().sort()).toEqual([
         'AliceBobCharlieAlice'
       ].sort());
@@ -344,7 +344,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
         AliceBobCharlieAlice: { Alice: true, Bob: true }
       });
     });
-    it('Charlie has 3 loops', () => {
+    it('Charlie has 1 loop', () => {
       expect(charlie.getLoops().sort()).toEqual([
         'AliceBobCharlieAlice'
       ].sort());
