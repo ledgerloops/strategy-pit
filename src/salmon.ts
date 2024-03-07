@@ -41,19 +41,21 @@ export class Salmon extends Node {
       }
     });    
   }
+  protected sendNewProbeToExistingFriends(probeForNewLink: string): void {
+    Object.values(this.friends).forEach(friend => {
+      if (typeof this.probes[probeForNewLink][friend.getName()] === 'undefined') {
+        this.probes[probeForNewLink][friend.getName()] = true;
+        this.sendMessage(friend.getName(), new Probe(probeForNewLink));
+      }
+    });
+  }
   onMeet(other: string): void {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
       this.probes[probeForNewLink] = {};
     }
-    Object.values(this.friends).forEach(friend => {
-      if (typeof this.probes[probeForNewLink][friend.getName()] === 'undefined') {
-        this.probes[probeForNewLink][friend.getName()] = true;
-        this.sendMessage(friend.getName(), new Probe(probeForNewLink));
-        return;
-      }
-    });
+    this.sendNewProbeToExistingFriends(probeForNewLink);
     this.sendExistingProbesToNewFriend(other);
   }
   getProbes(): { [id: string]: { [name: string]: boolean } } {

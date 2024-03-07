@@ -44,7 +44,7 @@ const messagesAliceDave = [
   "[Alice]->[Bob] loop AliceDave AliceDave",
   "[Bob]->[Charlie] loop AliceDave AliceDave",
   "[Charlie]->[Alice] loop AliceDave AliceDave",
-  // | Why not new probe back Alice->Charlie?
+  // | (no need to send `[Alice]->[Charlie] probe AliceDave` because it already looped back `[Charlie]->[Alice] probe AliceDave`)
   // | Probes forward
   "[Alice]->[Dave] probe AliceDave",
   "[Alice]->[Dave] probe AliceBob",
@@ -163,6 +163,12 @@ describe('Basic Petrogale Hourglass', () => {
     edward = new Petrogale('Edward', messageLogger);
   });
 
+  // This creates an P topology:
+  // Bob - Charlie
+  //   \   /
+  //    Alice
+  //   /
+  // Dave
   describe('Triangle, then Alice meets Dave', () => {
     beforeAll(() => {
       // First go through the steps of the Basic Petrogale Triangle test:
@@ -203,6 +209,12 @@ describe('Basic Petrogale Hourglass', () => {
       expect(messageLogger.getFullLog()).toEqual(triangleMessages.concat(messagesAliceDave));
     });
 
+    // This creates an P topology:
+    // Bob - Charlie
+    //   \   /
+    //    Alice
+    //   /
+    // Dave - Edward
     describe('Dave meets Edward', () => {
       beforeAll(() => {
         stage = "DaveEdward";
@@ -253,7 +265,12 @@ describe('Basic Petrogale Hourglass', () => {
         );
       });
 
-
+      // This creates an hourglass topology:
+      // Bob - Charlie
+      //   \   /
+      //    Alice
+      //   /   \
+      // Dave - Edward
       describe('Edward meets Alice', () => {
         beforeAll(() => {
           stage = "EdwardAlice";
