@@ -2,6 +2,16 @@
 
 import { jest } from '@jest/globals';
 
+let counter: number = 0;
+jest.unstable_mockModule('../src/util.js', () => {
+  return{
+    genRanHex: jest.fn((): string => {
+      return `gen-ran-hex-${counter++}`;
+    })
+  };
+});
+const { Pelican, MessageLogger } = await import('../src/main.js');
+
 const triangleMessages = [
   "[Alice]->[Bob] meet",
   "[Alice]->[Bob] probe AliceBob",
@@ -80,8 +90,6 @@ const messagesEdwardAlice = [
    "[Edward]->[Alice] loop AliceDave EdwardAlice",
 ];
 
-let stage: string = "setup";
-
 describe('Basic Pelican Hourglass', () => {
   // let Pelican: unknown;
   let alice: any;
@@ -91,15 +99,6 @@ describe('Basic Pelican Hourglass', () => {
   let edward: any;
   let messageLogger: any;
   beforeAll(async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Pelican, MessageLogger } = await import('../src/main.js');
-    stage = "hourglass-setup"
     messageLogger = new MessageLogger();
     alice = new Pelican('Alice', messageLogger);
     bob = new Pelican('Bob', messageLogger);
@@ -111,14 +110,10 @@ describe('Basic Pelican Hourglass', () => {
   describe('Triangle, then Alice meets Dave', () => {
     beforeAll(() => {
       // First go through the steps of the Basic Pelican Triangle test:
-      stage = "AliceBob";
       alice.meet(bob);
-      stage = "BobCharlie";
       bob.meet(charlie);
-      stage = "CharlieAlice";
       charlie.meet(alice);
       // Now add Dave:
-      stage = "AliceDave";
       alice.meet(dave);
     });
     it('Alice is friends with triangle + Dave', () => {
@@ -150,7 +145,6 @@ describe('Basic Pelican Hourglass', () => {
 
     describe('Dave meets Edward', () => {
       beforeAll(() => {
-        stage = "DaveEdward";
         dave.meet(edward);
       });
       it('Alice is friends with the triangle plus Dave', () => {
@@ -195,7 +189,6 @@ describe('Basic Pelican Hourglass', () => {
    
       describe('Edward meets Alice', () => {
         beforeAll(() => {
-          stage = "EdwardAlice";
           edward.meet(alice);
         });
 

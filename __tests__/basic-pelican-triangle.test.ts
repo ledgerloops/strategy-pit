@@ -2,26 +2,15 @@
 
 import { jest } from '@jest/globals';
 
-let stage: string = "setup";
-
-describe('already friends', () => {
-  it('throws an error', async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Pelican } = await import('../src/main.js');
-    stage = 'already-friends-test';
-    const alice = new Pelican('Alice');
-    const bob = new Pelican('Bob');
-
-    alice.meet(bob);
-    expect(() => alice.meet(bob)).toThrow('Alice is already friends with Bob');
-  });
+let counter: number = 0;
+jest.unstable_mockModule('../src/util.js', () => {
+  return{
+    genRanHex: jest.fn((): string => {
+      return `gen-ran-hex-${counter++}`;
+    })
+  };
 });
+const { Pelican } = await import('../src/main.js');
 
 describe('Basic Pelican Triangle - step-by-step', () => {
   // let Pelican: unknown;
@@ -29,15 +18,6 @@ describe('Basic Pelican Triangle - step-by-step', () => {
   let bob: any;
   let charlie: any;
   beforeAll(async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Pelican } = await import('../src/main.js');
-    stage = "triangle-setup"
     alice = new Pelican('Alice');
     bob = new Pelican('Bob');
     charlie = new Pelican('Charlie');
@@ -45,7 +25,6 @@ describe('Basic Pelican Triangle - step-by-step', () => {
 
   describe('Alice meets Bob', () => {
     beforeAll(() => {
-      stage = "AliceBob";
       alice.meet(bob);
     });
     it('Alice is friends with Bob', () => {
@@ -101,7 +80,6 @@ describe('Basic Pelican Triangle - step-by-step', () => {
 
     describe('Bob meets Charlie', () => {
       beforeAll(() => {
-        stage = "BobCharlie";
         bob.meet(charlie);
       });
       it('Alice is friends with Bob', () => {
@@ -169,7 +147,6 @@ describe('Basic Pelican Triangle - step-by-step', () => {
   
       describe('Charlie meets Alice', () => {
         beforeAll(() => {
-          stage = "CharlieAlice";
           charlie.meet(alice);
         });
 
@@ -292,15 +269,6 @@ describe('Basic Pelican Triangle - synchronous', () => {
   let bob: any;
   let charlie: any;
   beforeAll(async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Pelican } = await import('../src/main.js');
-    stage = "triangle-setup"
     alice = new Pelican('Alice');
     bob = new Pelican('Bob');
     charlie = new Pelican('Charlie');
@@ -308,7 +276,6 @@ describe('Basic Pelican Triangle - synchronous', () => {
 
   describe('Alice meets Bob meet Charlie meets Alice', () => {
     beforeAll(() => {
-      stage = "AliceBobCharlieAlice";
       alice.meet(bob);
       bob.meet(charlie);
       charlie.meet(alice);

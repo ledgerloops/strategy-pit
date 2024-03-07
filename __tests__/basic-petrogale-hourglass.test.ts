@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { jest } from '@jest/globals';
+let counter: number = 0;
+jest.unstable_mockModule('../src/util.js', () => {
+  return{
+    genRanHex: jest.fn((): string => {
+      return `gen-ran-hex-${counter++}`;
+    })
+  };
+});
+const { Petrogale, MessageLogger } = await import('../src/main.js');
 
 const triangleMessages = [
   // Alice meets Bob
@@ -135,8 +144,6 @@ const messagesEdwardAlice = [
   "[Edward]->[Alice] loop CharlieAlice EdwardAlice",
 ];
 
-let stage: string = "setup";
-
 describe('Basic Petrogale Hourglass', () => {
   // let Petrogale: unknown;
   let alice: any;
@@ -146,15 +153,6 @@ describe('Basic Petrogale Hourglass', () => {
   let edward: any;
   let messageLogger: any;
   beforeAll(async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return {
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Petrogale, MessageLogger } = await import('../src/main.js');
-    stage = "hourglass-setup"
     messageLogger = new MessageLogger();
     alice = new Petrogale('Alice', messageLogger);
     bob = new Petrogale('Bob', messageLogger);
@@ -172,14 +170,10 @@ describe('Basic Petrogale Hourglass', () => {
   describe('Triangle, then Alice meets Dave', () => {
     beforeAll(() => {
       // First go through the steps of the Basic Petrogale Triangle test:
-      stage = "AliceBob";
       alice.meet(bob);
-      stage = "BobCharlie";
       bob.meet(charlie);
-      stage = "CharlieAlice";
       charlie.meet(alice);
       // Now add Dave:
-      stage = "AliceDave";
       alice.meet(dave);
     });
     it('Alice is friends with triangle + Dave', () => {
@@ -217,7 +211,6 @@ describe('Basic Petrogale Hourglass', () => {
     // Dave - Edward
     describe('Dave meets Edward', () => {
       beforeAll(() => {
-        stage = "DaveEdward";
         dave.meet(edward);
       });
       it('Alice is friends with the triangle plus Dave', () => {
@@ -273,7 +266,6 @@ describe('Basic Petrogale Hourglass', () => {
       // Dave - Edward
       describe('Edward meets Alice', () => {
         beforeAll(() => {
-          stage = "EdwardAlice";
           edward.meet(alice);
         });
 

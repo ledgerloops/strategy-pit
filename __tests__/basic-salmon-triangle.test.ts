@@ -2,19 +2,18 @@
 
 import { jest } from '@jest/globals';
 
-let stage: string = "setup";
+let counter: number = 0;
+jest.unstable_mockModule('../src/util.js', () => {
+  return{
+    genRanHex: jest.fn((): string => {
+      return `gen-ran-hex-${counter++}`;
+    })
+  };
+});
+const { Salmon } = await import('../src/main.js');
 
 describe('already friends', () => {
   it('throws an error', async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Salmon } = await import('../src/main.js');
-    stage = 'already-friends-test';
     const alice = new Salmon('Alice');
     const bob = new Salmon('Bob');
 
@@ -29,15 +28,6 @@ describe('Basic Salmon Triangle - step-by-step', () => {
   let bob: any;
   let charlie: any;
   beforeAll(async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Salmon } = await import('../src/main.js');
-    stage = "triangle-setup"
     alice = new Salmon('Alice');
     bob = new Salmon('Bob');
     charlie = new Salmon('Charlie');
@@ -45,7 +35,6 @@ describe('Basic Salmon Triangle - step-by-step', () => {
 
   describe('Alice meets Bob', () => {
     beforeAll(() => {
-      stage = "AliceBob";
       alice.meet(bob);
     });
     it('Alice is friends with Bob', () => {
@@ -101,7 +90,6 @@ describe('Basic Salmon Triangle - step-by-step', () => {
 
     describe('Bob meets Charlie', () => {
       beforeAll(() => {
-        stage = "BobCharlie";
         bob.meet(charlie);
       });
       it('Alice is friends with Bob', () => {
@@ -169,7 +157,6 @@ describe('Basic Salmon Triangle - step-by-step', () => {
   
       describe('Charlie meets Alice', () => {
         beforeAll(() => {
-          stage = "CharlieAlice";
           charlie.meet(alice);
         });
 
@@ -292,15 +279,6 @@ describe('Basic Salmon Triangle - synchronous', () => {
   let bob: any;
   let charlie: any;
   beforeAll(async () => {
-    jest.unstable_mockModule('../src/util.js', () => {
-      return{
-        genRanHex: jest.fn((): string => {
-          return stage
-        })
-      };
-    });
-    const { Salmon } = await import('../src/main.js');
-    stage = "triangle-setup"
     alice = new Salmon('Alice');
     bob = new Salmon('Bob');
     charlie = new Salmon('Charlie');
@@ -308,7 +286,6 @@ describe('Basic Salmon Triangle - synchronous', () => {
 
   describe('Alice meets Bob meet Charlie meets Alice', () => {
     beforeAll(() => {
-      stage = "AliceBobCharlieAlice";
       alice.meet(bob);
       bob.meet(charlie);
       charlie.meet(alice);
