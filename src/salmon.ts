@@ -29,17 +29,17 @@ export class Salmon extends Node {
     super(name);
   }
   protected sendExistingProbesToNewFriend(other: Node): void {
-        // send existing probes to new friend
-        Object.entries(this.probes).forEach(([id, probes]) => {
-          if (this.loopStore.has(id)) {
-            // console.log(`existing probe apparently looped back`);
-          } else {
-            if (typeof probes[other.getName()] === 'undefined') {
-              this.probes[id][other.getName()] = true;
-              other.receiveMessage(new Probe(this, id));
-            }
-          }
-        });    
+    // send existing probes to new friend
+    Object.entries(this.probes).forEach(([id, probes]) => {
+      if (this.loopStore.has(id)) {
+        // console.log(`existing probe apparently looped back`);
+      } else {
+        if (typeof probes[other.getName()] === 'undefined') {
+          this.probes[id][other.getName()] = true;
+          other.receiveMessage(new Probe(this, id));
+        }
+      }
+    });    
   }
   onMeet(other: Node): void {
     // create new probe for new link
@@ -65,15 +65,18 @@ export class Salmon extends Node {
   handleMeetMessage(message: Meet): void {
     this.addFriend(message.getSender());
   }
-  handleProbeMessage(message: Probe): void {
-    if (typeof this.probes[message.getId()] === 'undefined') {
-      this.probes[message.getId()] = {};
-    } else {
+  protected onLoopDetected(message: Probe): void {
       // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
       this.loopStore.set(message.getId());
       Object.keys(this.probes[message.getId()]).forEach(name => {
         this.friends[name].receiveMessage(new Loop(this, message.getId()));
       });
+  }
+  handleProbeMessage(message: Probe): void {
+    if (typeof this.probes[message.getId()] === 'undefined') {
+      this.probes[message.getId()] = {};
+    } else {
+      this.onLoopDetected(message);
     }
     this.probes[message.getId()][message.getSender().getName()] = true;
 

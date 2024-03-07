@@ -31,31 +31,18 @@ export class Pelican extends Salmon {
     Object.keys(this.pelicanLoops).forEach(probeId => Object.keys(this.pelicanLoops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
     return loops;
   }
-  handleProbeMessage(message: Probe): void {
-    if (typeof this.probes[message.getId()] === 'undefined') {
-      this.probes[message.getId()] = {};
-    } else {
-      // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
-      const initialLoopId = genRanHex(8);
-      if (typeof this.pelicanLoops[message.getId()] === 'undefined') {
-        this.pelicanLoops[message.getId()] = {};
-      }
-      this.pelicanLoops[message.getId()][initialLoopId] = true;
-      Object.keys(this.probes[message.getId()]).forEach(name => {
-        this.friends[name].receiveMessage(new Loop(this, message.getId(), initialLoopId));
-      });
+  onLoopDetected(message: Probe): void {
+    // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
+    const initialLoopId = genRanHex(8);
+    if (typeof this.pelicanLoops[message.getId()] === 'undefined') {
+      this.pelicanLoops[message.getId()] = {};
     }
-    this.probes[message.getId()][message.getSender().getName()] = true;
-
-    // check if we can forward this to anyone
-    Object.values(this.friends).forEach(friend => {
-      if (typeof this.probes[message.getId()][friend.getName()] === 'undefined') {
-        this.probes[message.getId()][friend.getName()] = true;
-        friend.receiveMessage(new Probe(this, message.getId()));
-      }
+    this.pelicanLoops[message.getId()][initialLoopId] = true;
+    Object.keys(this.probes[message.getId()]).forEach(name => {
+      this.friends[name].receiveMessage(new Loop(this, message.getId(), initialLoopId));
     });
-    // this.addFriend(message.getSender());
   }
+
   handleLoopMessage(message: Loop): void {
     if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getLoopId()]) {
         // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()} - loop id ${message.getLoopId()}`);
