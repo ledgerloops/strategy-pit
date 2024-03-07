@@ -35,7 +35,7 @@ export class Loop extends Message {
   constructor(probeId: string, loopId?: string) {
       super();
       this.probeId = probeId;
-      this.loopId = loopId;
+      this.loopId = loopId  || 'default';
   }
   getMessageType(): string {
     return 'loop';
