@@ -118,3 +118,7 @@ loops were already found for them.
 
 I think in the hourglass test, the first triangle is found 3 times and the second triangle is found 8 times, although it's
 hard to tell because of #1 and #2.
+
+###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
+The Stingray has a more detailed data storage than the Salmon, Pelican and Petrogale, both for Probes and for Loops.
+Under construction
