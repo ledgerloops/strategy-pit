@@ -21,7 +21,7 @@ export class Pelican extends Salmon {
       } else {
         if (typeof probes[other.getName()] === 'undefined') {
           this.probes[id][other.getName()] = true;
-          other.receiveMessage(new Probe(this, id));
+          this.sendMessage(other, new Probe(this, id));
         }
       }
     });
@@ -39,7 +39,7 @@ export class Pelican extends Salmon {
     }
     this.pelicanLoops[message.getId()][initialLoopId] = true;
     Object.keys(this.probes[message.getId()]).forEach(name => {
-      this.friends[name].receiveMessage(new Loop(this, message.getId(), initialLoopId));
+      this.sendMessage(this.friends[name], new Loop(this, message.getId(), initialLoopId));
     });
   }
 
@@ -49,7 +49,7 @@ export class Pelican extends Salmon {
       let loopId = message.getLoopId();
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
         if (name !== message.getSender().getName()) {
-          this.friends[name].receiveMessage(new Loop(this, message.getProbeId(), loopId));
+          this.sendMessage(this.friends[name], new Loop(this, message.getProbeId(), loopId));
           if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
             this.pelicanLoops[message.getProbeId()] = {};
           }

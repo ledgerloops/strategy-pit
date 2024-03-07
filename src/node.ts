@@ -1,6 +1,12 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 
 export abstract class Node {
+    protected messageLog: {
+      [other: string]: {
+        in: Message[],
+        out: Message[]
+      }
+    } = {};
     protected name: string;
     protected friends: {
       [name: string]: Node
@@ -35,7 +41,24 @@ export abstract class Node {
     abstract handleProbeMessage(message: Probe): void;
     abstract handleLoopMessage(message: Loop): void;
 
+    protected sendMessage(to: Node, message: Message): void {
+      if (typeof this.messageLog[to.getName()] === 'undefined') {
+        this.messageLog[to.getName()] = {
+          in: [],
+          out: []
+        };
+      }
+      this.messageLog[to.getName()].out.push(message);
+      to.receiveMessage(message);
+    }
     receiveMessage(message: Message): void {
+      if (typeof this.messageLog[message.getSender().getName()] === 'undefined') {
+        this.messageLog[message.getSender().getName()] = {
+          in: [],
+          out: []
+        };
+      }
+      this.messageLog[message.getSender().getName()].in.push(message);
       // console.log(`${this.name} receives message from ${message.getSender().getName()}`, message);
       if (message.getMessageType() === `meet`) {
         this.handleMeetMessage(message as Meet);

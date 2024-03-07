@@ -10,7 +10,7 @@ export class Petrogale extends Pelican {
     Object.entries(this.probes).forEach(([id, probes]) => {
       if (typeof probes[other.getName()] === 'undefined') {
         this.probes[id][other.getName()] = true;
-        other.receiveMessage(new Probe(this, id));
+        this.sendMessage(other, new Probe(this, id));
       }
     });
   }
