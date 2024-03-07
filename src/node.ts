@@ -1,14 +1,47 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 
+export class MessageLogger {
+  private log: {
+    sender: string,
+    receiver: string,
+    message: Message,
+    event: string
+  }[] = [];
+  logMessageSent(sender: string, receiver: string, message: Message): void {
+    this.log.push({ sender, receiver, message, event: 'sent' });
+  }
+  logMessageReceived(sender: string, receiver: string, message: Message): void {
+    this.log.push({ sender, receiver, message, event: 'received' });
+  }
+  getLocalLog(name: string): string[] {
+    return this.log.filter(entry => {
+      if (entry.sender === name) {
+        return entry.event = 'sent';
+      }
+      if (entry.receiver === name) {
+        return entry.event = 'received';
+      }
+      // istanbul ignore next
+      return false;
+    }).map(entry => {
+      if (entry.event === 'sent') {
+        return `TO[${entry.receiver}] ${entry.message.toString()}`;
+      } else {
+        return `FROM[${entry.sender}] ${entry.message.toString()}`;
+      }
+    });
+  }
+}
 export abstract class Node {
-    protected messageLog: string[] = [];
+    protected messageLogger: MessageLogger;
     protected name: string;
     protected friends: {
       [name: string]: Node
      }  = {};
    
-    constructor(name: string) {
+    constructor(name: string, messageLogger?: MessageLogger) {
       this.name = name;
+      this.messageLogger = messageLogger || new MessageLogger();
     }
     getName(): string {
         return this.name;
@@ -37,11 +70,11 @@ export abstract class Node {
     abstract handleLoopMessage(sender: string, message: Loop): void;
 
     protected sendMessage(to: string, message: Message): void {
-      this.messageLog.push(`TO[${to}] ${message.toString()}`);
+      this.messageLogger.logMessageSent(this.name, to, message);
       this.friends[to].receiveMessage(this, message);
     }
     receiveMessage(sender: Node, message: Message): void {
-      this.messageLog.push(`FROM[${sender.getName()}] ${message.toString()}`);
+      this.messageLogger.logMessageReceived(sender.getName(), this.name, message);
       // console.log(`${this.name} receives message from ${sender}`, message);
       if (message.getMessageType() === `meet`) {
         this.addFriend(sender);
@@ -53,6 +86,6 @@ export abstract class Node {
       }
     }
     getMessageLog(): string[] {
-      return this.messageLog;
-    }  
+      return this.messageLogger.getLocalLog(this.name);
+    }
 }
