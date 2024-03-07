@@ -10,10 +10,10 @@ jest.unstable_mockModule('../src/util.js', () => {
     })
   };
 });
-const { Salmon } = await import('../src/main.js');
 
 describe('already friends', () => {
   it('throws an error', async () => {
+    const { Salmon } = await import('../src/main.js');
     const alice = new Salmon('Alice');
     const bob = new Salmon('Bob');
 
@@ -28,6 +28,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
   let bob: any;
   let charlie: any;
   beforeAll(async () => {
+    const { Salmon } = await import('../src/main.js');
     alice = new Salmon('Alice');
     bob = new Salmon('Bob');
     charlie = new Salmon('Charlie');
@@ -279,6 +280,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
   let bob: any;
   let charlie: any;
   beforeAll(async () => {
+    const { Salmon } = await import('../src/main.js');
     alice = new Salmon('Alice');
     bob = new Salmon('Bob');
     charlie = new Salmon('Charlie');
