@@ -1,6 +1,6 @@
 import { Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
-import { Node, MessageForwarder } from "./node.js";
+import { Node, BasicMessageForwarder } from "./node.js";
 
 export class SalmonLoopStore {
   private loops: {
@@ -25,7 +25,7 @@ export class Salmon extends Node {
   } = {};
   protected loopStore: SalmonLoopStore = new SalmonLoopStore();
 
-  constructor(name: string, messageForwarder?: MessageForwarder) {
+  constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
   protected sendExistingProbesToNewFriend(other: string): void {

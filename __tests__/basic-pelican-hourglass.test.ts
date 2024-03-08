@@ -98,8 +98,8 @@ describe('Basic Pelican Hourglass', () => {
   let edward: any;
   let messageForwarder: any;
   beforeAll(async () => {
-    const { Pelican, MessageForwarder } = await import('../src/main.js');
-    messageForwarder = new MessageForwarder();
+    const { Pelican, BasicMessageForwarder } = await import('../src/main.js');
+    messageForwarder = new BasicMessageForwarder();
     alice = new Pelican('Alice', messageForwarder);
     bob = new Pelican('Bob', messageForwarder);
     charlie = new Pelican('Charlie', messageForwarder);

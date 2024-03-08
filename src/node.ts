@@ -1,6 +1,6 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 
-export class MessageForwarder {
+export class BasicMessageForwarder {
   private log: {
     sender: string,
     receiver: string,
@@ -12,6 +12,10 @@ export class MessageForwarder {
   }
   logMessageReceived(sender: string, receiver: string, message: Message): void {
     this.log.push({ sender, receiver, message, event: 'received' });
+  }
+  forwardMessage(sender: Node, receiver: Node, message: Message): void {
+    this.logMessageSent(sender.getName(), receiver.getName(), message);
+    receiver.receiveMessage(sender, message);
   }
   getLocalLog(name: string): string[] {
     return this.log.filter(entry => {
@@ -43,15 +47,15 @@ export class MessageForwarder {
   }
 }
 export abstract class Node {
-    protected messageForwarder: MessageForwarder;
+    protected messageForwarder: BasicMessageForwarder;
     protected name: string;
     protected friends: {
       [name: string]: Node
      }  = {};
    
-    constructor(name: string, messageForwarder?: MessageForwarder) {
+    constructor(name: string, messageForwarder?: BasicMessageForwarder) {
       this.name = name;
-      this.messageForwarder = messageForwarder || new MessageForwarder();
+      this.messageForwarder = messageForwarder || new BasicMessageForwarder();
     }
     getName(): string {
         return this.name;
@@ -80,11 +84,10 @@ export abstract class Node {
     abstract handleLoopMessage(sender: string, message: Loop): void;
 
     protected sendMessage(to: string, message: Message): void {
-      this.messageForwarder.logMessageSent(this.name, to, message);
-      this.friends[to].receiveMessage(this, message);
+      this.messageForwarder.forwardMessage(this, this.friends[to], message);
     }
     receiveMessage(sender: Node, message: Message): void {
-      this.messageForwarder.logMessageReceived(sender.getName(), this.name, message);
+      this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
       // console.log(`${this.name} receives message from ${sender}`, message);
       if (message.getMessageType() === `meet`) {
         this.addFriend(sender);
