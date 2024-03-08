@@ -1,6 +1,6 @@
 import { Probe, Loop } from "./messages.js";
 import { genRanHex } from "./util.js";
-import { Node, MessageLogger } from "./node.js";
+import { Node, MessageForwarder } from "./node.js";
 
 export class StingrayProbeStore {
   private probes: {
@@ -175,7 +175,7 @@ export class Stingray extends Node {
   protected probeStore: StingrayProbeStore = new StingrayProbeStore();
   protected loopStore: StingrayLoopStore = new StingrayLoopStore();
 
-  constructor(name: string, messageLogger?: MessageLogger) {
+  constructor(name: string, messageLogger?: MessageForwarder) {
     super(name, messageLogger);
   }
   protected offerProbe(friend: string, probeId: string, flood: boolean, homeMinted: boolean): void {

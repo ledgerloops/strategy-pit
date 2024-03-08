@@ -152,8 +152,8 @@ describe('Basic Petrogale Hourglass', () => {
   let edward: any;
   let messageLogger: any;
   beforeAll(async () => {
-    const { Petrogale, MessageLogger } = await import('../src/main.js');
-    messageLogger = new MessageLogger();
+    const { Petrogale, MessageForwarder } = await import('../src/main.js');
+    messageLogger = new MessageForwarder();
     alice = new Petrogale('Alice', messageLogger);
     bob = new Petrogale('Bob', messageLogger);
     charlie = new Petrogale('Charlie', messageLogger);

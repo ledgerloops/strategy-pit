@@ -1,9 +1,9 @@
 import { Probe } from "./messages.js";
-import { MessageLogger } from "./node.js";
+import { MessageForwarder } from "./node.js";
 import { Pelican } from "./pelican.js";
 
 export class Petrogale extends Pelican {
-  constructor(name: string, messageLogger?: MessageLogger) {
+  constructor(name: string, messageLogger?: MessageForwarder) {
     super(name, messageLogger);
   }
   protected sendExistingProbesToNewFriend(other: string): void {

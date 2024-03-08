@@ -1,6 +1,6 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 
-export class MessageLogger {
+export class MessageForwarder {
   private log: {
     sender: string,
     receiver: string,
@@ -43,15 +43,15 @@ export class MessageLogger {
   }
 }
 export abstract class Node {
-    protected messageLogger: MessageLogger;
+    protected messageLogger: MessageForwarder;
     protected name: string;
     protected friends: {
       [name: string]: Node
      }  = {};
    
-    constructor(name: string, messageLogger?: MessageLogger) {
+    constructor(name: string, messageLogger?: MessageForwarder) {
       this.name = name;
-      this.messageLogger = messageLogger || new MessageLogger();
+      this.messageLogger = messageLogger || new MessageForwarder();
     }
     getName(): string {
         return this.name;
