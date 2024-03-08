@@ -25,8 +25,8 @@ export class Salmon extends Node {
   } = {};
   protected loopStore: SalmonLoopStore = new SalmonLoopStore();
 
-  constructor(name: string, messageLogger?: MessageForwarder) {
-    super(name, messageLogger);
+  constructor(name: string, messageForwarder?: MessageForwarder) {
+    super(name, messageForwarder);
   }
   protected sendExistingProbesToNewFriend(other: string): void {
     // send existing probes to new friend

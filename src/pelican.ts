@@ -11,8 +11,8 @@ export class Pelican extends Salmon {
       [loopId: string]: boolean
     }
   } = {};
-  constructor(name: string, messageLogger?: MessageForwarder) {
-    super(name, messageLogger);
+  constructor(name: string, messageForwarder?: MessageForwarder) {
+    super(name, messageForwarder);
   }
   protected sendExistingProbesToNewFriend(other: string): void {
     Object.entries(this.probes).forEach(([id, probes]) => {

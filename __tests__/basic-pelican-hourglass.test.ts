@@ -96,15 +96,15 @@ describe('Basic Pelican Hourglass', () => {
   let charlie: any;
   let dave: any;
   let edward: any;
-  let messageLogger: any;
+  let messageForwarder: any;
   beforeAll(async () => {
     const { Pelican, MessageForwarder } = await import('../src/main.js');
-    messageLogger = new MessageForwarder();
-    alice = new Pelican('Alice', messageLogger);
-    bob = new Pelican('Bob', messageLogger);
-    charlie = new Pelican('Charlie', messageLogger);
-    dave = new Pelican('Dave', messageLogger);
-    edward = new Pelican('Edward', messageLogger);
+    messageForwarder = new MessageForwarder();
+    alice = new Pelican('Alice', messageForwarder);
+    bob = new Pelican('Bob', messageForwarder);
+    charlie = new Pelican('Charlie', messageForwarder);
+    dave = new Pelican('Dave', messageForwarder);
+    edward = new Pelican('Edward', messageForwarder);
   });
 
   describe('Triangle, then Alice meets Dave', () => {
@@ -140,7 +140,7 @@ describe('Basic Pelican Hourglass', () => {
       ].sort());
     });
     it('the message logs are as expected', () => {
-      expect(messageLogger.getFullLog()).toEqual(triangleMessages.concat(messagesgenRanHex12));
+      expect(messageForwarder.getFullLog()).toEqual(triangleMessages.concat(messagesgenRanHex12));
     });
 
     describe('Dave meets Edward', () => {
@@ -178,7 +178,7 @@ describe('Basic Pelican Hourglass', () => {
         });
       });
       it('the message logs are as expected', () => {
-        expect(messageLogger.getFullLog()).toEqual([].concat(
+        expect(messageForwarder.getFullLog()).toEqual([].concat(
             triangleMessages,
             messagesgenRanHex12,
             messagesgenRanHex16
@@ -327,7 +327,7 @@ describe('Basic Pelican Hourglass', () => {
       //     ].sort());
       //   });
       //   it('the message logs are as expected', () => {
-      //     expect(messageLogger.getFullLog()).toEqual([].concat(
+      //     expect(messageForwarder.getFullLog()).toEqual([].concat(
       //       triangleMessages,
       //       messagesgenRanHex12,
       //       messagesgenRanHex16,

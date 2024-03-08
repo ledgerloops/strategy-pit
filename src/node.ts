@@ -43,15 +43,15 @@ export class MessageForwarder {
   }
 }
 export abstract class Node {
-    protected messageLogger: MessageForwarder;
+    protected messageForwarder: MessageForwarder;
     protected name: string;
     protected friends: {
       [name: string]: Node
      }  = {};
    
-    constructor(name: string, messageLogger?: MessageForwarder) {
+    constructor(name: string, messageForwarder?: MessageForwarder) {
       this.name = name;
-      this.messageLogger = messageLogger || new MessageForwarder();
+      this.messageForwarder = messageForwarder || new MessageForwarder();
     }
     getName(): string {
         return this.name;
@@ -80,11 +80,11 @@ export abstract class Node {
     abstract handleLoopMessage(sender: string, message: Loop): void;
 
     protected sendMessage(to: string, message: Message): void {
-      this.messageLogger.logMessageSent(this.name, to, message);
+      this.messageForwarder.logMessageSent(this.name, to, message);
       this.friends[to].receiveMessage(this, message);
     }
     receiveMessage(sender: Node, message: Message): void {
-      this.messageLogger.logMessageReceived(sender.getName(), this.name, message);
+      this.messageForwarder.logMessageReceived(sender.getName(), this.name, message);
       // console.log(`${this.name} receives message from ${sender}`, message);
       if (message.getMessageType() === `meet`) {
         this.addFriend(sender);
@@ -96,6 +96,6 @@ export abstract class Node {
       }
     }
     getMessageLog(): string[] {
-      return this.messageLogger.getLocalLog(this.name);
+      return this.messageForwarder.getLocalLog(this.name);
     }
 }

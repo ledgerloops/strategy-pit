@@ -175,8 +175,8 @@ export class Stingray extends Node {
   protected probeStore: StingrayProbeStore = new StingrayProbeStore();
   protected loopStore: StingrayLoopStore = new StingrayLoopStore();
 
-  constructor(name: string, messageLogger?: MessageForwarder) {
-    super(name, messageLogger);
+  constructor(name: string, messageForwarder?: MessageForwarder) {
+    super(name, messageForwarder);
   }
   protected offerProbe(friend: string, probeId: string, flood: boolean, homeMinted: boolean): void {
     if (!this.probeStore.haveSentOrReceived(friend, probeId)) {

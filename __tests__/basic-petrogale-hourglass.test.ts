@@ -150,15 +150,15 @@ describe('Basic Petrogale Hourglass', () => {
   let charlie: any;
   let dave: any;
   let edward: any;
-  let messageLogger: any;
+  let messageForwarder: any;
   beforeAll(async () => {
     const { Petrogale, MessageForwarder } = await import('../src/main.js');
-    messageLogger = new MessageForwarder();
-    alice = new Petrogale('Alice', messageLogger);
-    bob = new Petrogale('Bob', messageLogger);
-    charlie = new Petrogale('Charlie', messageLogger);
-    dave = new Petrogale('Dave', messageLogger);
-    edward = new Petrogale('Edward', messageLogger);
+    messageForwarder = new MessageForwarder();
+    alice = new Petrogale('Alice', messageForwarder);
+    bob = new Petrogale('Bob', messageForwarder);
+    charlie = new Petrogale('Charlie', messageForwarder);
+    dave = new Petrogale('Dave', messageForwarder);
+    edward = new Petrogale('Edward', messageForwarder);
   });
 
   // This creates an P topology:
@@ -200,7 +200,7 @@ describe('Basic Petrogale Hourglass', () => {
       ].sort());
     });
     it('the message logs are as expected', () => {
-      expect(messageLogger.getFullLog()).toEqual(triangleMessages.concat(messagesgenRanHex12));
+      expect(messageForwarder.getFullLog()).toEqual(triangleMessages.concat(messagesgenRanHex12));
     });
 
     // This creates an P topology:
@@ -250,7 +250,7 @@ describe('Basic Petrogale Hourglass', () => {
         });
       });
       it('the message logs are as expected', () => {
-        expect(messageLogger.getFullLog()).toEqual([].concat(
+        expect(messageForwarder.getFullLog()).toEqual([].concat(
           triangleMessages,
           messagesgenRanHex12,
           messagesgenRanHex16
@@ -409,7 +409,7 @@ describe('Basic Petrogale Hourglass', () => {
       //     ].sort());
       //   });
       //   it('the message logs are as expected', () => {
-      //     expect(messageLogger.getFullLog()).toEqual([].concat(
+      //     expect(messageForwarder.getFullLog()).toEqual([].concat(
       //       triangleMessages,
       //       messagesgenRanHex12,
       //       messagesgenRanHex16,
