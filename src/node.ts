@@ -46,6 +46,24 @@ export class BasicMessageForwarder {
     });
   }
 }
+export class BatchedMessageForwarder extends BasicMessageForwarder {
+  private batch: {
+    sender: Node,
+    receiver: Node,
+    message: Message
+  }[] = [];
+  forwardMessage(sender: Node, receiver: Node, message: Message): void {
+    this.logMessageSent(sender.getName(), receiver.getName(), message);
+    this.batch.push({ sender, receiver, message });
+  }
+  flush(): void {
+    this.batch.forEach(entry => {
+      entry.receiver.receiveMessage(entry.sender, entry.message);
+    });
+    this.batch = [];
+  }
+}
+
 export abstract class Node {
     protected messageForwarder: BasicMessageForwarder;
     protected name: string;
