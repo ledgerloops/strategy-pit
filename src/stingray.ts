@@ -303,4 +303,16 @@ export class Stingray extends Node {
     const trace = new Trace(sender, this.getName(), message.getLoopId());
     probe.addTrace(trace);
   }
+  getLoops(): string[] {
+    const loops: string[] = [];
+    Object.keys(this.probeStore.getProbes()).forEach(probeId => {
+      const traces = this.probeStore.get(probeId).getTraces();
+      Object.keys(traces).forEach(traceId => {
+        if (typeof traces[traceId].getFrom() !== 'undefined') {
+          loops.push(`${probeId}:${traceId}`);
+        }
+      });
+    });
+    return loops;
+  }
 }
