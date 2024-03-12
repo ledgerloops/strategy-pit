@@ -1,4 +1,4 @@
-import { Probe as ProbeMessage, Loop as LoopMessage } from "./messages.js";
+import { Probe as ProbeMessage, Loop as LoopMessage, Meet } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
@@ -179,6 +179,7 @@ export class Stingray extends Node {
   // when this node has sent a `meet` message
   onMeet(other: string): void {
     this.log.push(`I meet ${other}, and offer them all my flood probes`);
+    this.sendMessage(other, new Meet());
     this.offerAllFloodProbes(other);
     this.createFloodProbe();
   }

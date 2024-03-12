@@ -51,3 +51,20 @@ export class Loop extends Message {
   }
 
 }
+
+export class Pauze extends Message {
+  private pauze: boolean;
+  constructor(pauze: boolean) {
+      super();
+      this.pauze = pauze;
+  }
+  getMessageType(): string {
+    return 'pauze';
+  }
+  getPauze(): boolean {
+    return this.pauze;
+  }
+  toString(): string {
+    return `pauze ${this.pauze}`;
+  }
+}

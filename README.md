@@ -91,6 +91,9 @@ For every incoming trace:
 
 A Probe is *virgin* for a neighbour if it was never sent to them and never received from them.
 
+###  <img src="./img/jackal.png" style="width:50px;border-radius: 10px"/> Jackal
+Same as Stingray except that, as a mitigation for https://github.com/ledgerloops/strategy-pit/issues/7, the other node is told to pauze its messages during the batch of messages that are triggered by an `onMeet` event.
+
 ## Previous Strategies
 ### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
 

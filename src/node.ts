@@ -96,7 +96,6 @@ export abstract class Node {
   
     meet(other: Node): void {
       this.addFriend(other);
-      this.sendMessage(other.getName(), new Meet());
       this.onMeet(other.getName());
     }
   
