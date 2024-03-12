@@ -12,31 +12,32 @@ export class Jackal extends Stingray {
     super.onMeet(node);
     this.sendMessage(node, new Pauze(false));
   }
-  handlePauzeMessage(sender: Node, message: Pauze): void {
+  handlePauzeMessage(other: string, message: Pauze): void {
     if (message.getPauze()) {
-      this.pauzed[sender.getName()] = this.pauzed[sender.getName()] || [];
+      this.log.push(`PAUZING ${other}`);
+      this.pauzed[other] = this.pauzed[other] || [];
     } else {
-      this.pauzed[sender.getName()].forEach((message) => {
-        super.receiveMessage(sender, message);
+      this.log.push(`UNPAUZING ${other}`);
+      this.pauzed[other].forEach((message) => {
+        this.log.push(`SENDING PAUZED MESSAGE TO ${other}: ${message.toString()}`);
+        super.sendMessage(other, message);
       });
-      delete this.pauzed[sender.getName()];
+      delete this.pauzed[other];
     }
   }
-  handleRegularMessage(sender: Node, message: Message): void {
-    if (typeof this.pauzed[sender.getName()] !== 'undefined') {
-      this.pauzed[sender.getName()].push(message);
+  sendMessage(to: string, message: Message): void {
+    if (typeof this.pauzed[to] !== 'undefined') {
+      this.log.push(`PAUZED MESSAGE TO ${to}: ${message.toString()}`);
+      this.pauzed[to].push(message);
     } else {
-      super.receiveMessage(sender, message);
+      super.sendMessage(to, message);
     }
   }
   receiveMessage(sender: Node, message: Message): void {
-    if (typeof this.pauzed[sender.getName()] !== 'undefined') {
-      this.pauzed[sender.getName()].push(message);
-      if (message.getMessageType() === 'pauze') {
-        this.handlePauzeMessage(sender, message as Pauze);
-      } else {
-        this.handleRegularMessage(sender, message);
-      }
+    if (message.getMessageType() === 'pauze') {
+      this.handlePauzeMessage(sender.getName(), message as Pauze);
+    } else {
+      super.receiveMessage(sender, message);
     }
   }
 }

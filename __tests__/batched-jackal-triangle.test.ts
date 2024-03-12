@@ -249,7 +249,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
 
         it('Jackal Logs', () => {
           expect(alice.getLog()).toEqual([
-            "I meet Bob, and offer them all my flood probes",
+            "I meet Bob, and offer them allmy flood probes",
          ]);
           expect(bob.getLog()).toEqual([
             "I meet Charlie, and offer them all my flood probes",
