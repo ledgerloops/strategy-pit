@@ -12,6 +12,8 @@ const messagesAB = [
 const messagesBC = [
   "[Bob]->[Charlie] pauze true",
   "[Bob]->[Charlie] meet",
+  "[Bob]->[Charlie] probe genRanHex1",
+  "[Bob]->[Alice] probe genRanHex2",
   "[Bob]->[Charlie] probe genRanHex2",
   "[Bob]->[Charlie] pauze false",
 ];
@@ -19,14 +21,21 @@ const messagesBC = [
 const messagesCA = [
   "[Charlie]->[Alice] pauze true",
   "[Charlie]->[Alice] meet",
+  "[Charlie]->[Alice] probe genRanHex1",
+  "[Charlie]->[Alice] probe genRanHex2",
+  "[Charlie]->[Bob] probe genRanHex3",
   "[Charlie]->[Alice] probe genRanHex3",
   "[Charlie]->[Alice] pauze false",
 ];
 
-// const messages4 = [
-// ];
+const messages4 = [
+  "[Bob]->[Alice] probe genRanHex3",
+  "[Alice]->[Bob] probe genRanHex3",
+  "[Alice]->[Charlie] probe genRanHex1",
+  "[Alice]->[Charlie] probe genRanHex2",
+];
 
-// const messages5 = [];
+const messages5 = [];
 
 let counter: number = 0;
 jest.unstable_mockModule('../src/util.js', () => {
@@ -37,31 +46,31 @@ jest.unstable_mockModule('../src/util.js', () => {
   };
 });
 
-// function expectProbe(probeId: string, first: any, second: any, third: any, order: number): void {
-//   // minted at first:
-//   expect(first.getProbes()[probeId].homeMinted).toEqual(true);
-//   expect(second.getProbes()[probeId].homeMinted).toEqual(false);
-//   expect(third.getProbes()[probeId].homeMinted).toEqual(false);
-//   if (order === 1) {
-//     // sent:
-//     expect(first.getProbes()[probeId].to.sort()).toEqual([second.getName(), third.getName()].sort());
-//     expect(second.getProbes()[probeId].to).toEqual([third.getName()]);
-//     expect(third.getProbes()[probeId].to).toEqual([first.getName()]);
-//     // received:
-//     expect(first.getProbes()[probeId].from).toEqual([]);
-//     expect(second.getProbes()[probeId].from).toEqual([first.getName()]);
-//     expect(third.getProbes()[probeId].from).toEqual([second.getName()]);
-//   } else if (order === 2) {
-//     // sent:
-//     expect(first.getProbes()[probeId].to.sort()).toEqual([second.getName(), third.getName()].sort());
-//     expect(second.getProbes()[probeId].to).toEqual([third.getName()]);
-//     expect(third.getProbes()[probeId].to).toEqual([second.getName()]);
-//     // received:
-//     expect(first.getProbes()[probeId].from).toEqual([]);
-//     expect(second.getProbes()[probeId].from).toEqual([first.getName()]);
-//     expect(third.getProbes()[probeId].from).toEqual([first.getName()]);
-//   }
-// }
+function expectProbe(probeId: string, first: any, second: any, third: any, order: number): void {
+  // minted at first:
+  expect(first.getProbes()[probeId].homeMinted).toEqual(true);
+  expect(second.getProbes()[probeId].homeMinted).toEqual(false);
+  expect(third.getProbes()[probeId].homeMinted).toEqual(false);
+  if (order === 1) {
+    // sent:
+    expect(first.getProbes()[probeId].to.sort()).toEqual([second.getName(), third.getName()].sort());
+    expect(second.getProbes()[probeId].to).toEqual([third.getName()]);
+    expect(third.getProbes()[probeId].to).toEqual([first.getName()]);
+    // received:
+    expect(first.getProbes()[probeId].from).toEqual([]);
+    expect(second.getProbes()[probeId].from).toEqual([first.getName()]);
+    expect(third.getProbes()[probeId].from).toEqual([second.getName()]);
+  } else if (order === 2) {
+    // sent:
+    expect(first.getProbes()[probeId].to.sort()).toEqual([second.getName(), third.getName()].sort());
+    expect(second.getProbes()[probeId].to).toEqual([third.getName()]);
+    expect(third.getProbes()[probeId].to).toEqual([second.getName()]);
+    // received:
+    expect(first.getProbes()[probeId].from).toEqual([]);
+    expect(second.getProbes()[probeId].from).toEqual([first.getName()]);
+    expect(third.getProbes()[probeId].from).toEqual([first.getName()]);
+  }
+}
 
 
 describe('already friends', () => {
@@ -103,7 +112,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
     });
 
     it('Alice is friends with Bob', () => {
-      expect(alice.getFriends()).toEqual(['Bob']);
+      expect(alice.getFriends()).toEqual([ 'Bob' ]);
     });
     it('Alice has an genRanHex1 probe for Bob', () => {
       expect(alice.getProbes()).toEqual({
@@ -112,7 +121,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
           "homeMinted": true,
           "to": [
             "Bob",
-         ],
+          ],
           "traces": [],
         }
       });
@@ -147,7 +156,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
       });
 
       it('Alice is friends with Bob', () => {
-        expect(alice.getFriends()).toEqual(['Bob']);
+        expect(alice.getFriends()).toEqual([ 'Bob' ]);
       });
       it('Alice has some probes', () => {
         expect(alice.getProbes()).toEqual({
@@ -161,15 +170,21 @@ describe('Basic Jackal Triangle - step-by-step', () => {
       });
   
       it('Bob is friends with Alice and Charlie', () => {
-        expect(bob.getFriends()).toEqual(['Charlie']);
+        expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
       });
       it('Bob has some probes', () => {
         expect(bob.getProbes()).toEqual({
+          genRanHex1: {
+            traces: [],
+            from: ['Alice'],
+            homeMinted: false,
+            to: ['Charlie']
+          },
           genRanHex2: {
             traces: [],
             from: [],
             homeMinted: true,
-            to: ['Charlie']
+            to: ['Alice','Charlie']
           }
         });
       });
@@ -195,7 +210,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
         });
 
         it('Alice is friends with Bob', () => {
-          expect(alice.getFriends()).toEqual(['Bob']);
+          expect(alice.getFriends()).toEqual([ 'Bob' ]);
         });
         it('Alice has some probes', () => {
           expect(alice.getProbes()).toEqual({
@@ -205,6 +220,12 @@ describe('Basic Jackal Triangle - step-by-step', () => {
               to: ['Bob'],
               traces: [],
             },
+            genRanHex2: {
+              from: [ 'Bob' ],
+              homeMinted: false,
+              to: [],
+              traces: [],
+            },
           });
         });
         it('Alice has 3 loops', () => {
@@ -212,30 +233,42 @@ describe('Basic Jackal Triangle - step-by-step', () => {
             // 'genRanHex1',
             // 'genRanHex2',
             // 'genRanHex3'
-         ].sort());
+          ].sort());
         });
     
         it('Bob is friends with Alice and Charlie', () => {
-          expect(bob.getFriends()).toEqual(['Charlie']);
+          expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([
             // 'genRanHex1',
             // 'genRanHex2',
             // 'genRanHex3'
-         ].sort());
+          ].sort());
         });
 
         it('Charlie is friends with Bob and Alice', () => {
-          expect(charlie.getFriends()).toEqual(['Alice']);
+          expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
         });
         it('Charlie has some probes', () => {
           expect(charlie.getProbes()).toEqual({
+            genRanHex1: {
+              traces: [],
+              from: ['Bob'],
+              homeMinted: false,
+              to: ['Alice']
+            },
+            genRanHex2: {
+              traces: [],
+              from: ['Bob'],
+              homeMinted: false,
+              to: ['Alice']
+            },
             genRanHex3: {
               traces: [],
               from: [],
               homeMinted: true,
-              to: ['Alice']
+              to: ['Bob', 'Alice']
             }
           });
         });
@@ -244,132 +277,164 @@ describe('Basic Jackal Triangle - step-by-step', () => {
             // 'genRanHex1',
             // 'genRanHex2',
             // 'genRanHex3'
-         ].sort());
+          ].sort());
         });
 
         it('Jackal Logs', () => {
           expect(alice.getLog()).toEqual([
-            "I meet Bob, and offer them allmy flood probes",
-         ]);
+            "I meet Bob, and offer them all my flood probes",
+          ]);
           expect(bob.getLog()).toEqual([
+            "PAUZING MESSAGES TO Alice",
+            "MEET MESSAGE FROM Alice, offering all flood probes",
+            "UNPAUZING MESSAGES TO Alice",
             "I meet Charlie, and offer them all my flood probes",
-        
-         ]);
+            "OFFERING PROBE genRanHex1 TO Charlie",
+          ]);
           expect(charlie.getLog()).toEqual([
+            "PAUZING MESSAGES TO Bob",
+            "MEET MESSAGE FROM Bob, offering all flood probes",
+            "UNPAUZING MESSAGES TO Bob",
             "I meet Alice, and offer them all my flood probes",
+            "OFFERING PROBE genRanHex1 TO Alice",
+            "OFFERING PROBE genRanHex2 TO Alice",
         
-         ]);
+          ]);
         });
 
 
-        // describe('Another round of messages', () => {
-        //   beforeAll(() => {
-        //     flushReport = messageForwarder.flush();
-        //   });
+        describe('Another round of messages', () => {
+          beforeAll(() => {
+            flushReport = messageForwarder.flush();
+          });
 
-        //   it('Message Logs', () => {
-        //     expect(flushReport).toEqual(messagesCA);
-        //     // messages4 is already sent but messagesCA is still what was just flushed here
-        //     expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA, messages4));
-        //   });
+          it('Message Logs', () => {
+            expect(flushReport).toEqual(messagesCA);
+            // messages4 is already sent but messagesCA is still what was just flushed here
+            expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA, messages4));
+          });
 
-        //   it('Probe trees', () => {
-        //     expect(Object.keys(alice.getProbes()).sort()).toEqual(['genRanHex1'].sort());
-        //     expect(Object.keys(bob.getProbes()).sort()).toEqual(['genRanHex2'].sort());
-        //     expect(Object.keys(charlie.getProbes()).sort()).toEqual(['genRanHex3'].sort());
-        //     expectProbe('genRanHex1', alice, bob, charlie, 1);
-        //     expectProbe('genRanHex2', bob, charlie, alice, 2);
-        //     expectProbe('genRanHex3', charlie, alice, bob, 2);
-        //   });
+          it('Probe trees', () => {
+            expect(Object.keys(alice.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+            expect(Object.keys(bob.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+            expect(Object.keys(charlie.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+            expectProbe('genRanHex1', alice, bob, charlie, 1);
+            expectProbe('genRanHex2', bob, charlie, alice, 2);
+            expectProbe('genRanHex3', charlie, alice, bob, 2);
+          });
   
 
-        //   it('Alice, Bob and Charlie all know each other', () => {
-        //     expect(alice.getFriends()).toEqual(['Bob']);
-        //     expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
-        //     expect(charlie.getFriends()).toEqual(['Bob', 'Alice']);
-        //   });
+          it('Alice, Bob and Charlie all know each other', () => {
+            expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+            expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+            expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+          });
 
-        //   it('Alice, Bob and Charlie all have all probes', () => {
-        //     expect(alice.getFriends()).toEqual(['Charlie']);
-        //     expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
-        //     expect(charlie.getFriends()).toEqual(['Bob', 'Alice']);
-        //   });
+          it('Alice, Bob and Charlie all have all probes', () => {
+            expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+            expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+            expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+          });
 
-        //   it('Jackal Logs', () => {
-        //     expect(alice.getLog()).toEqual([
-        //       "I meet Bob, and offer them all my flood probes",
-        //     ]);
-        //     expect(bob.getLog()).toEqual([
-        //       "MEET MESSAGE FROM Alice, offering all flood probes",
-        //       "I meet Charlie, and offer them all my flood probes",
-        //       "OFFERING PROBE genRanHex1 TO Charlie",
-        //    ]);
-        //     expect(charlie.getLog()).toEqual([
-        //       "MEET MESSAGE FROM Bob, offering all flood probes",
-        //       "I meet Alice, and offer them all my flood probes",
-        //       "OFFERING PROBE genRanHex1 TO Alice",
-        //       "OFFERING PROBE genRanHex2 TO Alice",
+          it('Jackal Logs', () => {
+            expect(alice.getLog()).toEqual([
+              "I meet Bob, and offer them all my flood probes",
+              "PAUZING MESSAGES TO Charlie",
+              "MEET MESSAGE FROM Charlie, offering all flood probes",
+              "OFFERING PROBE genRanHex1 TO Charlie",
+              "PAUZED MESSAGE TO Charlie: probe genRanHex1",
+              "OFFERING PROBE genRanHex2 TO Charlie",
+              "PAUZED MESSAGE TO Charlie: probe genRanHex2",
+              "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+              "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+              "UNPAUZING MESSAGES TO Charlie",
+              "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex1",
+              "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex2",
+            ]);
+            expect(bob.getLog()).toEqual([
+              "PAUZING MESSAGES TO Alice",
+              "MEET MESSAGE FROM Alice, offering all flood probes",
+              "UNPAUZING MESSAGES TO Alice",
+              "I meet Charlie, and offer them all my flood probes",
+              "OFFERING PROBE genRanHex1 TO Charlie",
+            ]);
+            expect(charlie.getLog()).toEqual([
+              "PAUZING MESSAGES TO Bob",
+              "MEET MESSAGE FROM Bob, offering all flood probes",
+              "UNPAUZING MESSAGES TO Bob",
+              "I meet Alice, and offer them all my flood probes",
+              "OFFERING PROBE genRanHex1 TO Alice",
+              "OFFERING PROBE genRanHex2 TO Alice",
           
-        //    ]);
-        //   });
+            ]);
+          });
 
-        //   describe('Another round of messages', () => {
-        //     beforeAll(() => {
-        //       flushReport = messageForwarder.flush();
-        //     });
+          describe('Another round of messages', () => {
+            beforeAll(() => {
+              flushReport = messageForwarder.flush();
+            });
 
-        //     it('Message Logs', () => {
-        //       // expect(flushReport).toEqual(messages4);
-        //       // messages5 is already sent but messages4 is still what was just flushed here
-        //       expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA, messages4, messages5));
-        //     });
+            it('Message Logs', () => {
+              // expect(flushReport).toEqual(messages4);
+              // messages5 is already sent but messages4 is still what was just flushed here
+              expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA, messages4, messages5));
+            });
 
-        //     it('Probe trees', () => {
-        //       expect(Object.keys(alice.getProbes()).sort()).toEqual(['genRanHex1', 'genRanHex2', 'genRanHex3'].sort());
-        //       expect(Object.keys(bob.getProbes()).sort()).toEqual(['genRanHex1', 'genRanHex2', 'genRanHex3'].sort());
-        //       expect(Object.keys(charlie.getProbes()).sort()).toEqual(['genRanHex1', 'genRanHex2', 'genRanHex3'].sort());
-        //       expectProbe('genRanHex1', alice, bob, charlie, 1);
-        //       expectProbe('genRanHex2', bob, charlie, alice, 2);
-        //       expectProbe('genRanHex3', charlie, alice, bob, 2);
-        //     });
+            it('Probe trees', () => {
+              expect(Object.keys(alice.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+              expect(Object.keys(bob.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+              expect(Object.keys(charlie.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+              expectProbe('genRanHex1', alice, bob, charlie, 1);
+              expectProbe('genRanHex2', bob, charlie, alice, 2);
+              expectProbe('genRanHex3', charlie, alice, bob, 2);
+            });
     
 
-        //     it('Alice, Bob and Charlie all know each other', () => {
-        //       expect(alice.getFriends()).toEqual(['Bob', 'Charlie']);
-        //       expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
-        //       expect(charlie.getFriends()).toEqual(['Bob', 'Alice']);
-        //     });
+            it('Alice, Bob and Charlie all know each other', () => {
+              expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+              expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+              expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+            });
 
-        //     it('Alice, Bob and Charlie all have all probes', () => {
-        //       expect(alice.getFriends()).toEqual(['Bob', 'Charlie']);
-        //       expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
-        //       expect(charlie.getFriends()).toEqual(['Bob', 'Alice']);
-        //     });
+            it('Alice, Bob and Charlie all have all probes', () => {
+              expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+              expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+              expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+            });
 
-        //     it('Jackal Logs', () => {
-        //       expect(alice.getLog()).toEqual([
-        //         "I meet Bob, and offer them all my flood probes",
-        //         "MEET MESSAGE FROM Charlie, offering all flood probes",
-        //         "OFFERING PROBE genRanHex1 TO Charlie",
-        //         "OFFERING PROBE genRanHex2 TO Charlie",                  
-        //         "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
-        //         "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
-            
-        //      ]);
-        //       expect(bob.getLog()).toEqual([
-        //         "MEET MESSAGE FROM Alice, offering all flood probes",
-        //         "I meet Charlie, and offer them all my flood probes",
-        //          "OFFERING PROBE genRanHex1 TO Charlie",      
-        //      ]);
-        //       expect(charlie.getLog()).toEqual([
-        //         "MEET MESSAGE FROM Bob, offering all flood probes",
-        //         "I meet Alice, and offer them all my flood probes",
-        //         "OFFERING PROBE genRanHex1 TO Alice",
-        //         "OFFERING PROBE genRanHex2 TO Alice",            
-        //      ]);
-        //     });
-        //   }); // Another round of messages
-        // }); // Another round of messages
+            it('Jackal Logs', () => {
+              expect(alice.getLog()).toEqual([
+                "I meet Bob, and offer them all my flood probes",
+                "PAUZING MESSAGES TO Charlie",
+                "MEET MESSAGE FROM Charlie, offering all flood probes",
+                "OFFERING PROBE genRanHex1 TO Charlie",
+                "PAUZED MESSAGE TO Charlie: probe genRanHex1",
+                "OFFERING PROBE genRanHex2 TO Charlie",
+                "PAUZED MESSAGE TO Charlie: probe genRanHex2",
+                "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+                "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+                "UNPAUZING MESSAGES TO Charlie",
+                "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex1",
+                "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex2", 
+              ]);
+              expect(bob.getLog()).toEqual([
+                "PAUZING MESSAGES TO Alice",
+                "MEET MESSAGE FROM Alice, offering all flood probes",
+                "UNPAUZING MESSAGES TO Alice",
+                "I meet Charlie, and offer them all my flood probes",
+                "OFFERING PROBE genRanHex1 TO Charlie",      
+              ]);
+              expect(charlie.getLog()).toEqual([
+                "PAUZING MESSAGES TO Bob",
+                "MEET MESSAGE FROM Bob, offering all flood probes",
+                "UNPAUZING MESSAGES TO Bob",
+                "I meet Alice, and offer them all my flood probes",
+                "OFFERING PROBE genRanHex1 TO Alice",
+                "OFFERING PROBE genRanHex2 TO Alice",            
+              ]);
+            });
+          }); // Another round of messages
+        }); // Another round of messages
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob

@@ -14,10 +14,10 @@ export class Jackal extends Stingray {
   }
   handlePauzeMessage(other: string, message: Pauze): void {
     if (message.getPauze()) {
-      this.log.push(`PAUZING ${other}`);
+      this.log.push(`PAUZING MESSAGES TO ${other}`);
       this.pauzed[other] = this.pauzed[other] || [];
     } else {
-      this.log.push(`UNPAUZING ${other}`);
+      this.log.push(`UNPAUZING MESSAGES TO ${other}`);
       this.pauzed[other].forEach((message) => {
         this.log.push(`SENDING PAUZED MESSAGE TO ${other}: ${message.toString()}`);
         super.sendMessage(other, message);
