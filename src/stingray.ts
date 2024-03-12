@@ -1,205 +1,193 @@
-import { Probe, Loop } from "./messages.js";
+import { Probe as ProbeMessage, Loop as LoopMessage } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
+export class Trace {
+  private traceId: string;
+  private from: string | undefined;
+  private to: string;
+  constructor(from: string | undefined, to: string, traceId: string) {
+    this.traceId = traceId;
+    this.to = to;
+    this.from = from;
+  }
+  getFrom(): string | undefined {
+    return this.from;
+  }
+  getTo(): string {
+    return this.to;
+  }
+  getTraceId(): string {
+    return this.traceId;
+  }
+}
+export class Probe {
+  private from: string[];
+  private to: string[];
+  private homeMinted: boolean;
+  private traces: Trace[] = [];
+  constructor (from: string[], to: string[], homeMinted: boolean) {
+    this.from = from;
+    this.to = to;
+    this.homeMinted = homeMinted;
+  }
+  getFrom(): string[] {
+    return this.from;
+  }
+  addFrom(from: string): void {
+    this.from.push(from);
+  }
+  getTo(): string[] {
+    return this.to;
+  }
+  addTo(to: string): void {
+    this.to.push(to);
+  }
+  isHomeMinted(): boolean {
+    return this.homeMinted;
+  }
+  recordIncoming(from: string): void {
+    this.from.push(from);
+  }
+  recordOutgoing(to: string): void {
+    this.to.push(to);
+  }
+  isVirginFor(newFrom: string): boolean {
+    return !this.from.includes(newFrom) && !this.to.includes(newFrom);
+  }
+  getTraces(): Trace[] {
+    return this.traces;
+  }
+  addTrace(trace: Trace): void {
+    this.traces.push(trace);
+  }
+}
+
 export class StingrayProbeStore {
   private probes: {
-    [id: string]: {
-      from: string[];
-      to: string[];
-      flood: boolean;
-      homeMinted: boolean;
-    }
+    [id: string]: Probe
   } = {};
   constructor() {}
-  has(id: string): boolean {
-    return (typeof this.probes[id] !== 'undefined');
-  }
-  get(id: string): {
-    from: string[];
-    to: string[];
-    flood: boolean;
-    homeMinted: boolean;
-  } {
+  // has(id: string): boolean {
+  //   return (typeof this.probes[id] !== 'undefined');
+  // }
+  get(id: string): Probe | undefined {
     return this.probes[id];
   }
-  haveSentTo(friend: string, id: string): boolean {
-    return (typeof this.probes[id] !== 'undefined' && this.probes[id].to.includes(friend));
-  }
-  haveReceivedFrom(friend: string, id: string): boolean {
-    return (typeof this.probes[id] !== 'undefined' && this.probes[id].from.includes(friend));
-  }
-  haveSentOrReceived(friend: string, id: string): boolean {
-    return (this.haveSentTo(friend, id) || this.haveReceivedFrom(friend, id)); 
-  }
-  ensure(id: string, flood: boolean, homeMinted: boolean): void {
+  ensure(id: string, homeMinted: boolean): Probe {
     if (typeof this.probes[id] === 'undefined') {
-      this.probes[id] = { from: [], to: [], flood, homeMinted };
+      this.probes[id] = new Probe([], [], homeMinted);
     }
-  }
-  recordIncoming(id: string, from: string): void {
-    if (this.has(id)) {
-      if (this.probes[id].flood) {
-        // console.log(`RECORDING FLOOD PROBE ${id} COMING IN THROUGH ${from}`);
-      } else {
-        // console.log(`RECORDING PIN PROBE ${id} COMING IN THROUGH ${from}`);
-      }
-    } else {
-      // console.log(`RECORDING NEW PROBE ${id} COMING IN THROUGH ${from} - MARKING FOR FLOOD`);
-      this.ensure(id, true, false);
-    }
-    if (this.haveReceivedFrom(from, id)) {
-      // console.log(`ALREADY RECEIVED PROBE ${id} FROM ${from}`);
-    } else {
-      this.probes[id].from.push(from);
-    }
-  }
-  recordOutgoing(id: string, to: string, flood: boolean, homeMinted: boolean): void {
-    if (this.has(id)) {
-      if (this.probes[id].flood !== flood) {
-        throw new Error(`PROBE ${id} ALREADY EXISTS AND HAS DIFFERENT FLOOD STATUS`);
-      } else if (flood) {
-        // console.log(`EXISTING FLOOD PROBE ${id} GOES OUT TO ${to}`);
-      } else {
-        throw new Error(`PIN PROBES SHOULD BE SENT OUT ONLY ONCE!`);
-      }
-    } else {
-      this.ensure(id, flood, homeMinted);
-    }
-    this.probes[id].to.push(to);
+    return this.probes[id];
   }
   getKeys(): string[] {
     return Object.keys(this.probes);
   }
   getProbes(): {
-    [id: string]: {
-      from: string[];
-      to: string[];
-    }
+    [id: string]: Probe
   } {
     return this.probes;
   }
-  getProbeReport(id: string, sender: string): {
-    from: string;
-    to: string;
-    proofsComm: boolean;
-  } {
-    if (this.probes[id].flood) {
-      throw new Error(`PROBE ${id} IS A FLOOD PROBE`);
-    }
-    if (this.probes[id].from.length !== 1) {
-      throw new Error(`PROBE ${id} HAS BEEN RECEIVED FROM MULTIPLE SOURCES`);
-    }
-    if (this.probes[id].to.length !== 1) {
-      throw new Error(`PROBE ${id} HAS BEEN SENT TO MULTIPLE DESTINATIONS`);
-    }
-    if (this.probes[id].from[0] !== sender) {
-      throw new Error(`PROBE ${id} HAS BEEN RECEIVED FROM ${this.probes[id].from[0]} INSTEAD OF ${sender}`);
-    }
-    // See https://github.com/ledgerloops/strategy-pit/issues/4#issuecomment-1985648430
-    // for theory on proof of communication
-    const comm1 = this.probes[id].homeMinted;
-    const comm2 = (!this.probes[id].to.includes(sender));
-    const proofsComm = comm1 && comm2;
-    return { from: this.probes[id].from[0], to: this.probes[id].to[0], proofsComm };
-  }
 }
 
-export class StingrayLoopStore {
-  private loops: {
-    [probeId: string]: {
-      [loopId: string]: {
-        from: string[];
-        to: string[];
-        homeMinted: boolean;
-      }
-    }
-  } = {};
-  constructor() {}
-  has(probeId: string, loopId: string): boolean {
-    return ((typeof this.loops[probeId] !== 'undefined') && (typeof this.loops[probeId][loopId] !== 'undefined'));
-  }
-  get(probeId: string, loopId: string): {
-    from: string[];
-    to: string[];
-  } {
-    return this.loops[probeId][loopId];
-  }
-  haveSentTo(friend: string, probeId: string, loopId: string): boolean {
-    const { to } = this.get(probeId, loopId);
-    return (to.includes(friend));
-  }
-  haveReceivedFrom(friend: string, probeId: string, loopId: string): boolean {
-    const { from } = this.get(probeId, loopId);
-    return (from.includes(friend));
-  }
-  haveSentOrReceived(friend: string, probeId: string, loopId: string): boolean {
-    const { from, to } = this.get(probeId, loopId);
-    return (from.includes(friend) || to.includes(friend));
-  }
-  ensure(probeId: string, loopId: string, homeMinted: boolean): void {
-    if (typeof this.loops[probeId] === 'undefined') {
-      this.loops[probeId] = {};
-    }
-    if (typeof this.loops[probeId][loopId] === 'undefined') {
-      this.loops[probeId][loopId] = { from: [], to: [], homeMinted };
-    }
-  }
-  recordIncoming(probeId: string, loopId: string, from: string): void {
-    this.ensure(probeId, loopId, false);
-    this.loops[probeId][loopId].from.push(from);
-  }
-  recordOutgoing(probeId: string, loopId: string, to: string, homeMinted: boolean): void {
-    this.ensure(probeId, loopId, homeMinted);
-    this.loops[probeId][loopId].to.push(to);
-  }
-  getKeys(): string[] {
-    const loops: string[] = [];
-    Object.keys(this.loops).forEach(probeId => Object.keys(this.loops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
-    return loops;
-  }
-  getLoops(): {
-    [probeId: string]: {
-      [loopId: string]: {
-        from: string[];
-        to: string[];
-      }
-    }
-  } {
-    return this.loops;
-  }
-}
+// export class StingrayLoopStore {
+//   private loops: {
+//     [probeId: string]: {
+//       [loopId: string]: {
+//         from: string[];
+//         to: string[];
+//         homeMinted: boolean;
+//       }
+//     }
+//   } = {};
+//   constructor() {}
+//   has(probeId: string, loopId: string): boolean {
+//     return ((typeof this.loops[probeId] !== 'undefined') && (typeof this.loops[probeId][loopId] !== 'undefined'));
+//   }
+//   get(probeId: string, loopId: string): {
+//     from: string[];
+//     to: string[];
+//   } {
+//     return this.loops[probeId][loopId];
+//   }
+//   haveSentTo(friend: string, probeId: string, loopId: string): boolean {
+//     const { to } = this.get(probeId, loopId);
+//     return (to.includes(friend));
+//   }
+//   haveReceivedFrom(friend: string, probeId: string, loopId: string): boolean {
+//     const { from } = this.get(probeId, loopId);
+//     return (from.includes(friend));
+//   }
+//   haveSentOrReceived(friend: string, probeId: string, loopId: string): boolean {
+//     const { from, to } = this.get(probeId, loopId);
+//     return (from.includes(friend) || to.includes(friend));
+//   }
+//   ensure(probeId: string, loopId: string, homeMinted: boolean): Probe {
+//     if (typeof this.loops[probeId] === 'undefined') {
+//       this.loops[probeId] = {};
+//     }
+//     if (typeof this.loops[probeId][loopId] === 'undefined') {
+//       this.loops[probeId][loopId] = { from: [], to: [], homeMinted };
+//     }
+//     return this.loops[probeId][loopId];
+//   }
+//   recordIncoming(probeId: string, loopId: string, from: string): void {
+//     this.ensure(probeId, loopId, false);
+//     this.loops[probeId][loopId].from.push(from);
+//   }
+//   recordOutgoing(probeId: string, loopId: string, to: string, homeMinted: boolean): void {
+//     this.ensure(probeId, loopId, homeMinted);
+//     this.loops[probeId][loopId].to.push(to);
+//   }
+//   getKeys(): string[] {
+//     const loops: string[] = [];
+//     Object.keys(this.loops).forEach(probeId => Object.keys(this.loops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
+//     return loops;
+//   }
+//   getLoops(): {
+//     [probeId: string]: {
+//       [loopId: string]: {
+//         from: string[];
+//         to: string[];
+//       }
+//     }
+//   } {
+//     return this.loops;
+//   }
+// }
 
 // Stingray nodes always send all the probes they can to all their friends.
 export class Stingray extends Node {
   protected probeStore: StingrayProbeStore = new StingrayProbeStore();
-  protected loopStore: StingrayLoopStore = new StingrayLoopStore();
+  // protected loopStore: StingrayLoopStore = new StingrayLoopStore();
 
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
-  protected offerProbe(friend: string, probeId: string, flood: boolean, homeMinted: boolean): void {
-    if (!this.probeStore.haveSentOrReceived(friend, probeId)) {
-      this.probeStore.recordOutgoing(probeId, friend, flood, homeMinted);
-      this.sendMessage(friend, new Probe(probeId));
+  protected offerProbe(friend: string, probeId: string, homeMinted: boolean): void {
+    const probe = this.probeStore.ensure(probeId, homeMinted);
+    if (probe.isVirginFor(friend)) {
+      probe.recordOutgoing(friend);
+      this.sendMessage(friend, new ProbeMessage(probeId));
     }
   }
   protected offerAllFloodProbes(other: string): void {
     this.probeStore.getKeys().forEach((probeId) => {
-      this.offerProbe(other, probeId, true, this.probeStore.get(probeId).homeMinted);
-    }); 
+      // setting homeMinted to false but we don't expect it to matter since this probe already exists
+      this.offerProbe(other, probeId, false);
+    });
   }
   protected offerFloodProbeToAll(probeId: string, homeMinted: boolean): void {
     this.getFriends().forEach(friend => {
-      this.offerProbe(friend, probeId, true, homeMinted);
+      this.offerProbe(friend, probeId, homeMinted);
     });
   }
   protected createFloodProbe(): void {
     this.offerFloodProbeToAll(genRanHex(8), true);
   }
-  protected createPinProbe(recipient: string): void {
+  protected createPinnedFloodProbe(recipient: string): void {
     const probeForNewLink = genRanHex(8);
-    this.offerProbe(recipient, probeForNewLink, false, true);
+    this.offerProbe(recipient, probeForNewLink, true);
   }
   // when this node has sent a `meet` message
   onMeet(other: string): void {
@@ -211,73 +199,77 @@ export class Stingray extends Node {
     this.offerAllFloodProbes(sender);
   }
   getProbes(): {
-    [id: string]: {
-      from: string[];
-      to: string[];
-    }
+    [id: string]: Probe
   } {
     return this.probeStore.getProbes();
   }
   getLoops(): {
     [probeId: string]: {
       [loopId: string]: {
-        from: string[];
-        to: string[];
+        from: string | undefined;
+        to: string;
       }
     }
   } {
-    return this.loopStore.getLoops();
+    const ret: {
+      [probeId: string]: {
+        [loopId: string]: {
+          from: string | undefined;
+          to: string;
+        }
+      }
+    } = {};
+    const probes = this.probeStore.getProbes();
+    Object.keys(probes).forEach(probeId => {
+      ret[probeId] = {};
+      probes[probeId].getTraces().forEach(trace => {
+        ret[probeId][trace.getTraceId()] = {
+          from: trace.getFrom(),
+          to: trace.getTo()
+        };
+      });
+    }); 
+    return ret;
   }
   createLoopTrace(probeId: string, friend: string): void {
     const loopId = genRanHex(8);
-    this.loopStore.recordOutgoing(probeId, loopId, friend, true);
-    this.sendMessage(friend, new Loop(probeId, loopId));
+    const trace = new Trace(undefined, friend, loopId);
+    const probe = this.probeStore.get(probeId);
+    probe.addTrace(trace);
+    this.sendMessage(friend, new LoopMessage(probeId, loopId));
   }
-  whenFloodProbeLoopsBack(sender: string): void {
-    this.createPinProbe(sender);
-  }
-  whenPinProbeLoopsBack(probeId: string, sender: string): void {
-    this.createLoopTrace(probeId, sender);
-  }
-  handleProbeMessage(sender: string, message: Probe): void {
-    if (this.probeStore.haveReceivedFrom(sender, message.getId())) {
-      // console.log(`ALREADY RECEIVED PROBE ${message.getId()} FROM ${sender}`);
-      return;
-    }
-    if (this.probeStore.has(message.getId())) {
-      // flood probe looping back on itself, responding with pin probe
-      // (see https://github.com/ledgerloops/strategy-pit/issues/4)
-      this.whenFloodProbeLoopsBack(sender);
-      return;
-    }
-    // INCOMING PROBE IS NEW TO US, FLOOD IT FORWARD
-    this.probeStore.recordIncoming(message.getId(), sender);
-    this.offerFloodProbeToAll(message.getId(), false);
-  }
-  handleLoopMessage(sender: string, message: Loop): void {
-    if (this.loopStore.has(message.getProbeId(), message.getLoopId())) {
-      if (this.loopStore.haveReceivedFrom(sender, message.getProbeId(), message.getLoopId())) {
-        // console.log(`NEIGHBOUR ${sender} IS REPEATING LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} TO US?`);
-      } else if (this.loopStore.haveSentTo(sender, message.getProbeId(), message.getLoopId())) {
-        // console.log(`NEIGHBOUR ${sender} IS ECHOING LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} BACK TO US?`);
-      } else {
-        // console.log(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM UNEXPECTED SENDER ${sender}`);
-      }
+  handleProbeMessage(sender: string, message: ProbeMessage): void {
+    let probe: Probe | undefined = this.probeStore.get(message.getId());
+    if (typeof probe === 'undefined') {
+      // INCOMING PROBE IS NEW TO US, FLOOD IT FORWARD
+      probe = this.probeStore.ensure(message.getId(), false);
+      probe.addFrom(sender);
+      this.offerFloodProbeToAll(message.getId(), false);
     } else {
-      this.loopStore.recordIncoming(message.getProbeId(), message.getLoopId(), sender);
-      const recipients = this.probeStore.get(message.getProbeId()).from;
-      let used = false;
-      recipients.forEach(recipient => {
-        if (used) {
-          const newLoopId = genRanHex(8);
-          this.loopStore.recordOutgoing(message.getProbeId(), newLoopId, recipient, true);
-          this.sendMessage(recipients[0], new Loop(message.getProbeId(), newLoopId));
+      if (probe.isVirginFor(sender)) {
+        if (probe.isHomeMinted()) {
+          this.createLoopTrace(message.getId(), sender);
         } else {
-          used = true;
-          this.loopStore.recordOutgoing(message.getProbeId(), message.getLoopId(), recipient, false);
-          this.sendMessage(recipient, message);
+          this.createPinnedFloodProbe(sender);
         }
-      });
+
+      }
     }
+  }
+  handleLoopMessage(sender: string, message: LoopMessage): void {
+    const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
+    // console.log(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
+    if (typeof probe === 'undefined') {
+      // console.log(`UNEXPECTED: PROBE UNKNOWN TO US!`);
+      return;
+    }
+    if (probe.getFrom().length != 1) {
+      console.log(`UNEXPECTED: PROBE DOES NOT HAVE ONE FROM: ${probe.getFrom().join(' ')}!`);
+      return;
+    }
+    const recipient = probe.getFrom()[0];
+    this.sendMessage(recipient, new LoopMessage(message.getProbeId(), message.getLoopId()));
+    const trace = new Trace(sender, this.getName(), message.getLoopId());
+    probe.addTrace(trace);
   }
 }

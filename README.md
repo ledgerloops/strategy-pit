@@ -63,7 +63,37 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 6. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward.
 7. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward, Edward->Alice.
 
-## Strategies
+## Current Strategies
+###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
+The Stingray has a more detailed data storage (both for Flood Probes and for Trace Probes) than its predecessors Salmon, Pelican and Petrogale.
+A Stingray reacts to events with actions. Events are:
+* Meet - a new neighbour is added. Although neighbour links are symmetrical, the Meet event is triggered in only one of the two parties
+* Receiving a Meet message (being the other party in a Meet)
+* Receiving a Probe message from a neighbour
+* Receiving a Trace message from a neighbour
+
+Actions are:
+* Mint a probe and send it to one or more neighbours
+* Forward an incoming probe to one or more neighbours
+* Mint a Trace and send it to a neighbour
+* Forward an incoming Trace to a different neighbour
+* Conclude that a loop exists
+
+A Stingray will behave as follows:
+For every Meet, mint a probe and send it to all neighbours (including the new one)
+For every incoming probe:
+* if it is unknown, forward it to all other neighbours (not including the sender)
+* if it is known, home-minted and *convincing* (see below), mint a trace and send that to just the sender of the probe
+* in all other cases (i.e. known but not home-minted and/or not convincing), mint a probe and send that to just the sender of the probe (we call this is a "pinning probe")
+For every incoming trace:
+* if it was home-minted, conclude that a loop exists
+* if it was not home-minted, look at the Probe ID it relates to, and forward it to the neighbour who originally sent you that probe (a Trace backtraces a probe).
+
+An incoming Probe is *convincing* if:
+* it was never sent before by that
+* it was never sent by us to that sender
+
+## Previous Strategies
 ### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
 
 The Salmon strategy works as follows:
@@ -118,7 +148,3 @@ loops were already found for them.
 
 I think in the hourglass test, the first triangle is found 3 times and the second triangle is found 8 times, although it's
 hard to tell because of #1 and #2.
-
-###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
-The Stingray has a more detailed data storage than the Salmon, Pelican and Petrogale, both for Probes and for Loops.
-Under construction
