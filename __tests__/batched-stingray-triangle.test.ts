@@ -285,7 +285,7 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             expect(Object.keys(charlie.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
             expectProbe('genRanHex1', alice, bob, charlie, 1);
             expectProbe('genRanHex2', bob, charlie, alice, 2);
-            // expectProbe('genRanHex3', charlie, alice, bob);
+            expectProbe('genRanHex3', charlie, alice, bob, 1);
           });
   
 
