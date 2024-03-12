@@ -33,7 +33,7 @@ export class Probe {
   private to: string[];
   private homeMinted: boolean;
   private traces: Trace[] = [];
- 
+
   constructor (from: string[], to: string[], homeMinted: boolean) {
     this.from = from;
     this.to = to;
@@ -42,14 +42,8 @@ export class Probe {
   getFrom(): string[] {
     return this.from;
   }
-  addFrom(from: string): void {
-    this.from.push(from);
-  }
   getTo(): string[] {
     return this.to;
-  }
-  addTo(to: string): void {
-    this.to.push(to);
   }
   isHomeMinted(): boolean {
     return this.homeMinted;
@@ -98,6 +92,7 @@ export class StingrayProbeStore {
   private probes: {
     [id: string]: Probe
   } = {};
+
   constructor() {}
   // has(id: string): boolean {
   //   return (typeof this.probes[id] !== 'undefined');
@@ -146,6 +141,7 @@ export class Stingray extends Node {
   protected probeStore: StingrayProbeStore = new StingrayProbeStore();
   // protected loopStore: StingrayLoopStore = new StingrayLoopStore();
   protected log: string[] = [];
+  private loopsFound: string[] = [];
 
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
@@ -220,7 +216,7 @@ export class Stingray extends Node {
     if (typeof probe === 'undefined') {
       // INCOMING PROBE IS NEW TO US, FLOOD IT FORWARD
       probe = this.probeStore.ensure(message.getId(), false);
-      probe.addFrom(sender);
+      probe.recordIncoming(sender);
       this.offerFloodProbeToAll(message.getId(), false);
     } else {
       if (probe.isVirginFor(sender)) {
@@ -238,12 +234,20 @@ export class Stingray extends Node {
   handleLoopMessage(sender: string, message: LoopMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
     this.log.push(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
+    this.log.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
+    this.log.push(`PROBE ${message.getProbeId()} HAS FROM: ${probe.getFrom().join(' ')}`);
+    this.log.push(`PROBE ${message.getProbeId()} HAS TO: ${probe.getTo().join(' ')}`);
     if (typeof probe === 'undefined') {
       this.log.push(`UNEXPECTED: PROBE UNKNOWN TO US!`);
       return;
     }
-    if (probe.getFrom().length != 1) {
-      this.log.push(`UNEXPECTED: PROBE DOES NOT HAVE ONE FROM: ${probe.getFrom().join(' ')}!`);
+    if (probe.getFrom().length === 0) {
+      this.log.push(`OUR LOOP TRACE CAME BACK!`);
+      this.loopsFound.push(message.getProbeId() + ':' + message.getLoopId());
+      return;
+    }
+    if (probe.getFrom().length > 1) {
+      this.log.push(`UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
       return;
     }
     this.log.push(`FORWARDING LOOP TO ${probe.getFrom()[0]}`);
@@ -253,16 +257,7 @@ export class Stingray extends Node {
     probe.addTrace(trace);
   }
   getLoops(): string[] {
-    const loops: string[] = [];
-    Object.keys(this.probeStore.getProbes()).forEach(probeId => {
-      const traces = this.probeStore.get(probeId).getTraces();
-      Object.keys(traces).forEach(traceId => {
-        if (typeof traces[traceId].getFrom() !== 'undefined') {
-          loops.push(`${probeId}:${traceId}`);
-        }
-      });
-    });
-    return loops;
+    return this.loopsFound;
   }
   getLog(): string[] {
     return this.log;

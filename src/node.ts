@@ -66,7 +66,7 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
     });
     return flushReport;
   }
-  getBatch() {
+  getBatch(): string[] {
     return this.batch.map(entry => `[${entry.sender.getName()}]->[${entry.receiver.getName()}] ${entry.message.toString()}`);
   }
 }
