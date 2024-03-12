@@ -141,72 +141,6 @@ export class StingrayProbeStore {
   }
 }
 
-// export class StingrayLoopStore {
-//   private loops: {
-//     [probeId: string]: {
-//       [loopId: string]: {
-//         from: string[];
-//         to: string[];
-//         homeMinted: boolean;
-//       }
-//     }
-//   } = {};
-//   constructor() {}
-//   has(probeId: string, loopId: string): boolean {
-//     return ((typeof this.loops[probeId] !== 'undefined') && (typeof this.loops[probeId][loopId] !== 'undefined'));
-//   }
-//   get(probeId: string, loopId: string): {
-//     from: string[];
-//     to: string[];
-//   } {
-//     return this.loops[probeId][loopId];
-//   }
-//   haveSentTo(friend: string, probeId: string, loopId: string): boolean {
-//     const { to } = this.get(probeId, loopId);
-//     return (to.includes(friend));
-//   }
-//   haveReceivedFrom(friend: string, probeId: string, loopId: string): boolean {
-//     const { from } = this.get(probeId, loopId);
-//     return (from.includes(friend));
-//   }
-//   haveSentOrReceived(friend: string, probeId: string, loopId: string): boolean {
-//     const { from, to } = this.get(probeId, loopId);
-//     return (from.includes(friend) || to.includes(friend));
-//   }
-//   ensure(probeId: string, loopId: string, homeMinted: boolean): Probe {
-//     if (typeof this.loops[probeId] === 'undefined') {
-//       this.loops[probeId] = {};
-//     }
-//     if (typeof this.loops[probeId][loopId] === 'undefined') {
-//       this.loops[probeId][loopId] = { from: [], to: [], homeMinted };
-//     }
-//     return this.loops[probeId][loopId];
-//   }
-//   recordIncoming(probeId: string, loopId: string, from: string): void {
-//     this.ensure(probeId, loopId, false);
-//     this.loops[probeId][loopId].from.push(from);
-//   }
-//   recordOutgoing(probeId: string, loopId: string, to: string, homeMinted: boolean): void {
-//     this.ensure(probeId, loopId, homeMinted);
-//     this.loops[probeId][loopId].to.push(to);
-//   }
-//   getKeys(): string[] {
-//     const loops: string[] = [];
-//     Object.keys(this.loops).forEach(probeId => Object.keys(this.loops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
-//     return loops;
-//   }
-//   getLoops(): {
-//     [probeId: string]: {
-//       [loopId: string]: {
-//         from: string[];
-//         to: string[];
-//       }
-//     }
-//   } {
-//     return this.loops;
-//   }
-// }
-
 // Stingray nodes always send all the probes they can to all their friends.
 export class Stingray extends Node {
   protected probeStore: StingrayProbeStore = new StingrayProbeStore();
@@ -322,7 +256,7 @@ export class Stingray extends Node {
     });
     return loops;
   }
-  getLog() {
+  getLog(): string[] {
     return this.log;
   }
 }

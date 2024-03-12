@@ -83,15 +83,13 @@ A Stingray will behave as follows:
 For every Meet, mint a probe and send it to all neighbours (including the new one)
 For every incoming probe:
 * if it is unknown, forward it to all other neighbours (not including the sender)
-* if it is known, home-minted and *convincing* (see below), mint a trace and send that to just the sender of the probe
-* in all other cases (i.e. known but not home-minted and/or not convincing), mint a probe and send that to just the sender of the probe (we call this is a "pinning probe")
+* if it is known, home-minted and *virgin for that sender* (see below), mint a trace and send that to just the sender of the probe
+* in all other cases (i.e. known but not home-minted and/or not virgin for the sender), mint a probe and send that to just the sender of the probe (we call this is a "pinning probe")
 For every incoming trace:
 * if it was home-minted, conclude that a loop exists
 * if it was not home-minted, look at the Probe ID it relates to, and forward it to the neighbour who originally sent you that probe (a Trace backtraces a probe).
 
-An incoming Probe is *convincing* if:
-* it was never sent before by that
-* it was never sent by us to that sender
+A Probe is *virgin* for a neighbour if it was never sent to them and never received from them.
 
 ## Previous Strategies
 ### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
