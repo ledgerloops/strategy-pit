@@ -14,5 +14,5 @@ export default {
     'src/**/*.mts',
     '!src/**/*.d.ts',
     '!src/**/*.d.mts',
-  ],
+ ],
 };

@@ -58,12 +58,16 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
   }
   flush(): string[] {
     const flushReport: string[] = [];
-    this.batch.forEach(entry => {
+    const batch = this.batch;
+    this.batch = [];
+    batch.forEach(entry => {
       entry.receiver.receiveMessage(entry.sender, entry.message);
       flushReport.push(`[${entry.sender.getName()}]->[${entry.receiver.getName()}] ${entry.message.toString()}`);
     });
-    this.batch = [];
     return flushReport;
+  }
+  getBatch() {
+    return this.batch.map(entry => `[${entry.sender.getName()}]->[${entry.receiver.getName()}] ${entry.message.toString()}`);
   }
 }
 
@@ -73,7 +77,7 @@ export abstract class Node {
     protected friends: {
       [name: string]: Node
      }  = {};
-   
+
     constructor(name: string, messageForwarder?: BasicMessageForwarder) {
       this.name = name;
       this.messageForwarder = messageForwarder || new BasicMessageForwarder();
@@ -93,12 +97,12 @@ export abstract class Node {
     getFriends(): string[] {
       return Object.keys(this.friends);
     }
-  
+ 
     meet(other: Node): void {
       this.addFriend(other);
       this.onMeet(other.getName());
     }
-  
+ 
     abstract handleMeetMessage(sender: string, message: Meet): void;
     abstract handleProbeMessage(sender: string, message: Probe): void;
     abstract handleLoopMessage(sender: string, message: Loop): void;

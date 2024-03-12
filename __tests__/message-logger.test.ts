@@ -14,17 +14,17 @@ describe('BasicMessageForwarder', () => {
     expect(logger.getLocalLog('Alice')).toEqual([
       "TO[Bob] probe probe-alice-bob",
       "FROM[Bob] loop probe-alice-bob Hi",
-    ]);
+   ]);
     expect(logger.getFullLog(true)).toEqual([
       "[Alice]->[Bob] probe probe-alice-bob",
       "[Alice]>-[Bob] probe probe-alice-bob",
       "[Bob]->[Alice] loop probe-alice-bob Hi",
       "[Bob]>-[Alice] loop probe-alice-bob Hi",
-    ]);
+   ]);
     expect(logger.getFullLog()).toEqual([
       "[Alice]->[Bob] probe probe-alice-bob",
       "[Bob]->[Alice] loop probe-alice-bob Hi",
-    ]);
+   ]);
 
   });
 });

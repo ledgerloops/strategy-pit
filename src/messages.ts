@@ -1,6 +1,6 @@
 export abstract class Message {
   abstract getMessageType(): string;
-  abstract toString(): string; 
+  abstract toString(): string;
 }
 
 export class Meet extends Message {

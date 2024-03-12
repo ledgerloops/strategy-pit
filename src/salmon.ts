@@ -39,7 +39,7 @@ export class Salmon extends Node {
           this.sendMessage(other, new Probe(id));
         }
       }
-    });    
+    });
   }
   protected sendNewProbeToExistingFriends(probeForNewLink: string): void {
     Object.values(this.friends).forEach(friend => {

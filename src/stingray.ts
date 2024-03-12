@@ -33,7 +33,7 @@ export class Probe {
   private to: string[];
   private homeMinted: boolean;
   private traces: Trace[] = [];
-  
+ 
   constructor (from: string[], to: string[], homeMinted: boolean) {
     this.from = from;
     this.to = to;
@@ -237,15 +237,16 @@ export class Stingray extends Node {
   }
   handleLoopMessage(sender: string, message: LoopMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
-    // console.log(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
+    this.log.push(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     if (typeof probe === 'undefined') {
-      // console.log(`UNEXPECTED: PROBE UNKNOWN TO US!`);
+      this.log.push(`UNEXPECTED: PROBE UNKNOWN TO US!`);
       return;
     }
     if (probe.getFrom().length != 1) {
-      console.log(`UNEXPECTED: PROBE DOES NOT HAVE ONE FROM: ${probe.getFrom().join(' ')}!`);
+      this.log.push(`UNEXPECTED: PROBE DOES NOT HAVE ONE FROM: ${probe.getFrom().join(' ')}!`);
       return;
     }
+    this.log.push(`FORWARDING LOOP TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
     this.sendMessage(recipient, new LoopMessage(message.getProbeId(), message.getLoopId()));
     const trace = new Trace(sender, this.getName(), message.getLoopId());

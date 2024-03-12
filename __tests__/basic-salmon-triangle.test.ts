@@ -39,7 +39,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
       alice.meet(bob);
     });
     it('Alice is friends with Bob', () => {
-      expect(alice.getFriends()).toEqual([ 'Bob' ]);
+      expect(alice.getFriends()).toEqual(['Bob']);
     });
     it('Alice has an genRanHex1 probe for Bob', () => {
       expect(alice.getProbes()).toEqual({
@@ -53,10 +53,10 @@ describe('Basic Salmon Triangle - step-by-step', () => {
       expect(alice.getMessageLog()).toEqual([
         'TO[Bob] meet',
         'TO[Bob] probe genRanHex1'
-      ]);
+     ]);
     });
     it('Bob is friends with Alice', () => {
-      expect(bob.getFriends()).toEqual([ 'Alice' ]);
+      expect(bob.getFriends()).toEqual(['Alice']);
     });
     it('Bob has an genRanHex1 probe with Alice', () => {
       expect(bob.getProbes()).toEqual({
@@ -71,7 +71,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
       expect(bob.getMessageLog()).toEqual([
         "FROM[Alice] meet",
         "FROM[Alice] probe genRanHex1",
-      ]);
+     ]);
     });
 
     it('Charlie is friends with nobody', () => {
@@ -86,7 +86,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
     });
     it('Charlie has sent and received no messages', () => {
       expect(charlie.getMessageLog()).toEqual([
-      ]);
+     ]);
     });
 
     describe('Bob meets Charlie', () => {
@@ -94,7 +94,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
         bob.meet(charlie);
       });
       it('Alice is friends with Bob', () => {
-        expect(alice.getFriends()).toEqual([ 'Bob' ]);
+        expect(alice.getFriends()).toEqual(['Bob']);
       });
       it('Alice has some probes', () => {
         expect(alice.getProbes()).toEqual({
@@ -110,11 +110,11 @@ describe('Basic Salmon Triangle - step-by-step', () => {
           'TO[Bob] meet',
           'TO[Bob] probe genRanHex1',
           "FROM[Bob] probe genRanHex2",
-        ]);
+       ]);
       });
-  
+ 
       it('Bob is friends with Alice and Charlie', () => {
-        expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+        expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
       });
       it('Bob has some probes', () => {
         expect(bob.getProbes()).toEqual({
@@ -132,12 +132,12 @@ describe('Basic Salmon Triangle - step-by-step', () => {
           "TO[Charlie] meet",
           "TO[Alice] probe genRanHex2",
           "TO[Charlie] probe genRanHex2",
-          "TO[Charlie] probe genRanHex1",      
-        ]);
+          "TO[Charlie] probe genRanHex1",
+       ]);
       });
-  
+ 
       it('Charlie is friends with Bob', () => {
-        expect(charlie.getFriends()).toEqual([ 'Bob' ]);
+        expect(charlie.getFriends()).toEqual(['Bob']);
       });
       it('Charlie has some probes', () => {
         expect(charlie.getProbes()).toEqual({
@@ -147,22 +147,22 @@ describe('Basic Salmon Triangle - step-by-step', () => {
       });
       it('Charlie has no loops', () => {
         expect(charlie.getLoops()).toEqual([]);
-      });  
+      }); 
       it('Charlie has sent and received some messages', () => {
         expect(charlie.getMessageLog()).toEqual([
           "FROM[Bob] meet",
           "FROM[Bob] probe genRanHex2",
           "FROM[Bob] probe genRanHex1",
-        ]);
+       ]);
       });
-  
+ 
       describe('Charlie meets Alice', () => {
         beforeAll(() => {
           charlie.meet(alice);
         });
 
         it('Alice is friends with Bob and Charlie', () => {
-          expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+          expect(alice.getFriends()).toEqual(['Bob', 'Charlie']);
         });
         it('Alice has some probes', () => {
           expect(alice.getProbes()).toEqual({
@@ -176,7 +176,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
             'genRanHex1',
             'genRanHex2',
             'genRanHex3'
-          ].sort());
+         ].sort());
         });
         it('Alice has sent and received some messages', () => {
           expect(alice.getMessageLog()).toEqual([
@@ -194,25 +194,25 @@ describe('Basic Salmon Triangle - step-by-step', () => {
             "FROM[Charlie] probe genRanHex1",
             "TO[Bob] loop genRanHex1 default",
             "FROM[Charlie] loop genRanHex1 default",
-          ]);
+         ]);
         });
-    
+
         it('Bob is friends with Alice and Charlie', () => {
-          expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+          expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
         });
         it('Bob has some probes', () => {
           expect(bob.getProbes()).toEqual({
             genRanHex1: { Alice: true, Charlie: true },
             genRanHex2: { Alice: true, Charlie: true },
             genRanHex3: { Alice: true, Charlie: true }
-          }); 
+          });
         });
         it('Bob has 3 loops', () => {
           expect(bob.getLoops().sort()).toEqual([
             'genRanHex1',
             'genRanHex2',
             'genRanHex3'
-          ].sort());
+         ].sort());
         });
         it('Bob has sent and received some messages', () => {
           expect(bob.getMessageLog()).toEqual([
@@ -230,11 +230,11 @@ describe('Basic Salmon Triangle - step-by-step', () => {
             "TO[Charlie] loop genRanHex2 default",
             "FROM[Alice] loop genRanHex1 default",
             "TO[Charlie] loop genRanHex1 default",
-          ]);
+         ]);
         });
-  
+ 
         it('Charlie is friends with Bob and Alice', () => {
-          expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+          expect(charlie.getFriends()).toEqual(['Bob', 'Alice']);
         });
         it('Charlie has some probes', () => {
           expect(charlie.getProbes()).toEqual({
@@ -248,7 +248,7 @@ describe('Basic Salmon Triangle - step-by-step', () => {
             'genRanHex1',
             'genRanHex2',
             'genRanHex3'
-          ].sort());
+         ].sort());
         });
         it('Charlie has sent and received some messages', () => {
           expect(charlie.getMessageLog()).toEqual([
@@ -266,8 +266,8 @@ describe('Basic Salmon Triangle - step-by-step', () => {
             "TO[Alice] probe genRanHex1",
             "FROM[Bob] loop genRanHex1 default",
             "TO[Alice] loop genRanHex1 default"
-          ]);
-        });    
+         ]);
+        });
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
@@ -294,7 +294,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
     });
 
     it('Alice is friends with Bob and Charlie', () => {
-      expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+      expect(alice.getFriends()).toEqual(['Bob', 'Charlie']);
     });
     it('Alice has some probes', () => {
       expect(alice.getProbes()).toEqual({
@@ -308,29 +308,29 @@ describe('Basic Salmon Triangle - synchronous', () => {
         'genRanHex4',
         'genRanHex5',
         'genRanHex6',
-      ].sort());
+     ].sort());
     });
 
     it('Bob is friends with Alice and Charlie', () => {
-      expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+      expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
     });
     it('Bob has some probes', () => {
       expect(bob.getProbes()).toEqual({
         genRanHex4: { Alice: true, Charlie: true },
         genRanHex5: { Alice: true, Charlie: true },
         genRanHex6: { Alice: true, Charlie: true },
-      }); 
+      });
     });
     it('Bob has some loops', () => {
       expect(bob.getLoops().sort()).toEqual([
         'genRanHex4',
         'genRanHex5',
         'genRanHex6',
-      ].sort());
+     ].sort());
     });
 
     it('Charlie is friends with Bob and Alice', () => {
-      expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+      expect(charlie.getFriends()).toEqual(['Bob', 'Alice']);
     });
     it('Charlie has some probes', () => {
       expect(charlie.getProbes()).toEqual({
@@ -343,8 +343,8 @@ describe('Basic Salmon Triangle - synchronous', () => {
       expect(charlie.getLoops().sort()).toEqual([
         'genRanHex4',
         'genRanHex5',
-        'genRanHex6',        
-      ].sort());
+        'genRanHex6', 
+     ].sort());
     });
     it('Alice has sent and received some messages', () => {
       expect(alice.getMessageLog()).toEqual([
@@ -362,7 +362,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
         "FROM[Charlie] probe genRanHex4",
         "TO[Bob] loop genRanHex4 default",
         "FROM[Charlie] loop genRanHex4 default",
-      ]);
+     ]);
     });
     it('Bob has sent and received some messages', () => {
       expect(bob.getMessageLog()).toEqual([
@@ -380,7 +380,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
         "TO[Charlie] loop genRanHex5 default",
         "FROM[Alice] loop genRanHex4 default",
         "TO[Charlie] loop genRanHex4 default",
-      ]);
+     ]);
     });
     it('Charlie has sent and received some messages', () => {
       expect(charlie.getMessageLog()).toEqual([
@@ -398,7 +398,7 @@ describe('Basic Salmon Triangle - synchronous', () => {
         "TO[Alice] probe genRanHex4",
         "FROM[Bob] loop genRanHex4 default",
         "TO[Alice] loop genRanHex4 default",
-      ]);
+     ]);
     }); // Charlie has sent and received some messages
   }); // Alice meest Bob meets Charlie meets Alice
 }); // basic salmon triangle

@@ -89,7 +89,7 @@ describe('Basic Pelican Hourglass', () => {
         'Bob',
         'Charlie',
         'Dave'
-      ]);
+     ]);
     });
     it('Alice has the triangle probes plus one for Dave', () => {
       expect(alice.getProbes()).toEqual({
@@ -105,7 +105,7 @@ describe('Basic Pelican Hourglass', () => {
         'genRanHex1:genRanHex6',
         'genRanHex2:genRanHex3',
         'genRanHex12:genRanHex13'
-      ].sort());
+     ].sort());
     });
     it('the message logs are as expected', () => {
       expect(messageForwarder.getFullLog()).toEqual(triangleMessages.concat(messagesgenRanHex12));
@@ -116,7 +116,7 @@ describe('Basic Pelican Hourglass', () => {
         dave.meet(edward);
       });
       it('Alice is friends with the triangle plus Dave', () => {
-        expect(alice.getFriends().sort()).toEqual([ 'Bob', 'Charlie', 'Dave' ].sort());
+        expect(alice.getFriends().sort()).toEqual(['Bob', 'Charlie', 'Dave'].sort());
       });
       it('Alice has probes for the triangle plus Dave and Edward', () => {
         expect(alice.getProbes()).toEqual({
@@ -128,7 +128,7 @@ describe('Basic Pelican Hourglass', () => {
         });
       });
       it('Dave is friends with Alice and Edward', () => {
-        expect(dave.getFriends().sort()).toEqual([ 'Alice', 'Edward' ].sort());
+        expect(dave.getFriends().sort()).toEqual(['Alice', 'Edward'].sort());
       });
       it('Dave has all the triangle probes plus one for Edward', () => {
         expect(dave.getProbes()).toEqual({
@@ -137,7 +137,7 @@ describe('Basic Pelican Hourglass', () => {
         });
       });
       it('Edward is friends with Dave', () => {
-        expect(edward.getFriends().sort()).toEqual([ 'Dave' ]);
+        expect(edward.getFriends().sort()).toEqual(['Dave']);
       });
       it('Edward has all the triangle probes plus one for Dave', () => {
         expect(edward.getProbes()).toEqual({

@@ -118,7 +118,7 @@ describe('Basic Petrogale Hourglass', () => {
         'Bob',
         'Charlie',
         'Dave'
-      ]);
+     ]);
     });
     it('Alice has the triangle probes plus an genRanHex12 probe for Dave', () => {
       expect(alice.getProbes()).toEqual({
@@ -134,7 +134,7 @@ describe('Basic Petrogale Hourglass', () => {
         'genRanHex1:genRanHex6',
         'genRanHex2:genRanHex3',
         'genRanHex12:genRanHex13'
-      ].sort());
+     ].sort());
     });
     it('the message logs are as expected', () => {
       expect(messageForwarder.getFullLog()).toEqual(triangleMessages.concat(messagesgenRanHex12));
@@ -201,7 +201,7 @@ describe('Basic Petrogale Hourglass', () => {
       //    Alice
       //   /   \
       // Dave - Edward
-     
+ 
     }); // Dave meets Edward
   }); // Alice meets Dave
 }); // basic petrogale hourglass
