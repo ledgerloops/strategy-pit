@@ -56,11 +56,14 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
     this.logMessageSent(sender.getName(), receiver.getName(), message);
     this.batch.push({ sender, receiver, message });
   }
-  flush(): void {
+  flush(): string[] {
+    const flushReport: string[] = [];
     this.batch.forEach(entry => {
       entry.receiver.receiveMessage(entry.sender, entry.message);
+      flushReport.push(`[${entry.sender.getName()}]->[${entry.receiver.getName()}] ${entry.message.toString()}`);
     });
     this.batch = [];
+    return flushReport;
   }
 }
 

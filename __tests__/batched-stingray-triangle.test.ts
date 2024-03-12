@@ -20,13 +20,16 @@ const messages3 = [
   "[Charlie]->[Alice] probe genRanHex2",
   "[Charlie]->[Bob] probe genRanHex3",
   "[Charlie]->[Alice] probe genRanHex3",
+];
+
+const messages3a = [
   "[Alice]->[Charlie] probe genRanHex1",
   "[Alice]->[Charlie] probe genRanHex2",
+  "[Bob]->[Alice] probe genRanHex3",
+  "[Alice]->[Bob] probe genRanHex3",
 ];
 
 const messages4 = [
-  "[Bob]->[Alice] probe genRanHex3",
-  "[Alice]->[Bob] probe genRanHex3",
 ];
 
 let counter: number = 0;
@@ -55,6 +58,7 @@ describe('Basic Stingray Triangle - step-by-step', () => {
   let bob: any;
   let charlie: any;
   let messageForwarder: any;
+  let flushReport: string[];
   beforeAll(async () => {
     const { Stingray, BatchedMessageForwarder } = await import('../src/main.js');
     messageForwarder = new BatchedMessageForwarder();
@@ -66,10 +70,11 @@ describe('Basic Stingray Triangle - step-by-step', () => {
   describe('Alice meets Bob', () => {
     beforeAll(() => {
       alice.meet(bob);
-      messageForwarder.flush();
+      flushReport = messageForwarder.flush();
     });
 
     it('Message Logs', () => {
+      expect(flushReport).toEqual(messages1);
       expect(messageForwarder.getFullLog()).toEqual(messages1);
     });
 
@@ -114,10 +119,11 @@ describe('Basic Stingray Triangle - step-by-step', () => {
     describe('Bob meets Charlie', () => {
       beforeAll(() => {
         bob.meet(charlie);
-        messageForwarder.flush();
+        flushReport = messageForwarder.flush();
       });
 
       it('Message Logs', () => {
+        expect(flushReport).toEqual(messages2);
         expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2));
       });
 
@@ -191,11 +197,12 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       describe('Charlie meets Alice', () => {
         beforeAll(() => {
           charlie.meet(alice);
-          messageForwarder.flush();
+          flushReport = messageForwarder.flush();
         });
 
         it('Message Logs', () => {
-          expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3));
+          expect(flushReport).toEqual(messages3);
+          expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3, messages3a));
         });
 
         it('Alice is friends with Bob and Charlie', () => {
@@ -299,11 +306,12 @@ describe('Basic Stingray Triangle - step-by-step', () => {
 
         describe('Another round of messages', () => {
           beforeAll(() => {
-            messageForwarder.flush();
+            flushReport = messageForwarder.flush();
           });
 
           it('Message Logs', () => {
-            expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3, messages4));
+            expect(flushReport).toEqual(messages4);
+            expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3, messages3a, messages4));
           });
 
           it('Alice, Bob and Charlie all know each other', () => {
