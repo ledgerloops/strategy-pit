@@ -1,5 +1,5 @@
 import { Probe as ProbeMessage, Loop as LoopMessage } from "./messages.js";
-import { genRanHex } from "./util.js";
+import { genRanHex, objectMap } from "./util.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
 export class Trace {
@@ -61,6 +61,29 @@ export class Probe {
   addTrace(trace: Trace): void {
     this.traces.push(trace);
   }
+  toJson(): {
+    from: string[],
+    to: string[],
+    homeMinted: boolean,
+    traces: {
+      from: string | undefined,
+      to: string,
+      traceId: string
+    }[]
+   } {
+    return {
+      from: this.from,
+      to: this.to,
+      homeMinted: this.homeMinted,
+      traces: this.traces.map(trace => {
+        return {
+          from: trace.getFrom(),
+          to: trace.getTo(),
+          traceId: trace.getTraceId()
+        };
+      })
+    };
+  }
 }
 
 export class StingrayProbeStore {
@@ -84,9 +107,29 @@ export class StingrayProbeStore {
     return Object.keys(this.probes);
   }
   getProbes(): {
-    [id: string]: Probe
+    [id: string]: {
+      from: string[],
+      to: string[],
+      homeMinted: boolean,
+      traces: {
+        from: string | undefined,
+        to: string,
+        traceId: string
+      }[]
+     }
   } {
-    return this.probes;
+    return objectMap(this.probes, (probe => probe.toJson())) as {
+      [id: string]: {
+        from: string[],
+        to: string[],
+        homeMinted: boolean,
+        traces: {
+          from: string | undefined,
+          to: string,
+          traceId: string
+        }[]
+       }
+    };
   }
 }
 
@@ -199,37 +242,18 @@ export class Stingray extends Node {
     this.offerAllFloodProbes(sender);
   }
   getProbes(): {
-    [id: string]: Probe
+    [id: string]: {
+      from: string[],
+      to: string[],
+      homeMinted: boolean,
+      traces: {
+        from: string | undefined,
+        to: string,
+        traceId: string
+      }[]
+     }
   } {
     return this.probeStore.getProbes();
-  }
-  getLoops(): {
-    [probeId: string]: {
-      [loopId: string]: {
-        from: string | undefined;
-        to: string;
-      }
-    }
-  } {
-    const ret: {
-      [probeId: string]: {
-        [loopId: string]: {
-          from: string | undefined;
-          to: string;
-        }
-      }
-    } = {};
-    const probes = this.probeStore.getProbes();
-    Object.keys(probes).forEach(probeId => {
-      ret[probeId] = {};
-      probes[probeId].getTraces().forEach(trace => {
-        ret[probeId][trace.getTraceId()] = {
-          from: trace.getFrom(),
-          to: trace.getTo()
-        };
-      });
-    }); 
-    return ret;
   }
   createLoopTrace(probeId: string, friend: string): void {
     const loopId = genRanHex(8);

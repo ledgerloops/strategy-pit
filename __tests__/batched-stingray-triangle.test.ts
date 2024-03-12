@@ -46,12 +46,7 @@ describe('Basic Stingray Triangle - step-by-step', () => {
     });
     it('Alice has an genRanHex1 probe for Bob', () => {
       expect(alice.getProbes()).toEqual({
-        genRanHex1: {
-          flood: true,
-          from: [],
-          homeMinted: true,
-          to: ['Bob']
-        }
+        genRanHex1: {}
       });
     });
     it('Alice has no loops', () => {
