@@ -415,7 +415,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
                 "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
                 "UNPAUZING MESSAGES TO Charlie",
                 "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex1",
-                "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex2", 
+                "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex2",
               ]);
               expect(bob.getLog()).toEqual([
                 "PAUZING MESSAGES TO Alice",

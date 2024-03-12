@@ -1,4 +1,4 @@
-import { Probe as ProbeMessage, Loop as LoopMessage, Meet } from "./messages.js";
+import { Probe as ProbeMessage, Loop as LoopMessage, Meet, Message } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
@@ -150,10 +150,16 @@ export class Stingray extends Node {
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
+  protected sendMessage(to: string, message: Message): void {
+    if (message.getMessageType() === 'probe') {
+      const probe = this.probeStore.get((message as ProbeMessage).getId());
+      probe.recordOutgoing(to);
+    }
+    super.sendMessage(to, message);
+  }
   protected offerProbe(friend: string, probeId: string, homeMinted: boolean): void {
     const probe = this.probeStore.ensure(probeId, homeMinted);
     if (probe.isVirginFor(friend)) {
-      probe.recordOutgoing(friend);
       this.sendMessage(friend, new ProbeMessage(probeId));
     }
   }
