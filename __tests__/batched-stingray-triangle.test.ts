@@ -22,11 +22,11 @@ const messages3 = [
   "[Charlie]->[Alice] probe genRanHex3",
   "[Alice]->[Charlie] probe genRanHex1",
   "[Alice]->[Charlie] probe genRanHex2",
-  "[Bob]->[Alice] probe genRanHex3",
-  "[Alice]->[Bob] probe genRanHex3",
 ];
 
 const messages4 = [
+  "[Bob]->[Alice] probe genRanHex3",
+  "[Alice]->[Bob] probe genRanHex3",
 ];
 
 let counter: number = 0;
