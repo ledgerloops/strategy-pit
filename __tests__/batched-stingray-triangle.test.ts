@@ -2,6 +2,33 @@
 
 import { jest } from '@jest/globals';
 
+const messages1 = [
+  "[Alice]->[Bob] meet",
+  "[Alice]->[Bob] probe genRanHex1",
+];
+
+const messages2 = [
+  "[Bob]->[Charlie] meet",
+  "[Bob]->[Charlie] probe genRanHex1",
+  "[Bob]->[Alice] probe genRanHex2",
+  "[Bob]->[Charlie] probe genRanHex2",
+];
+
+const messages3 = [
+  "[Charlie]->[Alice] meet",
+  "[Charlie]->[Alice] probe genRanHex1",
+  "[Charlie]->[Alice] probe genRanHex2",
+  "[Charlie]->[Bob] probe genRanHex3",
+  "[Charlie]->[Alice] probe genRanHex3",
+  "[Alice]->[Charlie] probe genRanHex1",
+  "[Alice]->[Charlie] probe genRanHex2",
+  "[Bob]->[Alice] probe genRanHex3",
+  "[Alice]->[Bob] probe genRanHex3",
+];
+
+const messages4 = [
+];
+
 let counter: number = 0;
 jest.unstable_mockModule('../src/util.js', () => {
   return{
@@ -41,6 +68,11 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       alice.meet(bob);
       messageForwarder.flush();
     });
+
+    it('Message Logs', () => {
+      expect(messageForwarder.getFullLog()).toEqual(messages1);
+    });
+
     it('Alice is friends with Bob', () => {
       expect(alice.getFriends()).toEqual([ 'Bob' ]);
     });
@@ -56,12 +88,7 @@ describe('Basic Stingray Triangle - step-by-step', () => {
         }
       });
     });
-    it('Alice has sent and received some messages', () => {
-      expect(alice.getMessageLog()).toEqual([
-        'TO[Bob] meet',
-        'TO[Bob] probe genRanHex1'
-      ]);
-    });
+
     it('Bob is friends with Alice', () => {
       expect(bob.getFriends()).toEqual([ 'Alice' ]);
     });
@@ -76,13 +103,6 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       });
     });
 
-    it('Bob has sent and received some messages', () => {
-      expect(bob.getMessageLog()).toEqual([
-        "FROM[Alice] meet",
-        "FROM[Alice] probe genRanHex1",
-      ]);
-    });
-
     it('Charlie is friends with nobody', () => {
       expect(charlie.getFriends()).toEqual([]);
     });
@@ -90,16 +110,17 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       expect(charlie.getProbes()).toEqual({
       });
     });
-    it('Charlie has sent and received no messages', () => {
-      expect(charlie.getMessageLog()).toEqual([
-      ]);
-    });
 
     describe('Bob meets Charlie', () => {
       beforeAll(() => {
         bob.meet(charlie);
         messageForwarder.flush();
       });
+
+      it('Message Logs', () => {
+        expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2));
+      });
+
       it('Alice is friends with Bob', () => {
         expect(alice.getFriends()).toEqual([ 'Bob' ]);
       });
@@ -146,16 +167,6 @@ describe('Basic Stingray Triangle - step-by-step', () => {
           }
         });
       });
-      it('Bob has sent and received some messages', () => {
-        expect(bob.getMessageLog()).toEqual([
-          "FROM[Alice] meet",
-          "FROM[Alice] probe genRanHex1",
-          "TO[Charlie] meet",
-          "TO[Charlie] probe genRanHex1",      
-          "TO[Alice] probe genRanHex2",
-          "TO[Charlie] probe genRanHex2",
-        ]);
-      });
   
       it('Charlie is friends with Bob', () => {
         expect(charlie.getFriends()).toEqual([ 'Bob' ]);
@@ -176,18 +187,15 @@ describe('Basic Stingray Triangle - step-by-step', () => {
           }
         });
       });
-      it('Charlie has sent and received some messages', () => {
-        expect(charlie.getMessageLog()).toEqual([
-          "FROM[Bob] meet",
-          "FROM[Bob] probe genRanHex1",
-          "FROM[Bob] probe genRanHex2",
-        ]);
-      });
   
       describe('Charlie meets Alice', () => {
         beforeAll(() => {
           charlie.meet(alice);
           messageForwarder.flush();
+        });
+
+        it('Message Logs', () => {
+          expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3));
         });
 
         it('Alice is friends with Bob and Charlie', () => {
@@ -222,20 +230,6 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             // 'genRanHex3'
           ].sort());
         });
-        it('Alice has sent and received some messages', () => {
-          expect(alice.getMessageLog()).toEqual([
-            'TO[Bob] meet',
-            'TO[Bob] probe genRanHex1',
-            "FROM[Bob] probe genRanHex2",
-            "FROM[Charlie] meet",
-            "TO[Charlie] probe genRanHex1",
-            "TO[Charlie] probe genRanHex2",
-            "FROM[Charlie] probe genRanHex1",
-            "FROM[Charlie] probe genRanHex2",
-            "FROM[Charlie] probe genRanHex3",
-            "TO[Bob] probe genRanHex3",
-          ]);
-        });
     
         it('Bob is friends with Alice and Charlie', () => {
           expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
@@ -269,25 +263,7 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             // 'genRanHex3'
           ].sort());
         });
-        it('Bob has sent and received some messages', () => {
-          expect(bob.getMessageLog()).toEqual([
-            "FROM[Alice] meet",
-            "FROM[Alice] probe genRanHex1",
-            "TO[Charlie] meet",
-            "TO[Charlie] probe genRanHex1",
-            "TO[Alice] probe genRanHex2",
-            "TO[Charlie] probe genRanHex2",
-            "FROM[Charlie] probe genRanHex3",
-            "TO[Alice] probe genRanHex3",
-            // "FROM[Charlie] loop genRanHex3 default",
-            // "TO[Alice] loop genRanHex3 default",
-            // "FROM[Alice] loop genRanHex2 default",
-            // "TO[Charlie] loop genRanHex2 default",
-            // "FROM[Alice] loop genRanHex1 default",
-            // "TO[Charlie] loop genRanHex1 default",
-          ]);
-        });
-  
+
         it('Charlie is friends with Bob and Alice', () => {
           expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
         });
@@ -320,24 +296,22 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             // 'genRanHex3'
           ].sort());
         });
-        it('Charlie has sent and received some messages', () => {
-          expect(charlie.getMessageLog()).toEqual([
-            "FROM[Bob] meet",
-            "FROM[Bob] probe genRanHex1",
-            "FROM[Bob] probe genRanHex2",
-            "TO[Alice] meet",
-            "TO[Alice] probe genRanHex1",
-            "TO[Alice] probe genRanHex2",
-            "TO[Bob] probe genRanHex3",
-            "TO[Alice] probe genRanHex3",
-            // "FROM[Alice] probe genRanHex3",
-            // "TO[Bob] loop genRanHex3 default",
-            // "FROM[Alice] loop genRanHex3 default",
-            // "FROM[Bob] loop genRanHex2 default",
-            // "FROM[Bob] loop genRanHex1 default",
-            // "TO[Alice] loop genRanHex1 default"
-          ]);
-        });    
+
+        describe('Another round of messages', () => {
+          beforeAll(() => {
+            messageForwarder.flush();
+          });
+
+          it('Message Logs', () => {
+            expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3, messages4));
+          });
+
+          it('Alice, Bob and Charlie all know each other', () => {
+            expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+            expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+            expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+          });
+        });
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
