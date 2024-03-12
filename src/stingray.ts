@@ -33,6 +33,7 @@ export class Probe {
   private to: string[];
   private homeMinted: boolean;
   private traces: Trace[] = [];
+  
   constructor (from: string[], to: string[], homeMinted: boolean) {
     this.from = from;
     this.to = to;
@@ -210,6 +211,7 @@ export class StingrayProbeStore {
 export class Stingray extends Node {
   protected probeStore: StingrayProbeStore = new StingrayProbeStore();
   // protected loopStore: StingrayLoopStore = new StingrayLoopStore();
+  protected log: string[] = [];
 
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
@@ -223,6 +225,7 @@ export class Stingray extends Node {
   }
   protected offerAllFloodProbes(other: string): void {
     this.probeStore.getKeys().forEach((probeId) => {
+      this.log.push(`OFFERING PROBE ${probeId} TO ${other}`);
       // setting homeMinted to false but we don't expect it to matter since this probe already exists
       this.offerProbe(other, probeId, false);
     });
@@ -241,11 +244,13 @@ export class Stingray extends Node {
   }
   // when this node has sent a `meet` message
   onMeet(other: string): void {
+    this.log.push(`I meet ${other}, and offer them all my flood probes`);
     this.offerAllFloodProbes(other);
     this.createFloodProbe();
   }
   // when this node has received a `meet` message
   handleMeetMessage(sender: string): void {
+    this.log.push(`MEET MESSAGE FROM ${sender}, offering all flood probes`);
     this.offerAllFloodProbes(sender);
   }
   getProbes(): {
@@ -278,12 +283,14 @@ export class Stingray extends Node {
       this.offerFloodProbeToAll(message.getId(), false);
     } else {
       if (probe.isVirginFor(sender)) {
+        this.log.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
           this.createLoopTrace(message.getId(), sender);
         } else {
           this.createPinnedFloodProbe(sender);
         }
-
+      } else {
+        this.log.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
       }
     }
   }
@@ -314,5 +321,8 @@ export class Stingray extends Node {
       });
     });
     return loops;
+  }
+  getLog() {
+    return this.log;
   }
 }

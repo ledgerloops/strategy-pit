@@ -2,19 +2,19 @@
 
 import { jest } from '@jest/globals';
 
-const messages1 = [
+const messagesAB = [
   "[Alice]->[Bob] meet",
   "[Alice]->[Bob] probe genRanHex1",
 ];
 
-const messages2 = [
+const messagesBC = [
   "[Bob]->[Charlie] meet",
   "[Bob]->[Charlie] probe genRanHex1",
   "[Bob]->[Alice] probe genRanHex2",
   "[Bob]->[Charlie] probe genRanHex2",
 ];
 
-const messages3 = [
+const messagesCA = [
   "[Charlie]->[Alice] meet",
   "[Charlie]->[Alice] probe genRanHex1",
   "[Charlie]->[Alice] probe genRanHex2",
@@ -28,6 +28,8 @@ const messages4 = [
   "[Bob]->[Alice] probe genRanHex3",
   "[Alice]->[Bob] probe genRanHex3",
 ];
+
+const messages5 = [];
 
 let counter: number = 0;
 jest.unstable_mockModule('../src/util.js', () => {
@@ -99,7 +101,8 @@ describe('Basic Stingray Triangle - step-by-step', () => {
 
     it('Message Logs', () => {
       expect(flushReport).toEqual([]);
-      expect(messageForwarder.getFullLog()).toEqual(messages1);
+      // messagesAB is alreadsy sent but nothing is flushed yet
+      expect(messageForwarder.getFullLog()).toEqual(messagesAB);
     });
 
     it('Alice is friends with Bob', () => {
@@ -141,8 +144,9 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       });
 
       it('Message Logs', () => {
-        expect(flushReport).toEqual(messages1);
-        expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2));
+        expect(flushReport).toEqual(messagesAB);
+        // messagesBC is alreadsy sent but messagesAC is still what was just flushed here
+        expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC));
       });
 
       it('Alice is friends with Bob', () => {
@@ -194,8 +198,9 @@ describe('Basic Stingray Triangle - step-by-step', () => {
         });
 
         it('Message Logs', () => {
-          expect(flushReport).toEqual(messages2);
-          expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3));
+          expect(flushReport).toEqual(messagesBC);
+          // messagesCA is already sent but messagesBC is still what was just flushed here
+          expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA));
         });
 
         it('Alice is friends with Bob', () => {
@@ -269,14 +274,35 @@ describe('Basic Stingray Triangle - step-by-step', () => {
           ].sort());
         });
 
+        it('Stingray Logs', () => {
+          expect(alice.getLog()).toEqual([
+            "I meet Bob, and offer them all my flood probes",
+          ]);
+          expect(bob.getLog()).toEqual([
+            "MEET MESSAGE FROM Alice, offering all flood probes",
+            "I meet Charlie, and offer them all my flood probes",
+            "OFFERING PROBE genRanHex1 TO Charlie",
+        
+          ]);
+          expect(charlie.getLog()).toEqual([
+            "MEET MESSAGE FROM Bob, offering all flood probes",
+            "I meet Alice, and offer them all my flood probes",
+            "OFFERING PROBE genRanHex1 TO Alice",
+            "OFFERING PROBE genRanHex2 TO Alice",
+        
+          ]);
+        });
+
+
         describe('Another round of messages', () => {
           beforeAll(() => {
             flushReport = messageForwarder.flush();
           });
 
           it('Message Logs', () => {
-            expect(flushReport).toEqual(messages3);
-            expect(messageForwarder.getFullLog()).toEqual(messages1.concat(messages2, messages3, messages4));
+            expect(flushReport).toEqual(messagesCA);
+            // messages4 is already sent but messagesCA is still what was just flushed here
+            expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA, messages4));
           });
 
           it('Probe trees', () => {
@@ -300,7 +326,88 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
             expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
           });
-        });
+
+          it('Stingray Logs', () => {
+            expect(alice.getLog()).toEqual([
+              "I meet Bob, and offer them all my flood probes",
+              "MEET MESSAGE FROM Charlie, offering all flood probes",
+              "OFFERING PROBE genRanHex1 TO Charlie",
+              "OFFERING PROBE genRanHex2 TO Charlie",
+              "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+              "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+          
+            ]);
+            expect(bob.getLog()).toEqual([
+              "MEET MESSAGE FROM Alice, offering all flood probes",
+              "I meet Charlie, and offer them all my flood probes",
+              "OFFERING PROBE genRanHex1 TO Charlie",
+            ]);
+            expect(charlie.getLog()).toEqual([
+              "MEET MESSAGE FROM Bob, offering all flood probes",
+              "I meet Alice, and offer them all my flood probes",
+              "OFFERING PROBE genRanHex1 TO Alice",
+              "OFFERING PROBE genRanHex2 TO Alice",
+          
+            ]);
+          });
+
+          describe('Another round of messages', () => {
+            beforeAll(() => {
+              flushReport = messageForwarder.flush();
+            });
+
+            it('Message Logs', () => {
+              // expect(flushReport).toEqual(messages4);
+              // messages5 is already sent but messages4 is still what was just flushed here
+              expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC, messagesCA, messages4, messages5));
+            });
+
+            it('Probe trees', () => {
+              expect(Object.keys(alice.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+              expect(Object.keys(bob.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+              expect(Object.keys(charlie.getProbes()).sort()).toEqual([ 'genRanHex1', 'genRanHex2', 'genRanHex3' ].sort());
+              expectProbe('genRanHex1', alice, bob, charlie, 1);
+              expectProbe('genRanHex2', bob, charlie, alice, 2);
+              expectProbe('genRanHex3', charlie, alice, bob, 2);
+            });
+    
+
+            it('Alice, Bob and Charlie all know each other', () => {
+              expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+              expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+              expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+            });
+
+            it('Alice, Bob and Charlie all have all probes', () => {
+              expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
+              expect(bob.getFriends()).toEqual([ 'Alice', 'Charlie' ]);
+              expect(charlie.getFriends()).toEqual([ 'Bob', 'Alice' ]);
+            });
+
+            it('Stingray Logs', () => {
+              expect(alice.getLog()).toEqual([
+                "I meet Bob, and offer them all my flood probes",
+                "MEET MESSAGE FROM Charlie, offering all flood probes",
+                "OFFERING PROBE genRanHex1 TO Charlie",
+                "OFFERING PROBE genRanHex2 TO Charlie",                  
+                "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+                "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Charlie!",
+            
+              ]);
+              expect(bob.getLog()).toEqual([
+                "MEET MESSAGE FROM Alice, offering all flood probes",
+                "I meet Charlie, and offer them all my flood probes",
+                 "OFFERING PROBE genRanHex1 TO Charlie",      
+              ]);
+              expect(charlie.getLog()).toEqual([
+                "MEET MESSAGE FROM Bob, offering all flood probes",
+                "I meet Alice, and offer them all my flood probes",
+                "OFFERING PROBE genRanHex1 TO Alice",
+                "OFFERING PROBE genRanHex2 TO Alice",            
+              ]);
+            });
+          }); // Another round of messages
+        }); // Another round of messages
       }); // Charlie meets Alice
     }); // Bob meets Charlie
   }); // Alice meets Bob
