@@ -187,24 +187,30 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       describe('Charlie meets Alice', () => {
         beforeAll(() => {
           charlie.meet(alice);
+          messageForwarder.flush();
         });
 
         it('Alice is friends with Bob and Charlie', () => {
-          // FIXME
-          expect(alice.getFriends()).toEqual([ 'Bob' ]);
+          expect(alice.getFriends()).toEqual([ 'Bob', 'Charlie' ]);
         });
         it('Alice has some probes', () => {
           expect(alice.getProbes()).toEqual({
             genRanHex1: {
               from: [],
               homeMinted: true,
-              to: ['Bob'],
+              to: ['Bob', 'Charlie'],
               traces: [],
             },
             genRanHex2: {
               from: [ 'Bob' ],
               homeMinted: false,
-              to: [],
+              to: ['Charlie'],
+              traces: [],
+            },
+            genRanHex3: {
+              from: [ 'Charlie' ],
+              homeMinted: false,
+              to: ['Bob'],
               traces: [],
             },
           });
@@ -221,17 +227,13 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             'TO[Bob] meet',
             'TO[Bob] probe genRanHex1',
             "FROM[Bob] probe genRanHex2",
-            // "FROM[Charlie] meet",
-            // "FROM[Bob] probe genRanHex3",
-            // "TO[Charlie] probe genRanHex3",
-            // "FROM[Bob] loop genRanHex3 default",
-            // "TO[Charlie] loop genRanHex3 default",
-            // "FROM[Charlie] probe genRanHex2",
-            // "TO[Bob] loop genRanHex2 default",
-            // "FROM[Charlie] loop genRanHex2 default",
-            // "FROM[Charlie] probe genRanHex1",
-            // "TO[Bob] loop genRanHex1 default",
-            // "FROM[Charlie] loop genRanHex1 default",
+            "FROM[Charlie] meet",
+            "TO[Charlie] probe genRanHex1",
+            "TO[Charlie] probe genRanHex2",
+            "FROM[Charlie] probe genRanHex1",
+            "FROM[Charlie] probe genRanHex2",
+            "FROM[Charlie] probe genRanHex3",
+            "TO[Bob] probe genRanHex3",
           ]);
         });
     
@@ -252,6 +254,12 @@ describe('Basic Stingray Triangle - step-by-step', () => {
               to: ['Alice', 'Charlie'],
               traces: [],
             },
+            genRanHex3: {
+              from: ['Charlie'],
+              homeMinted: false,
+              to: ['Alice'],
+              traces: [],
+            },
           }); 
         });
         it('Bob has 3 loops', () => {
@@ -269,8 +277,8 @@ describe('Basic Stingray Triangle - step-by-step', () => {
             "TO[Charlie] probe genRanHex1",
             "TO[Alice] probe genRanHex2",
             "TO[Charlie] probe genRanHex2",
-            // "FROM[Charlie] probe genRanHex3",
-            // "TO[Alice] probe genRanHex3",
+            "FROM[Charlie] probe genRanHex3",
+            "TO[Alice] probe genRanHex3",
             // "FROM[Charlie] loop genRanHex3 default",
             // "TO[Alice] loop genRanHex3 default",
             // "FROM[Alice] loop genRanHex2 default",
