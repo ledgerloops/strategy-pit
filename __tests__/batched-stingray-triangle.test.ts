@@ -46,11 +46,15 @@ describe('Basic Stingray Triangle - step-by-step', () => {
     });
     it('Alice has an genRanHex1 probe for Bob', () => {
       expect(alice.getProbes()).toEqual({
-        genRanHex1: {}
+        genRanHex1: {
+          "from": [],
+          "homeMinted": true,
+          "to": [
+            "Bob",
+          ],
+          "traces": [],
+        }
       });
-    });
-    it('Alice has no loops', () => {
-      expect(alice.getLoops()).toEqual({});
     });
     it('Alice has sent and received some messages', () => {
       expect(alice.getMessageLog()).toEqual([
@@ -64,15 +68,12 @@ describe('Basic Stingray Triangle - step-by-step', () => {
     it('Bob has an genRanHex1 probe with Alice', () => {
       expect(bob.getProbes()).toEqual({
         genRanHex1: {
-          flood: true,
+          traces: [],
           from: ['Alice'],
           homeMinted: false,
           to: []
         }
       });
-    });
-    it('Bob has no loops', () => {
-      expect(bob.getLoops()).toEqual({});
     });
 
     it('Bob has sent and received some messages', () => {
@@ -88,9 +89,6 @@ describe('Basic Stingray Triangle - step-by-step', () => {
     it('Charlie has no probes', () => {
       expect(charlie.getProbes()).toEqual({
       });
-    });
-    it('Charlie has no loops', () => {
-      expect(charlie.getLoops()).toEqual({});
     });
     it('Charlie has sent and received no messages', () => {
       expect(charlie.getMessageLog()).toEqual([
@@ -108,21 +106,18 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       it('Alice has some probes', () => {
         expect(alice.getProbes()).toEqual({
           genRanHex1: {
-            flood: true,
+            traces: [],
             from: [],
             homeMinted: true,
             to: ['Bob']
           },
           genRanHex2: {
-            flood: true,
+            traces: [],
             from: ['Bob'],
             homeMinted: false,
             to: []
           }
         });
-      });
-      it('Alice has no loops', () => {
-        expect(alice.getLoops()).toEqual({});
       });
       it('Alice has sent and received some messages', () => {
         expect(alice.getMessageLog()).toEqual([
@@ -138,21 +133,18 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       it('Bob has some probes', () => {
         expect(bob.getProbes()).toEqual({
           genRanHex1: {
-            flood: true,
+            traces: [],
             from: ['Alice'],
             homeMinted: false,
             to: ['Charlie']
           },
           genRanHex2: {
-            flood: true,
+            traces: [],
             from: [],
             homeMinted: true,
             to: ['Alice','Charlie']
           }
         });
-      });
-      it('Bob has no loops', () => {
-        expect(bob.getLoops()).toEqual({});
       });
       it('Bob has sent and received some messages', () => {
         expect(bob.getMessageLog()).toEqual([
@@ -171,22 +163,19 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       it('Charlie has some probes', () => {
         expect(charlie.getProbes()).toEqual({
           genRanHex1: {
-            flood: true,
+            traces: [],
             from: ['Bob'],
             homeMinted: false,
             to: []
           },
           genRanHex2: {
-            flood: true,
+            traces: [],
             from: ['Bob'],
             homeMinted: false,
             to: []
           }
         });
       });
-      it('Charlie has no loops', () => {
-        expect(charlie.getLoops()).toEqual({});
-      });  
       it('Charlie has sent and received some messages', () => {
         expect(charlie.getMessageLog()).toEqual([
           "FROM[Bob] meet",
@@ -206,19 +195,19 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       //   it('Alice has some probes', () => {
       //     expect(alice.getProbes()).toEqual({
       //       genRanHex1: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
       //       },
       //       genRanHex2: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
       //       },
       //       genRanHex3: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
@@ -257,19 +246,19 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       //   it('Bob has some probes', () => {
       //     expect(bob.getProbes()).toEqual({
       //       genRanHex1: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
       //       },
       //       genRanHex2: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
       //       },
       //       genRanHex3: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
@@ -308,19 +297,19 @@ describe('Basic Stingray Triangle - step-by-step', () => {
       //   it('Charlie has some probes', () => {
       //     expect(charlie.getProbes()).toEqual({
       //       genRanHex1: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
       //       },
       //       genRanHex2: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']
       //       },
       //       genRanHex3: {
-      //         flood: true,
+      //         traces: [],
       //         from: [],
       //         homeMinted: true,
       //         to: ['Alice']

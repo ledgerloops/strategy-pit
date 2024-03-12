@@ -1,6 +1,13 @@
 import { Probe as ProbeMessage, Loop as LoopMessage } from "./messages.js";
-import { genRanHex, objectMap } from "./util.js";
+import { genRanHex } from "./util.js";
 import { Node, BasicMessageForwarder } from "./node.js";
+
+function objectMap(object, mapFn): object {
+  return Object.keys(object).reduce(function(result, key) {
+    result[key] = mapFn(object[key])
+    return result
+  }, {})
+}
 
 export class Trace {
   private traceId: string;
