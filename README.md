@@ -94,6 +94,9 @@ A Probe is *virgin* for a neighbour if it was never sent to them and never recei
 ###  <img src="./img/jackal.png" style="width:50px;border-radius: 10px"/> Jackal
 Same as Stingray except that, as a mitigation for https://github.com/ledgerloops/strategy-pit/issues/7, the other node is told to pauze its messages during the batch of messages that are triggered by an `onMeet` event.
 
+###  <img src="./img/squid.png" style="width:50px;border-radius: 10px"/> Squid
+Same as Jackal except that, in consideration of https://github.com/ledgerloops/strategy-pit/issues/8, of the two nodes in a neighbour relationship, one unpauzes whenever the other one pauzes.
+
 ## Previous Strategies
 ### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
 
