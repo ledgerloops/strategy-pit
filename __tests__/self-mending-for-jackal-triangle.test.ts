@@ -64,8 +64,8 @@ describe('Basic Jackal Triangle - until the music stops', () => {
 
   describe('Message Logs match exported fixture from last run', () => {
     it('Message Logs', () => {
-      const expected = JSON.parse(readFileSync('__tests__/fixtures/batched-jackal-triangle.log', 'utf8'));
-      writeFileSync('__tests__/fixtures/batched-jackal-triangle.log', JSON.stringify(messageForwarder.getFullLog(), null, 2));
+      const expected = JSON.parse(readFileSync('__tests__/fixtures/batched-jackal-triangle.json', 'utf8'));
+      writeFileSync('__tests__/fixtures/batched-jackal-triangle.json', JSON.stringify(messageForwarder.getFullLog(), null, 2));
       expect(messageForwarder.getFullLog()).toEqual(expected);
     });
   });
