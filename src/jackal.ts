@@ -2,7 +2,7 @@ import { Message, Pauze } from "./messages.js";
 import { BasicMessageForwarder, Node } from "./node.js";
 import { Stingray } from "./stingray.js";
 
-export class Squid extends Stingray {
+export class Jackal extends Stingray {
   private pauzed: { [name: string]: Message[] } = {};
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
