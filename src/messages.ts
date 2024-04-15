@@ -12,6 +12,15 @@ export class Meet extends Message {
   }
 }
 
+export class RaiseHand extends Message {
+  getMessageType(): string {
+    return 'raise-hand';
+  }
+  toString(): string {
+    return 'raise-hand';
+  }
+}
+
 export class Probe extends Message {
   private id: string;
   constructor(id: string) {

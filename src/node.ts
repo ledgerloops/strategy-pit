@@ -71,11 +71,22 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
   }
 }
 
+export class Friend {
+  public talking: boolean;
+  public outbox: Message[];
+  public node: Node;
+  constructor(node: Node) {
+    this.node = node;
+    this.talking = true;
+    this.outbox = [];
+  }
+}
+
 export abstract class Node {
     protected messageForwarder: BasicMessageForwarder;
     protected name: string;
     protected friends: {
-      [name: string]: Node
+      [name: string]: Friend
      }  = {};
 
     constructor(name: string, messageForwarder?: BasicMessageForwarder) {
@@ -92,7 +103,7 @@ export abstract class Node {
       if (typeof this.friends[other.getName()] !== 'undefined') {
         throw new Error(`${this.name} is already friends with ${otherName}`);
       }
-      this.friends[otherName] = other;
+      this.friends[otherName] = new Friend(other);
     }
     getFriends(): string[] {
       return Object.keys(this.friends);
@@ -108,7 +119,7 @@ export abstract class Node {
     abstract handleLoopMessage(sender: string, message: Loop): void;
 
     protected sendMessage(to: string, message: Message): void {
-      this.messageForwarder.forwardMessage(this, this.friends[to], message);
+      this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
     }
     receiveMessage(sender: Node, message: Message): void {
       this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);

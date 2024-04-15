@@ -43,9 +43,9 @@ export class Salmon extends Node {
   }
   protected sendNewProbeToExistingFriends(probeForNewLink: string): void {
     Object.values(this.friends).forEach(friend => {
-      if (typeof this.probes[probeForNewLink][friend.getName()] === 'undefined') {
-        this.probes[probeForNewLink][friend.getName()] = true;
-        this.sendMessage(friend.getName(), new Probe(probeForNewLink));
+      if (typeof this.probes[probeForNewLink][friend.node.getName()] === 'undefined') {
+        this.probes[probeForNewLink][friend.node.getName()] = true;
+        this.sendMessage(friend.node.getName(), new Probe(probeForNewLink));
       }
     });
   }
@@ -83,9 +83,9 @@ export class Salmon extends Node {
 
     // check if we can forward this to anyone
     Object.values(this.friends).forEach(friend => {
-      if (typeof this.probes[message.getId()][friend.getName()] === 'undefined') {
-        this.probes[message.getId()][friend.getName()] = true;
-        this.sendMessage(friend.getName(), new Probe(message.getId()));
+      if (typeof this.probes[message.getId()][friend.node.getName()] === 'undefined') {
+        this.probes[message.getId()][friend.node.getName()] = true;
+        this.sendMessage(friend.node.getName(), new Probe(message.getId()));
       }
     });
     // this.addFriend(message.getSender());
