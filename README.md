@@ -66,6 +66,9 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 7. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward, Edward->Alice.
 
 ## Current Strategies
+(coming soon)
+
+## Second Generation Strategies
 ###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
 The Stingray has a more detailed data storage (both for Flood Probes and for Trace Probes) than its predecessors Salmon, Pelican and Petrogale.
 A Stingray reacts to events with actions. Events are:
@@ -99,7 +102,7 @@ Same as Stingray except that, as a mitigation for https://github.com/ledgerloops
 ###  <img src="./img/squid.png" style="width:50px;border-radius: 10px"/> Squid
 Same as Jackal except that, in consideration of https://github.com/ledgerloops/strategy-pit/issues/8, of the two nodes in a neighbour relationship, one unpauzes whenever the other one pauzes.
 
-## Previous Strategies
+## First Generation Strategies
 ### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
 
 The Salmon strategy works as follows:
