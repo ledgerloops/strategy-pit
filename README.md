@@ -6,6 +6,8 @@ Some strategies will integrate discovery of loops with negotiation of exchange r
 The strategies are tested in different network models and with different network topologies.
 
 ## Network simulators
+See also 2024 work on ngraph generator in [ledgerloops/ledgerloops repo](https://github.com/ledgerloops/ledgerloops).
+
 ### Basic
 In the basic network simulator, nodes Alice and Bob can become neighbours with:
 ```js
