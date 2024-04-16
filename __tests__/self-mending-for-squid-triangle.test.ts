@@ -12,32 +12,6 @@ jest.unstable_mockModule('../src/util.js', () => {
   };
 });
 
-// function expectProbe(probeId: string, first: any, second: any, third: any, order: number): void {
-//   // minted at first:
-//   expect(first.getProbes()[probeId].homeMinted).toEqual(true);
-//   expect(second.getProbes()[probeId].homeMinted).toEqual(false);
-//   expect(third.getProbes()[probeId].homeMinted).toEqual(false);
-//   if (order === 1) {
-//     // sent:
-//     expect(first.getProbes()[probeId].to.sort()).toEqual([second.getName(), third.getName()].sort());
-//     expect(second.getProbes()[probeId].to).toEqual([third.getName()]);
-//     expect(third.getProbes()[probeId].to).toEqual([first.getName()]);
-//     // received:
-//     expect(first.getProbes()[probeId].from).toEqual([]);
-//     expect(second.getProbes()[probeId].from).toEqual([first.getName()]);
-//     expect(third.getProbes()[probeId].from).toEqual([second.getName()]);
-//   } else if (order === 2) {
-//     // sent:
-//     expect(first.getProbes()[probeId].to.sort()).toEqual([second.getName(), third.getName()].sort());
-//     expect(second.getProbes()[probeId].to).toEqual([third.getName()]);
-//     expect(third.getProbes()[probeId].to).toEqual([second.getName()]);
-//     // received:
-//     expect(first.getProbes()[probeId].from).toEqual([]);
-//     expect(second.getProbes()[probeId].from).toEqual([first.getName()]);
-//     expect(third.getProbes()[probeId].from).toEqual([first.getName()]);
-//   }
-// }
-
 describe('Basic Squid Triangle - until the music stops', () => {
   // let Squid: unknown;
   let alice: any;

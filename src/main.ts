@@ -4,4 +4,5 @@ export { Petrogale } from './petrogale.js';
 export { Stingray } from './stingray.js';
 export { Jackal } from './jackal.js';
 export { Squid } from './squid.js';
+export { Butterfly } from './butterfly.js';
 export { BasicMessageForwarder, BatchedMessageForwarder } from './node.js';

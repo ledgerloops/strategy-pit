@@ -1,5 +1,14 @@
-import { BasicMessageForwarder } from "../src/node.js";
-import { Butterfly } from "../src/butterfly.js";
+import { jest } from '@jest/globals';
+
+let counter: number = 0;
+jest.unstable_mockModule('../src/util.js', () => {
+  return{
+    genRanHex: jest.fn((): string => {
+      return `genRanHex${counter++}`;
+    })
+  };
+});
+const { Butterfly, BasicMessageForwarder } = await import('../src/main.js');
 
 describe('Butterfly', () => {
   it('starts a flood probe when it meets a new node', () => {
@@ -13,10 +22,13 @@ describe('Butterfly', () => {
     bob.meet(charlie);
     expect(messageForwarder.getFullLog()).toEqual([
       "[Alice]->[Bob] meet",
+      "[Alice]->[Bob] probe genRanHex0",
       "[Bob]->[Charlie] meet",
-      // "[Bob]->[Alice] raise-hand",
-      // "[Alice]->[Bob] over-to-you",
-      // "[Bob]->[Alice] probe",
+      "[Bob]->[Charlie] probe genRanHex0",
+      "[Bob]->[Alice] raise-hand",
+      "[Alice]->[Bob] over-to-you",
+      "[Bob]->[Alice] probe genRanHex1",
+      "[Bob]->[Charlie] probe genRanHex1",
     ]);
   });
 });
