@@ -72,13 +72,19 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
   }
 }
 
+export enum HandRaisingStatus {
+  Listening,
+  Waiting,
+  Talking,
+}
+
 export class Friend {
-  public talking: boolean;
+  public handRaisingStatus: HandRaisingStatus;
   public outbox: Message[];
   public node: Node;
-  constructor(node: Node, talking: boolean) {
+  constructor(node: Node, handRaisingStatus: HandRaisingStatus) {
     this.node = node;
-    this.talking = talking;
+    this.handRaisingStatus = handRaisingStatus;
     this.outbox = [];
   }
 }
@@ -98,20 +104,20 @@ export abstract class Node {
         return this.name;
     }
     abstract onMeet(other: string): void;
-    protected addFriend(other: Node, talking: boolean): void {
+    protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
       const otherName = other.getName();
       // console.log(`${this.name} meets ${otherName}`);
       if (typeof this.friends[other.getName()] !== 'undefined') {
         throw new Error(`${this.name} is already friends with ${otherName}`);
       }
-      this.friends[otherName] = new Friend(other, talking);
+      this.friends[otherName] = new Friend(other, handRaisingStatus);
     }
     getFriends(): string[] {
       return Object.keys(this.friends);
     }
  
     meet(other: Node): void {
-      this.addFriend(other, true);
+      this.addFriend(other, HandRaisingStatus.Talking);
       this.onMeet(other.getName());
     }
  
@@ -126,7 +132,7 @@ export abstract class Node {
       this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
       // console.log(`${this.name} receives message from ${sender}`, message);
       if (message.getMessageType() === `meet`) {
-        this.addFriend(sender, false);
+        this.addFriend(sender, HandRaisingStatus.Listening);
         this.handleMeetMessage(sender.getName(), message as Meet);
       } else if (message.getMessageType() === `probe`) {
         this.handleProbeMessage(sender.getName(), message as Probe);
