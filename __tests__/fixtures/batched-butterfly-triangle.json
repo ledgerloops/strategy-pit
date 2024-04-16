@@ -1,37 +1,39 @@
-[
-  "[---]->[---] ---",
-  "[Alice]->[Bob] meet",
-  "[Alice]->[Bob] probe genRanHex0",
-  "[---]->[---] ---",
-  "[Bob]->[Charlie] meet",
-  "[Bob]->[Charlie] probe genRanHex0",
-  "[Bob]->[Alice] raise-hand",
-  "[Bob]->[Charlie] probe genRanHex1",
-  "[---]->[---] ---",
-  "[Alice]->[Bob] over-to-you",
-  "[Charlie]->[Alice] meet",
-  "[Charlie]->[Alice] probe genRanHex0",
-  "[Charlie]->[Alice] probe genRanHex1",
-  "[Charlie]->[Bob] raise-hand",
-  "[Charlie]->[Alice] probe genRanHex2",
-  "[---]->[---] ---",
-  "[Bob]->[Alice] probe genRanHex1",
-  "[Alice]->[Charlie] raise-hand",
-  "[Alice]->[Bob] raise-hand",
-  "[Bob]->[Charlie] over-to-you",
-  "[---]->[---] ---",
-  "[Charlie]->[Alice] over-to-you",
-  "[Bob]->[Alice] over-to-you",
-  "[Charlie]->[Bob] probe genRanHex2",
-  "[---]->[---] ---",
-  "[Alice]->[Charlie] probe genRanHex0",
-  "[Alice]->[Bob] probe genRanHex1",
-  "[Alice]->[Bob] probe genRanHex2",
-  "[Bob]->[Alice] raise-hand",
-  "[---]->[---] ---",
-  "[Alice]->[Bob] over-to-you",
-  "[---]->[---] ---",
-  "[Bob]->[Alice] probe genRanHex2",
-  "[---]->[---] ---",
-  "[---]->[---] ---"
-]
+{
+  "full": [
+    "[---]->[---] ---",
+    "[Alice]->[Bob] meet",
+    "[---]->[---] ---",
+    "[Bob]->[Charlie] meet",
+    "[---]->[---] ---",
+    "[Charlie]->[Alice] meet",
+    "[---]->[---] ---",
+    "[---]->[---] ---",
+    "[Alice]->[Bob] probe genRanHex0",
+    "[Bob]->[Charlie] probe genRanHex1",
+    "[Charlie]->[Alice] probe genRanHex2"
+  ],
+  "probes": {
+    "probe genRanHex0": [
+      "[Alice]->[Bob]"
+    ],
+    "probe genRanHex1": [
+      "[Bob]->[Charlie]"
+    ],
+    "probe genRanHex2": [
+      "[Charlie]->[Alice]"
+    ]
+  },
+  "alice": [
+    "I meet Bob, and offer them all my flood probes",
+    "MEET MESSAGE FROM Charlie, offering all flood probes",
+    "OFFERING PROBE genRanHex0 TO Charlie"
+  ],
+  "bob": [
+    "MEET MESSAGE FROM Alice, offering all flood probes",
+    "I meet Charlie, and offer them all my flood probes"
+  ],
+  "charlie": [
+    "MEET MESSAGE FROM Bob, offering all flood probes",
+    "I meet Alice, and offer them all my flood probes"
+  ]
+}

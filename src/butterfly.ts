@@ -147,13 +147,14 @@ export class Butterfly extends Polite {
     probe.recordOutgoing(to);
     this.sendMessage(to, message);
   }
-  protected offerProbe(friend: string, probeId: string, homeMinted: boolean): void {
+  protected async offerProbe(friend: string, probeId: string, homeMinted: boolean): Promise<void> {
     const probe = this.probeStore.ensure(probeId, homeMinted);
+    await this.semaphore(friend);
     if (probe.isVirginFor(friend)) {
       this.sendProbe(friend, new ProbeMessage(probeId));
     }
   }
-  protected offerAllFloodProbes(other: string): void {
+  protected async offerAllFloodProbes(other: string): Promise<void> {
     this.probeStore.getKeys().forEach((probeId) => {
       this.debugLog.push(`OFFERING PROBE ${probeId} TO ${other}`);
       // setting homeMinted to false but we don't expect it to matter since this probe already exists

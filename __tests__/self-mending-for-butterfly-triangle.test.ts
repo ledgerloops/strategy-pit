@@ -35,12 +35,33 @@ describe('Basic Butterfly Triangle - until the music stops', () => {
       flushReport = messageForwarder.flush();
     } while (flushReport.length > 0);
   });
+  it('Probes are not echoed back to the sender', () => {
+    const probeLogs = messageForwarder.getProbeLogs();
+    for (const probeId in probeLogs) {
+      const seen = [ probeId ];
+      for (const entry of probeLogs[probeId]) {
+        const fromTo = entry.split('->');
+        if (fromTo.length < 2) continue;
+        const toFrom = [ fromTo[1], fromTo[0]];
+        seen.push(fromTo.toString());
+        expect(seen).not.toContain(toFrom.toString());
+      }
+      // console.log(probeId, seen);
+    }
+  });
 
   describe('Message Logs match exported fixture from last run', () => {
     it('Message Logs', () => {
       const expected = JSON.parse(readFileSync('__tests__/fixtures/batched-butterfly-triangle.json', 'utf8'));
-      writeFileSync('__tests__/fixtures/batched-butterfly-triangle.json', JSON.stringify(messageForwarder.getFullLog(), null, 2));
-      expect(messageForwarder.getFullLog()).toEqual(expected);
+      const actual = {
+        full: messageForwarder.getFullLog(),
+        probes: messageForwarder.getProbeLogs(),
+        alice: alice.debugLog,
+        bob: bob.debugLog,
+        charlie: charlie.debugLog,
+      };
+      writeFileSync('__tests__/fixtures/batched-butterfly-triangle.json', JSON.stringify(actual, null, 2) + '\n');
+      expect(actual).toEqual(expected);
     });
   });
 });

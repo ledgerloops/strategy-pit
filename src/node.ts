@@ -1,17 +1,31 @@
 import { Message, Meet, Probe, Loop } from "./messages.js";
 
+class Entry {
+  sender: string;
+  receiver: string;
+  message: Message;
+  event: string;
+  constructor(sender: string, receiver: string, message: Message, event: string) {
+    this.sender = sender;
+    this.receiver = receiver;
+    this.message = message;
+    this.event = event;
+  }
+  describePath(): string {
+    if (this.event === 'sent') {
+      return `[${this.sender}]->[${this.receiver}]`;
+    } else {
+      return `[${this.sender}]>-[${this.receiver}]`;
+    }
+  }
+}
 export class BasicMessageForwarder {
-  private log: {
-    sender: string,
-    receiver: string,
-    message: Message,
-    event: string
-  }[] = [];
+  private log: Entry[] = [];
   logMessageSent(sender: string, receiver: string, message: Message): void {
-    this.log.push({ sender, receiver, message, event: 'sent' });
+    this.log.push(new Entry(sender, receiver, message, 'sent'));
   }
   logMessageReceived(sender: string, receiver: string, message: Message): void {
-    this.log.push({ sender, receiver, message, event: 'received' });
+    this.log.push(new Entry(sender, receiver, message, 'received'));
   }
   forwardMessage(sender: Node, receiver: Node, message: Message): void {
     this.logMessageSent(sender.getName(), receiver.getName(), message);
@@ -37,13 +51,22 @@ export class BasicMessageForwarder {
   }
   getFullLog(includeEachMessageTwice: boolean = false): string[] {
     const filtered = (includeEachMessageTwice) ? this.log : this.log.filter(entry => entry.event === 'sent');
-    return filtered.map(entry => {
-      if (entry.event === 'sent') {
-        return `[${entry.sender}]->[${entry.receiver}] ${entry.message.toString()}`;
-      } else {
-        return `[${entry.sender}]>-[${entry.receiver}] ${entry.message.toString()}`;
+    return filtered.map(entry => `${entry.describePath()} ${entry.message.toString()}`);
+  }
+  getProbeLogs(): {
+    [text: string]: string[]
+  } {
+    const probeLogs: {
+      [text: string]: string[]
+    } = {};
+    // console.log(this.log);
+    this.log.filter(entry => entry.message.getMessageType() === 'probe').map(entry => {
+      if (typeof probeLogs[entry.message.toString()] === 'undefined') {
+        probeLogs[entry.message.toString()] = [];
       }
+      probeLogs[entry.message.toString()].push(entry.describePath());
     });
+    return probeLogs;
   }
 }
 export class BatchedMessageForwarder extends BasicMessageForwarder {
@@ -57,7 +80,7 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
     this.batch.push({ sender, receiver, message });
   }
   flush(): string[] {
-    this.logMessageSent('---', '---', { toString: () => '---' } as Message);
+    this.logMessageSent('---', '---', { toString: () => '---', getMessageType: () => 'separator' } as Message);
     const flushReport: string[] = [];
     const batch = this.batch;
     this.batch = [];

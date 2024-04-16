@@ -2,6 +2,12 @@ import { Message, OverToYou, RaiseHand } from './messages.js';
 import { Node, BasicMessageForwarder, HandRaisingStatus } from "./node.js";
 
 export abstract class Polite extends Node {
+  private promises: {
+    [name: string]: {
+      resolve: () => void,
+      reject: () => void,
+    }[]
+  } = {};
   private politeProtocolLog: string[] = [];
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
@@ -27,8 +33,25 @@ export abstract class Polite extends Node {
       const message = this.friends[from].outbox.shift();
       super.sendMessage(from, message);
     }
+    if (typeof this.promises[from] !== 'undefined') {
+      this.promises[from].forEach(promise => {
+        promise.resolve();
+      });
+      delete this.promises[from];
+    }
   }
-  
+  protected async semaphore(to: string): Promise<void> {
+    if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
+      return;
+    }
+    this.politeProtocolLog.push(`${this.name} waits for semaphore to talk to ${to}`);
+    return new Promise((resolve, reject) => {
+      if (typeof this.promises[to] === 'undefined') {
+        this.promises[to] = [];
+      }
+      this.promises[to].push({ resolve, reject });
+    });
+  }
   protected sendMessage(to: string, message: Message): void {
     if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
       this.politeProtocolLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
