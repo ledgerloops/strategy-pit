@@ -21,6 +21,15 @@ export class RaiseHand extends Message {
   }
 }
 
+export class OverToYou extends Message {
+  getMessageType(): string {
+    return 'over-to-you';
+  }
+  toString(): string {
+    return 'over-to-you';
+  }
+}
+
 export class Probe extends Message {
   private id: string;
   constructor(id: string) {
