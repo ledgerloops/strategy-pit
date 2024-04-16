@@ -66,7 +66,7 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 7. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward, Edward->Alice.
 
 ## Current Strategies
-###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Butterfly
+###  <img src="./img/butterfly.png" style="width:50px;border-radius: 10px"/> Butterfly
 The Butterfly is the first strategy in the third generation, which uses:
 * [Polite Messaging](https://github.com/ledgerloops/strategy-pit/issues/8) to avoid losing a chance for proof of communication due to probes crossing over
 * Flood probes in both directions when a new link is added
