@@ -1,13 +1,12 @@
 {
   "full": [
     "[---]->[---] ---",
+    "[---]->[---] ---",
+    "[---]->[---] ---",
+    "[---]->[---] ---",
     "[Alice]->[Bob] meet",
-    "[---]->[---] ---",
     "[Bob]->[Charlie] meet",
-    "[---]->[---] ---",
     "[Charlie]->[Alice] meet",
-    "[---]->[---] ---",
-    "[---]->[---] ---",
     "[Alice]->[Bob] probe genRanHex0",
     "[Bob]->[Charlie] probe genRanHex1",
     "[Charlie]->[Alice] probe genRanHex2"
@@ -24,16 +23,12 @@
     ]
   },
   "alice": [
-    "I meet Bob, and offer them all my flood probes",
-    "MEET MESSAGE FROM Charlie, offering all flood probes",
-    "OFFERING PROBE genRanHex0 TO Charlie"
+    "I meet Bob, and offer them all my flood probes"
   ],
   "bob": [
-    "MEET MESSAGE FROM Alice, offering all flood probes",
     "I meet Charlie, and offer them all my flood probes"
   ],
   "charlie": [
-    "MEET MESSAGE FROM Bob, offering all flood probes",
     "I meet Alice, and offer them all my flood probes"
   ]
 }

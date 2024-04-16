@@ -21,12 +21,14 @@ export abstract class Polite extends Node {
     this.messageForwarder.forwardMessage(this, this.friends[to].node, new RaiseHand());
   }
   private handleRaiseHand(from: string): void {
+    console.log(this.name, 'receives raised hand from', from);
     this.politeProtocolLog.push(`${this.name} receives raised hand from ${from}`);
     this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
     this.politeProtocolLog.push(`${this.name} sends over-to-you message to ${from}`);
     super.sendMessage(from, new OverToYou());
   }
   private handleOverToYouMessage(from: string): void {
+    console.log(this.name, 'receives over-to-you from', from);
     this.politeProtocolLog.push(`${this.name} receives over-to-you from ${from}`);
     this.friends[from].handRaisingStatus = HandRaisingStatus.Talking;
     while (this.friends[from].outbox.length > 0) {
@@ -42,27 +44,28 @@ export abstract class Polite extends Node {
   }
   protected async semaphore(to: string): Promise<void> {
     if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
+      console.log(this.name, 'is talking to', to);
       return;
     }
+    console.log(this.name, 'is waiting to talk to', to);
+
     this.politeProtocolLog.push(`${this.name} waits for semaphore to talk to ${to}`);
-    return new Promise((resolve, reject) => {
+    const ret: Promise<void> = new Promise((resolve, reject) => {
       if (typeof this.promises[to] === 'undefined') {
         this.promises[to] = [];
       }
       this.promises[to].push({ resolve, reject });
     });
-  }
-  protected sendMessage(to: string, message: Message): void {
-    if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
-      this.politeProtocolLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
-      this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
-      return;
-    }
-    this.politeProtocolLog.push(`${this.name} is not talking and queues ${message.getMessageType()} message for ${to}`);
-    this.friends[to].outbox.push(message);
     if(this.friends[to].handRaisingStatus === HandRaisingStatus.Listening) {
+      console.log(this.name, 'raising hand to', to);
       this.raiseHand(to);
     }
+    return ret;
+  }
+  protected async sendMessage(to: string, message: Message): Promise<void> {
+    await this.semaphore(to);
+    this.politeProtocolLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
   receiveMessage(sender: Node, message: Message): void {
     // console.log(`${this.name} receives message from ${sender}`, message);

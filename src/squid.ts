@@ -8,7 +8,7 @@ export class Squid extends Stingray {
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
-  onMeet(node: string): void {
+  async onMeet(node: string): Promise<void> {
     this.sendMessage(node, new Pauze(true));
     super.onMeet(node);
     if (this.theyHaveTheirHandUp[node]) {

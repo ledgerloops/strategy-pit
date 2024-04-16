@@ -49,7 +49,7 @@ export class Salmon extends Node {
       }
     });
   }
-  onMeet(other: string): void {
+  async onMeet(other: string): Promise<void> {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
