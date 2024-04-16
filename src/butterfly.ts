@@ -155,30 +155,32 @@ export class Butterfly extends Polite {
     }
   }
   protected async offerAllFloodProbes(other: string): Promise<void> {
-    this.probeStore.getKeys().forEach((probeId) => {
+    const promises = this.probeStore.getKeys().map((probeId) => {
       this.debugLog.push(`OFFERING PROBE ${probeId} TO ${other}`);
       // setting homeMinted to false but we don't expect it to matter since this probe already exists
-      this.offerProbe(other, probeId, false);
+      return this.offerProbe(other, probeId, false);
     });
+    await Promise.all(promises);
   }
-  protected offerFloodProbeToAll(probeId: string, homeMinted: boolean): void {
-    this.getFriends().forEach(friend => {
-      this.offerProbe(friend, probeId, homeMinted);
+  protected async offerFloodProbeToAll(probeId: string, homeMinted: boolean): Promise<void> {
+    const promises = this.getFriends().map(friend => {
+      return this.offerProbe(friend, probeId, homeMinted);
     });
+    await Promise.all(promises);
   }
-  protected createFloodProbe(): void {
-    this.offerFloodProbeToAll(genRanHex(8), true);
+  protected createFloodProbe(): Promise<void> {
+    return this.offerFloodProbeToAll(genRanHex(8), true);
   }
   protected createPinnedFloodProbe(recipient: string): void {
     const probeForNewLink = genRanHex(8);
     this.offerProbe(recipient, probeForNewLink, true);
   }
   // when this node has sent a `meet` message
-  onMeet(other: string): void {
+  async onMeet(other: string): Promise<void> {
     this.debugLog.push(`I meet ${other}, and offer them all my flood probes`);
     this.sendMessage(other, new Meet());
-    this.offerAllFloodProbes(other);
-    this.createFloodProbe();
+    await this.offerAllFloodProbes(other);
+    await this.createFloodProbe();
   }
   // when this node has received a `meet` message
   handleMeetMessage(sender: string): void {

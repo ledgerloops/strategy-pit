@@ -126,7 +126,7 @@ export abstract class Node {
     getName(): string {
         return this.name;
     }
-    abstract onMeet(other: string): void;
+    abstract onMeet(other: string): Promise<void>;
     protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
       const otherName = other.getName();
       // console.log(`${this.name} meets ${otherName}`);
@@ -139,9 +139,9 @@ export abstract class Node {
       return Object.keys(this.friends);
     }
  
-    meet(other: Node): void {
+    meet(other: Node): Promise<void> {
       this.addFriend(other, HandRaisingStatus.Talking);
-      this.onMeet(other.getName());
+      return this.onMeet(other.getName());
     }
  
     abstract handleMeetMessage(sender: string, message: Meet): void;
