@@ -75,9 +75,9 @@ export class Friend {
   public talking: boolean;
   public outbox: Message[];
   public node: Node;
-  constructor(node: Node) {
+  constructor(node: Node, talking: boolean) {
     this.node = node;
-    this.talking = true;
+    this.talking = talking;
     this.outbox = [];
   }
 }
@@ -97,20 +97,20 @@ export abstract class Node {
         return this.name;
     }
     abstract onMeet(other: string): void;
-    protected addFriend(other: Node): void {
+    protected addFriend(other: Node, talking: boolean): void {
       const otherName = other.getName();
       // console.log(`${this.name} meets ${otherName}`);
       if (typeof this.friends[other.getName()] !== 'undefined') {
         throw new Error(`${this.name} is already friends with ${otherName}`);
       }
-      this.friends[otherName] = new Friend(other);
+      this.friends[otherName] = new Friend(other, talking);
     }
     getFriends(): string[] {
       return Object.keys(this.friends);
     }
  
     meet(other: Node): void {
-      this.addFriend(other);
+      this.addFriend(other, true);
       this.onMeet(other.getName());
     }
  
@@ -125,7 +125,7 @@ export abstract class Node {
       this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
       // console.log(`${this.name} receives message from ${sender}`, message);
       if (message.getMessageType() === `meet`) {
-        this.addFriend(sender);
+        this.addFriend(sender, false);
         this.handleMeetMessage(sender.getName(), message as Meet);
       } else if (message.getMessageType() === `probe`) {
         this.handleProbeMessage(sender.getName(), message as Probe);
