@@ -57,6 +57,7 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
     this.batch.push({ sender, receiver, message });
   }
   flush(): string[] {
+    this.logMessageSent('---', '---', { toString: () => '---' } as Message);
     const flushReport: string[] = [];
     const batch = this.batch;
     this.batch = [];

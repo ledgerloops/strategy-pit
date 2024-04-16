@@ -2,6 +2,9 @@
 
 import { jest } from '@jest/globals';
 
+const separator = [
+  "[---]->[---] ---",
+];
 const messagesAB = [
   "[Alice]->[Bob] pauze true",
   "[Alice]->[Bob] meet",
@@ -10,6 +13,7 @@ const messagesAB = [
 ];
 
 const messagesBC = [
+  "[---]->[---] ---",
   "[Bob]->[Charlie] pauze true",
   "[Bob]->[Charlie] meet",
   "[Bob]->[Charlie] probe genRanHex1",
@@ -29,24 +33,25 @@ const messagesCA = [
 ];
 
 const fullLogRound4 = [
+  "[---]->[---] ---",
   "[Alice]->[Bob] pauze true",
   "[Alice]->[Bob] meet",
   "[Alice]->[Bob] probe genRanHex1",
   "[Alice]->[Bob] pauze false",
+  "[---]->[---] ---",
   "[Alice]>-[Bob] meet",
   "[Alice]>-[Bob] probe genRanHex1",
-
   "[Bob]->[Charlie] pauze true",
   "[Bob]->[Charlie] meet",
   "[Bob]->[Charlie] probe genRanHex1",
   "[Bob]->[Alice] probe genRanHex2",
   "[Bob]->[Charlie] probe genRanHex2",
   "[Bob]->[Charlie] pauze false",
+  "[---]->[---] ---",
   "[Bob]>-[Charlie] meet",
   "[Bob]>-[Charlie] probe genRanHex1",
   "[Bob]>-[Alice] probe genRanHex2",
   "[Bob]>-[Charlie] probe genRanHex2",
-
   "[Charlie]->[Alice] pauze true",
   "[Charlie]->[Alice] meet",
   "[Charlie]->[Alice] probe genRanHex1",
@@ -54,7 +59,7 @@ const fullLogRound4 = [
   "[Charlie]->[Bob] probe genRanHex3",
   "[Charlie]->[Alice] probe genRanHex3",
   "[Charlie]->[Alice] pauze false",
-
+  "[---]->[---] ---",
   "[Charlie]>-[Alice] meet",
   "[Charlie]>-[Alice] probe genRanHex1",
   "[Charlie]>-[Alice] probe genRanHex2",
@@ -70,6 +75,7 @@ const fullLogRound4 = [
 ];
 
 const fullLogRound5 = [
+  "[---]->[---] ---",
   "[Bob]>-[Alice] probe genRanHex3",
   "[Alice]>-[Bob] probe genRanHex3",
   "[Alice]>-[Charlie] probe genRanHex1",
@@ -81,6 +87,7 @@ const fullLogRound5 = [
 ];
 
 const fullLogsRound6 = [
+  "[---]->[---] ---",
   "[Charlie]>-[Bob] loop genRanHex1 genRanHex4",
   "[Bob]->[Alice] loop genRanHex1 genRanHex4",
   "[Charlie]>-[Bob] probe genRanHex5",
@@ -88,12 +95,14 @@ const fullLogsRound6 = [
 ];
 
 const fullLogsRound7 = [
+  "[---]->[---] ---",
   "[Bob]>-[Alice] loop genRanHex1 genRanHex4",
   "[Bob]>-[Alice] probe genRanHex5",
   "[Alice]->[Bob] loop genRanHex5 genRanHex6",
 ];
 
 const fullLogsRound8 = [
+  "[---]->[---] ---",
   "[Alice]>-[Bob] loop genRanHex5 genRanHex6",
   "[Bob]->[Charlie] loop genRanHex5 genRanHex6",
 ];
@@ -156,7 +165,7 @@ describe('already friends', () => {
   });
 });
 
-describe('Basic Jackal Triangle - step-by-step', () => {
+describe('Batched Jackal Triangle - step-by-step', () => {
   // let Jackal: unknown;
   let alice: any;
   let bob: any;
@@ -180,7 +189,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
     it('Message Logs', () => {
       expect(flushReport).toEqual([]);
       // messagesAB is alreadsy sent but nothing is flushed yet
-      expect(messageForwarder.getFullLog()).toEqual(messagesAB);
+      expect(messageForwarder.getFullLog()).toEqual(separator.concat(messagesAB));
     });
 
     it('Alice is friends with Bob', () => {
@@ -224,7 +233,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
       it('Message Logs', () => {
         expect(flushReport).toEqual(messagesAB);
         // messagesBC is alreadsy sent but messagesAC is still what was just flushed here
-        expect(messageForwarder.getFullLog()).toEqual([].concat(messagesAB, messagesBC));
+        expect(messageForwarder.getFullLog()).toEqual(separator.concat(messagesAB, messagesBC));
       });
 
       it('Alice is friends with Bob', () => {
@@ -286,11 +295,12 @@ describe('Basic Jackal Triangle - step-by-step', () => {
          ]);
           // messagesCA is already sent but messagesBC is still what was just flushed here
           expect(messageForwarder.getFullLog(true)).toEqual([
+            "[---]->[---] ---",
             "[Alice]->[Bob] pauze true",
             "[Alice]->[Bob] meet",
             "[Alice]->[Bob] probe genRanHex1",
             "[Alice]->[Bob] pauze false",
-
+            "[---]->[---] ---",
             "[Alice]>-[Bob] meet",
             "[Alice]>-[Bob] probe genRanHex1",
 
@@ -301,7 +311,7 @@ describe('Basic Jackal Triangle - step-by-step', () => {
             "[Bob]->[Alice] probe genRanHex2",
             "[Bob]->[Charlie] probe genRanHex2",
             "[Bob]->[Charlie] pauze false",
-
+            "[---]->[---] ---",
             "[Bob]>-[Charlie] meet",
             "[Bob]>-[Charlie] probe genRanHex1",
             "[Bob]>-[Alice] probe genRanHex2",
