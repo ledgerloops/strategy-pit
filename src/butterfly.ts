@@ -1,6 +1,6 @@
 import { ProbeMessage as ProbeMessage, LoopMessage as LoopMessage, MeetMessage, HaveProbesMessage, OkayToSendProbesMessage } from "../src/messages.js";
 import { BasicMessageForwarder, HandRaisingStatus, Node } from "../src/node.js";
-import { genRanHex } from "./util.js";
+import { genRanHex } from "./genRanHex.js";
 
 function objectMap(object, mapFn): object {
   return Object.keys(object).reduce(function(result, key) {
@@ -291,14 +291,22 @@ export class Butterfly extends Node {
       this.debugLog.push(`UNEXPECTED: PROBE UNKNOWN TO US!`);
       return;
     }
-    if (probe.getFrom().length === 0) {
-      this.debugLog.push(`OUR LOOP TRACE CAME BACK!`);
-      this.loopsFound.push(message.getProbeId() + ':' + message.getLoopId());
-      return;
-    }
-    if (probe.getFrom().length > 1) {
-      this.debugLog.push(`UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
-      return;
+    const traces = probe.getTraces();
+    for (let i = 0; i < traces.length; i++) {
+      const trace = traces[i];
+      if (trace.getTraceId() === message.getLoopId()) {
+        if (probe.getFrom().length === 0) {
+          this.debugLog.push(`OUR LOOP TRACE CAME BACK!`);
+          this.loopsFound.push(message.getProbeId() + ':' + message.getLoopId());
+          return;
+        }
+        if (probe.getFrom().length > 1) {
+          this.debugLog.push(`UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
+          return;
+        }
+        this.debugLog.push(`LOOP TRACE ${message.getLoopId()} for probe ${message.getProbeId()} ALREADY KNOWN TO US! NOT FORWARDING DUPLICATE MESSAGE`);
+        return;
+      }
     }
     this.debugLog.push(`FORWARDING LOOP TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];

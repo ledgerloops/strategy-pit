@@ -1,5 +1,5 @@
 import { ProbeMessage, LoopMessage } from "./messages.js";
-import { genRanHex } from "./util.js";
+import { genRanHex } from "./genRanHex.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
 export class SalmonLoopStore {

@@ -1,5 +1,5 @@
 import { ProbeMessage as ProbeMessage, LoopMessage as LoopMessage, MeetMessage, Message } from "./messages.js";
-import { genRanHex } from "./util.js";
+import { genRanHex } from "./genRanHex.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
 function objectMap(object, mapFn): object {

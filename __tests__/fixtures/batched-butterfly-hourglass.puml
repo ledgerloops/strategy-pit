@@ -1,0 +1,425 @@
+@startuml
+--- -[#green]-> ---: ---
+Alice -[#green]-> Bob: meet
+Alice -[#green]-> Bob: probe genRanHex0
+--- -[#green]-> ---: ---
+Alice -[#green]-> Bob: meet
+Alice -[#green]-> Bob: probe genRanHex0
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Charlie: meet
+Bob -[#green]-> Charlie: probe genRanHex0
+Bob -[#green]-> Charlie: probe genRanHex1
+--- -[#green]-> ---: ---
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Alice: have-probes
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Charlie: meet
+Bob -[#green]-> Charlie: probe genRanHex0
+Charlie -[#green]-> Bob: have-probes
+Bob -[#green]-> Charlie: probe genRanHex1
+Charlie -[#green]-> Alice: meet
+Charlie -[#green]-> Alice: probe genRanHex0
+Charlie -[#green]-> Alice: probe genRanHex1
+Charlie -[#green]-> Alice: probe genRanHex2
+--- -[#green]-> ---: ---
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Alice: probe genRanHex1
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Bob: have-probes
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Alice: meet
+Alice -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Alice: probe genRanHex0
+Alice -[#green]-> Charlie: loop genRanHex0 genRanHex3
+Charlie -[#green]-> Alice: probe genRanHex1
+Alice -[#green]-> Bob: have-probes
+Charlie -[#green]-> Alice: probe genRanHex2
+Alice -[#green]-> Dave: meet
+Alice -[#green]-> Dave: probe genRanHex0
+Alice -[#green]-> Dave: probe genRanHex1
+Alice -[#green]-> Dave: probe genRanHex2
+Alice -[#green]-> Dave: probe genRanHex4
+--- -[#green]-> ---: ---
+Bob -[#green]-> Alice: probe genRanHex1
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Bob: probe genRanHex2
+Alice -[#green]-> Charlie: have-probes
+Alice -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: loop genRanHex0 genRanHex3
+Charlie -[#green]-> Bob: loop genRanHex0 genRanHex3
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Bob: have-probes
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Dave: meet
+Alice -[#green]-> Dave: probe genRanHex0
+Dave -[#green]-> Alice: have-probes
+Alice -[#green]-> Dave: probe genRanHex1
+Alice -[#green]-> Dave: probe genRanHex2
+Alice -[#green]-> Dave: probe genRanHex4
+Dave -[#green]-> Edward: meet
+Dave -[#green]-> Edward: probe genRanHex0
+Dave -[#green]-> Edward: probe genRanHex1
+Dave -[#green]-> Edward: probe genRanHex2
+Dave -[#green]-> Edward: probe genRanHex4
+Dave -[#green]-> Edward: probe genRanHex6
+--- -[#green]-> ---: ---
+Charlie -[#green]-> Bob: probe genRanHex2
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex4
+Charlie -[#green]-> Bob: loop genRanHex0 genRanHex3
+Bob -[#green]-> Alice: loop genRanHex0 genRanHex3
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Bob: probe genRanHex2
+Alice -[#green]-> Bob: probe genRanHex4
+Alice -[#green]-> Bob: probe genRanHex5
+Dave -[#green]-> Alice: have-probes
+Dave -[#green]-> Alice: have-probes
+Alice -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Edward: meet
+Dave -[#green]-> Edward: probe genRanHex0
+Edward -[#green]-> Dave: have-probes
+Dave -[#green]-> Edward: probe genRanHex1
+Dave -[#green]-> Edward: probe genRanHex2
+Dave -[#green]-> Edward: probe genRanHex4
+Dave -[#green]-> Edward: probe genRanHex6
+Edward -[#green]-> Alice: meet
+Edward -[#green]-> Alice: probe genRanHex0
+Edward -[#green]-> Alice: probe genRanHex1
+Edward -[#green]-> Alice: probe genRanHex2
+Edward -[#green]-> Alice: probe genRanHex4
+Edward -[#green]-> Alice: probe genRanHex6
+Edward -[#green]-> Alice: probe genRanHex7
+--- -[#green]-> ---: ---
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Alice: have-probes
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Charlie: have-probes
+Bob -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Bob: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex4
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Alice: have-probes
+Bob -[#green]-> Alice: loop genRanHex0 genRanHex3
+Alice -[#green]-> Bob: probe genRanHex2
+Alice -[#green]-> Bob: probe genRanHex4
+Alice -[#green]-> Bob: probe genRanHex5
+Alice -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Alice: probe genRanHex6
+Edward -[#green]-> Dave: have-probes
+Edward -[#green]-> Dave: have-probes
+Dave -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Alice: meet
+Alice -[#green]-> Edward: have-probes
+Edward -[#green]-> Alice: probe genRanHex0
+Alice -[#green]-> Edward: loop genRanHex0 genRanHex9
+Edward -[#green]-> Alice: probe genRanHex1
+Edward -[#green]-> Alice: probe genRanHex2
+Edward -[#green]-> Alice: probe genRanHex4
+Alice -[#green]-> Edward: loop genRanHex4 genRanHex12
+Edward -[#green]-> Alice: probe genRanHex6
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Charlie: probe genRanHex6
+Alice -[#green]-> Dave: have-probes
+Edward -[#green]-> Alice: probe genRanHex7
+Alice -[#green]-> Charlie: probe genRanHex7
+--- -[#green]-> ---: ---
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Alice: probe genRanHex8
+Charlie -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Charlie: probe genRanHex4
+Bob -[#green]-> Charlie: probe genRanHex5
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Bob: have-probes
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Alice: have-probes
+Charlie -[#green]-> Alice: have-probes
+Alice -[#green]-> Charlie: okay-to-send-probes
+Dave -[#green]-> Alice: probe genRanHex6
+Dave -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Dave: probe genRanHex7
+Alice -[#green]-> Edward: have-probes
+Alice -[#green]-> Edward: have-probes
+Edward -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Edward: loop genRanHex0 genRanHex9
+Edward -[#green]-> Dave: loop genRanHex0 genRanHex9
+Alice -[#green]-> Edward: loop genRanHex4 genRanHex12
+Edward -[#green]-> Dave: loop genRanHex4 genRanHex12
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Bob: have-probes
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex6
+Alice -[#green]-> Dave: have-probes
+Alice -[#green]-> Dave: have-probes
+Dave -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex7
+--- -[#green]-> ---: ---
+Bob -[#green]-> Alice: probe genRanHex8
+Alice -[#green]-> Charlie: have-probes
+Bob -[#green]-> Charlie: probe genRanHex4
+Bob -[#green]-> Charlie: probe genRanHex5
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Bob: probe genRanHex6
+Charlie -[#green]-> Bob: probe genRanHex7
+Charlie -[#green]-> Bob: probe genRanHex14
+Alice -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Alice: probe genRanHex5
+Edward -[#green]-> Dave: probe genRanHex7
+Dave -[#green]-> Alice: have-probes
+Dave -[#green]-> Edward: have-probes
+Edward -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Edward: probe genRanHex5
+Alice -[#green]-> Edward: probe genRanHex10
+Alice -[#green]-> Edward: probe genRanHex11
+Alice -[#green]-> Edward: probe genRanHex8
+Edward -[#green]-> Dave: loop genRanHex0 genRanHex9
+Dave -[#green]-> Alice: loop genRanHex0 genRanHex9
+Edward -[#green]-> Dave: loop genRanHex4 genRanHex12
+Dave -[#green]-> Alice: loop genRanHex4 genRanHex12
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Bob: probe genRanHex6
+Alice -[#green]-> Bob: probe genRanHex7
+Dave -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Dave: probe genRanHex7
+Alice -[#green]-> Dave: probe genRanHex13
+Alice -[#green]-> Dave: probe genRanHex8
+--- -[#green]-> ---: ---
+Alice -[#green]-> Charlie: have-probes
+Alice -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Alice: okay-to-send-probes
+Charlie -[#green]-> Bob: probe genRanHex6
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Bob: probe genRanHex7
+Charlie -[#green]-> Bob: probe genRanHex14
+Charlie -[#green]-> Alice: probe genRanHex5
+Alice -[#green]-> Charlie: loop genRanHex5 genRanHex15
+Dave -[#green]-> Alice: have-probes
+Dave -[#green]-> Alice: have-probes
+Alice -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Edward: have-probes
+Dave -[#green]-> Edward: have-probes
+Edward -[#green]-> Dave: okay-to-send-probes
+Alice -[#green]-> Edward: probe genRanHex5
+Edward -[#green]-> Dave: have-probes
+Edward -[#green]-> Alice: have-probes
+Alice -[#green]-> Edward: probe genRanHex10
+Alice -[#green]-> Edward: probe genRanHex11
+Alice -[#green]-> Edward: probe genRanHex8
+Dave -[#green]-> Alice: loop genRanHex0 genRanHex9
+Dave -[#green]-> Alice: loop genRanHex4 genRanHex12
+Alice -[#green]-> Bob: probe genRanHex6
+Alice -[#green]-> Bob: probe genRanHex7
+Alice -[#green]-> Dave: probe genRanHex7
+Alice -[#green]-> Dave: probe genRanHex13
+Alice -[#green]-> Dave: probe genRanHex8
+--- -[#green]-> ---: ---
+Charlie -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex8
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Alice: have-probes
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Charlie: have-probes
+Bob -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Bob: okay-to-send-probes
+Alice -[#green]-> Charlie: loop genRanHex5 genRanHex15
+Charlie -[#green]-> Bob: loop genRanHex5 genRanHex15
+Alice -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Alice: probe genRanHex18
+Edward -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Edward: probe genRanHex13
+Dave -[#green]-> Edward: probe genRanHex8
+Edward -[#green]-> Dave: have-probes
+Edward -[#green]-> Dave: have-probes
+Dave -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Alice: have-probes
+Edward -[#green]-> Alice: have-probes
+Alice -[#green]-> Edward: okay-to-send-probes
+--- -[#green]-> ---: ---
+Alice -[#green]-> Charlie: probe genRanHex8
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Alice: have-probes
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Alice: probe genRanHex14
+Bob -[#green]-> Alice: probe genRanHex16
+Bob -[#green]-> Alice: probe genRanHex17
+Charlie -[#green]-> Bob: okay-to-send-probes
+Charlie -[#green]-> Bob: loop genRanHex5 genRanHex15
+Bob -[#green]-> Alice: loop genRanHex5 genRanHex15
+Dave -[#green]-> Alice: probe genRanHex18
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Charlie: probe genRanHex18
+Alice -[#green]-> Dave: have-probes
+Alice -[#green]-> Edward: have-probes
+Dave -[#green]-> Edward: probe genRanHex13
+Dave -[#green]-> Edward: probe genRanHex8
+Dave -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Dave: probe genRanHex5
+Edward -[#green]-> Dave: probe genRanHex10
+Edward -[#green]-> Dave: probe genRanHex11
+Edward -[#green]-> Dave: probe genRanHex19
+Alice -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Alice: probe genRanHex13
+--- -[#green]-> ---: ---
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Bob: have-probes
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Alice: have-probes
+Charlie -[#green]-> Alice: have-probes
+Alice -[#green]-> Charlie: okay-to-send-probes
+Bob -[#green]-> Alice: probe genRanHex14
+Alice -[#green]-> Charlie: have-probes
+Bob -[#green]-> Alice: probe genRanHex16
+Bob -[#green]-> Alice: probe genRanHex17
+Bob -[#green]-> Alice: loop genRanHex5 genRanHex15
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Bob: have-probes
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex18
+Alice -[#green]-> Dave: have-probes
+Alice -[#green]-> Dave: have-probes
+Dave -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Edward: have-probes
+Alice -[#green]-> Edward: have-probes
+Edward -[#green]-> Alice: okay-to-send-probes
+Edward -[#green]-> Dave: probe genRanHex5
+Dave -[#green]-> Alice: have-probes
+Dave -[#green]-> Edward: have-probes
+Edward -[#green]-> Dave: probe genRanHex10
+Edward -[#green]-> Dave: probe genRanHex11
+Edward -[#green]-> Dave: probe genRanHex19
+Edward -[#green]-> Alice: probe genRanHex13
+Alice -[#green]-> Edward: loop genRanHex13 genRanHex20
+--- -[#green]-> ---: ---
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Bob: probe genRanHex8
+Charlie -[#green]-> Bob: probe genRanHex18
+Alice -[#green]-> Charlie: okay-to-send-probes
+Alice -[#green]-> Charlie: have-probes
+Alice -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Alice: okay-to-send-probes
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Bob: probe genRanHex18
+Dave -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Dave: probe genRanHex14
+Alice -[#green]-> Dave: probe genRanHex16
+Alice -[#green]-> Dave: probe genRanHex17
+Edward -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Edward: probe genRanHex18
+Alice -[#green]-> Edward: probe genRanHex14
+Alice -[#green]-> Edward: probe genRanHex16
+Alice -[#green]-> Edward: probe genRanHex17
+Dave -[#green]-> Alice: have-probes
+Dave -[#green]-> Alice: have-probes
+Alice -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Edward: have-probes
+Dave -[#green]-> Edward: have-probes
+Edward -[#green]-> Dave: okay-to-send-probes
+Alice -[#green]-> Edward: loop genRanHex13 genRanHex20
+Edward -[#green]-> Dave: loop genRanHex13 genRanHex20
+--- -[#green]-> ---: ---
+Charlie -[#green]-> Bob: probe genRanHex8
+Bob -[#green]-> Charlie: loop genRanHex8 genRanHex21
+Charlie -[#green]-> Bob: probe genRanHex18
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex14
+Alice -[#green]-> Charlie: probe genRanHex16
+Alice -[#green]-> Charlie: probe genRanHex17
+Alice -[#green]-> Bob: probe genRanHex18
+Alice -[#green]-> Dave: probe genRanHex14
+Alice -[#green]-> Dave: probe genRanHex16
+Alice -[#green]-> Dave: probe genRanHex17
+Alice -[#green]-> Edward: probe genRanHex18
+Edward -[#green]-> Dave: have-probes
+Edward -[#green]-> Alice: have-probes
+Alice -[#green]-> Edward: probe genRanHex14
+Alice -[#green]-> Edward: probe genRanHex16
+Alice -[#green]-> Edward: probe genRanHex17
+Alice -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Alice: probe genRanHex5
+Dave -[#green]-> Alice: probe genRanHex10
+Dave -[#green]-> Alice: probe genRanHex11
+Dave -[#green]-> Alice: probe genRanHex19
+Edward -[#green]-> Dave: okay-to-send-probes
+Dave -[#green]-> Edward: probe genRanHex14
+Dave -[#green]-> Edward: probe genRanHex16
+Dave -[#green]-> Edward: probe genRanHex17
+Edward -[#green]-> Dave: loop genRanHex13 genRanHex20
+Dave -[#green]-> Alice: loop genRanHex13 genRanHex20
+--- -[#green]-> ---: ---
+Bob -[#green]-> Charlie: loop genRanHex8 genRanHex21
+Charlie -[#green]-> Alice: loop genRanHex8 genRanHex21
+Bob -[#green]-> Alice: have-probes
+Bob -[#green]-> Alice: have-probes
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Charlie: have-probes
+Bob -[#green]-> Charlie: have-probes
+Charlie -[#green]-> Bob: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex14
+Charlie -[#green]-> Alice: loop genRanHex14 genRanHex23
+Alice -[#green]-> Charlie: probe genRanHex16
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Alice: have-probes
+Alice -[#green]-> Charlie: probe genRanHex17
+Edward -[#green]-> Dave: have-probes
+Edward -[#green]-> Dave: have-probes
+Dave -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Alice: have-probes
+Edward -[#green]-> Alice: have-probes
+Alice -[#green]-> Edward: okay-to-send-probes
+Dave -[#green]-> Alice: probe genRanHex5
+Alice -[#green]-> Dave: loop genRanHex5 genRanHex24
+Dave -[#green]-> Alice: probe genRanHex10
+Alice -[#green]-> Dave: loop genRanHex10 genRanHex25
+Dave -[#green]-> Alice: probe genRanHex11
+Alice -[#green]-> Dave: loop genRanHex11 genRanHex26
+Dave -[#green]-> Alice: probe genRanHex19
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Charlie: probe genRanHex19
+Alice -[#green]-> Dave: have-probes
+Alice -[#green]-> Edward: have-probes
+Dave -[#green]-> Edward: probe genRanHex14
+Dave -[#green]-> Edward: probe genRanHex16
+Dave -[#green]-> Edward: probe genRanHex17
+Dave -[#green]-> Alice: loop genRanHex13 genRanHex20
+--- -[#green]-> ---: ---
+Charlie -[#green]-> Alice: loop genRanHex8 genRanHex21
+Alice -[#green]-> Bob: loop genRanHex8 genRanHex21
+Alice -[#green]-> Bob: okay-to-send-probes
+Bob -[#green]-> Alice: probe genRanHex22
+Charlie -[#green]-> Bob: okay-to-send-probes
+Charlie -[#green]-> Alice: loop genRanHex14 genRanHex23
+Alice -[#green]-> Bob: loop genRanHex14 genRanHex23
+Charlie -[#green]-> Bob: have-probes
+Charlie -[#green]-> Bob: have-probes
+Bob -[#green]-> Charlie: okay-to-send-probes
+Charlie -[#green]-> Alice: have-probes
+Charlie -[#green]-> Alice: have-probes
+Alice -[#green]-> Charlie: okay-to-send-probes
+Dave -[#green]-> Edward: okay-to-send-probes
+Edward -[#green]-> Dave: probe genRanHex18
+Edward -[#green]-> Dave: probe genRanHex27
+Edward -[#green]-> Dave: probe genRanHex28
+Edward -[#green]-> Dave: probe genRanHex29
+Alice -[#green]-> Edward: okay-to-send-probes
+Alice -[#green]-> Dave: loop genRanHex5 genRanHex24
+Dave -[#green]-> Edward: loop genRanHex5 genRanHex24
+Alice -[#green]-> Dave: loop genRanHex10 genRanHex25
+Dave -[#green]-> Edward: loop genRanHex10 genRanHex25
+Alice -[#green]-> Dave: loop genRanHex11 genRanHex26
+Dave -[#green]-> Edward: loop genRanHex11 genRanHex26
+Alice -[#green]-> Bob: have-probes
+Alice -[#green]-> Bob: have-probes
+Bob -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Charlie: probe genRanHex19
+Alice -[#green]-> Dave: have-probes
+Alice -[#green]-> Dave: have-probes
+Dave -[#green]-> Alice: okay-to-send-probes
+Alice -[#green]-> Edward: have-probes
+Alice -[#green]-> Edward: have-probes
+Edward -[#green]-> Alice: okay-to-send-probes
+@enduml

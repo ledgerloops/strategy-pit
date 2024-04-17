@@ -4,7 +4,7 @@ import { jest } from '@jest/globals';
 import { readFileSync, writeFileSync } from 'fs';
 
 let counter: number = 0;
-jest.unstable_mockModule('../src/util.js', () => {
+jest.unstable_mockModule('../src/genRanHex.js', () => {
   return{
     genRanHex: jest.fn((): string => {
       return `genRanHex${counter++}`;

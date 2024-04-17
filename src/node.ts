@@ -1,24 +1,6 @@
 import { Message, MeetMessage, ProbeMessage, LoopMessage } from "./messages.js";
+import { Entry, createPlantUml } from "./util.js";
 
-class Entry {
-  sender: string;
-  receiver: string;
-  message: Message;
-  event: string;
-  constructor(sender: string, receiver: string, message: Message, event: string) {
-    this.sender = sender;
-    this.receiver = receiver;
-    this.message = message;
-    this.event = event;
-  }
-  describePath(): string {
-    if (this.event === 'sent') {
-      return `[${this.sender}]->[${this.receiver}]`;
-    } else {
-      return `[${this.sender}]>-[${this.receiver}]`;
-    }
-  }
-}
 export class BasicMessageForwarder {
   private log: Entry[] = [];
   logMessageSent(sender: string, receiver: string, message: Message): void {
@@ -67,6 +49,9 @@ export class BasicMessageForwarder {
       probeLogs[entry.message.toString()].push(entry.describePath());
     });
     return probeLogs;
+  }
+  getPlantUml(): string {
+    return createPlantUml(this.log);
   }
 }
 export class BatchedMessageForwarder extends BasicMessageForwarder {
