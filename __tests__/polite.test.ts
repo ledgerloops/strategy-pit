@@ -19,15 +19,15 @@ describe('Polite', () => {
       const alice = new PoliteNode('Alice', messageForwarder);
       const bob = new PoliteNode('Bob', messageForwarder);
       await alice.meet(bob);
-      console.log('1');
+      // console.log('1');
       expect(alice.getFriends()).toEqual(['Bob']);
       expect(bob.getFriends()).toEqual(['Alice']);
       await alice.sendTestMessage('Bob');
-      console.log('2');
+      // console.log('2');
       await bob.sendTestMessage('Alice');
-      console.log('3');
+      // console.log('3');
       await alice.sendTestMessage('Bob');
-      console.log('4');
+      // console.log('4');
       expect(alice.getPoliteProtocolLog()).toEqual([
         "Alice is talking and sends meet message to Bob",
         "Alice is talking and sends test message to Bob",

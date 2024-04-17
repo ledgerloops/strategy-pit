@@ -103,12 +103,16 @@ export enum HandRaisingStatus {
 
 export class Friend {
   public handRaisingStatus: HandRaisingStatus;
-  public outbox: Message[];
   public node: Node;
+  public promises: {
+      resolve: () => void,
+      reject: () => void,
+    }[];
+
   constructor(node: Node, handRaisingStatus: HandRaisingStatus) {
     this.node = node;
     this.handRaisingStatus = handRaisingStatus;
-    this.outbox = [];
+    this.promises = [];
   }
 }
 
