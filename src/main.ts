@@ -5,4 +5,5 @@ export { Stingray } from './stingray.js';
 export { Jackal } from './jackal.js';
 export { Squid } from './squid.js';
 export { Butterfly } from './butterfly.js';
+export { Giraffe } from './giraffe.js';
 export { BasicMessageForwarder, BatchedMessageForwarder } from './node.js';
