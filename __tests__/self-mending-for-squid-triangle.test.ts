@@ -25,14 +25,14 @@ describe('Basic Squid Triangle - until the music stops', () => {
     alice = new Squid('Alice', messageForwarder);
     bob = new Squid('Bob', messageForwarder);
     charlie = new Squid('Charlie', messageForwarder);
-    flushReport = messageForwarder.flush();
+    flushReport = await messageForwarder.flush();
     alice.meet(bob);
-    flushReport = messageForwarder.flush();
+    flushReport = await messageForwarder.flush();
     bob.meet(charlie);
-    flushReport = messageForwarder.flush();
+    flushReport = await messageForwarder.flush();
     charlie.meet(alice);
     do {
-      flushReport = messageForwarder.flush();
+      flushReport = await messageForwarder.flush();
     } while (flushReport.length > 0);
   });
 

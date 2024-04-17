@@ -1,4 +1,4 @@
-import { Message, OverToYou, RaiseHand } from './messages.js';
+import { Message, OkayToSendProbes, HaveProbes } from './messages.js';
 import { Node, BasicMessageForwarder, HandRaisingStatus } from "./node.js";
 
 export abstract class Polite extends Node {
@@ -8,18 +8,18 @@ export abstract class Polite extends Node {
   private raiseHand(to: string): void {
     this.friends[to].handRaisingStatus = HandRaisingStatus.Waiting;
     this.debugLog.push(`${this.name} raises hand to ${to}`);
-    this.messageForwarder.forwardMessage(this, this.friends[to].node, new RaiseHand());
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, new HaveProbes());
   }
   private handleRaiseHand(from: string): void {
     // console.log(this.name, 'receives raised hand from', from);
     this.debugLog.push(`${this.name} receives raised hand from ${from}`);
     this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
-    this.debugLog.push(`${this.name} sends over-to-you message to ${from}`);
-    super.sendMessage(from, new OverToYou());
+    this.debugLog.push(`${this.name} sends okay-to-send-probes message to ${from}`);
+    super.sendMessage(from, new OkayToSendProbes());
   }
   private handleOverToYouMessage(from: string): void {
-    // console.log(this.name, 'receives over-to-you from', from);
-    this.debugLog.push(`${this.name} receives over-to-you from ${from}`);
+    // console.log(this.name, 'receives okay-to-send-probes from', from);
+    this.debugLog.push(`${this.name} receives okay-to-send-probes from ${from}`);
     this.friends[from].handRaisingStatus = HandRaisingStatus.Talking;
     if (typeof this.friends[from].promises !== 'undefined') {
       this.friends[from].promises.forEach(promise => {
@@ -58,17 +58,14 @@ export abstract class Polite extends Node {
   async receiveMessage(sender: Node, message: Message): Promise<void> {
     this.debugLog.push(`[Polite#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
     // console.log(`${this.name} receives message from ${sender}`, message);
-    if (message.getMessageType() === `raise-hand`) {
+    if (message.getMessageType() === `have-probes`) {
       this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
       this.handleRaiseHand(sender.getName());
-    } else if (message.getMessageType() === `over-to-you`) {
+    } else if (message.getMessageType() === `okay-to-send-probes`) {
       this.handleOverToYouMessage(sender.getName());
     } else {
       this.debugLog.push(`${this.name} receives payload message from ${sender.getName()}`);
       super.receiveMessage(sender, message);
     }
-  }
-  getMessageLog(): string[] {
-    return this.messageForwarder.getLocalLog(this.name);
   }
 }

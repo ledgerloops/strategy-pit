@@ -1,6 +1,5 @@
-import { Probe as ProbeMessage, Loop as LoopMessage, Meet } from "../src/messages.js";
-import { BasicMessageForwarder } from "../src/node.js";
-import { Polite } from "../src/polite.js";
+import { Probe as ProbeMessage, Loop as LoopMessage, Meet, HaveProbes, Message, OkayToSendProbes } from "../src/messages.js";
+import { BasicMessageForwarder, HandRaisingStatus, Node } from "../src/node.js";
 import { genRanHex } from "./util.js";
 
 function objectMap(object, mapFn): object {
@@ -134,13 +133,82 @@ export class ButterflyProbeStore {
   }
 }
 
-export class Butterfly extends Polite {
+export class Butterfly extends Node {
   protected probeStore: ButterflyProbeStore = new ButterflyProbeStore();
   private loopsFound: string[] = [];
-
+  // private probesToOffer: {
+  //   [friend: string] : string[]
+  // } = {};
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
+
+  // Methods copied from Polite START
+  private raiseHand(to: string): void {
+    this.friends[to].handRaisingStatus = HandRaisingStatus.Waiting;
+    this.debugLog.push(`${this.name} raises hand to ${to}`);
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, new HaveProbes());
+  }
+  private handleRaiseHand(from: string): void {
+    // console.log(this.name, 'receives raised hand from', from);
+    this.debugLog.push(`${this.name} receives raised hand from ${from}`);
+    this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
+    this.debugLog.push(`${this.name} sends okay-to-send-probes message to ${from}`);
+    super.sendMessage(from, new OkayToSendProbes());
+  }
+  private handleOverToYouMessage(from: string): void {
+    // console.log(this.name, 'receives okay-to-send-probes from', from);
+    this.debugLog.push(`${this.name} receives okay-to-send-probes from ${from}`);
+    this.friends[from].handRaisingStatus = HandRaisingStatus.Talking;
+    if (typeof this.friends[from].promises !== 'undefined') {
+      this.friends[from].promises.forEach(promise => {
+        promise.resolve();
+      });
+      delete this.friends[from].promises;
+    }
+  }
+  protected async semaphore(to: string): Promise<void> {
+    if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
+      this.debugLog.push(`${this.name} is talking to ${to}`);
+      return;
+    }
+    this.debugLog.push(`${this.name} is waiting to talk to ${to}`);
+
+    this.debugLog.push(`${this.name} waits for semaphore to talk to ${to}`);
+    const ret: Promise<void> = new Promise((resolve, reject) => {
+      if (typeof this.friends[to].promises === 'undefined') {
+        this.friends[to].promises = [];
+      }
+      this.friends[to].promises.push({ resolve, reject });
+    });
+    if(this.friends[to].handRaisingStatus === HandRaisingStatus.Listening) {
+      // console.log(this.name, 'raising hand to', to);
+      this.raiseHand(to);
+    }
+    return ret;
+  }
+  protected async sendMessage(to: string, message: Message): Promise<void> {
+    this.debugLog.push(`sendMessage ${this.name} to ${to}, semaphore wait START`);
+    await this.semaphore(to);
+    this.debugLog.push(`sendMessage ${this.name} to ${to}, semaphore wait END`);
+    this.debugLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
+  }
+  async receiveMessage(sender: Node, message: Message): Promise<void> {
+    this.debugLog.push(`[Polite#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
+    // console.log(`${this.name} receives message from ${sender}`, message);
+    if (message.getMessageType() === `have-probes`) {
+      this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
+      this.handleRaiseHand(sender.getName());
+    } else if (message.getMessageType() === `okay-to-send-probes`) {
+      this.handleOverToYouMessage(sender.getName());
+    } else {
+      this.debugLog.push(`${this.name} receives payload message from ${sender.getName()}`);
+      super.receiveMessage(sender, message);
+    }
+  }
+  // Methods copied from Polite END
+
   protected sendProbe(to: string, message: ProbeMessage): void {
     const probe = this.probeStore.get((message as ProbeMessage).getId());
     probe.recordOutgoing(to);
@@ -184,11 +252,14 @@ export class Butterfly extends Polite {
   // when this node has sent a `meet` message
   async onMeet(other: string): Promise<void> {
     this.debugLog.push(`I meet ${other} [1/4]`);
-    this.sendMessage(other, new Meet());
+    // this is safe to await because it will just queue them for the next message round
+    await this.sendMessage(other, new Meet());
     this.debugLog.push(`I offer ${other} all my flood probes [2/4]`);
+    // this is safe to await because it will just queue them for the next message round
     await this.offerAllFloodProbes(other);
     this.debugLog.push(`and create a new flood probe for other friends than ${other} [3/4]`);
-    await this.createFloodProbe();
+    // NOTE: don't await the flood probe creation because it will span multiple message rounds
+    this.createFloodProbe();
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
   // when this node has received a `meet` message

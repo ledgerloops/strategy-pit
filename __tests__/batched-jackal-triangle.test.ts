@@ -181,9 +181,9 @@ describe('Batched Jackal Triangle - step-by-step', () => {
   });
 
   describe('Alice meets Bob', () => {
-    beforeAll(() => {
-      flushReport = messageForwarder.flush();
-      alice.meet(bob);
+    beforeAll(async () => {
+      flushReport = await messageForwarder.flush();
+      await alice.meet(bob);
     });
 
     it('Message Logs', () => {
@@ -225,9 +225,9 @@ describe('Batched Jackal Triangle - step-by-step', () => {
     });
 
     describe('Bob meets Charlie', () => {
-      beforeAll(() => {
-        flushReport = messageForwarder.flush();
-        bob.meet(charlie);
+      beforeAll(async () => {
+        flushReport = await messageForwarder.flush();
+        await bob.meet(charlie);
       });
 
       it('Message Logs', () => {
@@ -279,9 +279,9 @@ describe('Batched Jackal Triangle - step-by-step', () => {
       });
  
       describe('Charlie meets Alice', () => {
-        beforeAll(() => {
-          flushReport = messageForwarder.flush();
-          charlie.meet(alice);
+        beforeAll(async () => {
+          flushReport = await messageForwarder.flush();
+          await charlie.meet(alice);
         });
 
         it('Message Logs', () => {
@@ -423,8 +423,8 @@ describe('Batched Jackal Triangle - step-by-step', () => {
 
 
         describe('Messages Round 4', () => {
-          beforeAll(() => {
-            flushReport = messageForwarder.flush();
+          beforeAll(async () => {
+            flushReport = await messageForwarder.flush();
           });
 
           it('Message Logs', () => {
@@ -464,8 +464,8 @@ describe('Batched Jackal Triangle - step-by-step', () => {
           });
 
           describe('Messages Round 5', () => {
-            it('Message Logs', () => {
-              expect(messageForwarder.flush()).toEqual([
+            it('Message Logs', async () => {
+              expect(await messageForwarder.flush()).toEqual([
                 "[Bob]->[Alice] probe genRanHex3",
                 "[Alice]->[Bob] probe genRanHex3",
                 "[Alice]->[Charlie] probe genRanHex1",
@@ -544,8 +544,8 @@ describe('Batched Jackal Triangle - step-by-step', () => {
              ]);
             });
             describe('Messages Round 6', () => {
-              it('Message Logs', () => {
-                expect(messageForwarder.flush()).toEqual([
+              it('Message Logs', async () => {
+                expect(await messageForwarder.flush()).toEqual([
                   "[Charlie]->[Bob] loop genRanHex1 genRanHex4",
                   "[Charlie]->[Bob] probe genRanHex5",
                 ]);
@@ -553,8 +553,8 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                 expect(messageForwarder.getFullLog(true)).toEqual([].concat(fullLogRound4, fullLogRound5, fullLogsRound6));
               });
               describe('Messages Round 7', () => {
-                it('Message Logs', () => {
-                  expect(messageForwarder.flush()).toEqual([
+                it('Message Logs', async () => {
+                  expect(await messageForwarder.flush()).toEqual([
                     "[Bob]->[Alice] loop genRanHex1 genRanHex4",
                     "[Bob]->[Alice] probe genRanHex5",
                   ]);
@@ -563,8 +563,8 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                 });
     
                 describe('Messages Round 8', () => {
-                  it('Message Logs', () => {
-                    expect(messageForwarder.flush()).toEqual([
+                  it('Message Logs', async () => {
+                    expect(await messageForwarder.flush()).toEqual([
                       "[Alice]->[Bob] loop genRanHex5 genRanHex6",
                     ]);
                     // messages5 is already sent but messages4 is still what was just flushed here

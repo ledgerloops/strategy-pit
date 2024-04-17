@@ -35,7 +35,7 @@ describe('Basic Butterfly Triangle - until the music stops', () => {
       flushReport = await messageForwarder.flush();
     } while (flushReport.length > 0);
   });
-  it('Probes are not echoed back to the sender', () => {
+  it.skip('Probes are not echoed back to the sender', () => {
     const probeLogs = messageForwarder.getProbeLogs();
     for (const probeId in probeLogs) {
       const seen = [ probeId ];

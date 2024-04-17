@@ -12,21 +12,21 @@ export class Meet extends Message {
   }
 }
 
-export class RaiseHand extends Message {
+export class HaveProbes extends Message {
   getMessageType(): string {
-    return 'raise-hand';
+    return 'have-probes';
   }
   toString(): string {
-    return 'raise-hand';
+    return 'have-probes';
   }
 }
 
-export class OverToYou extends Message {
+export class OkayToSendProbes extends Message {
   getMessageType(): string {
-    return 'over-to-you';
+    return 'okay-to-send-probes';
   }
   toString(): string {
-    return 'over-to-you';
+    return 'okay-to-send-probes';
   }
 }
 

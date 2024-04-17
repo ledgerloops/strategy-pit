@@ -25,14 +25,14 @@ describe('Basic Jackal Triangle - until the music stops', () => {
     alice = new Jackal('Alice', messageForwarder);
     bob = new Jackal('Bob', messageForwarder);
     charlie = new Jackal('Charlie', messageForwarder);
-    flushReport = messageForwarder.flush();
+    flushReport = await messageForwarder.flush();
     alice.meet(bob);
-    flushReport = messageForwarder.flush();
+    flushReport = await messageForwarder.flush();
     bob.meet(charlie);
-    flushReport = messageForwarder.flush();
+    flushReport = await messageForwarder.flush();
     charlie.meet(alice);
     do {
-      flushReport = messageForwarder.flush();
+      flushReport = await messageForwarder.flush();
     } while (flushReport.length > 0);
   });
 
