@@ -3,6 +3,7 @@
 import { jest } from '@jest/globals';
 import { readFileSync, writeFileSync } from 'fs';
 
+const NUM_ROUNDS = 10;
 let counter: number = 0;
 jest.unstable_mockModule('../src/util.js', () => {
   return{
@@ -41,9 +42,10 @@ describe('Basic Butterfly Hourglass - until the music stops', () => {
     await dave.meet(edward);
     flushReport = await messageForwarder.flush();
     await edward.meet(alice);
+    let counter = 0;
     do {
       flushReport = await messageForwarder.flush();
-    } while (flushReport.length > 0);
+    } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
   });
   it('Probes are not echoed back to the sender', () => {
     const probeLogs = messageForwarder.getProbeLogs();

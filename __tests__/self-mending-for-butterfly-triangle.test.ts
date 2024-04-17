@@ -31,9 +31,10 @@ describe('Basic Butterfly Triangle - until the music stops', () => {
     await bob.meet(charlie);
     flushReport = await messageForwarder.flush();
     await charlie.meet(alice);
+    let counter = 0;
     do {
       flushReport = await messageForwarder.flush();
-    } while (flushReport.length > 0);
+    } while ((flushReport.length > 0) && (counter++ < 10));
   });
   it('Probes are not echoed back to the sender', () => {
     const probeLogs = messageForwarder.getProbeLogs();

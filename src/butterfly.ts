@@ -210,10 +210,12 @@ export class Butterfly extends Node {
     });
   }
   protected createFloodProbe(): void {
+    this.debugLog.push(`creating flood probe`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }
   protected createPinnedFloodProbe(recipient: string): void {
     const probeForNewLink = genRanHex(8);
+    this.debugLog.push(`creating pinned flood probe ${probeForNewLink} for ${recipient}`);
     this.queueProbe(recipient, probeForNewLink, true);
   }
   // when this node has sent a `meet` message
@@ -253,6 +255,7 @@ export class Butterfly extends Node {
     const trace = new Trace(undefined, friend, loopId);
     const probe = this.probeStore.get(probeId);
     probe.addTrace(trace);
+    this.debugLog.push(`CREATING LOOP TRACE ${loopId} TO ${friend} FOR OUR HOME MINTED PROBE ${probeId}`);
     this.sendMessage(friend, new LoopMessage(probeId, loopId));
   }
   handleProbeMessage(sender: string, message: ProbeMessage): void {
@@ -263,9 +266,10 @@ export class Butterfly extends Node {
       probe.recordIncoming(sender);
       this.queueFloodProbeToAll(message.getId(), false);
     } else {
-      probe.recordIncoming(sender);
       this.debugLog.push(`INCOMING PROBE ${message.getId()} IS KNOWN TO US`);
       if (probe.isVirginFor(sender)) {
+        // Record this *after* testing it:
+        probe.recordIncoming(sender);
         this.debugLog.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
           this.createLoopTrace(message.getId(), sender);
