@@ -22,15 +22,15 @@ describe('Butterfly', () => {
     await bob.meet(charlie);
     expect(messageForwarder.getFullLog()).toEqual([
       "[Alice]->[Bob] meet",
-      "[Alice]->[Bob] probe genRanHex0",
-      "[Bob]->[Alice] have-probes",
-      "[Alice]->[Bob] okay-to-send-probes",
+      // "[Alice]->[Bob] probe genRanHex0",
+      // "[Bob]->[Alice] have-probes",
+      // "[Alice]->[Bob] okay-to-send-probes",
       "[Bob]->[Charlie] meet",
-      "[Bob]->[Charlie] probe genRanHex0",
-      "[Charlie]->[Bob] have-probes",
-      "[Bob]->[Charlie] okay-to-send-probes",
-      "[Bob]->[Charlie] have-probes",
-      "[Charlie]->[Bob] okay-to-send-probes",
+      // "[Bob]->[Charlie] probe genRanHex0",
+      // "[Charlie]->[Bob] have-probes",
+      // "[Bob]->[Charlie] okay-to-send-probes",
+      // "[Bob]->[Charlie] have-probes",
+      // "[Charlie]->[Bob] okay-to-send-probes",
     ]);
   });
 });

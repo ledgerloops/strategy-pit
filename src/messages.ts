@@ -3,7 +3,7 @@ export abstract class Message {
   abstract toString(): string;
 }
 
-export class Meet extends Message {
+export class MeetMessage extends Message {
   getMessageType(): string {
     return 'meet';
   }
@@ -12,7 +12,7 @@ export class Meet extends Message {
   }
 }
 
-export class HaveProbes extends Message {
+export class HaveProbesMessage extends Message {
   getMessageType(): string {
     return 'have-probes';
   }
@@ -21,7 +21,7 @@ export class HaveProbes extends Message {
   }
 }
 
-export class OkayToSendProbes extends Message {
+export class OkayToSendProbesMessage extends Message {
   getMessageType(): string {
     return 'okay-to-send-probes';
   }
@@ -30,7 +30,7 @@ export class OkayToSendProbes extends Message {
   }
 }
 
-export class Probe extends Message {
+export class ProbeMessage extends Message {
   private id: string;
   constructor(id: string) {
       super();
@@ -47,7 +47,7 @@ export class Probe extends Message {
   }
 }
 
-export class Loop extends Message {
+export class LoopMessage extends Message {
   private loopId: string;
   private probeId: string;
   constructor(probeId: string, loopId?: string) {
@@ -70,7 +70,7 @@ export class Loop extends Message {
 
 }
 
-export class Pauze extends Message {
+export class PauzeMessage extends Message {
   private pauze: boolean;
   constructor(pauze: boolean) {
       super();

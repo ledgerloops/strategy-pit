@@ -1,10 +1,10 @@
-import { Meet } from "../src/messages.js";
+import { MeetMessage } from "../src/messages.js";
 import { BasicMessageForwarder } from "../src/node.js";
 import { Polite } from "../src/polite.js";
 
 class PoliteNode extends Polite {
     async onMeet(other: string): Promise<void> {
-        this.sendMessage(other, new Meet());
+        this.sendMessage(other, new MeetMessage());
       }
     async handleMeetMessage(): Promise<void> {}
     handleProbeMessage(): void {}

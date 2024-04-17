@@ -1,4 +1,4 @@
-import { Probe as ProbeMessage, Loop as LoopMessage, Meet, HaveProbes, Message, OkayToSendProbes } from "../src/messages.js";
+import { ProbeMessage as ProbeMessage, LoopMessage as LoopMessage, MeetMessage, HaveProbesMessage, OkayToSendProbesMessage } from "../src/messages.js";
 import { BasicMessageForwarder, HandRaisingStatus, Node } from "../src/node.js";
 import { genRanHex } from "./util.js";
 
@@ -29,15 +29,20 @@ export class Trace {
   }
 }
 export class Probe {
+  private probeId: string;
   private from: string[];
   private to: string[];
   private homeMinted: boolean;
   private traces: Trace[] = [];
 
-  constructor (from: string[], to: string[], homeMinted: boolean) {
+  constructor (probeId: string, from: string[], to: string[], homeMinted: boolean) {
+    this.probeId = probeId;
     this.from = from;
     this.to = to;
     this.homeMinted = homeMinted;
+  }
+  getProbeId(): string {
+    return this.probeId;
   }
   getFrom(): string[] {
     return this.from;
@@ -63,7 +68,8 @@ export class Probe {
   addTrace(trace: Trace): void {
     this.traces.push(trace);
   }
-  toJson(): {
+  toObject(): {
+    probeId: string,
     from: string[],
     to: string[],
     homeMinted: boolean,
@@ -74,6 +80,7 @@ export class Probe {
     }[]
    } {
     return {
+      probeId: this.probeId,
       from: this.from,
       to: this.to,
       homeMinted: this.homeMinted,
@@ -99,7 +106,7 @@ export class ButterflyProbeStore {
   }
   ensure(id: string, homeMinted: boolean): Probe {
     if (typeof this.probes[id] === 'undefined') {
-      this.probes[id] = new Probe([], [], homeMinted);
+      this.probes[id] = new Probe(id, [], [], homeMinted);
     }
     return this.probes[id];
   }
@@ -136,93 +143,51 @@ export class ButterflyProbeStore {
 export class Butterfly extends Node {
   protected probeStore: ButterflyProbeStore = new ButterflyProbeStore();
   private loopsFound: string[] = [];
-  // private probesToOffer: {
-  //   [friend: string] : string[]
-  // } = {};
+  private probesToOffer: {
+    [friend: string] : string[]
+  } = {};
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
 
-  // Methods copied from Polite START
-  private raiseHand(to: string): void {
+  // Postpone sending of probes until we have received the okay-to-send-probes message
+  protected raiseHand(to: string): void {
     this.friends[to].handRaisingStatus = HandRaisingStatus.Waiting;
     this.debugLog.push(`${this.name} raises hand to ${to}`);
-    this.messageForwarder.forwardMessage(this, this.friends[to].node, new HaveProbes());
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, new HaveProbesMessage());
   }
-  private handleRaiseHand(from: string): void {
-    // console.log(this.name, 'receives raised hand from', from);
-    this.debugLog.push(`${this.name} receives raised hand from ${from}`);
+
+  protected handleHaveProbesMessage(from: string): void {
     this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
-    this.debugLog.push(`${this.name} sends okay-to-send-probes message to ${from}`);
-    super.sendMessage(from, new OkayToSendProbes());
+    super.sendMessage(from, new OkayToSendProbesMessage());
   }
-  private handleOverToYouMessage(from: string): void {
-    // console.log(this.name, 'receives okay-to-send-probes from', from);
-    this.debugLog.push(`${this.name} receives okay-to-send-probes from ${from}`);
-    this.friends[from].handRaisingStatus = HandRaisingStatus.Talking;
-    if (typeof this.friends[from].promises !== 'undefined') {
-      this.friends[from].promises.forEach(promise => {
-        promise.resolve();
+  protected handleOkayToSendProbesMessage(friend: string): void {
+    this.debugLog.push(`${this.name} receives okay-to-send-probes from ${friend}`);
+    this.friends[friend].handRaisingStatus = HandRaisingStatus.Talking;
+    if (typeof this.probesToOffer[friend] !== 'undefined') {
+      this.probesToOffer[friend].forEach(probeId => {
+        const probe = this.probeStore.get(probeId);
+        if (probe.isVirginFor(friend)) {
+          this.debugLog.push(`OFFERING PROBE ${probe.getProbeId()} TO ${friend} [3/4]`);
+          probe.recordOutgoing(friend);
+          const message = new ProbeMessage(probe.getProbeId());
+          this.sendMessage(friend, message);
+        }
       });
-      delete this.friends[from].promises;
+      delete this.friends[friend].promises;
     }
   }
-  protected async semaphore(to: string): Promise<void> {
-    if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
-      this.debugLog.push(`${this.name} is talking to ${to}`);
-      return;
-    }
-    this.debugLog.push(`${this.name} is waiting to talk to ${to}`);
 
-    this.debugLog.push(`${this.name} waits for semaphore to talk to ${to}`);
-    const ret: Promise<void> = new Promise((resolve, reject) => {
-      if (typeof this.friends[to].promises === 'undefined') {
-        this.friends[to].promises = [];
-      }
-      this.friends[to].promises.push({ resolve, reject });
-    });
-    if(this.friends[to].handRaisingStatus === HandRaisingStatus.Listening) {
-      // console.log(this.name, 'raising hand to', to);
-      this.raiseHand(to);
-    }
-    return ret;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected sendProbe(_to: string, _message: ProbeMessage): void {
   }
-  protected async sendMessage(to: string, message: Message): Promise<void> {
-    this.debugLog.push(`sendMessage ${this.name} to ${to}, semaphore wait START`);
-    await this.semaphore(to);
-    this.debugLog.push(`sendMessage ${this.name} to ${to}, semaphore wait END`);
-    this.debugLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
-    this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
-  }
-  async receiveMessage(sender: Node, message: Message): Promise<void> {
-    this.debugLog.push(`[Polite#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
-    // console.log(`${this.name} receives message from ${sender}`, message);
-    if (message.getMessageType() === `have-probes`) {
-      this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
-      this.handleRaiseHand(sender.getName());
-    } else if (message.getMessageType() === `okay-to-send-probes`) {
-      this.handleOverToYouMessage(sender.getName());
-    } else {
-      this.debugLog.push(`${this.name} receives payload message from ${sender.getName()}`);
-      super.receiveMessage(sender, message);
-    }
-  }
-  // Methods copied from Polite END
-
-  protected sendProbe(to: string, message: ProbeMessage): void {
-    const probe = this.probeStore.get((message as ProbeMessage).getId());
-    probe.recordOutgoing(to);
-    this.sendMessage(to, message);
-  }
-  protected async offerProbe(friend: string, probeId: string, homeMinted: boolean): Promise<void> {
-    const probe = this.probeStore.ensure(probeId, homeMinted);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected async offerProbe(friend: string, probeId: string, _homeMinted: boolean): Promise<void> {
+    // const probe = this.probeStore.ensure(probeId, homeMinted);
     this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [1/4]`);
-    await this.semaphore(friend);
+    // await this.semaphore(friend);
     this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [2/4]`);
-    if (probe.isVirginFor(friend)) {
-      this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [3/4]`);
-      this.sendProbe(friend, new ProbeMessage(probeId));
-    }
+    
     this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [4/4]`);
   }
   protected async offerAllFloodProbes(other: string): Promise<void> {
@@ -253,7 +218,7 @@ export class Butterfly extends Node {
   async onMeet(other: string): Promise<void> {
     this.debugLog.push(`I meet ${other} [1/4]`);
     // this is safe to await because it will just queue them for the next message round
-    await this.sendMessage(other, new Meet());
+    await this.sendMessage(other, new MeetMessage());
     this.debugLog.push(`I offer ${other} all my flood probes [2/4]`);
     // this is safe to await because it will just queue them for the next message round
     await this.offerAllFloodProbes(other);

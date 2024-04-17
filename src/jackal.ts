@@ -1,4 +1,4 @@
-import { Message, Pauze } from "./messages.js";
+import { Message, PauzeMessage } from "./messages.js";
 import { BasicMessageForwarder, Node } from "./node.js";
 import { Stingray } from "./stingray.js";
 
@@ -8,11 +8,11 @@ export class Jackal extends Stingray {
     super(name, messageForwarder);
   }
   async onMeet(node: string): Promise<void> {
-    this.sendMessage(node, new Pauze(true));
+    this.sendMessage(node, new PauzeMessage(true));
     super.onMeet(node);
-    this.sendMessage(node, new Pauze(false));
+    this.sendMessage(node, new PauzeMessage(false));
   }
-  handlePauzeMessage(other: string, message: Pauze): void {
+  handlePauzeMessage(other: string, message: PauzeMessage): void {
     if (message.getPauze()) {
       this.log.push(`PAUZING MESSAGES TO ${other}`);
       this.pauzed[other] = this.pauzed[other] || [];
@@ -35,7 +35,7 @@ export class Jackal extends Stingray {
   }
   async receiveMessage(sender: Node, message: Message): Promise<void> {
     if (message.getMessageType() === 'pauze') {
-      this.handlePauzeMessage(sender.getName(), message as Pauze);
+      this.handlePauzeMessage(sender.getName(), message as PauzeMessage);
     } else {
       super.receiveMessage(sender, message);
     }

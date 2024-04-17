@@ -1,4 +1,4 @@
-import { Message, OkayToSendProbes, HaveProbes } from './messages.js';
+import { Message, OkayToSendProbesMessage, HaveProbesMessage } from './messages.js';
 import { Node, BasicMessageForwarder, HandRaisingStatus } from "./node.js";
 
 export abstract class Polite extends Node {
@@ -8,14 +8,14 @@ export abstract class Polite extends Node {
   private raiseHand(to: string): void {
     this.friends[to].handRaisingStatus = HandRaisingStatus.Waiting;
     this.debugLog.push(`${this.name} raises hand to ${to}`);
-    this.messageForwarder.forwardMessage(this, this.friends[to].node, new HaveProbes());
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, new HaveProbesMessage());
   }
   private handleRaiseHand(from: string): void {
     // console.log(this.name, 'receives raised hand from', from);
     this.debugLog.push(`${this.name} receives raised hand from ${from}`);
     this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
     this.debugLog.push(`${this.name} sends okay-to-send-probes message to ${from}`);
-    super.sendMessage(from, new OkayToSendProbes());
+    super.sendMessage(from, new OkayToSendProbesMessage());
   }
   private handleOverToYouMessage(from: string): void {
     // console.log(this.name, 'receives okay-to-send-probes from', from);

@@ -1,4 +1,4 @@
-import { Probe, Loop } from "./messages.js";
+import { ProbeMessage, LoopMessage } from "./messages.js";
 import { genRanHex } from "./util.js";
 import { Salmon } from "./salmon.js";
 import { BasicMessageForwarder } from "./node.js";
@@ -21,7 +21,7 @@ export class Pelican extends Salmon {
       } else {
         if (typeof probes[other] === 'undefined') {
           this.probes[id][other] = true;
-          this.sendMessage(other, new Probe(id));
+          this.sendMessage(other, new ProbeMessage(id));
         }
       }
     });
@@ -31,7 +31,7 @@ export class Pelican extends Salmon {
     Object.keys(this.pelicanLoops).forEach(probeId => Object.keys(this.pelicanLoops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
     return loops;
   }
-  onLoopDetected(message: Probe): void {
+  onLoopDetected(message: ProbeMessage): void {
     // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
     const initialLoopId = genRanHex(8);
     if (typeof this.pelicanLoops[message.getId()] === 'undefined') {
@@ -39,17 +39,17 @@ export class Pelican extends Salmon {
     }
     this.pelicanLoops[message.getId()][initialLoopId] = true;
     Object.keys(this.probes[message.getId()]).forEach(name => {
-      this.sendMessage(name, new Loop(message.getId(), initialLoopId));
+      this.sendMessage(name, new LoopMessage(message.getId(), initialLoopId));
     });
   }
 
-  async handleLoopMessage(sender: string, message: Loop): Promise<void> {
+  async handleLoopMessage(sender: string, message: LoopMessage): Promise<void> {
     if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getLoopId()]) {
         // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getLoopId()}`);
       let loopId = message.getLoopId();
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
         if (name !== sender) {
-          this.sendMessage(name, new Loop(message.getProbeId(), loopId));
+          this.sendMessage(name, new LoopMessage(message.getProbeId(), loopId));
           if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
             this.pelicanLoops[message.getProbeId()] = {};
           }

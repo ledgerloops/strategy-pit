@@ -1,4 +1,4 @@
-import { Probe } from "./messages.js";
+import { ProbeMessage } from "./messages.js";
 import { BasicMessageForwarder } from "./node.js";
 import { Pelican } from "./pelican.js";
 
@@ -10,7 +10,7 @@ export class Petrogale extends Pelican {
     Object.entries(this.probes).forEach(([id, probes]) => {
       if (typeof probes[other] === 'undefined') {
         this.probes[id][other] = true;
-        this.sendMessage(other, new Probe(id));
+        this.sendMessage(other, new ProbeMessage(id));
       }
     });
   }

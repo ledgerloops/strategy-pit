@@ -1,4 +1,4 @@
-import { Message, Meet, Probe, Loop } from "./messages.js";
+import { Message, MeetMessage, ProbeMessage, LoopMessage } from "./messages.js";
 
 class Entry {
   sender: string;
@@ -153,9 +153,17 @@ export abstract class Node {
     return this.onMeet(other.getName());
   }
 
-  abstract handleMeetMessage(sender: string, message: Meet): void;
-  abstract handleProbeMessage(sender: string, message: Probe): void;
-  abstract handleLoopMessage(sender: string, message: Loop): void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleMeetMessage(_sender: string, _message: MeetMessage): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleProbeMessage(_sender: string, _message: ProbeMessage): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleLoopMessage(_sender: string, _message: LoopMessage): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleHaveProbesMessage(_from: string): void {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  protected handleOkayToSendProbesMessage(_from: string): void {}
+
   protected sendMessage(to: string, message: Message): void {
     this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
@@ -165,11 +173,17 @@ export abstract class Node {
     // console.log(`${this.name} receives message from ${sender}`, message);
     if (message.getMessageType() === `meet`) {
       this.addFriend(sender, HandRaisingStatus.Listening);
-      return this.handleMeetMessage(sender.getName(), message as Meet);
+      return this.handleMeetMessage(sender.getName(), message as MeetMessage);
     } else if (message.getMessageType() === `probe`) {
-      return this.handleProbeMessage(sender.getName(), message as Probe);
+      return this.handleProbeMessage(sender.getName(), message as ProbeMessage);
     } else if (message.getMessageType() === `loop`) {
-      return this.handleLoopMessage(sender.getName(), message as Loop);
+      return this.handleLoopMessage(sender.getName(), message as LoopMessage);
+    } else if (message.getMessageType() === `have-probes`) {
+      this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
+      this.handleHaveProbesMessage(sender.getName());
+    } else if (message.getMessageType() === `okay-to-send-probes`) {
+      this.handleOkayToSendProbesMessage(sender.getName());
+
     }
   }
   getMessageLog(): string[] {

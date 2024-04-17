@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Loop, Probe } from '../src/messages.js';
+import { LoopMessage, ProbeMessage } from '../src/messages.js';
 
 describe('BasicMessageForwarder', () => {
   it('logs messages', async () => {
     const { BasicMessageForwarder } = await import('../src/node.js');
     const logger = new BasicMessageForwarder();
-    const probe = new Probe('probe-alice-bob');
-    const loop = new Loop('probe-alice-bob', 'Hi');
+    const probe = new ProbeMessage('probe-alice-bob');
+    const loop = new LoopMessage('probe-alice-bob', 'Hi');
     logger.logMessageSent('Alice', 'Bob', probe);
     logger.logMessageReceived('Alice', 'Bob', probe);
     logger.logMessageSent('Bob', 'Alice', loop);
