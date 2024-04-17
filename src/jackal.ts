@@ -33,7 +33,7 @@ export class Jackal extends Stingray {
       super.sendMessage(to, message);
     }
   }
-  receiveMessage(sender: Node, message: Message): void {
+  async receiveMessage(sender: Node, message: Message): Promise<void> {
     if (message.getMessageType() === 'pauze') {
       this.handlePauzeMessage(sender.getName(), message as Pauze);
     } else {

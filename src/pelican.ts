@@ -43,7 +43,7 @@ export class Pelican extends Salmon {
     });
   }
 
-  handleLoopMessage(sender: string, message: Loop): void {
+  async handleLoopMessage(sender: string, message: Loop): Promise<void> {
     if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getLoopId()]) {
         // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getLoopId()}`);
       let loopId = message.getLoopId();

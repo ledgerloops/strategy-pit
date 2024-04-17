@@ -39,7 +39,7 @@ export class Squid extends Stingray {
       super.sendMessage(to, message);
     }
   }
-  receiveMessage(sender: Node, message: Message): void {
+  async receiveMessage(sender: Node, message: Message): Promise<void> {
     if (message.getMessageType() === 'pauze') {
       if ((message as Pauze).getPauze()) {
         this.theyHaveTheirHandUp[sender.getName()] = true;

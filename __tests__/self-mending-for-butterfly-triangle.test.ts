@@ -25,14 +25,14 @@ describe('Basic Butterfly Triangle - until the music stops', () => {
     alice = new Butterfly('Alice', messageForwarder);
     bob = new Butterfly('Bob', messageForwarder);
     charlie = new Butterfly('Charlie', messageForwarder);
-    flushReport = messageForwarder.flush();
-    alice.meet(bob);
-    flushReport = messageForwarder.flush();
-    bob.meet(charlie);
-    flushReport = messageForwarder.flush();
-    charlie.meet(alice);
+    flushReport = await messageForwarder.flush();
+    await alice.meet(bob);
+    flushReport = await messageForwarder.flush();
+    await bob.meet(charlie);
+    flushReport = await messageForwarder.flush();
+    await charlie.meet(alice);
     do {
-      flushReport = messageForwarder.flush();
+      flushReport = await messageForwarder.flush();
     } while (flushReport.length > 0);
   });
   it('Probes are not echoed back to the sender', () => {

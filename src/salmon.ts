@@ -64,7 +64,7 @@ export class Salmon extends Node {
   getLoops(): string[] {
     return this.loopStore.getKeys();
   }
-  handleMeetMessage(): void {
+  async handleMeetMessage(): Promise<void> {
   }
   protected onLoopDetected(message: Probe): void {
       // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
@@ -73,7 +73,7 @@ export class Salmon extends Node {
         this.sendMessage(name, new Loop( message.getId()));
       });
   }
-  handleProbeMessage(sender: string, message: Probe): void {
+  async handleProbeMessage(sender: string, message: Probe): Promise<void> {
     if (typeof this.probes[message.getId()] === 'undefined') {
       this.probes[message.getId()] = {};
     } else {
@@ -90,7 +90,7 @@ export class Salmon extends Node {
     });
     // this.addFriend(message.getSender());
   }
-  handleLoopMessage(sender: string, message: Loop): void {
+  async handleLoopMessage(sender: string, message: Loop): Promise<void> {
     if (!this.loopStore.has(message.getProbeId())) {
       // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()}`);
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {

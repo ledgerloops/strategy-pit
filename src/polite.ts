@@ -5,9 +5,6 @@ export abstract class Polite extends Node {
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
-  public getPoliteProtocolLog(): string[] {
-    return this.debugLog;
-  }
   private raiseHand(to: string): void {
     this.friends[to].handRaisingStatus = HandRaisingStatus.Waiting;
     this.debugLog.push(`${this.name} raises hand to ${to}`);
@@ -58,7 +55,7 @@ export abstract class Polite extends Node {
     this.debugLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
     this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
-  receiveMessage(sender: Node, message: Message): void {
+  async receiveMessage(sender: Node, message: Message): Promise<void> {
     this.debugLog.push(`[Polite#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
     // console.log(`${this.name} receives message from ${sender}`, message);
     if (message.getMessageType() === `raise-hand`) {

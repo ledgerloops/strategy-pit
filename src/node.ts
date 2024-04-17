@@ -79,15 +79,17 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
     this.logMessageSent(sender.getName(), receiver.getName(), message);
     this.batch.push({ sender, receiver, message });
   }
-  flush(): string[] {
+  async flush(): Promise<string[]> {
     this.logMessageSent('---', '---', { toString: () => '---', getMessageType: () => 'separator' } as Message);
     const flushReport: string[] = [];
     const batch = this.batch;
     this.batch = [];
-    batch.forEach(entry => {
-      entry.receiver.receiveMessage(entry.sender, entry.message);
+    const promises: Promise<void>[] = batch.map(entry => {
+      const promise: Promise<void> = entry.receiver.receiveMessage(entry.sender, entry.message);
       flushReport.push(`[${entry.sender.getName()}]->[${entry.receiver.getName()}] ${entry.message.toString()}`);
+      return promise;
     });
+    await Promise.all(promises);
     return flushReport;
   }
   getBatch(): string[] {
@@ -130,6 +132,9 @@ export abstract class Node {
   getName(): string {
       return this.name;
   }
+  getDebugLog(): string[] {
+    return this.debugLog;
+  }
   abstract onMeet(other: string): Promise<void>;
   protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
     const otherName = other.getName();
@@ -154,17 +159,17 @@ export abstract class Node {
   protected sendMessage(to: string, message: Message): void {
     this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
-  receiveMessage(sender: Node, message: Message): void {
+  async receiveMessage(sender: Node, message: Message): Promise<void> {
     this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
     this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
     // console.log(`${this.name} receives message from ${sender}`, message);
     if (message.getMessageType() === `meet`) {
       this.addFriend(sender, HandRaisingStatus.Listening);
-      this.handleMeetMessage(sender.getName(), message as Meet);
+      return this.handleMeetMessage(sender.getName(), message as Meet);
     } else if (message.getMessageType() === `probe`) {
-      this.handleProbeMessage(sender.getName(), message as Probe);
+      return this.handleProbeMessage(sender.getName(), message as Probe);
     } else if (message.getMessageType() === `loop`) {
-      this.handleLoopMessage(sender.getName(), message as Loop);
+      return this.handleLoopMessage(sender.getName(), message as Loop);
     }
   }
   getMessageLog(): string[] {

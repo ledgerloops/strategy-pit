@@ -6,7 +6,7 @@ class PoliteNode extends Polite {
     async onMeet(other: string): Promise<void> {
         this.sendMessage(other, new Meet());
       }
-    handleMeetMessage(): void {}
+    async handleMeetMessage(): Promise<void> {}
     handleProbeMessage(): void {}
     handleLoopMessage(): void {}
     sendTestMessage(to: string): Promise<void> {
@@ -28,7 +28,7 @@ describe('Polite', () => {
       // console.log('3');
       await alice.sendTestMessage('Bob');
       // console.log('4');
-      expect(alice.getPoliteProtocolLog()).toEqual([
+      expect(alice.getDebugLog()).toEqual([
         "sendMessage Alice to Bob, semaphore wait START",
         "Alice is talking to Bob",
         "sendMessage Alice to Bob, semaphore wait END",
@@ -52,7 +52,7 @@ describe('Polite', () => {
         "sendMessage Alice to Bob, semaphore wait END",
         "Alice is talking and sends test message to Bob",
       ]);
-      expect(bob.getPoliteProtocolLog()).toEqual([
+      expect(bob.getDebugLog()).toEqual([
         "[Polite#receiveMessage] Bob receives message from Alice",
         "Bob receives payload message from Alice",
         "[Node#receiveMessage] Bob receives message from Alice",
