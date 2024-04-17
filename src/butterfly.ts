@@ -136,7 +136,6 @@ export class ButterflyProbeStore {
 
 export class Butterfly extends Polite {
   protected probeStore: ButterflyProbeStore = new ButterflyProbeStore();
-  protected debugLog: string[] = [];
   private loopsFound: string[] = [];
 
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
@@ -159,6 +158,7 @@ export class Butterfly extends Polite {
     this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [4/4]`);
   }
   protected async offerAllFloodProbes(other: string): Promise<void> {
+    this.debugLog.push(`OFFERING ALL FLOOD PROBES TO ${other}`);
     const promises = this.probeStore.getKeys().map((probeId) => {
       this.debugLog.push(`OFFERING PROBE ${probeId} TO ${other}`);
       // setting homeMinted to false but we don't expect it to matter since this probe already exists
@@ -192,7 +192,7 @@ export class Butterfly extends Polite {
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
   // when this node has received a `meet` message
-  handleMeetMessage(sender: string): void {
+  async handleMeetMessage(sender: string): Promise<void> {
     this.debugLog.push(`MEET MESSAGE FROM ${sender}, offering all flood probes`);
     this.offerAllFloodProbes(sender);
   }
@@ -217,27 +217,28 @@ export class Butterfly extends Polite {
     probe.addTrace(trace);
     this.sendMessage(friend, new LoopMessage(probeId, loopId));
   }
-  handleProbeMessage(sender: string, message: ProbeMessage): void {
+  async handleProbeMessage(sender: string, message: ProbeMessage): Promise<void> {
     let probe: Probe | undefined = this.probeStore.get(message.getId());
     if (typeof probe === 'undefined') {
-      // INCOMING PROBE IS NEW TO US, FLOOD IT FORWARD
+      this.debugLog.push(`INCOMING PROBE ${message.getId()} IS NEW TO US, FLOOD IT FORWARD`);
       probe = this.probeStore.ensure(message.getId(), false);
       probe.recordIncoming(sender);
-      this.offerFloodProbeToAll(message.getId(), false);
+      await this.offerFloodProbeToAll(message.getId(), false);
     } else {
+      this.debugLog.push(`INCOMING PROBE ${message.getId()} IS KNOWN TO US`);
       if (probe.isVirginFor(sender)) {
         this.debugLog.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
-          this.createLoopTrace(message.getId(), sender);
+          await this.createLoopTrace(message.getId(), sender);
         } else {
-          this.createPinnedFloodProbe(sender);
+          await this.createPinnedFloodProbe(sender);
         }
       } else {
         this.debugLog.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
       }
     }
   }
-  handleLoopMessage(sender: string, message: LoopMessage): void {
+  async handleLoopMessage(sender: string, message: LoopMessage): Promise<void> {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
     this.debugLog.push(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.debugLog.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);

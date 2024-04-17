@@ -117,57 +117,56 @@ export class Friend {
 }
 
 export abstract class Node {
-    protected messageForwarder: BasicMessageForwarder;
-    protected name: string;
-    protected friends: {
-      [name: string]: Friend
-     }  = {};
+  protected debugLog: string[] = [];
+  protected messageForwarder: BasicMessageForwarder;
+  protected name: string;
+  protected friends: {
+    [name: string]: Friend
+   }  = {};
+  constructor(name: string, messageForwarder?: BasicMessageForwarder) {
+    this.name = name;
+    this.messageForwarder = messageForwarder || new BasicMessageForwarder();
+  }
+  getName(): string {
+      return this.name;
+  }
+  abstract onMeet(other: string): Promise<void>;
+  protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
+    const otherName = other.getName();
+    // console.log(`${this.name} meets ${otherName}`);
+    if (typeof this.friends[other.getName()] !== 'undefined') {
+      throw new Error(`${this.name} is already friends with ${otherName}`);
+    }
+    this.friends[otherName] = new Friend(other, handRaisingStatus);
+  }
+  getFriends(): string[] {
+    return Object.keys(this.friends);
+  }
 
-    constructor(name: string, messageForwarder?: BasicMessageForwarder) {
-      this.name = name;
-      this.messageForwarder = messageForwarder || new BasicMessageForwarder();
-    }
-    getName(): string {
-        return this.name;
-    }
-    abstract onMeet(other: string): Promise<void>;
-    protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
-      const otherName = other.getName();
-      // console.log(`${this.name} meets ${otherName}`);
-      if (typeof this.friends[other.getName()] !== 'undefined') {
-        throw new Error(`${this.name} is already friends with ${otherName}`);
-      }
-      this.friends[otherName] = new Friend(other, handRaisingStatus);
-    }
-    getFriends(): string[] {
-      return Object.keys(this.friends);
-    }
- 
-    meet(other: Node): Promise<void> {
-      this.addFriend(other, HandRaisingStatus.Talking);
-      return this.onMeet(other.getName());
-    }
- 
-    abstract handleMeetMessage(sender: string, message: Meet): void;
-    abstract handleProbeMessage(sender: string, message: Probe): void;
-    abstract handleLoopMessage(sender: string, message: Loop): void;
+  meet(other: Node): Promise<void> {
+    this.addFriend(other, HandRaisingStatus.Talking);
+    return this.onMeet(other.getName());
+  }
 
-    protected sendMessage(to: string, message: Message): void {
-      this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
+  abstract handleMeetMessage(sender: string, message: Meet): void;
+  abstract handleProbeMessage(sender: string, message: Probe): void;
+  abstract handleLoopMessage(sender: string, message: Loop): void;
+  protected sendMessage(to: string, message: Message): void {
+    this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
+  }
+  receiveMessage(sender: Node, message: Message): void {
+    this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
+    // console.log(`${this.name} receives message from ${sender}`, message);
+    if (message.getMessageType() === `meet`) {
+      this.addFriend(sender, HandRaisingStatus.Listening);
+      this.handleMeetMessage(sender.getName(), message as Meet);
+    } else if (message.getMessageType() === `probe`) {
+      this.handleProbeMessage(sender.getName(), message as Probe);
+    } else if (message.getMessageType() === `loop`) {
+      this.handleLoopMessage(sender.getName(), message as Loop);
     }
-    receiveMessage(sender: Node, message: Message): void {
-      this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
-      // console.log(`${this.name} receives message from ${sender}`, message);
-      if (message.getMessageType() === `meet`) {
-        this.addFriend(sender, HandRaisingStatus.Listening);
-        this.handleMeetMessage(sender.getName(), message as Meet);
-      } else if (message.getMessageType() === `probe`) {
-        this.handleProbeMessage(sender.getName(), message as Probe);
-      } else if (message.getMessageType() === `loop`) {
-        this.handleLoopMessage(sender.getName(), message as Loop);
-      }
-    }
-    getMessageLog(): string[] {
-      return this.messageForwarder.getLocalLog(this.name);
-    }
+  }
+  getMessageLog(): string[] {
+    return this.messageForwarder.getLocalLog(this.name);
+  }
 }
