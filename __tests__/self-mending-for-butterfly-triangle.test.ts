@@ -56,9 +56,18 @@ describe('Basic Butterfly Triangle - until the music stops', () => {
       const actual = {
         full: messageForwarder.getFullLog(),
         probes: messageForwarder.getProbeLogs(),
-        alice: alice.debugLog,
-        bob: bob.debugLog,
-        charlie: charlie.debugLog,
+        alice: {
+          debugLog: alice.debugLog,
+          loopsFound: alice.loopsFound,
+        },
+        bob: {
+          debugLog: bob.debugLog,
+          loopsFound: bob.loopsFound,
+        },
+        charlie: {
+          debugLog: charlie.debugLog,
+          loopsFound: charlie.loopsFound,
+        },
       };
       writeFileSync('__tests__/fixtures/batched-butterfly-triangle.json', JSON.stringify(actual, null, 2) + '\n');
       expect(actual).toEqual(expected);
