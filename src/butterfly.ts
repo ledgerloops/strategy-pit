@@ -59,8 +59,8 @@ export class Probe {
   recordOutgoing(to: string): void {
     this.to.push(to);
   }
-  isVirginFor(newFrom: string): boolean {
-    return !this.from.includes(newFrom) && !this.to.includes(newFrom);
+  isVirginFor(friend: string): boolean {
+    return !this.from.includes(friend) && !this.to.includes(friend);
   }
   getTraces(): Trace[] {
     return this.traces;
@@ -185,7 +185,7 @@ export class Butterfly extends Node {
       this.debugLog.push(`${this.name} is talking to ${friend}`);
       this.flushProbesQueue(friend);
     } else if (this.friends[friend].handRaisingStatus === HandRaisingStatus.Listening) {
-      this.debugLog.push(`${this.name} start waiting to talk to ${friend}`);
+      this.debugLog.push(`${this.name} starts waiting to talk to ${friend}`);
       this.raiseHand(friend);
     }
   }
@@ -263,6 +263,7 @@ export class Butterfly extends Node {
       probe.recordIncoming(sender);
       this.queueFloodProbeToAll(message.getId(), false);
     } else {
+      probe.recordIncoming(sender);
       this.debugLog.push(`INCOMING PROBE ${message.getId()} IS KNOWN TO US`);
       if (probe.isVirginFor(sender)) {
         this.debugLog.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
