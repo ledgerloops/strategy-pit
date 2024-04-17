@@ -161,14 +161,12 @@ export class Butterfly extends Node {
     this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
     super.sendMessage(from, new OkayToSendProbesMessage());
   }
-  protected handleOkayToSendProbesMessage(friend: string): void {
-    this.debugLog.push(`${this.name} receives okay-to-send-probes from ${friend}`);
-    this.friends[friend].handRaisingStatus = HandRaisingStatus.Talking;
+  protected flushProbesQueue(friend: string): void {
     if (typeof this.probesToOffer[friend] !== 'undefined') {
       this.probesToOffer[friend].forEach(probeId => {
         const probe = this.probeStore.get(probeId);
         if (probe.isVirginFor(friend)) {
-          this.debugLog.push(`OFFERING PROBE ${probe.getProbeId()} TO ${friend} [3/4]`);
+          this.debugLog.push(`QUEUEING PROBE ${probe.getProbeId()} TO ${friend} [3/4]`);
           probe.recordOutgoing(friend);
           const message = new ProbeMessage(probe.getProbeId());
           this.sendMessage(friend, message);
@@ -177,60 +175,64 @@ export class Butterfly extends Node {
       delete this.friends[friend].promises;
     }
   }
+  protected handleOkayToSendProbesMessage(friend: string): void {
+    this.debugLog.push(`${this.name} receives okay-to-send-probes from ${friend}`);
+    this.friends[friend].handRaisingStatus = HandRaisingStatus.Talking;
+    this.flushProbesQueue(friend);
+  }
+  protected tryToSendProbes(friend: string): void {
+    if (this.friends[friend].handRaisingStatus === HandRaisingStatus.Talking) {
+      this.debugLog.push(`${this.name} is talking to ${friend}`);
+      this.flushProbesQueue(friend);
+    } else if (this.friends[friend].handRaisingStatus === HandRaisingStatus.Listening) {
+      this.debugLog.push(`${this.name} start waiting to talk to ${friend}`);
+      this.raiseHand(friend);
+    }
+  }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected sendProbe(_to: string, _message: ProbeMessage): void {
+  protected queueProbe(friend: string, probeId: string, homeMinted: boolean): void {
+    this.probeStore.ensure(probeId, homeMinted);
+    this.probesToOffer[friend] = this.probesToOffer[friend] || [];
+    this.probesToOffer[friend].push(probeId);
+    this.tryToSendProbes(friend);
   }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected async offerProbe(friend: string, probeId: string, _homeMinted: boolean): Promise<void> {
-    // const probe = this.probeStore.ensure(probeId, homeMinted);
-    this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [1/4]`);
-    // await this.semaphore(friend);
-    this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [2/4]`);
-    
-    this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [4/4]`);
-  }
-  protected async offerAllFloodProbes(other: string): Promise<void> {
-    this.debugLog.push(`OFFERING ALL FLOOD PROBES TO ${other}`);
-    const promises = this.probeStore.getKeys().map((probeId) => {
-      this.debugLog.push(`OFFERING PROBE ${probeId} TO ${other}`);
+  protected queueAllFloodProbes(other: string): void {
+    this.debugLog.push(`QUEUEING ALL FLOOD PROBES TO ${other}`);
+    this.probeStore.getKeys().forEach((probeId) => {
+      this.debugLog.push(`QUEUEING PROBE ${probeId} TO ${other}`);
       // setting homeMinted to false but we don't expect it to matter since this probe already exists
-      return this.offerProbe(other, probeId, false);
+      this.queueProbe(other, probeId, false);
     });
-    this.debugLog.push(`AWAITING ALL PROBES TO BE OFFERED TO ${other}`);
-    await Promise.all(promises);
   }
-  protected async offerFloodProbeToAll(probeId: string, homeMinted: boolean): Promise<void> {
-    const promises = this.getFriends().map(friend => {
-      return this.offerProbe(friend, probeId, homeMinted);
+  protected queueFloodProbeToAll(probeId: string, homeMinted: boolean): void {
+    this.getFriends().forEach(friend => {
+      this.queueProbe(friend, probeId, homeMinted);
     });
-    this.debugLog.push(`AWAITING PROBE ${probeId} TO BE OFFERED TO ALL FRIENDS`);
-    await Promise.all(promises);
   }
-  protected createFloodProbe(): Promise<void> {
-    return this.offerFloodProbeToAll(genRanHex(8), true);
+  protected createFloodProbe(): void {
+    return this.queueFloodProbeToAll(genRanHex(8), true);
   }
   protected createPinnedFloodProbe(recipient: string): void {
     const probeForNewLink = genRanHex(8);
-    this.offerProbe(recipient, probeForNewLink, true);
+    this.queueProbe(recipient, probeForNewLink, true);
   }
   // when this node has sent a `meet` message
-  async onMeet(other: string): Promise<void> {
+  onMeet(other: string): void {
     this.debugLog.push(`I meet ${other} [1/4]`);
-    // this is safe to await because it will just queue them for the next message round
-    await this.sendMessage(other, new MeetMessage());
-    this.debugLog.push(`I offer ${other} all my flood probes [2/4]`);
-    // this is safe to await because it will just queue them for the next message round
-    await this.offerAllFloodProbes(other);
+    // this is safe to because it will just queue them for the next message round
+    this.sendMessage(other, new MeetMessage());
+    this.debugLog.push(`I queue ${other} all my flood probes [2/4]`);
+    // this is safe to because it will just queue them for the next message round
+    this.queueAllFloodProbes(other);
     this.debugLog.push(`and create a new flood probe for other friends than ${other} [3/4]`);
-    // NOTE: don't await the flood probe creation because it will span multiple message rounds
+    // NOTE: don't the flood probe creation because it will span multiple message rounds
     this.createFloodProbe();
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
   // when this node has received a `meet` message
-  async handleMeetMessage(sender: string): Promise<void> {
-    this.debugLog.push(`MEET MESSAGE FROM ${sender}, offering all flood probes`);
-    this.offerAllFloodProbes(sender);
+  handleMeetMessage(sender: string): void {
+    this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
+    this.queueAllFloodProbes(sender);
   }
   getProbes(): {
     [id: string]: {
@@ -253,28 +255,28 @@ export class Butterfly extends Node {
     probe.addTrace(trace);
     this.sendMessage(friend, new LoopMessage(probeId, loopId));
   }
-  async handleProbeMessage(sender: string, message: ProbeMessage): Promise<void> {
+  handleProbeMessage(sender: string, message: ProbeMessage): void {
     let probe: Probe | undefined = this.probeStore.get(message.getId());
     if (typeof probe === 'undefined') {
       this.debugLog.push(`INCOMING PROBE ${message.getId()} IS NEW TO US, FLOOD IT FORWARD`);
       probe = this.probeStore.ensure(message.getId(), false);
       probe.recordIncoming(sender);
-      await this.offerFloodProbeToAll(message.getId(), false);
+      this.queueFloodProbeToAll(message.getId(), false);
     } else {
       this.debugLog.push(`INCOMING PROBE ${message.getId()} IS KNOWN TO US`);
       if (probe.isVirginFor(sender)) {
         this.debugLog.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
-          await this.createLoopTrace(message.getId(), sender);
+          this.createLoopTrace(message.getId(), sender);
         } else {
-          await this.createPinnedFloodProbe(sender);
+          this.createPinnedFloodProbe(sender);
         }
       } else {
         this.debugLog.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
       }
     }
   }
-  async handleLoopMessage(sender: string, message: LoopMessage): Promise<void> {
+  handleLoopMessage(sender: string, message: LoopMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
     this.debugLog.push(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.debugLog.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);

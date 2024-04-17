@@ -179,7 +179,7 @@ export class Stingray extends Node {
     this.offerProbe(recipient, probeForNewLink, true);
   }
   // when this node has sent a `meet` message
-  async onMeet(other: string): Promise<void> {
+  onMeet(other: string): void {
     this.log.push(`I meet ${other}, and offer them all my flood probes`);
     this.sendMessage(other, new MeetMessage());
     this.offerAllFloodProbes(other);

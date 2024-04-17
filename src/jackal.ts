@@ -7,7 +7,7 @@ export class Jackal extends Stingray {
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
-  async onMeet(node: string): Promise<void> {
+  onMeet(node: string): void {
     this.sendMessage(node, new PauzeMessage(true));
     super.onMeet(node);
     this.sendMessage(node, new PauzeMessage(false));
@@ -33,7 +33,7 @@ export class Jackal extends Stingray {
       super.sendMessage(to, message);
     }
   }
-  async receiveMessage(sender: Node, message: Message): Promise<void> {
+  receiveMessage(sender: Node, message: Message): void {
     if (message.getMessageType() === 'pauze') {
       this.handlePauzeMessage(sender.getName(), message as PauzeMessage);
     } else {

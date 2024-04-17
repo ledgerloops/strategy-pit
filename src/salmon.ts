@@ -49,7 +49,7 @@ export class Salmon extends Node {
       }
     });
   }
-  async onMeet(other: string): Promise<void> {
+  onMeet(other: string): void {
     // create new probe for new link
     const probeForNewLink = genRanHex(8);
     if (typeof this.probes[probeForNewLink] === 'undefined') {
@@ -64,7 +64,7 @@ export class Salmon extends Node {
   getLoops(): string[] {
     return this.loopStore.getKeys();
   }
-  async handleMeetMessage(): Promise<void> {
+  handleMeetMessage(): void {
   }
   protected onLoopDetected(message: ProbeMessage): void {
       // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
@@ -73,7 +73,7 @@ export class Salmon extends Node {
         this.sendMessage(name, new LoopMessage( message.getId()));
       });
   }
-  async handleProbeMessage(sender: string, message: ProbeMessage): Promise<void> {
+  handleProbeMessage(sender: string, message: ProbeMessage): void {
     if (typeof this.probes[message.getId()] === 'undefined') {
       this.probes[message.getId()] = {};
     } else {
@@ -90,7 +90,7 @@ export class Salmon extends Node {
     });
     // this.addFriend(message.getSender());
   }
-  async handleLoopMessage(sender: string, message: LoopMessage): Promise<void> {
+  handleLoopMessage(sender: string, message: LoopMessage): void {
     if (!this.loopStore.has(message.getProbeId())) {
       // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()}`);
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {

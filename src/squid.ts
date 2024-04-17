@@ -8,7 +8,7 @@ export class Squid extends Stingray {
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
     super(name, messageForwarder);
   }
-  async onMeet(node: string): Promise<void> {
+  onMeet(node: string): void {
     this.sendMessage(node, new PauzeMessage(true));
     super.onMeet(node);
     if (this.theyHaveTheirHandUp[node]) {
@@ -39,7 +39,7 @@ export class Squid extends Stingray {
       super.sendMessage(to, message);
     }
   }
-  async receiveMessage(sender: Node, message: Message): Promise<void> {
+  receiveMessage(sender: Node, message: Message): void {
     if (message.getMessageType() === 'pauze') {
       if ((message as PauzeMessage).getPauze()) {
         this.theyHaveTheirHandUp[sender.getName()] = true;

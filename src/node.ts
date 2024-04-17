@@ -79,17 +79,15 @@ export class BatchedMessageForwarder extends BasicMessageForwarder {
     this.logMessageSent(sender.getName(), receiver.getName(), message);
     this.batch.push({ sender, receiver, message });
   }
-  async flush(): Promise<string[]> {
+  flush(): string[] {
     this.logMessageSent('---', '---', { toString: () => '---', getMessageType: () => 'separator' } as Message);
     const flushReport: string[] = [];
     const batch = this.batch;
     this.batch = [];
-    const promises: Promise<void>[] = batch.map(entry => {
-      const promise: Promise<void> = entry.receiver.receiveMessage(entry.sender, entry.message);
+    batch.forEach(entry => {
+      entry.receiver.receiveMessage(entry.sender, entry.message);
       flushReport.push(`[${entry.sender.getName()}]->[${entry.receiver.getName()}] ${entry.message.toString()}`);
-      return promise;
     });
-    await Promise.all(promises);
     return flushReport;
   }
   getBatch(): string[] {
@@ -135,7 +133,7 @@ export abstract class Node {
   getDebugLog(): string[] {
     return this.debugLog;
   }
-  abstract onMeet(other: string): Promise<void>;
+  abstract onMeet(other: string): void;
   protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
     const otherName = other.getName();
     // console.log(`${this.name} meets ${otherName}`);
@@ -148,9 +146,9 @@ export abstract class Node {
     return Object.keys(this.friends);
   }
 
-  meet(other: Node): Promise<void> {
+  meet(other: Node): void {
     this.addFriend(other, HandRaisingStatus.Talking);
-    return this.onMeet(other.getName());
+    this.onMeet(other.getName());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -167,7 +165,7 @@ export abstract class Node {
   protected sendMessage(to: string, message: Message): void {
     this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
-  async receiveMessage(sender: Node, message: Message): Promise<void> {
+  receiveMessage(sender: Node, message: Message): void {
     this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
     this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
     // console.log(`${this.name} receives message from ${sender}`, message);
