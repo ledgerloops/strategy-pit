@@ -74,7 +74,7 @@ The Butterfly is the first strategy in the third generation; it uses:
 * A Trace probe in the opposite direction when a Flood probe loops back to the root
 
 ###  <img src="./img/giraffe.png" style="width:50px;border-radius: 10px"/> Giraffe
-The Giraffe builds on the Butterfly with a fix for #15, to avoid pins for pins for pins infinite loops.
+The Giraffe builds on the Butterfly with a fix for [#15](https://github.com/ledgerloops/strategy-pit/issues/15), to avoid pins for pins for pins infinite loops.
 
 ## Second Generation Strategies
 ###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
