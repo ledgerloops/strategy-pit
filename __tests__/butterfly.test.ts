@@ -23,12 +23,20 @@ describe('Butterfly', () => {
     expect(messageForwarder.getFullLog()).toEqual([
       "[Alice]->[Bob] meet",
       "[Alice]->[Bob] probe genRanHex0",
+      "[Bob]->[Alice] raise-hand",
+      "[Alice]->[Bob] over-to-you",
       "[Bob]->[Charlie] meet",
       "[Bob]->[Charlie] probe genRanHex0",
-      // "[Bob]->[Alice] raise-hand",
-      // "[Alice]->[Bob] over-to-you",
-      // "[Bob]->[Alice] probe genRanHex1",
+      "[Charlie]->[Bob] raise-hand",
+      "[Bob]->[Charlie] over-to-you",
+      "[Bob]->[Charlie] raise-hand",
+      "[Charlie]->[Bob] over-to-you",
+      "[Bob]->[Alice] probe genRanHex1",
+      "[Alice]->[Bob] raise-hand",
+      "[Bob]->[Alice] over-to-you",
       "[Bob]->[Charlie] probe genRanHex1",
+      "[Charlie]->[Bob] raise-hand",
+      "[Bob]->[Charlie] over-to-you",
     ]);
   });
 });

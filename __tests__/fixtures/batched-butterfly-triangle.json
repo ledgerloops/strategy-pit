@@ -23,12 +23,39 @@
     ]
   },
   "alice": [
-    "I meet Bob, and offer them all my flood probes"
+    "I meet Bob [1/4]",
+    "I offer Bob all my flood probes [2/4]",
+    "AWAITING ALL PROBES TO BE OFFERED TO Bob",
+    "and create a new flood probe for other friends than Bob [3/4]",
+    "OFFERING PROBE genRanHex0 TO Bob [1/4]",
+    "AWAITING PROBE genRanHex0 TO BE OFFERED TO ALL FRIENDS",
+    "OFFERING PROBE genRanHex0 TO Bob [2/4]",
+    "OFFERING PROBE genRanHex0 TO Bob [3/4]",
+    "OFFERING PROBE genRanHex0 TO Bob [4/4]",
+    "Done onMeet Bob [4/4]"
   ],
   "bob": [
-    "I meet Charlie, and offer them all my flood probes"
+    "I meet Charlie [1/4]",
+    "I offer Charlie all my flood probes [2/4]",
+    "AWAITING ALL PROBES TO BE OFFERED TO Charlie",
+    "and create a new flood probe for other friends than Charlie [3/4]",
+    "OFFERING PROBE genRanHex1 TO Charlie [1/4]",
+    "AWAITING PROBE genRanHex1 TO BE OFFERED TO ALL FRIENDS",
+    "OFFERING PROBE genRanHex1 TO Charlie [2/4]",
+    "OFFERING PROBE genRanHex1 TO Charlie [3/4]",
+    "OFFERING PROBE genRanHex1 TO Charlie [4/4]",
+    "Done onMeet Charlie [4/4]"
   ],
   "charlie": [
-    "I meet Alice, and offer them all my flood probes"
+    "I meet Alice [1/4]",
+    "I offer Alice all my flood probes [2/4]",
+    "AWAITING ALL PROBES TO BE OFFERED TO Alice",
+    "and create a new flood probe for other friends than Alice [3/4]",
+    "OFFERING PROBE genRanHex2 TO Alice [1/4]",
+    "AWAITING PROBE genRanHex2 TO BE OFFERED TO ALL FRIENDS",
+    "OFFERING PROBE genRanHex2 TO Alice [2/4]",
+    "OFFERING PROBE genRanHex2 TO Alice [3/4]",
+    "OFFERING PROBE genRanHex2 TO Alice [4/4]",
+    "Done onMeet Alice [4/4]"
   ]
 }

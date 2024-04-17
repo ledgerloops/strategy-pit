@@ -149,10 +149,14 @@ export class Butterfly extends Polite {
   }
   protected async offerProbe(friend: string, probeId: string, homeMinted: boolean): Promise<void> {
     const probe = this.probeStore.ensure(probeId, homeMinted);
+    this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [1/4]`);
     await this.semaphore(friend);
+    this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [2/4]`);
     if (probe.isVirginFor(friend)) {
+      this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [3/4]`);
       this.sendProbe(friend, new ProbeMessage(probeId));
     }
+    this.debugLog.push(`OFFERING PROBE ${probeId} TO ${friend} [4/4]`);
   }
   protected async offerAllFloodProbes(other: string): Promise<void> {
     const promises = this.probeStore.getKeys().map((probeId) => {
@@ -160,12 +164,14 @@ export class Butterfly extends Polite {
       // setting homeMinted to false but we don't expect it to matter since this probe already exists
       return this.offerProbe(other, probeId, false);
     });
+    this.debugLog.push(`AWAITING ALL PROBES TO BE OFFERED TO ${other}`);
     await Promise.all(promises);
   }
   protected async offerFloodProbeToAll(probeId: string, homeMinted: boolean): Promise<void> {
     const promises = this.getFriends().map(friend => {
       return this.offerProbe(friend, probeId, homeMinted);
     });
+    this.debugLog.push(`AWAITING PROBE ${probeId} TO BE OFFERED TO ALL FRIENDS`);
     await Promise.all(promises);
   }
   protected createFloodProbe(): Promise<void> {
@@ -177,10 +183,13 @@ export class Butterfly extends Polite {
   }
   // when this node has sent a `meet` message
   async onMeet(other: string): Promise<void> {
-    this.debugLog.push(`I meet ${other}, and offer them all my flood probes`);
+    this.debugLog.push(`I meet ${other} [1/4]`);
     this.sendMessage(other, new Meet());
+    this.debugLog.push(`I offer ${other} all my flood probes [2/4]`);
     await this.offerAllFloodProbes(other);
+    this.debugLog.push(`and create a new flood probe for other friends than ${other} [3/4]`);
     await this.createFloodProbe();
+    this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
   // when this node has received a `meet` message
   handleMeetMessage(sender: string): void {
