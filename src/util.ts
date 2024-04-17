@@ -32,6 +32,12 @@ function createPreamble(): string {
   return `@startuml\n`;
 }
 function createLine(entry: Entry): string {
+  if (entry.sender === '---') {
+    return '';
+  }
+  if (entry.event !== 'sent') {
+    return '';
+  }
   const color = 'green';
   return `${entry.sender} -[#${color}]-> ${entry.receiver}: ${entry.message}\n`;
 }

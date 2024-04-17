@@ -3,7 +3,7 @@
 import { jest } from '@jest/globals';
 import { readFileSync, writeFileSync } from 'fs';
 
-const NUM_ROUNDS = 50;
+const NUM_ROUNDS = 100;
 const TEST_NAME = 'batched-butterfly-triangle';
 const JSON_FILE = `__tests__/fixtures/${TEST_NAME}.json`;
 const PUML_FILE = `__tests__/fixtures/${TEST_NAME}.puml`;
