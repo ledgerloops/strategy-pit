@@ -155,6 +155,7 @@ export abstract class Node {
     this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
   receiveMessage(sender: Node, message: Message): void {
+    this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
     this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
     // console.log(`${this.name} receives message from ${sender}`, message);
     if (message.getMessageType() === `meet`) {

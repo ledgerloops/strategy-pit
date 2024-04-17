@@ -33,10 +33,10 @@ export abstract class Polite extends Node {
   }
   protected async semaphore(to: string): Promise<void> {
     if(this.friends[to].handRaisingStatus === HandRaisingStatus.Talking) {
-      // console.log(this.name, 'is talking to', to);
+      this.debugLog.push(`${this.name} is talking to ${to}`);
       return;
     }
-    // console.log(this.name, 'is waiting to talk to', to);
+    this.debugLog.push(`${this.name} is waiting to talk to ${to}`);
 
     this.debugLog.push(`${this.name} waits for semaphore to talk to ${to}`);
     const ret: Promise<void> = new Promise((resolve, reject) => {
@@ -52,11 +52,14 @@ export abstract class Polite extends Node {
     return ret;
   }
   protected async sendMessage(to: string, message: Message): Promise<void> {
+    this.debugLog.push(`sendMessage ${this.name} to ${to}, semaphore wait START`);
     await this.semaphore(to);
+    this.debugLog.push(`sendMessage ${this.name} to ${to}, semaphore wait END`);
     this.debugLog.push(`${this.name} is talking and sends ${message.getMessageType()} message to ${to}`);
     this.messageForwarder.forwardMessage(this, this.friends[to].node, message);
   }
   receiveMessage(sender: Node, message: Message): void {
+    this.debugLog.push(`[Polite#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
     // console.log(`${this.name} receives message from ${sender}`, message);
     if (message.getMessageType() === `raise-hand`) {
       this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
