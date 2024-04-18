@@ -1,22 +1,19 @@
 import EventEmitter from "node:events";
 import { NetworkNode } from "./simulator/networksimulator.js";
 import { getMessageType } from "./messages.js";
-import { HandRaisingStatus } from "./node.js";
 import { ProbesManager } from "./manager/probesmanager.js";
+import { FriendsManager } from "./manager/friendsmanager.js";
 
 export class Giraffe extends EventEmitter implements NetworkNode {
+  protected friendsManager: FriendsManager;
   protected probesManager: ProbesManager;
   protected debugLog: string[] = [];
   protected name: string;
-  protected friends: {
-    [name: string]: {
-      handRaisingStatus: HandRaisingStatus,
-    }
-  }  = {};
 
   constructor(name: string) {
     super();
     this.name = name;
+    this.friendsManager = new FriendsManager(name);
     this.probesManager = this.connectProbesManager();
   }
   protected connectProbesManager(): ProbesManager {
@@ -41,16 +38,8 @@ export class Giraffe extends EventEmitter implements NetworkNode {
       case `okay-to-send-probes`: return this.probesManager.handleOkayToSendProbesMessage(sender);
     }
   }
-  protected addFriend(otherName: string, handRaisingStatus: HandRaisingStatus): void {
-    // console.log(`${this.name} meets ${otherName}`);
-    if (typeof this.friends[otherName] !== 'undefined') {
-      // console.log(this.debugLog);
-      throw new Error(`${this.name} is already friends with ${otherName}`);
-    }
-    this.friends[otherName] = { handRaisingStatus };
-  }
   meet(other: string): void {
-    this.addFriend(other, HandRaisingStatus.Talking);
+    this.friendsManager.addFriend(other);
     this.debugLog.push(`I meet ${other} [1/4]`);
     // this is safe to because it will just queue them for the next message round
     this.emit('message', other, 'meet');
@@ -61,7 +50,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
 
   // when this node has received a `meet` message
   handleMeetMessage(sender: string): void {
-    this.addFriend(sender, HandRaisingStatus.Listening);
+    this.friendsManager.addFriend(sender);
     this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
     this.probesManager.addFriend(sender, false);
   }
@@ -89,6 +78,6 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     return this.debugLog;
   }
   getFriends(): string[] {
-    return Object.keys(this.friends);
+    return Object.keys(this.friendsManager.getFriends());
   }
 }
