@@ -227,26 +227,28 @@ export class ProbesManager extends EventEmitter {
       this.createFloodProbe();      
     }
   }
-  public handleProbeMessage(sender: string, message: ProbeMessage): void {
-    let probe: Probe | undefined = this.get(message.getId());
+  public handleProbeMessage(sender: string, message: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [ _messageType, probeId ] = message.split(' ');
+    let probe: Probe | undefined = this.get(probeId);
     if (typeof probe === 'undefined') {
-      this.emit('debug', `INCOMING PROBE ${message.getId()} IS NEW TO US, FLOOD IT FORWARD`);
-      probe = this.ensure(message.getId(), false);
+      this.emit('debug', `INCOMING PROBE ${probeId} IS NEW TO US, FLOOD IT FORWARD`);
+      probe = this.ensure(probeId, false);
       probe.recordIncoming(sender);
-      this.queueFloodProbeToAll(message.getId(), false);
+      this.queueFloodProbeToAll(probeId, false);
     } else {
-      this.emit('debug', `INCOMING PROBE ${message.getId()} IS KNOWN TO US`);
+      this.emit('debug', `INCOMING PROBE ${probeId} IS KNOWN TO US`);
       if (probe.isVirginFor(sender)) {
         // Record this *after* testing it:
         probe.recordIncoming(sender);
-        this.emit('debug', `PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
+        this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
-          this.createTrace(message.getId(), sender);
+          this.createTrace(probeId, sender);
         } else {
           this.createPinnedFloodProbe(sender);
         }
       } else {
-        this.emit('debug', `PROBE ${message.getId()} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
+        this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
       }
     }
   }
@@ -258,12 +260,15 @@ export class ProbesManager extends EventEmitter {
     this.emit('debug', `CREATING TRACE ${traceId} TO ${friend} FOR OUR HOME MINTED PROBE ${probeId}`);
     this.emit('message', friend, new TraceMessage(probeId, traceId, 'default'));
   }  
-  handleTraceMessage(sender: string, message: TraceMessage): void {
-    const probe: Probe | undefined = this.get(message.getProbeId());
-    this.emit('debug', `TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
-    this.emit('debug', `PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
-    this.emit('debug', `PROBE ${message.getProbeId()} HAS FROM: ${probe.getFrom().join(' ')}`);
-    this.emit('debug', `PROBE ${message.getProbeId()} HAS TO: ${probe.getTo().join(' ')}`);
+  handleTraceMessage(sender: string, message: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [ _messageType, probeId, traceId ] = message.split(' ');
+
+    const probe: Probe | undefined = this.get(probeId);
+    this.emit('debug', `TRACE ${traceId} FOR PROBE ${probeId} COMING TO US FROM SENDER ${sender}`);
+    this.emit('debug', `PROBE ${probeId} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
+    this.emit('debug', `PROBE ${probeId} HAS FROM: ${probe.getFrom().join(' ')}`);
+    this.emit('debug', `PROBE ${probeId} HAS TO: ${probe.getTo().join(' ')}`);
     if (typeof probe === 'undefined') {
       this.emit('debug', `UNEXPECTED: PROBE UNKNOWN TO US!`);
       return;
@@ -271,24 +276,24 @@ export class ProbesManager extends EventEmitter {
     const traces = probe.getTraces();
     for (let i = 0; i < traces.length; i++) {
       const trace = traces[i];
-      if (trace.getTraceId() === message.getTraceId()) {
+      if (trace.getTraceId() === traceId) {
         if (probe.getFrom().length === 0) {
           this.emit('debug', `OUR TRACE CAME BACK!`);
-          this.loopsFound.push(message.getProbeId() + ':' + message.getTraceId());
+          this.loopsFound.push(probeId + ':' + traceId);
           return;
         }
         if (probe.getFrom().length > 1) {
           this.emit('debug', `UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
           return;
         }
-        this.emit('debug', `TRACE ${message.getTraceId()} for probe ${message.getProbeId()} ALREADY KNOWN TO US! NOT FORWARDING DUPLICATE MESSAGE`);
+        this.emit('debug', `TRACE ${traceId} for probe ${probeId} ALREADY KNOWN TO US! NOT FORWARDING DUPLICATE MESSAGE`);
         return;
       }
     }
     this.emit('debug', `FORWARDING TRACE TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
-    this.emit('message', recipient, new TraceMessage(message.getProbeId(), message.getTraceId(), 'default'));
-    const trace = new Trace(sender, this.name, message.getTraceId());
+    this.emit('message', recipient, new TraceMessage(probeId, traceId, 'default'));
+    const trace = new Trace(sender, this.name, traceId);
     probe.addTrace(trace);  
   }
   getLoops(): string[] {

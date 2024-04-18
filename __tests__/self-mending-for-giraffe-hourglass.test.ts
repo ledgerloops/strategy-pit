@@ -17,42 +17,47 @@ jest.unstable_mockModule('../src/genRanHex.js', () => {
   };
 });
 
-describe('Basic Giraffe Hourglass - until the music stops', () => {
+describe('Batched Giraffe Hourglass - until the music stops', () => {
   // let Giraffe: unknown;
   let alice: any;
   let bob: any;
   let charlie: any;
   let dave: any;
   let edward: any;
-  let messageForwarder: any;
+  let networkSimulator: any;
   let flushReport: string[];
   beforeAll(async () => {
-    const { Giraffe, BatchedMessageForwarder } = await import('../src/main.js');
-    messageForwarder = new BatchedMessageForwarder();
-    alice = new Giraffe('Alice', messageForwarder);
-    bob = new Giraffe('Bob', messageForwarder);
-    charlie = new Giraffe('Charlie', messageForwarder);
-    dave = new Giraffe('Dave', messageForwarder);
-    edward = new Giraffe('Edward', messageForwarder);
-    flushReport = await messageForwarder.flush();
+    const { BatchedNetworkSimulator, Giraffe } = await import('../src/main.js');
+    networkSimulator = new BatchedNetworkSimulator();
+    const alice = new Giraffe('Alice');
+    networkSimulator.addNode('alice', alice);
+    bob = new Giraffe('Bob');
+    networkSimulator.addNode('bob', bob);
+    charlie = new Giraffe('Charlie');
+    networkSimulator.addNode('charlie', charlie);
+    dave = new Giraffe('Dave');
+    networkSimulator.addNode('dave', dave);
+    edward = new Giraffe('Edward');
+    networkSimulator.addNode('edward', edward);
+    flushReport = await networkSimulator.flush();
     await alice.meet(bob);
-    flushReport = await messageForwarder.flush();
+    flushReport = await networkSimulator.flush();
     await bob.meet(charlie);
-    flushReport = await messageForwarder.flush();
+    flushReport = await networkSimulator.flush();
     await charlie.meet(alice);
-    flushReport = await messageForwarder.flush();
+    flushReport = await networkSimulator.flush();
     await alice.meet(dave);
-    flushReport = await messageForwarder.flush();
+    flushReport = await networkSimulator.flush();
     await dave.meet(edward);
-    flushReport = await messageForwarder.flush();
+    flushReport = await networkSimulator.flush();
     await edward.meet(alice);
     let counter = 0;
     do {
-      flushReport = await messageForwarder.flush();
+      flushReport = await networkSimulator.flush();
     } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
   });
   it('Probes are not echoed back to the sender', () => {
-    const probeLogs = messageForwarder.getProbeLogs();
+    const probeLogs = networkSimulator.getProbeLogs();
     for (const probeId in probeLogs) {
       const seen = [ probeId ];
       for (const entry of probeLogs[probeId]) {
@@ -76,8 +81,8 @@ describe('Basic Giraffe Hourglass - until the music stops', () => {
         // file was not found or was unreadable
       }
       const actual = {
-        full: messageForwarder.getFullLog(),
-        probes: messageForwarder.getProbeLogs(),
+        full: networkSimulator.getFullLog(),
+        probes: networkSimulator.getProbeLogs(),
         alice: {
           debugLog: alice.debugLog,
           loopsFound: alice.getLoops(),
@@ -112,7 +117,7 @@ describe('Basic Giraffe Hourglass - until the music stops', () => {
       } catch (err) {
         // file was not found or was unreadable
       }
-      const actual = messageForwarder.getPlantUml();
+      const actual = networkSimulator.getPlantUml();
       writeFileSync(PUML_FILE, actual);
       expect(actual).toEqual(expected);
     });

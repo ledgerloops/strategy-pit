@@ -1,6 +1,5 @@
 import EventEmitter from "node:events";
-import { Message, getMessageType } from "../messages.js";
-import { Node } from "../node.js";
+import { getMessageType } from "../messages.js";
 import { Entry, createPlantUml } from "../util.js";
 
 export abstract class NetworkNode extends EventEmitter {
@@ -18,13 +17,10 @@ export class LoggingNetworkSimulator extends NetworkSimulator {
   logMessageSent(sender: string, receiver: string, message: string): void {
     this.log.push(new Entry(sender, receiver, message, 'sent'));
   }
-  logMessageReceived(sender: string, receiver: string, message: Message): void {
+  logMessageReceived(sender: string, receiver: string, message: string): void {
     this.log.push(new Entry(sender, receiver, message, 'received'));
   }
-  forwardMessage(sender: Node, receiver: Node, message: Message): void {
-    this.logMessageSent(sender.getName(), receiver.getName(), message.toString());
-    receiver.receiveMessage(sender, message);
-  }
+
   getLocalLog(name: string): string[] {
     return this.log.filter(entry => {
       if (entry.sender === name) {
@@ -67,13 +63,46 @@ export class LoggingNetworkSimulator extends NetworkSimulator {
   }
 }
 
-export class BasicMessageSimulator extends LoggingNetworkSimulator {
+export class BasicNetworkSimulator extends LoggingNetworkSimulator {
   addNode(name: string, node: NetworkNode): void {
     super.addNode(name, node);
     node.on('message', (to: string, message: string) => {
+      this.logMessageSent(name, to, message);
       if (typeof this.nodes[to] !== 'undefined') {
+        this.logMessageReceived(name, to, message);
         this.nodes[to].process(name, message);
       }
     });
   }
+}
+
+export class BatchedNetworkSimulator extends LoggingNetworkSimulator {
+  private batch: {
+    sender: string,
+    receiver: string,
+    message: string
+  }[] = [];
+  addNode(name: string, node: NetworkNode): void {
+    super.addNode(name, node);
+    node.on('message', (to: string, message: string) => {
+      this.logMessageSent(name, to, message);
+      this.batch.push({ sender: name, receiver: to, message });    
+    });
+  }
+  flush(): string[] {
+    this.logMessageSent('---', '---', '---');
+    const flushReport: string[] = [];
+    const batch = this.batch;
+    this.batch = [];
+    batch.filter(entry => typeof this.nodes[entry.receiver] !== 'undefined').forEach(entry => {
+      this.logMessageReceived(entry.sender, entry.receiver, entry.message);
+      this.nodes[entry.receiver].process(entry.sender, entry.message);
+      flushReport.push(`[${entry.sender}]->[${entry.receiver}] ${entry.message}`);
+    });
+    return flushReport;
+  }
+  getBatch(): string[] {
+    return this.batch.map(entry => `[${entry.sender}]->[${entry.receiver}] ${entry.message}`);
+  }
+
 }

@@ -1,26 +1,46 @@
-import { ProbeMessage as ProbeMessage, TraceMessage as TraceMessage, MeetMessage, Message } from "./messages.js";
-import { BasicMessageForwarder, Friend, HandRaisingStatus, Node } from "./node.js";
+import { ProbeMessage as ProbeMessage, TraceMessage as TraceMessage, MeetMessage, Message, getMessageType } from "./messages.js";
+import { HandRaisingStatus } from "./node.js";
 import { ProbesManager } from "./manager/probesmanager.js";
+import { NetworkNode } from "./simulator/networksimulator.js";
+import EventEmitter from "node:events";
 
-export class Giraffe {
+export class Giraffe extends EventEmitter implements NetworkNode {
   protected probesManager: ProbesManager;
   protected debugLog: string[] = [];
-  protected messageForwarder: BasicMessageForwarder;
   protected name: string;
   protected friends: {
-    [name: string]: Friend
-   }  = {};
+    [name: string]: {
+      handRaisingStatus: HandRaisingStatus,
+    }
+  }  = {};
 
-  constructor(name: string, messageForwarder?: BasicMessageForwarder) {
+  constructor(name: string) {
+    super();
     this.name = name;
-    this.messageForwarder = messageForwarder || new BasicMessageForwarder();
     this.probesManager = new ProbesManager(name);
-    this.probesManager.on('message', (sender: string, message: ProbeMessage | TraceMessage) => {
-      this.sendMessageToFriend(sender, message);
+    this.probesManager.on('message', (to: string, message: ProbeMessage | TraceMessage) => {
+      this.emit('message', to, message);
     });
     this.probesManager.on('debug', (message: string) => {
       this.debugLog.push(message);
     });
+  }
+  process(sender: string, message: string): void {
+    this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender}`);
+    // console.log(`${this.name} receives message from ${sender}`, message);
+    if (getMessageType(message) === `meet`) {
+      this.addFriend(sender, HandRaisingStatus.Listening);
+      return this.handleMeetMessage(sender);
+    } else if (getMessageType(message) === `probe`) {
+      return this.handleProbeMessage(sender, message.toString());
+    } else if (getMessageType(message) === `loop`) {
+      return this.handleTraceMessage(sender, message.toString());
+    } else if (getMessageType(message) === `have-probes`) {
+      this.handleHaveProbesMessage(sender);
+    } else if (getMessageType(message) === `okay-to-send-probes`) {
+      this.handleOkayToSendProbesMessage(sender);
+
+    }
   }
   getName(): string {
       return this.name;
@@ -28,51 +48,28 @@ export class Giraffe {
   getDebugLog(): string[] {
     return this.debugLog;
   }
-  protected addFriend(other: Node, handRaisingStatus: HandRaisingStatus): void {
-    const otherName = other.getName();
+  protected addFriend(otherName: string, handRaisingStatus: HandRaisingStatus): void {
     // console.log(`${this.name} meets ${otherName}`);
-    if (typeof this.friends[other.getName()] !== 'undefined') {
+    if (typeof this.friends[otherName] !== 'undefined') {
       throw new Error(`${this.name} is already friends with ${otherName}`);
     }
-    this.friends[otherName] = new Friend(other, handRaisingStatus);
+    this.friends[otherName] = { handRaisingStatus };
   }
   getFriends(): string[] {
     return Object.keys(this.friends);
   }
 
-  meet(other: Node): void {
-    this.addFriend(other, HandRaisingStatus.Talking);
-    this.onMeet(other.getName());
+  meet(otherName: string): void {
+    this.addFriend(otherName, HandRaisingStatus.Talking);
+    this.onMeet(otherName);
   }
 
   protected sendMessageToFriend(friend: string, message: Message): void {
-    this.messageForwarder.forwardMessage(this as unknown as Node, this.friends[friend].node, message);
+    this.emit('message', this.name, friend, message);
   }
 
   protected sendMessage(to: string, message: Message): void {
-    this.messageForwarder.forwardMessage(this as unknown as Node, this.friends[to].node, message);
-  }
-  receiveMessage(sender: Node, message: Message): void {
-    this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender.getName()}`);
-    this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
-    // console.log(`${this.name} receives message from ${sender}`, message);
-    if (message.getMessageType() === `meet`) {
-      this.addFriend(sender, HandRaisingStatus.Listening);
-      return this.handleMeetMessage(sender.getName());
-    } else if (message.getMessageType() === `probe`) {
-      return this.handleProbeMessage(sender.getName(), message as ProbeMessage);
-    } else if (message.getMessageType() === `loop`) {
-      return this.handleTraceMessage(sender.getName(), message as TraceMessage);
-    } else if (message.getMessageType() === `have-probes`) {
-      this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
-      this.handleHaveProbesMessage(sender.getName());
-    } else if (message.getMessageType() === `okay-to-send-probes`) {
-      this.handleOkayToSendProbesMessage(sender.getName());
-
-    }
-  }
-  getMessageLog(): string[] {
-    return this.messageForwarder.getLocalLog(this.name);
+    this.emit('message', this.name, to, message);
   }
 
   // when this node has sent a `meet` message
@@ -103,10 +100,10 @@ export class Giraffe {
   } {
     return this.probesManager.getProbes();
   }
-  handleProbeMessage(sender: string, message: ProbeMessage): void {
+  handleProbeMessage(sender: string, message: string): void {
     this.probesManager.handleProbeMessage(sender, message);
   }
-  handleTraceMessage(sender: string, message: TraceMessage): void {
+  handleTraceMessage(sender: string, message: string): void {
     this.probesManager.handleTraceMessage(sender, message);
   }
   
