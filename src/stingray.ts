@@ -204,7 +204,7 @@ export class Stingray extends Node {
   } {
     return this.probeStore.getProbes();
   }
-  createLoopTrace(probeId: string, friend: string): void {
+  createTrace(probeId: string, friend: string): void {
     const traceId = genRanHex(8);
     const trace = new Trace(undefined, friend, traceId);
     const probe = this.probeStore.get(probeId);
@@ -222,7 +222,7 @@ export class Stingray extends Node {
       if (probe.isVirginFor(sender)) {
         this.log.push(`PROBE ${message.getId()} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
-          this.createLoopTrace(message.getId(), sender);
+          this.createTrace(message.getId(), sender);
         } else {
           this.createPinnedFloodProbe(sender);
         }
