@@ -1,4 +1,4 @@
-import { ProbeMessage, LoopMessage } from "./messages.js";
+import { ProbeMessage, TraceMessage } from "./messages.js";
 import { genRanHex } from "./genRanHex.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
@@ -70,7 +70,7 @@ export class Salmon extends Node {
       // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
       this.loopStore.set(message.getId());
       Object.keys(this.probes[message.getId()]).forEach(name => {
-        this.sendMessage(name, new LoopMessage( message.getId()));
+        this.sendMessage(name, new TraceMessage( message.getId(), 'default', 'default'));
       });
   }
   handleProbeMessage(sender: string, message: ProbeMessage): void {
@@ -90,12 +90,12 @@ export class Salmon extends Node {
     });
     // this.addFriend(message.getSender());
   }
-  handleLoopMessage(sender: string, message: LoopMessage): void {
+  handleLoopMessage(sender: string, message: TraceMessage): void {
     if (!this.loopStore.has(message.getProbeId())) {
       // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()}`);
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
         if (name !== sender) {
-          this.sendMessage(name, new LoopMessage(message.getProbeId()));
+          this.sendMessage(name, new TraceMessage(message.getProbeId(), 'default', 'default'));
         }
       });
       this.loopStore.set(message.getProbeId());

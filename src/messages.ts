@@ -47,13 +47,15 @@ export class ProbeMessage extends Message {
   }
 }
 
-export class LoopMessage extends Message {
-  private loopId: string;
+export class TraceMessage extends Message {
   private probeId: string;
-  constructor(probeId: string, loopId?: string) {
+  private traceId: string;
+  private legId: string;
+  constructor(probeId: string, traceId: string, legId: string) {
       super();
       this.probeId = probeId;
-      this.loopId = loopId  || 'default';
+      this.traceId = traceId;
+      this.legId = legId
   }
   getMessageType(): string {
     return 'loop';
@@ -61,11 +63,14 @@ export class LoopMessage extends Message {
   getProbeId(): string {
     return this.probeId;
   }
-  getLoopId(): string {
-    return this.loopId;
+  getTraceId(): string {
+    return this.traceId;
+  }
+  getLegId(): string {
+    return this.legId;
   }
   toString(): string {
-    return `loop ${this.probeId} ${this.loopId}`;
+    return `loop ${this.probeId} ${this.traceId}`;
   }
 
 }

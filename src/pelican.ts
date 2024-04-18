@@ -1,4 +1,4 @@
-import { ProbeMessage, LoopMessage } from "./messages.js";
+import { ProbeMessage, TraceMessage } from "./messages.js";
 import { genRanHex } from "./genRanHex.js";
 import { Salmon } from "./salmon.js";
 import { BasicMessageForwarder } from "./node.js";
@@ -39,17 +39,17 @@ export class Pelican extends Salmon {
     }
     this.pelicanLoops[message.getId()][initialLoopId] = true;
     Object.keys(this.probes[message.getId()]).forEach(name => {
-      this.sendMessage(name, new LoopMessage(message.getId(), initialLoopId));
+      this.sendMessage(name, new TraceMessage(message.getId(), initialLoopId, 'default'));
     });
   }
 
-  handleLoopMessage(sender: string, message: LoopMessage): void {
-    if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getLoopId()]) {
+  handleLoopMessage(sender: string, message: TraceMessage): void {
+    if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getTraceId()]) {
         // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getLoopId()}`);
-      let loopId = message.getLoopId();
+      let loopId = message.getTraceId();
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
         if (name !== sender) {
-          this.sendMessage(name, new LoopMessage(message.getProbeId(), loopId));
+          this.sendMessage(name, new TraceMessage(message.getProbeId(), loopId, 'default'));
           if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
             this.pelicanLoops[message.getProbeId()] = {};
           }

@@ -1,4 +1,4 @@
-import { ProbeMessage as ProbeMessage, LoopMessage as LoopMessage, MeetMessage, Message } from "./messages.js";
+import { ProbeMessage as ProbeMessage, TraceMessage as TraceMessage, MeetMessage, Message } from "./messages.js";
 import { genRanHex } from "./genRanHex.js";
 import { Node, BasicMessageForwarder } from "./node.js";
 
@@ -209,7 +209,7 @@ export class Stingray extends Node {
     const trace = new Trace(undefined, friend, loopId);
     const probe = this.probeStore.get(probeId);
     probe.addTrace(trace);
-    this.sendMessage(friend, new LoopMessage(probeId, loopId));
+    this.sendMessage(friend, new TraceMessage(probeId, loopId, 'default'));
   }
   handleProbeMessage(sender: string, message: ProbeMessage): void {
     let probe: Probe | undefined = this.probeStore.get(message.getId());
@@ -231,9 +231,9 @@ export class Stingray extends Node {
       }
     }
   }
-  handleLoopMessage(sender: string, message: LoopMessage): void {
+  handleLoopMessage(sender: string, message: TraceMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
-    this.log.push(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
+    this.log.push(`LOOP TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS FROM: ${probe.getFrom().join(' ')}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS TO: ${probe.getTo().join(' ')}`);
@@ -243,7 +243,7 @@ export class Stingray extends Node {
     }
     if (probe.getFrom().length === 0) {
       this.log.push(`OUR LOOP TRACE CAME BACK!`);
-      this.loopsFound.push(message.getProbeId() + ':' + message.getLoopId());
+      this.loopsFound.push(message.getProbeId() + ':' + message.getTraceId());
       return;
     }
     if (probe.getFrom().length > 1) {
@@ -252,8 +252,8 @@ export class Stingray extends Node {
     }
     this.log.push(`FORWARDING LOOP TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
-    this.sendMessage(recipient, new LoopMessage(message.getProbeId(), message.getLoopId()));
-    const trace = new Trace(sender, this.getName(), message.getLoopId());
+    this.sendMessage(recipient, new TraceMessage(message.getProbeId(), message.getTraceId(), 'default'));
+    const trace = new Trace(sender, this.getName(), message.getTraceId());
     probe.addTrace(trace);
   }
   getLoops(): string[] {

@@ -1,4 +1,4 @@
-import { ProbeMessage as ProbeMessage, LoopMessage as LoopMessage, MeetMessage, HaveProbesMessage, OkayToSendProbesMessage } from "../src/messages.js";
+import { ProbeMessage as ProbeMessage, TraceMessage as TraceMessage, MeetMessage, HaveProbesMessage, OkayToSendProbesMessage } from "../src/messages.js";
 import { BasicMessageForwarder, HandRaisingStatus, Node } from "../src/node.js";
 import { genRanHex } from "./genRanHex.js";
 
@@ -256,7 +256,7 @@ export class Butterfly extends Node {
     const probe = this.probeStore.get(probeId);
     probe.addTrace(trace);
     this.debugLog.push(`CREATING LOOP TRACE ${loopId} TO ${friend} FOR OUR HOME MINTED PROBE ${probeId}`);
-    this.sendMessage(friend, new LoopMessage(probeId, loopId));
+    this.sendMessage(friend, new TraceMessage(probeId, loopId, 'default'));
   }
   handleProbeMessage(sender: string, message: ProbeMessage): void {
     let probe: Probe | undefined = this.probeStore.get(message.getId());
@@ -281,9 +281,9 @@ export class Butterfly extends Node {
       }
     }
   }
-  handleLoopMessage(sender: string, message: LoopMessage): void {
+  handleLoopMessage(sender: string, message: TraceMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
-    this.debugLog.push(`LOOP TRACE ${message.getLoopId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
+    this.debugLog.push(`LOOP TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.debugLog.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
     this.debugLog.push(`PROBE ${message.getProbeId()} HAS FROM: ${probe.getFrom().join(' ')}`);
     this.debugLog.push(`PROBE ${message.getProbeId()} HAS TO: ${probe.getTo().join(' ')}`);
@@ -294,24 +294,24 @@ export class Butterfly extends Node {
     const traces = probe.getTraces();
     for (let i = 0; i < traces.length; i++) {
       const trace = traces[i];
-      if (trace.getTraceId() === message.getLoopId()) {
+      if (trace.getTraceId() === message.getTraceId()) {
         if (probe.getFrom().length === 0) {
           this.debugLog.push(`OUR LOOP TRACE CAME BACK!`);
-          this.loopsFound.push(message.getProbeId() + ':' + message.getLoopId());
+          this.loopsFound.push(message.getProbeId() + ':' + message.getTraceId());
           return;
         }
         if (probe.getFrom().length > 1) {
           this.debugLog.push(`UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
           return;
         }
-        this.debugLog.push(`LOOP TRACE ${message.getLoopId()} for probe ${message.getProbeId()} ALREADY KNOWN TO US! NOT FORWARDING DUPLICATE MESSAGE`);
+        this.debugLog.push(`LOOP TRACE ${message.getTraceId()} for probe ${message.getProbeId()} ALREADY KNOWN TO US! NOT FORWARDING DUPLICATE MESSAGE`);
         return;
       }
     }
     this.debugLog.push(`FORWARDING LOOP TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
-    this.sendMessage(recipient, new LoopMessage(message.getProbeId(), message.getLoopId()));
-    const trace = new Trace(sender, this.getName(), message.getLoopId());
+    this.sendMessage(recipient, new TraceMessage(message.getProbeId(), message.getTraceId(), 'default'));
+    const trace = new Trace(sender, this.getName(), message.getTraceId());
     probe.addTrace(trace);
   }
   getLoops(): string[] {

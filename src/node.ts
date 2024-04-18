@@ -1,4 +1,4 @@
-import { Message, MeetMessage, ProbeMessage, LoopMessage } from "./messages.js";
+import { Message, MeetMessage, ProbeMessage, TraceMessage } from "./messages.js";
 import { Entry, createPlantUml } from "./util.js";
 
 export class BasicMessageForwarder {
@@ -141,7 +141,7 @@ export abstract class Node {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected handleProbeMessage(_sender: string, _message: ProbeMessage): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  protected handleLoopMessage(_sender: string, _message: LoopMessage): void {}
+  protected handleLoopMessage(_sender: string, _message: TraceMessage): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected handleHaveProbesMessage(_from: string): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -160,7 +160,7 @@ export abstract class Node {
     } else if (message.getMessageType() === `probe`) {
       return this.handleProbeMessage(sender.getName(), message as ProbeMessage);
     } else if (message.getMessageType() === `loop`) {
-      return this.handleLoopMessage(sender.getName(), message as LoopMessage);
+      return this.handleLoopMessage(sender.getName(), message as TraceMessage);
     } else if (message.getMessageType() === `have-probes`) {
       this.messageForwarder.logMessageReceived(sender.getName(), this.getName(), message);
       this.handleHaveProbesMessage(sender.getName());

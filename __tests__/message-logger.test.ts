@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LoopMessage, ProbeMessage } from '../src/messages.js';
+import { TraceMessage, ProbeMessage } from '../src/messages.js';
 
 describe('BasicMessageForwarder', () => {
   it('logs messages', async () => {
     const { BasicMessageForwarder } = await import('../src/node.js');
     const logger = new BasicMessageForwarder();
     const probe = new ProbeMessage('probe-alice-bob');
-    const loop = new LoopMessage('probe-alice-bob', 'Hi');
+    const trace = new TraceMessage('probe-alice-bob', 'Hi', 'Ho');
     logger.logMessageSent('Alice', 'Bob', probe);
     logger.logMessageReceived('Alice', 'Bob', probe);
-    logger.logMessageSent('Bob', 'Alice', loop);
-    logger.logMessageReceived('Bob', 'Alice', loop);
+    logger.logMessageSent('Bob', 'Alice', trace);
+    logger.logMessageReceived('Bob', 'Alice', trace);
     expect(logger.getLocalLog('Alice')).toEqual([
       "TO[Bob] probe probe-alice-bob",
       "FROM[Bob] loop probe-alice-bob Hi",
