@@ -29,28 +29,28 @@ describe('Batched Giraffe Hourglass - until the music stops', () => {
   beforeAll(async () => {
     const { BatchedNetworkSimulator, Giraffe } = await import('../src/main.js');
     networkSimulator = new BatchedNetworkSimulator();
-    const alice = new Giraffe('Alice');
-    networkSimulator.addNode('alice', alice);
+    alice = new Giraffe('Alice');
+    networkSimulator.addNode('Alice', alice);
     bob = new Giraffe('Bob');
-    networkSimulator.addNode('bob', bob);
+    networkSimulator.addNode('Bob', bob);
     charlie = new Giraffe('Charlie');
-    networkSimulator.addNode('charlie', charlie);
+    networkSimulator.addNode('Charlie', charlie);
     dave = new Giraffe('Dave');
-    networkSimulator.addNode('dave', dave);
+    networkSimulator.addNode('Dave', dave);
     edward = new Giraffe('Edward');
-    networkSimulator.addNode('edward', edward);
+    networkSimulator.addNode('Edward', edward);
     flushReport = await networkSimulator.flush();
-    await alice.meet(bob);
+    await alice.meet('Bob');
     flushReport = await networkSimulator.flush();
-    await bob.meet(charlie);
+    await bob.meet('Charlie');
     flushReport = await networkSimulator.flush();
-    await charlie.meet(alice);
+    await charlie.meet('Alice');
     flushReport = await networkSimulator.flush();
-    await alice.meet(dave);
+    await alice.meet('Dave');
     flushReport = await networkSimulator.flush();
-    await dave.meet(edward);
+    await dave.meet('Edward');
     flushReport = await networkSimulator.flush();
-    await edward.meet(alice);
+    await edward.meet('Alice');
     let counter = 0;
     do {
       flushReport = await networkSimulator.flush();
@@ -84,23 +84,23 @@ describe('Batched Giraffe Hourglass - until the music stops', () => {
         full: networkSimulator.getFullLog(),
         probes: networkSimulator.getProbeLogs(),
         alice: {
-          debugLog: alice.debugLog,
+          debugLog: alice.getDebugLog(),
           loopsFound: alice.getLoops(),
         },
         bob: {
-          debugLog: bob.debugLog,
+          debugLog: bob.getDebugLog(),
           loopsFound: bob.getLoops(),
         },
         charlie: {
-          debugLog: charlie.debugLog,
+          debugLog: charlie.getDebugLog(),
           loopsFound: charlie.getLoops(),
         },
         dave: {
-          debugLog: dave.debugLog,
+          debugLog: dave.getDebugLog(),
           loopsFound: dave.getLoops(),
         },
         edward: {
-          debugLog: edward.debugLog,
+          debugLog: edward.getDebugLog(),
           loopsFound: edward.getLoops(),
         },
       };

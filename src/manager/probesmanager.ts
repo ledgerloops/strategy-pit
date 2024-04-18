@@ -1,5 +1,4 @@
 import { genRanHex } from "../genRanHex.js";
-import { HaveProbesMessage, OkayToSendProbesMessage, ProbeMessage, TraceMessage } from "../messages.js";
 import { Friend, HandRaisingStatus } from "../node.js";
 import { EventEmitter } from 'node:events';
 
@@ -154,12 +153,12 @@ export class ProbesManager extends EventEmitter {
   protected raiseHand(to: string): void {
     this.friends[to].handRaisingStatus = HandRaisingStatus.Waiting;
     this.emit('debug', `${this.name} raises hand to ${to}`);
-    this.emit('message', to, new HaveProbesMessage());
+    this.emit('message', to, 'have-probes');
   }
 
   public handleHaveProbesMessage(from: string): void {
     this.friends[from].handRaisingStatus = HandRaisingStatus.Listening;
-    this.emit('message', from, new OkayToSendProbesMessage());
+    this.emit('message', from, 'okay-to-send-probes');
   }
   protected flushProbesQueue(friend: string): void {
     if (typeof this.probesToOffer[friend] !== 'undefined') {
@@ -168,7 +167,7 @@ export class ProbesManager extends EventEmitter {
         if (probe.isVirginFor(friend)) {
           this.emit('debug', `QUEUEING PROBE ${probe.getProbeId()} TO ${friend} [3/4]`);
           probe.recordOutgoing(friend);
-          const message = new ProbeMessage(probe.getProbeId());
+          const message = `probe ${probe.getProbeId()}`;
           this.emit('message', friend, message);
         }
       });
@@ -228,6 +227,7 @@ export class ProbesManager extends EventEmitter {
     }
   }
   public handleProbeMessage(sender: string, message: string): void {
+    // console.log('handleProbeMessage', sender, message);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [ _messageType, probeId ] = message.split(' ');
     let probe: Probe | undefined = this.get(probeId);
@@ -258,7 +258,8 @@ export class ProbesManager extends EventEmitter {
     const probe = this.get(probeId);
     probe.addTrace(trace);
     this.emit('debug', `CREATING TRACE ${traceId} TO ${friend} FOR OUR HOME MINTED PROBE ${probeId}`);
-    this.emit('message', friend, new TraceMessage(probeId, traceId, 'default'));
+    this.emit('message', friend, `loop ${probeId} ${traceId}`);
+    // this.emit('message', friend, `trace ${probeId} ${traceId} default`);
   }  
   handleTraceMessage(sender: string, message: string): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -292,7 +293,8 @@ export class ProbesManager extends EventEmitter {
     }
     this.emit('debug', `FORWARDING TRACE TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
-    this.emit('message', recipient, new TraceMessage(probeId, traceId, 'default'));
+    this.emit('message', recipient, `loop ${probeId} ${traceId}`);
+    // this.emit('message', recipient, `trace ${probeId} ${traceId} default`);
     const trace = new Trace(sender, this.name, traceId);
     probe.addTrace(trace);  
   }
