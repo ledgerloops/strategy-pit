@@ -243,8 +243,14 @@ export class ProbesManager extends EventEmitter {
         probe.recordIncoming(sender);
         this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
+          this.emit('probe-loopback', probeId, 'root', probe.getFrom(), probe.getTo());
           this.createTrace(probeId, sender);
         } else {
+          if (probe.getTo().length > 0) {
+            this.emit('probe-loopback', probeId, 'internal', probe.getFrom(), probe.getTo());
+          } else {
+            this.emit('probe-loopback', probeId, 'leaf', probe.getFrom(), probe.getTo());
+          }
           this.createPinnedFloodProbe(sender);
         }
       } else {

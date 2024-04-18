@@ -3,10 +3,12 @@ import { NetworkNode } from "./simulator/networksimulator.js";
 import { getMessageType } from "./messages.js";
 import { ProbesManager } from "./manager/probesmanager.js";
 import { FriendsManager } from "./manager/friendsmanager.js";
+import { TracesManager } from "./manager/tracesmanager.js";
 
 export class Giraffe extends EventEmitter implements NetworkNode {
   protected friendsManager: FriendsManager;
   protected probesManager: ProbesManager;
+  protected tracesManager: TracesManager;
   protected debugLog: string[] = [];
   protected name: string;
 
@@ -15,6 +17,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     this.name = name;
     this.friendsManager = new FriendsManager(name);
     this.probesManager = this.connectProbesManager();
+    this.tracesManager = this.connectTracesManager(this.probesManager);
   }
   protected connectProbesManager(): ProbesManager {
     const probesManager = new ProbesManager(this.name);
@@ -25,6 +28,16 @@ export class Giraffe extends EventEmitter implements NetworkNode {
       this.debugLog.push(message);
     });
     return probesManager;
+  }
+  protected connectTracesManager(probesManager: ProbesManager): TracesManager {
+    const tracesManager = new TracesManager();
+    probesManager.on('probe-loopback', (probeId: string, situation: string, from: string[], to: string[]): void => {
+      tracesManager.handleProbeLoopback(probeId, situation, from, to);
+    });
+    tracesManager.on('debug', (message: string) => {
+      this.debugLog.push(message);
+    });
+    return tracesManager;
   }
   process(sender: string, message: string): void {
     this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender}`);
