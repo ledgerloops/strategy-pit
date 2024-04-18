@@ -231,7 +231,7 @@ export class Stingray extends Node {
       }
     }
   }
-  handleLoopMessage(sender: string, message: TraceMessage): void {
+  handleTraceMessage(sender: string, message: TraceMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
     this.log.push(`TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);

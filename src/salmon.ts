@@ -90,7 +90,7 @@ export class Salmon extends Node {
     });
     // this.addFriend(message.getSender());
   }
-  handleLoopMessage(sender: string, message: TraceMessage): void {
+  handleTraceMessage(sender: string, message: TraceMessage): void {
     if (!this.loopStore.has(message.getProbeId())) {
       // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${message.getSender().getName()}`);
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {

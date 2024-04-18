@@ -281,7 +281,7 @@ export class Butterfly extends Node {
       }
     }
   }
-  handleLoopMessage(sender: string, message: TraceMessage): void {
+  handleTraceMessage(sender: string, message: TraceMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
     this.debugLog.push(`TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.debugLog.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);

@@ -43,7 +43,7 @@ export class Pelican extends Salmon {
     });
   }
 
-  handleLoopMessage(sender: string, message: TraceMessage): void {
+  handleTraceMessage(sender: string, message: TraceMessage): void {
     if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getTraceId()]) {
         // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getTraceId()}`);
       let traceId = message.getTraceId();
