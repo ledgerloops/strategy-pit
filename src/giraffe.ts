@@ -1,8 +1,8 @@
-import { ProbeMessage as ProbeMessage, TraceMessage as TraceMessage, MeetMessage, Message, getMessageType } from "./messages.js";
+import EventEmitter from "node:events";
+import { NetworkNode } from "./simulator/networksimulator.js";
+import { getMessageType } from "./messages.js";
 import { HandRaisingStatus } from "./node.js";
 import { ProbesManager } from "./manager/probesmanager.js";
-import { NetworkNode } from "./simulator/networksimulator.js";
-import EventEmitter from "node:events";
 
 export class Giraffe extends EventEmitter implements NetworkNode {
   protected probesManager: ProbesManager;
@@ -18,7 +18,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     super();
     this.name = name;
     this.probesManager = new ProbesManager(name);
-    this.probesManager.on('message', (to: string, message: ProbeMessage | TraceMessage) => {
+    this.probesManager.on('message', (to: string, message: string) => {
       this.emit('message', to, message);
     });
     this.probesManager.on('debug', (message: string) => {
@@ -64,11 +64,11 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     this.onMeet(otherName);
   }
 
-  protected sendMessageToFriend(friend: string, message: Message): void {
+  protected sendMessageToFriend(friend: string, message: string): void {
     this.emit('message', this.name, friend, message);
   }
 
-  protected sendMessage(to: string, message: Message): void {
+  protected sendMessage(to: string, message: string): void {
     this.emit('message', this.name, to, message);
   }
 
@@ -76,7 +76,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   onMeet(other: string): void {
     this.debugLog.push(`I meet ${other} [1/4]`);
     // this is safe to because it will just queue them for the next message round
-    this.sendMessage(other, new MeetMessage());
+    this.sendMessage(other, 'meet');
     this.debugLog.push(`I queue ${other} all my flood probes [2/4]`);
     this.probesManager.addFriend(other, true);
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
