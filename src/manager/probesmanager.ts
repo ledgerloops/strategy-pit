@@ -244,7 +244,6 @@ export class ProbesManager extends EventEmitter {
         this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, VIRGIN FOR ${sender}!`);
         if (probe.isHomeMinted()) {
           this.emit('probe-loopback', probeId, 'root', probe.getFrom(), probe.getTo());
-          this.createTrace(probeId, sender);
         } else {
           if (probe.getTo().length > 0) {
             this.emit('probe-loopback', probeId, 'internal', probe.getFrom(), probe.getTo());
@@ -257,52 +256,6 @@ export class ProbesManager extends EventEmitter {
         this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
       }
     }
-  }
-  createTrace(probeId: string, friend: string): void {
-    const traceId = genRanHex(8);
-    const trace = new Trace(undefined, friend, traceId);
-    const probe = this.get(probeId);
-    probe.addTrace(trace);
-    this.emit('debug', `CREATING TRACE ${traceId} TO ${friend} FOR OUR HOME MINTED PROBE ${probeId}`);
-    // this.emit('message', friend, `loop ${probeId} ${traceId}`);
-    this.emit('message', friend, `trace ${probeId} ${traceId} default`);
-  }  
-  handleTraceMessage(sender: string, message: string): void {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [ _messageType, probeId, traceId ] = message.split(' ');
-
-    const probe: Probe | undefined = this.get(probeId);
-    this.emit('debug', `TRACE ${traceId} FOR PROBE ${probeId} COMING TO US FROM SENDER ${sender}`);
-    this.emit('debug', `PROBE ${probeId} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
-    this.emit('debug', `PROBE ${probeId} HAS FROM: ${probe.getFrom().join(' ')}`);
-    this.emit('debug', `PROBE ${probeId} HAS TO: ${probe.getTo().join(' ')}`);
-    if (typeof probe === 'undefined') {
-      this.emit('debug', `UNEXPECTED: PROBE UNKNOWN TO US!`);
-      return;
-    }
-    const traces = probe.getTraces();
-    for (let i = 0; i < traces.length; i++) {
-      const trace = traces[i];
-      if (trace.getTraceId() === traceId) {
-        if (probe.getFrom().length === 0) {
-          this.emit('debug', `OUR TRACE CAME BACK!`);
-          this.loopsFound.push(probeId + ':' + traceId);
-          return;
-        }
-        if (probe.getFrom().length > 1) {
-          this.emit('debug', `UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
-          return;
-        }
-        this.emit('debug', `TRACE ${traceId} for probe ${probeId} ALREADY KNOWN TO US! NOT FORWARDING DUPLICATE MESSAGE`);
-        return;
-      }
-    }
-    this.emit('debug', `FORWARDING TRACE TO ${probe.getFrom()[0]}`);
-    const recipient = probe.getFrom()[0];
-    // this.emit('message', recipient, `loop ${probeId} ${traceId}`);
-    this.emit('message', recipient, `trace ${probeId} ${traceId} default`);
-    const trace = new Trace(sender, this.name, traceId);
-    probe.addTrace(trace);  
   }
   getLoops(): string[] {
     return this.loopsFound;

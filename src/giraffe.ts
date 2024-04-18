@@ -45,7 +45,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     switch(getMessageType(message)) {
       case `meet`: return this.handleMeetMessage(sender);
       case `probe`: return this.probesManager.handleProbeMessage(sender, message);
-      case `trace`: return this.probesManager.handleTraceMessage(sender, message);
+      case `trace`: return this.tracesManager.handleTraceMessage(sender, message);
       // case `loop`: return this.probesManager.handleTraceMessage(sender, message);
       case `have-probes`: return this.probesManager.handleHaveProbesMessage(sender);
       case `okay-to-send-probes`: return this.probesManager.handleOkayToSendProbesMessage(sender);
