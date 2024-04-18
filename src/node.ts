@@ -1,4 +1,4 @@
-import { Message, MeetMessage, ProbeMessage, TraceMessage } from "./messages.js";
+import { Message, MeetMessage, ProbeMessage, TraceMessage, getMessageType } from "./messages.js";
 import { Entry, createPlantUml } from "./util.js";
 
 export class BasicMessageForwarder {
@@ -42,7 +42,7 @@ export class BasicMessageForwarder {
       [text: string]: string[]
     } = {};
     // console.log(this.log);
-    this.log.filter(entry => entry.message.getMessageType() === 'probe').map(entry => {
+    this.log.filter(entry => getMessageType(entry.message) === 'probe').map(entry => {
       if (typeof probeLogs[entry.message.toString()] === 'undefined') {
         probeLogs[entry.message.toString()] = [];
       }

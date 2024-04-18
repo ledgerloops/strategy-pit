@@ -91,3 +91,11 @@ export class PauzeMessage extends Message {
     return `pauze ${this.pauze}`;
   }
 }
+
+export function getMessageType(message: Message | string): string {
+  if (typeof message === 'string') {
+    const parts = message.split(' ');
+    return parts[0];
+  }
+  return message.getMessageType();
+}

@@ -12,9 +12,9 @@ export function objectMap(object, mapFn): object {
 export class Entry {
   sender: string;
   receiver: string;
-  message: Message;
+  message: Message | string;
   event: string;
-  constructor(sender: string, receiver: string, message: Message, event: string) {
+  constructor(sender: string, receiver: string, message: Message | string, event: string) {
     this.sender = sender;
     this.receiver = receiver;
     this.message = message;
