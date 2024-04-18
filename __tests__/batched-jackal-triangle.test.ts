@@ -536,11 +536,11 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                 "OFFERING PROBE genRanHex2 TO Alice",
                 "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Alice!",
                 "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Alice!",
-                "LOOP TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Alice",
+                "TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Alice",
                 "PROBE genRanHex1 HAS TRACES: ",
                 "PROBE genRanHex1 HAS FROM: Bob",
                 "PROBE genRanHex1 HAS TO: Alice",
-                "FORWARDING LOOP TO Bob",
+                "FORWARDING TRACE TO Bob",
              ]);
             });
             describe('Messages Round 6', () => {
@@ -589,11 +589,11 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                       "SENDING PAUZED MESSAGE TO Charlie: loop genRanHex1 genRanHex4",
                       "SENDING PAUZED MESSAGE TO Charlie: probe genRanHex5",
                       "PROBE genRanHex3 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Bob!",
-                      "LOOP TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Bob",
+                      "TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Bob",
                       "PROBE genRanHex1 HAS TRACES: genRanHex4",
                       "PROBE genRanHex1 HAS FROM: ",
                       "PROBE genRanHex1 HAS TO: Bob Charlie",
-                      "OUR LOOP TRACE CAME BACK!",
+                      "OUR TRACE CAME BACK!",
                       "PROBE genRanHex5 ALREADY KNOWN TO US, VIRGIN FOR Bob!",
                    ]);
                     expect(bob.getLog()).toEqual([
@@ -603,16 +603,16 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                       "I meet Charlie, and offer them all my flood probes",
                       "OFFERING PROBE genRanHex1 TO Charlie",
                       "PROBE genRanHex3 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Alice!",
-                      "LOOP TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Charlie",
+                      "TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Charlie",
                       "PROBE genRanHex1 HAS TRACES: ",
                       "PROBE genRanHex1 HAS FROM: Alice",
                       "PROBE genRanHex1 HAS TO: Charlie",
-                      "FORWARDING LOOP TO Alice",
-                      "LOOP TRACE genRanHex6 FOR PROBE genRanHex5 COMING TO US FROM SENDER Alice",
+                      "FORWARDING TRACE TO Alice",
+                      "TRACE genRanHex6 FOR PROBE genRanHex5 COMING TO US FROM SENDER Alice",
                       "PROBE genRanHex5 HAS TRACES: ",
                       "PROBE genRanHex5 HAS FROM: Charlie",
                       "PROBE genRanHex5 HAS TO: Alice",
-                      "FORWARDING LOOP TO Charlie",
+                      "FORWARDING TRACE TO Charlie",
                     ]);
                     expect(charlie.getLog()).toEqual([
                       "PAUZING MESSAGES TO Bob",
@@ -623,11 +623,11 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                       "OFFERING PROBE genRanHex2 TO Alice",
                       "PROBE genRanHex1 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Alice!",
                       "PROBE genRanHex2 ALREADY KNOWN TO US, BUT NOT VIRGIN FOR Alice!",
-                      "LOOP TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Alice",
+                      "TRACE genRanHex4 FOR PROBE genRanHex1 COMING TO US FROM SENDER Alice",
                       "PROBE genRanHex1 HAS TRACES: ",
                       "PROBE genRanHex1 HAS FROM: Bob",
                       "PROBE genRanHex1 HAS TO: Alice",
-                      "FORWARDING LOOP TO Bob",
+                      "FORWARDING TRACE TO Bob",
                   
                    ]);
                   });

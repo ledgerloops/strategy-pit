@@ -100,7 +100,7 @@ export class Salmon extends Node {
       });
       this.loopStore.set(message.getProbeId());
     } else {
-      // console.log(`LOOP ${message.getProbeId()} IS NOT NEW TO ME`);
+      // console.log(`TRACE ${message.getProbeId()} IS NOT NEW TO ME`);
     }
 
   }

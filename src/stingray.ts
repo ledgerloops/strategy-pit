@@ -205,11 +205,11 @@ export class Stingray extends Node {
     return this.probeStore.getProbes();
   }
   createLoopTrace(probeId: string, friend: string): void {
-    const loopId = genRanHex(8);
-    const trace = new Trace(undefined, friend, loopId);
+    const traceId = genRanHex(8);
+    const trace = new Trace(undefined, friend, traceId);
     const probe = this.probeStore.get(probeId);
     probe.addTrace(trace);
-    this.sendMessage(friend, new TraceMessage(probeId, loopId, 'default'));
+    this.sendMessage(friend, new TraceMessage(probeId, traceId, 'default'));
   }
   handleProbeMessage(sender: string, message: ProbeMessage): void {
     let probe: Probe | undefined = this.probeStore.get(message.getId());
@@ -233,7 +233,7 @@ export class Stingray extends Node {
   }
   handleLoopMessage(sender: string, message: TraceMessage): void {
     const probe: Probe | undefined = this.probeStore.get(message.getProbeId());
-    this.log.push(`LOOP TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
+    this.log.push(`TRACE ${message.getTraceId()} FOR PROBE ${message.getProbeId()} COMING TO US FROM SENDER ${sender}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS TRACES: ${probe.getTraces().map(trace => trace.getTraceId()).join(' ')}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS FROM: ${probe.getFrom().join(' ')}`);
     this.log.push(`PROBE ${message.getProbeId()} HAS TO: ${probe.getTo().join(' ')}`);
@@ -242,7 +242,7 @@ export class Stingray extends Node {
       return;
     }
     if (probe.getFrom().length === 0) {
-      this.log.push(`OUR LOOP TRACE CAME BACK!`);
+      this.log.push(`OUR TRACE CAME BACK!`);
       this.loopsFound.push(message.getProbeId() + ':' + message.getTraceId());
       return;
     }
@@ -250,7 +250,7 @@ export class Stingray extends Node {
       this.log.push(`UNEXPECTED: PROBE HAS MORE THAN ONE FROM: ${probe.getFrom().join(' ')}!`);
       return;
     }
-    this.log.push(`FORWARDING LOOP TO ${probe.getFrom()[0]}`);
+    this.log.push(`FORWARDING TRACE TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
     this.sendMessage(recipient, new TraceMessage(message.getProbeId(), message.getTraceId(), 'default'));
     const trace = new Trace(sender, this.getName(), message.getTraceId());

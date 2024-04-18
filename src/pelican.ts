@@ -8,7 +8,7 @@ import { BasicMessageForwarder } from "./node.js";
 export class Pelican extends Salmon {
   protected pelicanLoops: {
     [probeId: string]: {
-      [loopId: string]: boolean
+      [traceId: string]: boolean
     }
   } = {};
   constructor(name: string, messageForwarder?: BasicMessageForwarder) {
@@ -28,39 +28,39 @@ export class Pelican extends Salmon {
   }
   getLoops(): string[] {
     const loops: string[] = [];
-    Object.keys(this.pelicanLoops).forEach(probeId => Object.keys(this.pelicanLoops[probeId]).forEach(loopId => loops.push(`${probeId}:${loopId}`)));
+    Object.keys(this.pelicanLoops).forEach(probeId => Object.keys(this.pelicanLoops[probeId]).forEach(traceId => loops.push(`${probeId}:${traceId}`)));
     return loops;
   }
   onLoopDetected(message: ProbeMessage): void {
     // console.log(`LOOP DETECTED!: ${this.name} already has probe ${message.getId()} from (or sent to) ${Object.keys(this.probes[message.getId()]).join(' and ')}`);
-    const initialLoopId = genRanHex(8);
+    const initialTraceId = genRanHex(8);
     if (typeof this.pelicanLoops[message.getId()] === 'undefined') {
       this.pelicanLoops[message.getId()] = {};
     }
-    this.pelicanLoops[message.getId()][initialLoopId] = true;
+    this.pelicanLoops[message.getId()][initialTraceId] = true;
     Object.keys(this.probes[message.getId()]).forEach(name => {
-      this.sendMessage(name, new TraceMessage(message.getId(), initialLoopId, 'default'));
+      this.sendMessage(name, new TraceMessage(message.getId(), initialTraceId, 'default'));
     });
   }
 
   handleLoopMessage(sender: string, message: TraceMessage): void {
     if (!this.pelicanLoops[message.getProbeId()] || !this.pelicanLoops[message.getProbeId()][message.getTraceId()]) {
-        // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getLoopId()}`);
-      let loopId = message.getTraceId();
+        // console.log(`${this.name} received loop message about ${message.getProbeId()} from ${sender} - loop id ${message.getTraceId()}`);
+      let traceId = message.getTraceId();
       Object.keys(this.probes[message.getProbeId()]).forEach(name => {
         if (name !== sender) {
-          this.sendMessage(name, new TraceMessage(message.getProbeId(), loopId, 'default'));
+          this.sendMessage(name, new TraceMessage(message.getProbeId(), traceId, 'default'));
           if (typeof this.pelicanLoops[message.getProbeId()] === 'undefined') {
             this.pelicanLoops[message.getProbeId()] = {};
           }
-          this.pelicanLoops[message.getProbeId()][loopId] = true;
+          this.pelicanLoops[message.getProbeId()][traceId] = true;
 
           // Make sure the next forward (in case of a fork) will use a different loop id
-          loopId = genRanHex(8);
+          traceId = genRanHex(8);
         }
       });
     } else {
-      // console.log(`LOOP ${message.getProbeId()} IS NOT NEW TO ME`);
+      // console.log(`TRACE ${message.getProbeId()} IS NOT NEW TO ME`);
     }
   }
 }
