@@ -66,15 +66,9 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 7. Alice->Bob, Bob->Charlie, Charlie->Alice, Alice->Dave, Dave->Edward, Edward->Alice.
 
 ## Current Strategies
-###  <img src="./img/butterfly.png" style="width:50px;border-radius: 10px"/> Butterfly
-The Butterfly is the first strategy in the third generation; it uses:
-* [Polite Messaging](https://github.com/ledgerloops/strategy-pit/issues/8) for Probes to avoid losing a chance for proof of communication due to probes crossing over
-* Flood probes in both directions when a new link is added
-* An additional Flood probe ([pinned](https://github.com/ledgerloops/strategy-pit/issues/5)) when a probe loops back to a forwarder instead of to the root
-* A Trace probe in the opposite direction when a Flood probe loops back to the root
 
 ###  <img src="./img/giraffe.png" style="width:50px;border-radius: 10px"/> Giraffe
-The Giraffe builds on the Butterfly with a fix for [#15](https://github.com/ledgerloops/strategy-pit/issues/15), to avoid pins for pins for pins infinite loops.
+The Giraffe is the first strategy to properly detect Kite Loops, see https://github.com/ledgerloops/strategy-pit/issues/15.
 
 ## Second Generation Strategies
 ###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
@@ -165,3 +159,10 @@ loops were already found for them.
 
 I think in the hourglass test, the first triangle is found 3 times and the second triangle is found 8 times, although it's
 hard to tell because of #1 and #2.
+
+###  <img src="./img/butterfly.png" style="width:50px;border-radius: 10px"/> Butterfly
+The Butterfly uses:
+* [Polite Messaging](https://github.com/ledgerloops/strategy-pit/issues/8) for Probes to avoid losing a chance for proof of communication due to probes crossing over
+* Flood probes in both directions when a new link is added
+* An additional Flood probe ([pinned](https://github.com/ledgerloops/strategy-pit/issues/5)) when a probe loops back to a forwarder instead of to the root
+* A Trace probe in the opposite direction when a Flood probe loops back to the root
