@@ -14,7 +14,6 @@ Charlie -[#green]-> Alice: probe genRanHex2
 Bob -[#green]-> Alice: probe genRanHex1
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: have-probes
-Alice -[#green]-> Charlie: trace genRanHex0 genRanHex3 default
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Dave: meet
 Alice -[#green]-> Dave: probe genRanHex0
@@ -23,7 +22,6 @@ Alice -[#green]-> Dave: probe genRanHex2
 Alice -[#green]-> Dave: probe genRanHex4
 Charlie -[#green]-> Bob: probe genRanHex2
 Charlie -[#green]-> Alice: okay-to-send-probes
-Charlie -[#green]-> Bob: trace genRanHex0 genRanHex3 default
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: have-probes
 Dave -[#green]-> Edward: meet
@@ -35,7 +33,6 @@ Dave -[#green]-> Edward: probe genRanHex6
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex4
-Bob -[#green]-> Alice: trace genRanHex0 genRanHex3 default
 Alice -[#green]-> Bob: probe genRanHex2
 Alice -[#green]-> Bob: probe genRanHex4
 Alice -[#green]-> Bob: probe genRanHex5
@@ -55,8 +52,6 @@ Charlie -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex6
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Edward: trace genRanHex0 genRanHex9 default
-Alice -[#green]-> Edward: trace genRanHex4 genRanHex12 default
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex6
 Alice -[#green]-> Dave: have-probes
@@ -68,8 +63,6 @@ Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
 Edward -[#green]-> Dave: probe genRanHex7
 Edward -[#green]-> Alice: okay-to-send-probes
-Edward -[#green]-> Dave: trace genRanHex0 genRanHex9 default
-Edward -[#green]-> Dave: trace genRanHex4 genRanHex12 default
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
 Alice -[#green]-> Charlie: have-probes
@@ -83,8 +76,6 @@ Alice -[#green]-> Edward: probe genRanHex5
 Alice -[#green]-> Edward: probe genRanHex10
 Alice -[#green]-> Edward: probe genRanHex11
 Alice -[#green]-> Edward: probe genRanHex8
-Dave -[#green]-> Alice: trace genRanHex0 genRanHex9 default
-Dave -[#green]-> Alice: trace genRanHex4 genRanHex12 default
 Alice -[#green]-> Bob: probe genRanHex6
 Alice -[#green]-> Bob: probe genRanHex7
 Alice -[#green]-> Dave: probe genRanHex7
@@ -93,7 +84,6 @@ Alice -[#green]-> Dave: probe genRanHex8
 Charlie -[#green]-> Alice: okay-to-send-probes
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
-Alice -[#green]-> Charlie: trace genRanHex5 genRanHex15 default
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: have-probes
@@ -101,7 +91,6 @@ Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex8
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
-Charlie -[#green]-> Bob: trace genRanHex5 genRanHex15 default
 Dave -[#green]-> Alice: probe genRanHex18
 Dave -[#green]-> Edward: probe genRanHex13
 Dave -[#green]-> Edward: probe genRanHex8
@@ -112,7 +101,6 @@ Charlie -[#green]-> Alice: have-probes
 Bob -[#green]-> Alice: probe genRanHex14
 Bob -[#green]-> Alice: probe genRanHex16
 Bob -[#green]-> Alice: probe genRanHex17
-Bob -[#green]-> Alice: trace genRanHex5 genRanHex15 default
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex18
 Alice -[#green]-> Dave: have-probes
@@ -130,7 +118,6 @@ Dave -[#green]-> Alice: okay-to-send-probes
 Edward -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: have-probes
 Dave -[#green]-> Edward: have-probes
-Alice -[#green]-> Edward: trace genRanHex13 genRanHex20 default
 Charlie -[#green]-> Bob: probe genRanHex8
 Charlie -[#green]-> Bob: probe genRanHex18
 Charlie -[#green]-> Alice: okay-to-send-probes
@@ -144,8 +131,6 @@ Alice -[#green]-> Edward: probe genRanHex16
 Alice -[#green]-> Edward: probe genRanHex17
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Dave: trace genRanHex13 genRanHex20 default
-Bob -[#green]-> Charlie: trace genRanHex8 genRanHex21 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex14
@@ -160,80 +145,54 @@ Dave -[#green]-> Alice: probe genRanHex19
 Dave -[#green]-> Edward: probe genRanHex14
 Dave -[#green]-> Edward: probe genRanHex16
 Dave -[#green]-> Edward: probe genRanHex17
-Dave -[#green]-> Alice: trace genRanHex13 genRanHex20 default
-Charlie -[#green]-> Alice: trace genRanHex8 genRanHex21 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
-Charlie -[#green]-> Alice: trace genRanHex14 genRanHex23 default
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
-Alice -[#green]-> Dave: trace genRanHex5 genRanHex24 default
-Alice -[#green]-> Dave: trace genRanHex10 genRanHex25 default
-Alice -[#green]-> Dave: trace genRanHex11 genRanHex26 default
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex19
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex8 genRanHex21 default
 Bob -[#green]-> Alice: probe genRanHex22
-Alice -[#green]-> Bob: trace genRanHex14 genRanHex23 default
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
 Edward -[#green]-> Dave: probe genRanHex18
 Edward -[#green]-> Dave: probe genRanHex27
 Edward -[#green]-> Dave: probe genRanHex28
 Edward -[#green]-> Dave: probe genRanHex29
-Dave -[#green]-> Edward: trace genRanHex5 genRanHex24 default
-Dave -[#green]-> Edward: trace genRanHex10 genRanHex25 default
-Dave -[#green]-> Edward: trace genRanHex11 genRanHex26 default
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
 Edward -[#green]-> Alice: okay-to-send-probes
 Alice -[#green]-> Charlie: have-probes
-Bob -[#green]-> Charlie: trace genRanHex14 genRanHex23 default
 Charlie -[#green]-> Bob: probe genRanHex16
 Charlie -[#green]-> Bob: probe genRanHex17
 Charlie -[#green]-> Bob: probe genRanHex19
-Dave -[#green]-> Edward: trace genRanHex18 genRanHex30 default
 Dave -[#green]-> Alice: have-probes
 Dave -[#green]-> Edward: have-probes
-Edward -[#green]-> Alice: trace genRanHex5 genRanHex24 default
-Edward -[#green]-> Alice: trace genRanHex10 genRanHex25 default
-Edward -[#green]-> Alice: trace genRanHex11 genRanHex26 default
 Alice -[#green]-> Bob: probe genRanHex19
 Alice -[#green]-> Dave: probe genRanHex22
 Alice -[#green]-> Edward: probe genRanHex19
 Alice -[#green]-> Edward: probe genRanHex22
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex16 genRanHex31 default
-Bob -[#green]-> Charlie: trace genRanHex17 genRanHex32 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
-Edward -[#green]-> Alice: trace genRanHex18 genRanHex30 default
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex19 genRanHex34 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex22
-Charlie -[#green]-> Alice: trace genRanHex16 genRanHex31 default
-Charlie -[#green]-> Alice: trace genRanHex17 genRanHex32 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
-Alice -[#green]-> Dave: trace genRanHex18 genRanHex30 default
 Dave -[#green]-> Alice: probe genRanHex27
 Dave -[#green]-> Alice: probe genRanHex28
 Dave -[#green]-> Alice: probe genRanHex29
 Dave -[#green]-> Edward: probe genRanHex22
-Alice -[#green]-> Dave: trace genRanHex19 genRanHex34 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex16 genRanHex31 default
-Alice -[#green]-> Bob: trace genRanHex17 genRanHex32 default
 Bob -[#green]-> Alice: probe genRanHex33
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex27
@@ -241,7 +200,6 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex28
 Alice -[#green]-> Charlie: probe genRanHex29
-Dave -[#green]-> Edward: trace genRanHex19 genRanHex34 default
 Edward -[#green]-> Dave: probe genRanHex35
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -266,40 +224,28 @@ Alice -[#green]-> Edward: probe genRanHex29
 Alice -[#green]-> Edward: probe genRanHex33
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex22 genRanHex36 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex33
-Edward -[#green]-> Alice: trace genRanHex27 genRanHex40 default
-Edward -[#green]-> Alice: trace genRanHex28 genRanHex41 default
-Edward -[#green]-> Alice: trace genRanHex29 genRanHex42 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex35
 Dave -[#green]-> Edward: probe genRanHex33
-Charlie -[#green]-> Alice: trace genRanHex22 genRanHex36 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex27 genRanHex40 default
-Alice -[#green]-> Dave: trace genRanHex28 genRanHex41 default
-Alice -[#green]-> Dave: trace genRanHex29 genRanHex42 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex35
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex22 genRanHex36 default
 Bob -[#green]-> Alice: probe genRanHex37
 Bob -[#green]-> Alice: probe genRanHex38
 Bob -[#green]-> Alice: probe genRanHex39
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex27 genRanHex40 default
-Dave -[#green]-> Edward: trace genRanHex28 genRanHex41 default
-Dave -[#green]-> Edward: trace genRanHex29 genRanHex42 default
 Edward -[#green]-> Dave: probe genRanHex43
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
@@ -318,36 +264,30 @@ Alice -[#green]-> Edward: probe genRanHex37
 Alice -[#green]-> Edward: probe genRanHex38
 Alice -[#green]-> Edward: probe genRanHex39
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex33 genRanHex44 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex35 genRanHex46 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex37
 Alice -[#green]-> Charlie: probe genRanHex38
 Alice -[#green]-> Charlie: probe genRanHex39
-Charlie -[#green]-> Alice: trace genRanHex33 genRanHex44 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex43
 Dave -[#green]-> Edward: probe genRanHex37
 Dave -[#green]-> Edward: probe genRanHex38
 Dave -[#green]-> Edward: probe genRanHex39
-Alice -[#green]-> Dave: trace genRanHex35 genRanHex46 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex33 genRanHex44 default
 Bob -[#green]-> Alice: probe genRanHex45
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex43
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Dave -[#green]-> Edward: trace genRanHex35 genRanHex46 default
 Edward -[#green]-> Dave: probe genRanHex47
 Edward -[#green]-> Dave: probe genRanHex48
 Edward -[#green]-> Dave: probe genRanHex49
@@ -370,27 +310,19 @@ Alice -[#green]-> Edward: probe genRanHex43
 Alice -[#green]-> Edward: probe genRanHex45
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex37 genRanHex50 default
-Bob -[#green]-> Charlie: trace genRanHex38 genRanHex51 default
-Bob -[#green]-> Charlie: trace genRanHex39 genRanHex52 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex45
-Edward -[#green]-> Alice: trace genRanHex43 genRanHex54 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex47
 Dave -[#green]-> Alice: probe genRanHex48
 Dave -[#green]-> Alice: probe genRanHex49
 Dave -[#green]-> Edward: probe genRanHex45
-Charlie -[#green]-> Alice: trace genRanHex37 genRanHex50 default
-Charlie -[#green]-> Alice: trace genRanHex38 genRanHex51 default
-Charlie -[#green]-> Alice: trace genRanHex39 genRanHex52 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex43 genRanHex54 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
@@ -399,13 +331,9 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex48
 Alice -[#green]-> Charlie: probe genRanHex49
-Alice -[#green]-> Bob: trace genRanHex37 genRanHex50 default
-Alice -[#green]-> Bob: trace genRanHex38 genRanHex51 default
-Alice -[#green]-> Bob: trace genRanHex39 genRanHex52 default
 Bob -[#green]-> Alice: probe genRanHex53
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex43 genRanHex54 default
 Edward -[#green]-> Dave: probe genRanHex55
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
@@ -426,30 +354,21 @@ Alice -[#green]-> Edward: probe genRanHex48
 Alice -[#green]-> Edward: probe genRanHex49
 Alice -[#green]-> Edward: probe genRanHex53
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex45 genRanHex56 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex47 genRanHex60 default
-Edward -[#green]-> Alice: trace genRanHex48 genRanHex61 default
-Edward -[#green]-> Alice: trace genRanHex49 genRanHex62 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex53
-Charlie -[#green]-> Alice: trace genRanHex45 genRanHex56 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex55
 Dave -[#green]-> Edward: probe genRanHex53
-Alice -[#green]-> Dave: trace genRanHex47 genRanHex60 default
-Alice -[#green]-> Dave: trace genRanHex48 genRanHex61 default
-Alice -[#green]-> Dave: trace genRanHex49 genRanHex62 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex45 genRanHex56 default
 Bob -[#green]-> Alice: probe genRanHex57
 Bob -[#green]-> Alice: probe genRanHex58
 Bob -[#green]-> Alice: probe genRanHex59
@@ -457,9 +376,6 @@ Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex55
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Dave -[#green]-> Edward: trace genRanHex47 genRanHex60 default
-Dave -[#green]-> Edward: trace genRanHex48 genRanHex61 default
-Dave -[#green]-> Edward: trace genRanHex49 genRanHex62 default
 Edward -[#green]-> Dave: probe genRanHex63
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -482,36 +398,30 @@ Alice -[#green]-> Edward: probe genRanHex58
 Alice -[#green]-> Edward: probe genRanHex59
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex53 genRanHex64 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex57
 Alice -[#green]-> Charlie: probe genRanHex58
 Alice -[#green]-> Charlie: probe genRanHex59
-Edward -[#green]-> Alice: trace genRanHex55 genRanHex66 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex63
 Dave -[#green]-> Edward: probe genRanHex57
 Dave -[#green]-> Edward: probe genRanHex58
 Dave -[#green]-> Edward: probe genRanHex59
-Charlie -[#green]-> Alice: trace genRanHex53 genRanHex64 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex55 genRanHex66 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex63
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex53 genRanHex64 default
 Bob -[#green]-> Alice: probe genRanHex65
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex55 genRanHex66 default
 Edward -[#green]-> Dave: probe genRanHex67
 Edward -[#green]-> Dave: probe genRanHex68
 Edward -[#green]-> Dave: probe genRanHex69
@@ -530,34 +440,23 @@ Alice -[#green]-> Dave: probe genRanHex65
 Alice -[#green]-> Edward: probe genRanHex63
 Alice -[#green]-> Edward: probe genRanHex65
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex57 genRanHex70 default
-Bob -[#green]-> Charlie: trace genRanHex58 genRanHex71 default
-Bob -[#green]-> Charlie: trace genRanHex59 genRanHex72 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex63 genRanHex74 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex65
-Charlie -[#green]-> Alice: trace genRanHex57 genRanHex70 default
-Charlie -[#green]-> Alice: trace genRanHex58 genRanHex71 default
-Charlie -[#green]-> Alice: trace genRanHex59 genRanHex72 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex67
 Dave -[#green]-> Alice: probe genRanHex68
 Dave -[#green]-> Alice: probe genRanHex69
 Dave -[#green]-> Edward: probe genRanHex65
-Alice -[#green]-> Dave: trace genRanHex63 genRanHex74 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex57 genRanHex70 default
-Alice -[#green]-> Bob: trace genRanHex58 genRanHex71 default
-Alice -[#green]-> Bob: trace genRanHex59 genRanHex72 default
 Bob -[#green]-> Alice: probe genRanHex73
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex67
@@ -565,7 +464,6 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex68
 Alice -[#green]-> Charlie: probe genRanHex69
-Dave -[#green]-> Edward: trace genRanHex63 genRanHex74 default
 Edward -[#green]-> Dave: probe genRanHex75
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -590,40 +488,28 @@ Alice -[#green]-> Edward: probe genRanHex69
 Alice -[#green]-> Edward: probe genRanHex73
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex65 genRanHex76 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex73
-Edward -[#green]-> Alice: trace genRanHex67 genRanHex80 default
-Edward -[#green]-> Alice: trace genRanHex68 genRanHex81 default
-Edward -[#green]-> Alice: trace genRanHex69 genRanHex82 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex75
 Dave -[#green]-> Edward: probe genRanHex73
-Charlie -[#green]-> Alice: trace genRanHex65 genRanHex76 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex67 genRanHex80 default
-Alice -[#green]-> Dave: trace genRanHex68 genRanHex81 default
-Alice -[#green]-> Dave: trace genRanHex69 genRanHex82 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex75
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex65 genRanHex76 default
 Bob -[#green]-> Alice: probe genRanHex77
 Bob -[#green]-> Alice: probe genRanHex78
 Bob -[#green]-> Alice: probe genRanHex79
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex67 genRanHex80 default
-Dave -[#green]-> Edward: trace genRanHex68 genRanHex81 default
-Dave -[#green]-> Edward: trace genRanHex69 genRanHex82 default
 Edward -[#green]-> Dave: probe genRanHex83
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
@@ -642,36 +528,30 @@ Alice -[#green]-> Edward: probe genRanHex77
 Alice -[#green]-> Edward: probe genRanHex78
 Alice -[#green]-> Edward: probe genRanHex79
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex73 genRanHex84 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex75 genRanHex86 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex77
 Alice -[#green]-> Charlie: probe genRanHex78
 Alice -[#green]-> Charlie: probe genRanHex79
-Charlie -[#green]-> Alice: trace genRanHex73 genRanHex84 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex83
 Dave -[#green]-> Edward: probe genRanHex77
 Dave -[#green]-> Edward: probe genRanHex78
 Dave -[#green]-> Edward: probe genRanHex79
-Alice -[#green]-> Dave: trace genRanHex75 genRanHex86 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex73 genRanHex84 default
 Bob -[#green]-> Alice: probe genRanHex85
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex83
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Dave -[#green]-> Edward: trace genRanHex75 genRanHex86 default
 Edward -[#green]-> Dave: probe genRanHex87
 Edward -[#green]-> Dave: probe genRanHex88
 Edward -[#green]-> Dave: probe genRanHex89
@@ -694,27 +574,19 @@ Alice -[#green]-> Edward: probe genRanHex83
 Alice -[#green]-> Edward: probe genRanHex85
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex77 genRanHex90 default
-Bob -[#green]-> Charlie: trace genRanHex78 genRanHex91 default
-Bob -[#green]-> Charlie: trace genRanHex79 genRanHex92 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex85
-Edward -[#green]-> Alice: trace genRanHex83 genRanHex94 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex87
 Dave -[#green]-> Alice: probe genRanHex88
 Dave -[#green]-> Alice: probe genRanHex89
 Dave -[#green]-> Edward: probe genRanHex85
-Charlie -[#green]-> Alice: trace genRanHex77 genRanHex90 default
-Charlie -[#green]-> Alice: trace genRanHex78 genRanHex91 default
-Charlie -[#green]-> Alice: trace genRanHex79 genRanHex92 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex83 genRanHex94 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
@@ -723,13 +595,9 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex88
 Alice -[#green]-> Charlie: probe genRanHex89
-Alice -[#green]-> Bob: trace genRanHex77 genRanHex90 default
-Alice -[#green]-> Bob: trace genRanHex78 genRanHex91 default
-Alice -[#green]-> Bob: trace genRanHex79 genRanHex92 default
 Bob -[#green]-> Alice: probe genRanHex93
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex83 genRanHex94 default
 Edward -[#green]-> Dave: probe genRanHex95
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
@@ -750,30 +618,21 @@ Alice -[#green]-> Edward: probe genRanHex88
 Alice -[#green]-> Edward: probe genRanHex89
 Alice -[#green]-> Edward: probe genRanHex93
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex85 genRanHex96 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex87 genRanHex100 default
-Edward -[#green]-> Alice: trace genRanHex88 genRanHex101 default
-Edward -[#green]-> Alice: trace genRanHex89 genRanHex102 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex93
-Charlie -[#green]-> Alice: trace genRanHex85 genRanHex96 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex95
 Dave -[#green]-> Edward: probe genRanHex93
-Alice -[#green]-> Dave: trace genRanHex87 genRanHex100 default
-Alice -[#green]-> Dave: trace genRanHex88 genRanHex101 default
-Alice -[#green]-> Dave: trace genRanHex89 genRanHex102 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex85 genRanHex96 default
 Bob -[#green]-> Alice: probe genRanHex97
 Bob -[#green]-> Alice: probe genRanHex98
 Bob -[#green]-> Alice: probe genRanHex99
@@ -781,9 +640,6 @@ Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex95
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Dave -[#green]-> Edward: trace genRanHex87 genRanHex100 default
-Dave -[#green]-> Edward: trace genRanHex88 genRanHex101 default
-Dave -[#green]-> Edward: trace genRanHex89 genRanHex102 default
 Edward -[#green]-> Dave: probe genRanHex103
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -806,36 +662,30 @@ Alice -[#green]-> Edward: probe genRanHex98
 Alice -[#green]-> Edward: probe genRanHex99
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex93 genRanHex104 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex97
 Alice -[#green]-> Charlie: probe genRanHex98
 Alice -[#green]-> Charlie: probe genRanHex99
-Edward -[#green]-> Alice: trace genRanHex95 genRanHex106 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex103
 Dave -[#green]-> Edward: probe genRanHex97
 Dave -[#green]-> Edward: probe genRanHex98
 Dave -[#green]-> Edward: probe genRanHex99
-Charlie -[#green]-> Alice: trace genRanHex93 genRanHex104 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex95 genRanHex106 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex103
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex93 genRanHex104 default
 Bob -[#green]-> Alice: probe genRanHex105
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex95 genRanHex106 default
 Edward -[#green]-> Dave: probe genRanHex107
 Edward -[#green]-> Dave: probe genRanHex108
 Edward -[#green]-> Dave: probe genRanHex109
@@ -854,34 +704,23 @@ Alice -[#green]-> Dave: probe genRanHex105
 Alice -[#green]-> Edward: probe genRanHex103
 Alice -[#green]-> Edward: probe genRanHex105
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex97 genRanHex110 default
-Bob -[#green]-> Charlie: trace genRanHex98 genRanHex111 default
-Bob -[#green]-> Charlie: trace genRanHex99 genRanHex112 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex103 genRanHex114 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex105
-Charlie -[#green]-> Alice: trace genRanHex97 genRanHex110 default
-Charlie -[#green]-> Alice: trace genRanHex98 genRanHex111 default
-Charlie -[#green]-> Alice: trace genRanHex99 genRanHex112 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex107
 Dave -[#green]-> Alice: probe genRanHex108
 Dave -[#green]-> Alice: probe genRanHex109
 Dave -[#green]-> Edward: probe genRanHex105
-Alice -[#green]-> Dave: trace genRanHex103 genRanHex114 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex97 genRanHex110 default
-Alice -[#green]-> Bob: trace genRanHex98 genRanHex111 default
-Alice -[#green]-> Bob: trace genRanHex99 genRanHex112 default
 Bob -[#green]-> Alice: probe genRanHex113
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex107
@@ -889,7 +728,6 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex108
 Alice -[#green]-> Charlie: probe genRanHex109
-Dave -[#green]-> Edward: trace genRanHex103 genRanHex114 default
 Edward -[#green]-> Dave: probe genRanHex115
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -914,40 +752,28 @@ Alice -[#green]-> Edward: probe genRanHex109
 Alice -[#green]-> Edward: probe genRanHex113
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex105 genRanHex116 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex113
-Edward -[#green]-> Alice: trace genRanHex107 genRanHex120 default
-Edward -[#green]-> Alice: trace genRanHex108 genRanHex121 default
-Edward -[#green]-> Alice: trace genRanHex109 genRanHex122 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex115
 Dave -[#green]-> Edward: probe genRanHex113
-Charlie -[#green]-> Alice: trace genRanHex105 genRanHex116 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex107 genRanHex120 default
-Alice -[#green]-> Dave: trace genRanHex108 genRanHex121 default
-Alice -[#green]-> Dave: trace genRanHex109 genRanHex122 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex115
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex105 genRanHex116 default
 Bob -[#green]-> Alice: probe genRanHex117
 Bob -[#green]-> Alice: probe genRanHex118
 Bob -[#green]-> Alice: probe genRanHex119
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex107 genRanHex120 default
-Dave -[#green]-> Edward: trace genRanHex108 genRanHex121 default
-Dave -[#green]-> Edward: trace genRanHex109 genRanHex122 default
 Edward -[#green]-> Dave: probe genRanHex123
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
@@ -966,36 +792,30 @@ Alice -[#green]-> Edward: probe genRanHex117
 Alice -[#green]-> Edward: probe genRanHex118
 Alice -[#green]-> Edward: probe genRanHex119
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex113 genRanHex124 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex115 genRanHex126 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex117
 Alice -[#green]-> Charlie: probe genRanHex118
 Alice -[#green]-> Charlie: probe genRanHex119
-Charlie -[#green]-> Alice: trace genRanHex113 genRanHex124 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex123
 Dave -[#green]-> Edward: probe genRanHex117
 Dave -[#green]-> Edward: probe genRanHex118
 Dave -[#green]-> Edward: probe genRanHex119
-Alice -[#green]-> Dave: trace genRanHex115 genRanHex126 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex113 genRanHex124 default
 Bob -[#green]-> Alice: probe genRanHex125
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex123
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Dave -[#green]-> Edward: trace genRanHex115 genRanHex126 default
 Edward -[#green]-> Dave: probe genRanHex127
 Edward -[#green]-> Dave: probe genRanHex128
 Edward -[#green]-> Dave: probe genRanHex129
@@ -1018,27 +838,19 @@ Alice -[#green]-> Edward: probe genRanHex123
 Alice -[#green]-> Edward: probe genRanHex125
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex117 genRanHex130 default
-Bob -[#green]-> Charlie: trace genRanHex118 genRanHex131 default
-Bob -[#green]-> Charlie: trace genRanHex119 genRanHex132 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex125
-Edward -[#green]-> Alice: trace genRanHex123 genRanHex134 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex127
 Dave -[#green]-> Alice: probe genRanHex128
 Dave -[#green]-> Alice: probe genRanHex129
 Dave -[#green]-> Edward: probe genRanHex125
-Charlie -[#green]-> Alice: trace genRanHex117 genRanHex130 default
-Charlie -[#green]-> Alice: trace genRanHex118 genRanHex131 default
-Charlie -[#green]-> Alice: trace genRanHex119 genRanHex132 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex123 genRanHex134 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
@@ -1047,13 +859,9 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex128
 Alice -[#green]-> Charlie: probe genRanHex129
-Alice -[#green]-> Bob: trace genRanHex117 genRanHex130 default
-Alice -[#green]-> Bob: trace genRanHex118 genRanHex131 default
-Alice -[#green]-> Bob: trace genRanHex119 genRanHex132 default
 Bob -[#green]-> Alice: probe genRanHex133
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex123 genRanHex134 default
 Edward -[#green]-> Dave: probe genRanHex135
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes
@@ -1074,30 +882,21 @@ Alice -[#green]-> Edward: probe genRanHex128
 Alice -[#green]-> Edward: probe genRanHex129
 Alice -[#green]-> Edward: probe genRanHex133
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex125 genRanHex136 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex127 genRanHex140 default
-Edward -[#green]-> Alice: trace genRanHex128 genRanHex141 default
-Edward -[#green]-> Alice: trace genRanHex129 genRanHex142 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex133
-Charlie -[#green]-> Alice: trace genRanHex125 genRanHex136 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex135
 Dave -[#green]-> Edward: probe genRanHex133
-Alice -[#green]-> Dave: trace genRanHex127 genRanHex140 default
-Alice -[#green]-> Dave: trace genRanHex128 genRanHex141 default
-Alice -[#green]-> Dave: trace genRanHex129 genRanHex142 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex125 genRanHex136 default
 Bob -[#green]-> Alice: probe genRanHex137
 Bob -[#green]-> Alice: probe genRanHex138
 Bob -[#green]-> Alice: probe genRanHex139
@@ -1105,9 +904,6 @@ Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex135
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Dave -[#green]-> Edward: trace genRanHex127 genRanHex140 default
-Dave -[#green]-> Edward: trace genRanHex128 genRanHex141 default
-Dave -[#green]-> Edward: trace genRanHex129 genRanHex142 default
 Edward -[#green]-> Dave: probe genRanHex143
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -1130,36 +926,30 @@ Alice -[#green]-> Edward: probe genRanHex138
 Alice -[#green]-> Edward: probe genRanHex139
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex133 genRanHex144 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex137
 Alice -[#green]-> Charlie: probe genRanHex138
 Alice -[#green]-> Charlie: probe genRanHex139
-Edward -[#green]-> Alice: trace genRanHex135 genRanHex146 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex143
 Dave -[#green]-> Edward: probe genRanHex137
 Dave -[#green]-> Edward: probe genRanHex138
 Dave -[#green]-> Edward: probe genRanHex139
-Charlie -[#green]-> Alice: trace genRanHex133 genRanHex144 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex135 genRanHex146 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex143
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex133 genRanHex144 default
 Bob -[#green]-> Alice: probe genRanHex145
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex135 genRanHex146 default
 Edward -[#green]-> Dave: probe genRanHex147
 Edward -[#green]-> Dave: probe genRanHex148
 Edward -[#green]-> Dave: probe genRanHex149
@@ -1178,34 +968,23 @@ Alice -[#green]-> Dave: probe genRanHex145
 Alice -[#green]-> Edward: probe genRanHex143
 Alice -[#green]-> Edward: probe genRanHex145
 Charlie -[#green]-> Alice: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex137 genRanHex150 default
-Bob -[#green]-> Charlie: trace genRanHex138 genRanHex151 default
-Bob -[#green]-> Charlie: trace genRanHex139 genRanHex152 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Edward -[#green]-> Alice: trace genRanHex143 genRanHex154 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Alice -[#green]-> Charlie: probe genRanHex145
-Charlie -[#green]-> Alice: trace genRanHex137 genRanHex150 default
-Charlie -[#green]-> Alice: trace genRanHex138 genRanHex151 default
-Charlie -[#green]-> Alice: trace genRanHex139 genRanHex152 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Dave -[#green]-> Alice: probe genRanHex147
 Dave -[#green]-> Alice: probe genRanHex148
 Dave -[#green]-> Alice: probe genRanHex149
 Dave -[#green]-> Edward: probe genRanHex145
-Alice -[#green]-> Dave: trace genRanHex143 genRanHex154 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Bob: trace genRanHex137 genRanHex150 default
-Alice -[#green]-> Bob: trace genRanHex138 genRanHex151 default
-Alice -[#green]-> Bob: trace genRanHex139 genRanHex152 default
 Bob -[#green]-> Alice: probe genRanHex153
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex147
@@ -1213,7 +992,6 @@ Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
 Alice -[#green]-> Charlie: probe genRanHex148
 Alice -[#green]-> Charlie: probe genRanHex149
-Dave -[#green]-> Edward: trace genRanHex143 genRanHex154 default
 Edward -[#green]-> Dave: probe genRanHex155
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
@@ -1238,40 +1016,28 @@ Alice -[#green]-> Edward: probe genRanHex149
 Alice -[#green]-> Edward: probe genRanHex153
 Alice -[#green]-> Dave: okay-to-send-probes
 Edward -[#green]-> Dave: okay-to-send-probes
-Bob -[#green]-> Charlie: trace genRanHex145 genRanHex156 default
 Bob -[#green]-> Alice: have-probes
 Bob -[#green]-> Charlie: have-probes
 Alice -[#green]-> Charlie: probe genRanHex153
-Edward -[#green]-> Alice: trace genRanHex147 genRanHex160 default
-Edward -[#green]-> Alice: trace genRanHex148 genRanHex161 default
-Edward -[#green]-> Alice: trace genRanHex149 genRanHex162 default
 Edward -[#green]-> Dave: have-probes
 Edward -[#green]-> Alice: have-probes
 Dave -[#green]-> Alice: probe genRanHex155
 Dave -[#green]-> Edward: probe genRanHex153
-Charlie -[#green]-> Alice: trace genRanHex145 genRanHex156 default
 Alice -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: okay-to-send-probes
 Charlie -[#green]-> Bob: have-probes
 Charlie -[#green]-> Alice: have-probes
-Alice -[#green]-> Dave: trace genRanHex147 genRanHex160 default
-Alice -[#green]-> Dave: trace genRanHex148 genRanHex161 default
-Alice -[#green]-> Dave: trace genRanHex149 genRanHex162 default
 Dave -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Edward: okay-to-send-probes
 Alice -[#green]-> Bob: have-probes
 Alice -[#green]-> Charlie: probe genRanHex155
 Alice -[#green]-> Dave: have-probes
 Alice -[#green]-> Edward: have-probes
-Alice -[#green]-> Bob: trace genRanHex145 genRanHex156 default
 Bob -[#green]-> Alice: probe genRanHex157
 Bob -[#green]-> Alice: probe genRanHex158
 Bob -[#green]-> Alice: probe genRanHex159
 Bob -[#green]-> Charlie: okay-to-send-probes
 Alice -[#green]-> Charlie: okay-to-send-probes
-Dave -[#green]-> Edward: trace genRanHex147 genRanHex160 default
-Dave -[#green]-> Edward: trace genRanHex148 genRanHex161 default
-Dave -[#green]-> Edward: trace genRanHex149 genRanHex162 default
 Edward -[#green]-> Dave: probe genRanHex163
 Bob -[#green]-> Alice: okay-to-send-probes
 Dave -[#green]-> Alice: okay-to-send-probes

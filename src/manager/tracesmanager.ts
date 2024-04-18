@@ -52,9 +52,9 @@ export class TracesManager extends EventEmitter {
       if (from.length < 1) {
         throw new Error('how can root situation probe loopback have no from?');
       }
-      if (from.length > 1) {
-        throw new Error('how can root situation probe loopback have more than 1 from?');
-      }
+      // if (from.length > 1) {
+      //   throw new Error('how can root situation probe loopback have more than 1 from?');
+      // }
       this.createTrace(probeId, from, to, from[0]);
     }
   }
