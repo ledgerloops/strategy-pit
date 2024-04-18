@@ -258,8 +258,8 @@ export class ProbesManager extends EventEmitter {
     const probe = this.get(probeId);
     probe.addTrace(trace);
     this.emit('debug', `CREATING TRACE ${traceId} TO ${friend} FOR OUR HOME MINTED PROBE ${probeId}`);
-    this.emit('message', friend, `loop ${probeId} ${traceId}`);
-    // this.emit('message', friend, `trace ${probeId} ${traceId} default`);
+    // this.emit('message', friend, `loop ${probeId} ${traceId}`);
+    this.emit('message', friend, `trace ${probeId} ${traceId} default`);
   }  
   handleTraceMessage(sender: string, message: string): void {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -293,8 +293,8 @@ export class ProbesManager extends EventEmitter {
     }
     this.emit('debug', `FORWARDING TRACE TO ${probe.getFrom()[0]}`);
     const recipient = probe.getFrom()[0];
-    this.emit('message', recipient, `loop ${probeId} ${traceId}`);
-    // this.emit('message', recipient, `trace ${probeId} ${traceId} default`);
+    // this.emit('message', recipient, `loop ${probeId} ${traceId}`);
+    this.emit('message', recipient, `trace ${probeId} ${traceId} default`);
     const trace = new Trace(sender, this.name, traceId);
     probe.addTrace(trace);  
   }
