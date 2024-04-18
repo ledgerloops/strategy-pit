@@ -136,6 +136,10 @@ export abstract class Node {
     this.onMeet(other.getName());
   }
 
+  protected sendMessageToFriend(friend: string, message: Message): void {
+    this.messageForwarder.forwardMessage(this, this.friends[friend].node, message);
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   protected handleMeetMessage(_sender: string, _message: MeetMessage): void {}
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

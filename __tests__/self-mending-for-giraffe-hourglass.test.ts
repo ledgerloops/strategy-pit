@@ -80,23 +80,23 @@ describe('Basic Giraffe Hourglass - until the music stops', () => {
         probes: messageForwarder.getProbeLogs(),
         alice: {
           debugLog: alice.debugLog,
-          loopsFound: alice.loopsFound,
+          loopsFound: alice.getLoops(),
         },
         bob: {
           debugLog: bob.debugLog,
-          loopsFound: bob.loopsFound,
+          loopsFound: bob.getLoops(),
         },
         charlie: {
           debugLog: charlie.debugLog,
-          loopsFound: charlie.loopsFound,
+          loopsFound: charlie.getLoops(),
         },
         dave: {
           debugLog: dave.debugLog,
-          loopsFound: dave.loopsFound,
+          loopsFound: dave.getLoops(),
         },
         edward: {
           debugLog: edward.debugLog,
-          loopsFound: edward.loopsFound,
+          loopsFound: edward.getLoops(),
         },
       };
       writeFileSync(JSON_FILE, JSON.stringify(actual, null, 2) + '\n');
