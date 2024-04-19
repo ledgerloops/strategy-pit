@@ -42,15 +42,15 @@ describe(`${TEST_NAME} - until the music stops`, () => {
     flushReport = await networkSimulator.flush();
     await alice.meet('Bob');
     flushReport = await networkSimulator.flush();
-    await bob.meet('Charlie', false);
+    await bob.meet('Charlie');
     flushReport = await networkSimulator.flush();
-    await charlie.meet('Alice', false);
+    await charlie.meet('Alice');
     flushReport = await networkSimulator.flush();
-    await alice.meet('Dave', false);
+    await alice.meet('Dave');
     flushReport = await networkSimulator.flush();
-    await dave.meet('Edward', false);
+    await dave.meet('Edward');
     flushReport = await networkSimulator.flush();
-    await edward.meet('Alice', false);
+    await edward.meet('Alice');
     let counter = 0;
     do {
       flushReport = await networkSimulator.flush();
