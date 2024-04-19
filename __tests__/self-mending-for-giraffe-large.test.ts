@@ -29,8 +29,8 @@ describe(`${TEST_NAME} - until the music stops`, () => {
     networkSimulator = new BatchedNetworkSimulator();
     const data = readFileSync(TESTNET_CSV, 'utf8')
     const lines = data.split('\n').map(line => {
-      const [ from, to, fromMaxBalance, fromExchangeRate, toMaxBalance, toExchangeRate ] = line.split(' ')
-      return { from, to, fromMaxBalance, fromExchangeRate, toMaxBalance, toExchangeRate }
+      const [ from, to ] = line.split(' ')
+      return { from, to }
     }).filter(line => line.from !== 'from' && line.from !== '');
     lines.forEach(async line => {
       if (typeof nodes[line.from] === 'undefined') {
