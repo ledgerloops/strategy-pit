@@ -1,7 +1,9 @@
 # Decentralized Loop Detection (DLD)
 Decentralized Loop Detection is an algorithm to help a network of collaborating nodes to detect loops.
 This can be useful in cases where loops are undesired (such as routing) or desired (such as decentralized multilateral netting)
-The DLD algorithm works on two phases: probes and traces.
+The DLD algorithm works on two phases: probes and traces. This version of the DLD algorithm is implemented in
+the [Giraffe strategy](https://github.com/ledgerloops/strategy-pit/tree/main?tab=readme-ov-file#-giraffe).
+
 ## Probes
 Probes carry a high-entropy nonce and get forwarded from node to node, flooding the network until they cannot go any further.
 ### Meeting
@@ -47,6 +49,22 @@ a node may build in before forwarding a batch of probes, will linearly decrease 
 
 ### Detecting a loop
 There are a number of ways a probe can spread before a loop is detected. The simplest one is a probe that loops back to the node
-where it was minted. We call this an O-loop:
+where it was minted. We call this an O-loop (black lines are link, red lines are how the probe was forwarded):
 
 ![O-loop](https://private-user-images.githubusercontent.com/408412/323499096-c3ffc1c5-d270-4f91-883b-6cdb49ab5d31.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTM1MjU5MDcsIm5iZiI6MTcxMzUyNTYwNywicGF0aCI6Ii80MDg0MTIvMzIzNDk5MDk2LWMzZmZjMWM1LWQyNzAtNGY5MS04ODNiLTZjZGI0OWFiNWQzMS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNDE5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDQxOVQxMTIwMDdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yZTE0YTBkMzY4MzQwOTA0OWVhZGI1YzQzYzExMWYwYjgxZmE3NTJjZDcwMDcxOWFjZjZkMGM2NjRhMGZiNzVjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.-kTHEd_LxbT2x3wv89NkF3g-COd_q8kz3Gl6fLrvnIQ)
+
+When a node sees a trace come in that it has minted itself, it can immediately conclude that a loop was found.
+
+Another situation is if a trace is received twice, but was never sent out. We call this a kite-to-leaf, because it has the shape of a kite and the top of the kite is like a leaf in a tree structure in that it has no outgoing links:
+
+![Kite-to-leaf loop](https://github.com/ledgerloops/strategy-pit/assets/408412/71b3265e-b8db-41b4-abd8-8242cd35adc6)
+
+If a node receives a probe a second time after already having forwarded it, then it is either the fork in a P-loop:
+
+![P loop](https://github.com/ledgerloops/strategy-pit/assets/408412/2ee178cb-5ccd-41b7-80f7-c12faeb9e382)
+
+or the top in a kite-to-non-leaf loop:
+
+![Kite-to-non-leaf loop](https://github.com/ledgerloops/strategy-pit/assets/408412/9f8f2f2c-4cb9-4868-b590-e0efee5368e5)
+
+In all cases, if a known probe comes in, the node should trigger a trace for that probel
