@@ -1,0 +1,52 @@
+# Decentralized Loop Detection (DLD)
+Decentralized Loop Detection is an algorithm to help a network of collaborating nodes to detect loops.
+This can be useful in cases where loops are undesired (such as routing) or desired (such as decentralized multilateral netting)
+The DLD algorithm works on two phases: probes and traces.
+## Probes
+Probes carry a high-entropy nonce and get forwarded from node to node, flooding the network until they cannot go any further.
+### Meeting
+When a new link is added to the network, between "first party" and "second party", the first party receives a "meet" event
+The first party sends a meet message to the second party and enters talking mode
+The second party receives the meet mesage and enters listening mode
+
+### Probe sending
+Probes are sent with a semaphore, because if two probe messages with the same nonce pass in mid-air, it will be impossible for
+either node to detect the loop. Therefore, only one of the two nodes involved in a link is in talking mode, and is allowed to send
+probe messages. The other node is in listening or waiting mode.
+If a node is in talking mode, it can send a probe message at any time.
+If a node is in listening mode, it can queue a probe message, send a 'raise-hand-for-probes' message, and go into waiting mode.
+The other node can respond to the 'raise-hand-for-probes' message by itself going into listening mode and sending back an
+'okay-to-send-probes' message.
+When the waiting nodes receives the 'okay-to-send-probes' message, it switches from waiting to listening modes and sends all probe
+messages that it had queued.
+It is up to each node, when they receive a 'raise-hand-for-probes' messages, whether they first finish sending all the probe messages
+they were in the middle of sending, or whether they keep their own messages queued and let the other party go first.
+For this semaphore mechanism to work, it's important that messages are never delivered in a different order than the order in which they
+were sent ([causal ordering of messages](https://www.geeksforgeeks.org/causal-ordering-of-messages-in-distributed-system/)).
+
+### Exchanging probes on meet
+When a node meets a new neighbour, regardless of whether it is in first party or second party role, it will send that neighbour
+all its known probes,observing the probe sending mechanism, and unless the other neighbour sends that one to them first.
+Note that a probe may be queue for sending, but by the time the sending nodes goes into talking mode, that probe was already received
+from the other neighbour, so it's important to do the check at the actual time of sending and not at the time of queueing.
+
+### Minting a new probe
+In addition, the first party node mints a new probe and sends that to all its neighbours, observing the semaphore protocol for each
+neighbour. This is because a change in network topology where a new link is introduce may introduce new loops, so this is a good time
+to do a new probe.
+
+Of course, any node could mint a new probe at any time, and the other nodes would just play along without knowing who minted it and why.
+This means an attacker can flood the network and keep everyone busy with useless probes, so nodes will need some mitigation to keep
+probe traffic volume within reason.
+
+### Forwarding a probe
+When a probe comes in from one neighbour, if the probe wasn't seen before, a node should always forward it to all its other neighbours.
+This means each probe spread exponentially across the entire network. This could lead to high probe traffic, but if the nonces are not
+too long, then many probe messages can be compressed into a relatively manageable file size for a batch of many probes, and the delay
+a node may build in before forwarding a batch of probes, will linearly decrease the bandwidth requirements.
+
+### Detecting a loop
+There are a number of ways a probe can spread before a loop is detected. The simplest one is a probe that loops back to the node
+where it was minted. We call this an O-loop:
+
+![O-loop](https://private-user-images.githubusercontent.com/408412/323499096-c3ffc1c5-d270-4f91-883b-6cdb49ab5d31.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTM1MjU5MDcsIm5iZiI6MTcxMzUyNTYwNywicGF0aCI6Ii80MDg0MTIvMzIzNDk5MDk2LWMzZmZjMWM1LWQyNzAtNGY5MS04ODNiLTZjZGI0OWFiNWQzMS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNDE5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDQxOVQxMTIwMDdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yZTE0YTBkMzY4MzQwOTA0OWVhZGI1YzQzYzExMWYwYjgxZmE3NTJjZDcwMDcxOWFjZjZkMGM2NjRhMGZiNzVjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.-kTHEd_LxbT2x3wv89NkF3g-COd_q8kz3Gl6fLrvnIQ)
