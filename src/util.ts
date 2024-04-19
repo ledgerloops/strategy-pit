@@ -49,6 +49,13 @@ function createLine(entry: Entry): string {
   if ((entry.message === 'have-probes') || (entry.message === 'okay-to-send-probes')) {
     return '';
   }
+  const parts = entry.message.toString().split(' ');
+  if (parts.length < 2) {
+    return '';
+  }
+  // if ((parts[0] !== 'meet') && (parts[1] !== 'genRanHex2')) {
+  //   return '';
+  // }
   const color = colors[entry.message.toString().split(' ')[0]] || 'black';
   return `${entry.sender} -[#${color}]-> ${entry.receiver}: ${entry.message}\n`;
 }

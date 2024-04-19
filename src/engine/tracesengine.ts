@@ -36,16 +36,28 @@ export class TracesEngine extends EventEmitter {
       this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
     });
   }
+  seenThisTraceBefore(probeId: string, traceId: string, legId: string): boolean {
+    const legs = this.getLegsForwarded(probeId, traceId);
+    this.emit('debug', `checking if we have seenThisTraceBefore ${probeId} ${traceId} ${legId} in ${JSON.stringify(legs)}`);
+    if (typeof legs === 'undefined') {
+      return false;
+    }
+    return Object.values(legs).includes(legId);
+  }
   handleTraceMessage(sender: string, message: string): void {
     this.emit('debug', `[TraceEngine] handling trace message from ${sender}: ${message}`);
     const [messageType, probeId, traceId, legId] = message.split(' ');
+    if (messageType !== 'trace') {
+      throw new Error(`expected trace message but got ${messageType}`);
+    }
     if (this.wasCreatedByUs(probeId, traceId)) {
       this.emit('debug', `loop-found ${probeId} ${traceId}`);
       this.emit('loop-found', probeId, traceId);
       return;
     }
-    if (messageType !== 'trace') {
-      throw new Error(`expected trace message but got ${messageType}`);
+    if (this.seenThisTraceBefore(probeId, traceId, legId)) {
+      this.emit('debug', `seen this trace before ${probeId} ${traceId} ${legId}`);
+      return;
     }
     this.logTraceMessage(sender,probeId, traceId, legId);
     this.emit('lookup-probe', probeId, (probeFrom: string[], probeTo: string[]) => {
