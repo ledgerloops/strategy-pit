@@ -50,7 +50,7 @@ a node may build in before forwarding a batch of probes, will linearly decrease 
 
 ### Detecting a loop
 There are 4 ways a probe can loop back on itself: to the root, backward to an internal node, forward to an internal node,
-or to a leaf. The loop back to the root (i.e. back to the node
+or to a head. The loop back to the root (i.e. back to the node
 where it was minted) is the simplest one. Black lines are link, red arrows are probe messages that play a part in the loop.
 Probe messages that went in other directions and did not contribute to the loop are not displayed:
 
