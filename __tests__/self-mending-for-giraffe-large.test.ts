@@ -3,7 +3,7 @@
 import { jest } from '@jest/globals';
 import { readFileSync, writeFileSync } from 'fs';
 
-const TESTNET_CSV = '__tests__/fixtures/testnet.csv';
+const TESTNET_CSV = '__tests__/fixtures/testnet-10.csv';
 const NUM_ROUNDS = 100000;
 // const NUM_NODES = 100;
 const TEST_NAME = `batched-giraffe-testnet-csv`;
