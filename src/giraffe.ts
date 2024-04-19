@@ -27,9 +27,9 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     probesengine.on('message', (to: string, message: string) => {
       this.emit('message', to, message);
     });
-    probesengine.on('debug', (message: string) => {
-      this.debugLog.push(message);
-    });
+    // probesengine.on('debug', (message: string) => {
+    //   this.debugLog.push(message);
+    // });
     return probesengine;
   }
   protected connectTracesEngine(probesengine: ProbesEngine): TracesEngine {
@@ -37,9 +37,9 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     probesengine.on('probe-loopback', (probeId: string): void => {
       tracesengine.handleProbeLoopback(probeId);
     });
-    tracesengine.on('debug', (message: string) => {
-      this.debugLog.push(message);
-    });
+    // tracesengine.on('debug', (message: string) => {
+    //   this.debugLog.push(message);
+    // });
     tracesengine.on('lookup-probe', (probeId: string, callback: (probeFrom: string[], probeTo: string[]) => void) => {
       this.debugLog.push(`[Node#lookup-probe] ${this.name} is looking up probe ${probeId}`);
       const probe = probesengine.get(probeId);
@@ -60,9 +60,9 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     traceEngine.on('loop-found', (probeId: string, traceId: string) => {
       loopsEngine.handleLoopFound(probeId, traceId);
     });
-    loopsEngine.on('debug', (message: string) => {
-      this.debugLog.push(message);
-    });
+    // loopsEngine.on('debug', (message: string) => {
+    //   this.debugLog.push(message);
+    // });
     return loopsEngine;
   }
   process(sender: string, message: string): void {

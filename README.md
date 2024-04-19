@@ -10,7 +10,8 @@ The strategies are tested in different network models and with different network
 npm install
 npm test
 npm run build
-node ./build/src/run.js
+node ../ledgerloops/src/network-generator.js > __tests__/fixtures/testnet.csv
+time node ./build/src/run.js
 ```
 
 ## Network simulators
