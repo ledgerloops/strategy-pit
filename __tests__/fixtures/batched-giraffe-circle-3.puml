@@ -1,0 +1,22 @@
+@startuml messages
+n0 -[#blue]-> n1: probe genRanHex0
+n1 -[#blue]-> n2: probe genRanHex0
+n1 -[#blue]-> n2: probe genRanHex1
+n2 -[#blue]-> n0: probe genRanHex2
+n2 -[#blue]-> n0: probe genRanHex0
+n2 -[#blue]-> n0: probe genRanHex1
+n1 -[#blue]-> n0: probe genRanHex1
+n0 -[#green]-> n2: trace genRanHex0 genRanHex3 genRanHex4
+n0 -[#green]-> n2: trace genRanHex1 genRanHex5 genRanHex6
+n0 -[#green]-> n1: trace genRanHex1 genRanHex5 genRanHex7
+n2 -[#blue]-> n1: probe genRanHex2
+n2 -[#green]-> n1: trace genRanHex0 genRanHex3 genRanHex4
+n0 -[#blue]-> n1: probe genRanHex2
+n2 -[#green]-> n1: trace genRanHex1 genRanHex5 genRanHex6
+n1 -[#green]-> n0: trace genRanHex0 genRanHex3 genRanHex4
+n1 -[#green]-> n2: trace genRanHex2 genRanHex8 genRanHex9
+n1 -[#green]-> n0: trace genRanHex2 genRanHex8 genRanHex10
+n1 -[#green]-> n0: trace genRanHex1 genRanHex5 genRanHex6
+n0 -[#green]-> n2: trace genRanHex2 genRanHex8 genRanHex10
+n2 -[#green]-> n1: trace genRanHex2 genRanHex8 genRanHex10
+@enduml
