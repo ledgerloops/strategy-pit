@@ -32,6 +32,14 @@ function createPreamble(): string {
   return `@startuml messages\n`;
 }
 function createLine(entry: Entry): string {
+  const colors = {
+    'probe': 'blue',
+    'trace': 'green',
+    'meet': 'orange',
+    'loop': 'red',
+    'have-probes': 'purple',
+    'okay-to-send-probes': 'purple',
+  };
   if (entry.sender === '---') {
     return '';
   }
@@ -41,7 +49,7 @@ function createLine(entry: Entry): string {
   if ((entry.message === 'have-probes') || (entry.message === 'okay-to-send-probes')) {
     return '';
   }
-  const color = 'green';
+  const color = colors[entry.message.toString().split(' ')[0]] || 'black';
   return `${entry.sender} -[#${color}]-> ${entry.receiver}: ${entry.message}\n`;
 }
 function createEpilogue(): string {

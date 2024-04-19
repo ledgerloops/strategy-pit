@@ -9,25 +9,6 @@ function objectMap(object, mapFn): object {
   }, {})
 }
 
-export class Trace {
-  private traceId: string;
-  private from: string | undefined;
-  private to: string;
-  constructor(from: string | undefined, to: string, traceId: string) {
-    this.traceId = traceId;
-    this.to = to;
-    this.from = from;
-  }
-  getFrom(): string | undefined {
-    return this.from;
-  }
-  getTo(): string {
-    return this.to;
-  }
-  getTraceId(): string {
-    return this.traceId;
-  }
-}
 export class Probe {
   private probeId: string;
   private from: string[];
@@ -81,7 +62,6 @@ export class ProbesEngine extends EventEmitter {
   private probes: {
     [id: string]: Probe
   } = {};
-  private loopsFound: string[] = [];
   protected friends: {
     [name: string]: Friend
    }  = {};
@@ -193,8 +173,8 @@ export class ProbesEngine extends EventEmitter {
     this.emit('debug', `creating flood probe`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }
-  public addFriend(other: string, createFloodProbe: boolean): void {
-    this.friends[other] = new Friend(null, createFloodProbe ? HandRaisingStatus.Talking : HandRaisingStatus.Listening);
+  public addFriend(other: string, weInitiate: boolean, createFloodProbe: boolean): void {
+    this.friends[other] = new Friend(null, weInitiate ? HandRaisingStatus.Talking : HandRaisingStatus.Listening);
 
     this.queueAllFloodProbes(other);
     if (createFloodProbe) {
@@ -231,9 +211,6 @@ export class ProbesEngine extends EventEmitter {
         this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
       }
     }
-  }
-  getLoops(): string[] {
-    return this.loopsFound;
   }
 }
   

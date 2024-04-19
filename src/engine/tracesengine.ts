@@ -63,7 +63,7 @@ export class TracesEngine extends EventEmitter {
           if (otherLeg === sender) {
             this.emit('debug', `UNEXPECTED: Received two different legs from the same node`);
           }
-          this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`)
+          this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`);
         }
       } else {
         throw new Error(`received trace message '${message}' from unexpected sender ${sender}`);

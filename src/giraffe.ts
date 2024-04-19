@@ -66,7 +66,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     // this is safe to because it will just queue them for the next message round
     this.emit('message', other, 'meet');
     this.debugLog.push(`I queue ${other} all my flood probes [2/4]`);
-    this.probesengine.addFriend(other, createProbe);
+    this.probesengine.addFriend(other, true, createProbe);
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
 
@@ -74,7 +74,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   handleMeetMessage(sender: string): void {
     this.friendsengine.addFriend(sender);
     this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
-    this.probesengine.addFriend(sender, false);
+    this.probesengine.addFriend(sender, false, false);
   }
   getProbes(): {
     [id: string]: {
@@ -89,9 +89,6 @@ export class Giraffe extends EventEmitter implements NetworkNode {
      }
   } {
     return this.probesengine.getProbes();
-  }
-  getLoops(): string[] {
-    return this.probesengine.getLoops();
   }
   getName(): string {
     return this.name;
