@@ -80,12 +80,12 @@ Traces don't need a semaphore, and they are handled according to three rules: th
 A Probe is identified by the nonce it carries, which we refer to as its `probeId`.
 
 The neighbours from which a probe message with a given `probeId` was received are a node's `from`-neighbours for that probe.
-The neighbours to which a probe message with a given `probeId` was sent are a node's `from`-neighbours for that probe.
+The neighbours to which a probe message with a given `probeId` was sent are that node's `to`-neighbours for that probe.
 
 A Trace message carries three nonces: `probeId`, `traceId` and `legId`. All messages that have the same three nonces together form  a Leg.
 All messages that differ only in `legId` form a Trace. This way, a Leg pertains to a Trace, and a Trace in turn pertains to a Probe through
 its `probeId`.
-A Trace message that travel in the same direction as the corresponding Probe message, i.e. they are received from a `from`-neighbour of the
+A Trace message that travels in the same direction as the corresponding Probe message, i.e. they are received from a `from`-neighbour of the
 Probe they pertain to, and/or sent to a `to`-neighbour thereof, are probe-wise trace messages.
 Trace messages that travel in the opposite direction are counter-probe-wise trace messages.
 
@@ -102,7 +102,7 @@ If a Trace with known `probeId` but unknown `traceId` and `legId` is received, r
 the Trace pertains.
 
 ### Bouncing rule
-If a Trace with known `probeId` and `traceId` but unknown `legId` is received, remember it and forward it to all neighbours from which a Trace with that
+If a Trace with known `probeId` and `traceId` but unknown `legId` is received, remember it and forward it to all other neighbours from which a Trace with that
 `probeId` and `traceId`  was received. Note that this means the trace changes direction; if it arrived as a probe-wise trace message then it will continue
 from here on as a counter-probe-wise trace message, and vice versa.
 
