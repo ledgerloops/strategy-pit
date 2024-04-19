@@ -32,7 +32,7 @@ function run(): void {
   });
   let counter = 0;
   do {
-    networkSimulator.flush();
+    flushReport = networkSimulator.flush();
   } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
   Object.keys(nodes).forEach((nodeId) => {
     console.log(nodeId, nodes[nodeId].getLoops());
