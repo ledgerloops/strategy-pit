@@ -6,13 +6,14 @@ export class FriendsEngine {
   constructor(name: string) {
     this.name = name;
   }
-  addFriend(otherName: string): void {
+  addFriend(otherName: string): boolean {
     // console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[otherName] !== 'undefined') {
       // console.log(this.debugLog);
-      throw new Error(`${this.name} is already friends with ${otherName}`);
+      return false;
     }
     this.friends[otherName] = true;
+    return true;
   }
   getFriends(): string[] {
     return Object.keys(this.friends);

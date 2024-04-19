@@ -78,7 +78,10 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     }
   }
   meet(other: string, createProbe: boolean = true): void {
-    this.friendsEngine.addFriend(other);
+    const newFriendship = this.friendsEngine.addFriend(other);
+    if (!newFriendship) {
+      return;
+    }
     this.debugLog.push(`I meet ${other} [1/4]`);
     // this is safe to because it will just queue them for the next message round
     this.emit('message', other, 'meet');
