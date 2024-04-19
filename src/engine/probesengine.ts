@@ -76,7 +76,7 @@ export class Probe {
   }
 }
 
-export class ProbesManager extends EventEmitter {
+export class ProbesEngine extends EventEmitter {
   protected name: string;
   private probes: {
     [id: string]: Probe

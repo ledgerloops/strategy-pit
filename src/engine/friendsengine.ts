@@ -1,4 +1,4 @@
-export class FriendsManager {
+export class FriendsEngine {
   protected name: string;
   protected friends: {
     [name: string]: boolean

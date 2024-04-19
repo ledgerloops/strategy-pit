@@ -1,7 +1,7 @@
 import EventEmitter from "node:events";
 import { genRanHex } from "../genRanHex.js";
 
-export class TracesManager extends EventEmitter {
+export class TracesEngine extends EventEmitter {
   tracesCreated = {};
   tracesForwarded = {};
   getLegs(probeId: string, traceId: string): { [to: string]: string } | undefined {
@@ -28,7 +28,7 @@ export class TracesManager extends EventEmitter {
         const legs = {};
         probeFrom.forEach((from) => {
           legs[from] = legId;
-          this.emit('debug', `[TraceManager] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
+          this.emit('debug', `[Traceengine] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
           // this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
         });
         if (typeof this.tracesForwarded[probeId] === 'undefined') {

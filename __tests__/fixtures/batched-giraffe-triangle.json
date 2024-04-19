@@ -107,7 +107,7 @@
       "[Node#receiveMessage] Alice receives message from Bob",
       "[Node#receiveMessage] Alice receives message from Bob",
       "[Node#lookup-probe] Alice is looking up probe genRanHex2",
-      "[TraceManager] sending message to Charlie: trace genRanHex2 genRanHex8 genRanHex10"
+      "[Traceengine] sending message to Charlie: trace genRanHex2 genRanHex8 genRanHex10"
     ],
     "loopsFound": []
   },
@@ -188,10 +188,10 @@
       "[Node#receiveMessage] Charlie receives message from Alice",
       "[Node#receiveMessage] Charlie receives message from Alice",
       "[Node#lookup-probe] Charlie is looking up probe genRanHex0",
-      "[TraceManager] sending message to Bob: trace genRanHex0 genRanHex3 genRanHex4",
+      "[Traceengine] sending message to Bob: trace genRanHex0 genRanHex3 genRanHex4",
       "[Node#receiveMessage] Charlie receives message from Alice",
       "[Node#lookup-probe] Charlie is looking up probe genRanHex1",
-      "[TraceManager] sending message to Bob: trace genRanHex1 genRanHex5 genRanHex6",
+      "[Traceengine] sending message to Bob: trace genRanHex1 genRanHex5 genRanHex6",
       "[Node#receiveMessage] Charlie receives message from Bob",
       "[Node#receiveMessage] Charlie receives message from Bob",
       "[Node#lookup-probe] Charlie is looking up probe genRanHex2"

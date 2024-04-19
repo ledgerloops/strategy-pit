@@ -1,79 +1,79 @@
 import EventEmitter from "node:events";
 import { NetworkNode } from "./simulator/networksimulator.js";
 import { getMessageType } from "./messages.js";
-import { ProbesManager } from "./manager/probesmanager.js";
-import { FriendsManager } from "./manager/friendsmanager.js";
-import { TracesManager } from "./manager/tracesmanager.js";
+import { ProbesEngine } from "./engine/probesengine.js";
+import { FriendsEngine } from "./engine/friendsengine.js";
+import { TracesEngine } from "./engine/tracesengine.js";
 
 export class Giraffe extends EventEmitter implements NetworkNode {
-  protected friendsManager: FriendsManager;
-  protected probesManager: ProbesManager;
-  protected tracesManager: TracesManager;
+  protected friendsengine: FriendsEngine;
+  protected probesengine: ProbesEngine;
+  protected tracesengine: TracesEngine;
   protected debugLog: string[] = [];
   protected name: string;
 
   constructor(name: string) {
     super();
     this.name = name;
-    this.friendsManager = new FriendsManager(name);
-    this.probesManager = this.connectProbesManager();
-    this.tracesManager = this.connectTracesManager(this.probesManager);
+    this.friendsengine = new FriendsEngine(name);
+    this.probesengine = this.connectProbesEngine();
+    this.tracesengine = this.connectTracesEngine(this.probesengine);
   }
-  protected connectProbesManager(): ProbesManager {
-    const probesManager = new ProbesManager(this.name);
-    probesManager.on('message', (to: string, message: string) => {
+  protected connectProbesEngine(): ProbesEngine {
+    const probesengine = new ProbesEngine(this.name);
+    probesengine.on('message', (to: string, message: string) => {
       this.emit('message', to, message);
     });
-    probesManager.on('debug', (message: string) => {
+    probesengine.on('debug', (message: string) => {
       this.debugLog.push(message);
     });
-    return probesManager;
+    return probesengine;
   }
-  protected connectTracesManager(probesManager: ProbesManager): TracesManager {
-    const tracesManager = new TracesManager();
-    probesManager.on('probe-loopback', (probeId: string): void => {
-      tracesManager.handleProbeLoopback(probeId);
+  protected connectTracesEngine(probesengine: ProbesEngine): TracesEngine {
+    const tracesengine = new TracesEngine();
+    probesengine.on('probe-loopback', (probeId: string): void => {
+      tracesengine.handleProbeLoopback(probeId);
     });
-    tracesManager.on('debug', (message: string) => {
+    tracesengine.on('debug', (message: string) => {
       this.debugLog.push(message);
     });
-    tracesManager.on('lookup-probe', (probeId: string, callback: (probeFrom: string[]) => void) => {
+    tracesengine.on('lookup-probe', (probeId: string, callback: (probeFrom: string[]) => void) => {
       this.debugLog.push(`[Node#lookup-probe] ${this.name} is looking up probe ${probeId}`);
-      callback(probesManager.get(probeId).getFrom());
+      callback(probesengine.get(probeId).getFrom());
     });
-    tracesManager.on('message', (to: string, message: string) => {
+    tracesengine.on('message', (to: string, message: string) => {
       this.debugLog.push(`[Node#sendTraceMessage] ${this.name} sends trace message to ${to}: ${message}`);
       this.emit('message', to, message);
     });
-    return tracesManager;
+    return tracesengine;
   }
   process(sender: string, message: string): void {
     this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender}`);
     // console.log(`${this.name} receives message from ${sender}`, message);
     switch(getMessageType(message)) {
       case `meet`: return this.handleMeetMessage(sender);
-      case `probe`: return this.probesManager.handleProbeMessage(sender, message);
-      case `trace`: return this.tracesManager.handleTraceMessage(sender, message);
-      // case `loop`: return this.probesManager.handleTraceMessage(sender, message);
-      case `have-probes`: return this.probesManager.handleHaveProbesMessage(sender);
-      case `okay-to-send-probes`: return this.probesManager.handleOkayToSendProbesMessage(sender);
+      case `probe`: return this.probesengine.handleProbeMessage(sender, message);
+      case `trace`: return this.tracesengine.handleTraceMessage(sender, message);
+      // case `loop`: return this.probesengine.handleTraceMessage(sender, message);
+      case `have-probes`: return this.probesengine.handleHaveProbesMessage(sender);
+      case `okay-to-send-probes`: return this.probesengine.handleOkayToSendProbesMessage(sender);
     }
   }
   meet(other: string): void {
-    this.friendsManager.addFriend(other);
+    this.friendsengine.addFriend(other);
     this.debugLog.push(`I meet ${other} [1/4]`);
     // this is safe to because it will just queue them for the next message round
     this.emit('message', other, 'meet');
     this.debugLog.push(`I queue ${other} all my flood probes [2/4]`);
-    this.probesManager.addFriend(other, true);
+    this.probesengine.addFriend(other, true);
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
 
   // when this node has received a `meet` message
   handleMeetMessage(sender: string): void {
-    this.friendsManager.addFriend(sender);
+    this.friendsengine.addFriend(sender);
     this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
-    this.probesManager.addFriend(sender, false);
+    this.probesengine.addFriend(sender, false);
   }
   getProbes(): {
     [id: string]: {
@@ -87,10 +87,10 @@ export class Giraffe extends EventEmitter implements NetworkNode {
       }[]
      }
   } {
-    return this.probesManager.getProbes();
+    return this.probesengine.getProbes();
   }
   getLoops(): string[] {
-    return this.probesManager.getLoops();
+    return this.probesengine.getLoops();
   }
   getName(): string {
     return this.name;
@@ -99,6 +99,6 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     return this.debugLog;
   }
   getFriends(): string[] {
-    return Object.keys(this.friendsManager.getFriends());
+    return Object.keys(this.friendsengine.getFriends());
   }
 }
