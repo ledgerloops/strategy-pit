@@ -53,7 +53,9 @@ where it was minted. We call this an O-loop (black lines are link, red lines are
 
 ![O-loop](https://private-user-images.githubusercontent.com/408412/323499096-c3ffc1c5-d270-4f91-883b-6cdb49ab5d31.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTM1MjU5MDcsIm5iZiI6MTcxMzUyNTYwNywicGF0aCI6Ii80MDg0MTIvMzIzNDk5MDk2LWMzZmZjMWM1LWQyNzAtNGY5MS04ODNiLTZjZGI0OWFiNWQzMS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNDE5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDQxOVQxMTIwMDdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yZTE0YTBkMzY4MzQwOTA0OWVhZGI1YzQzYzExMWYwYjgxZmE3NTJjZDcwMDcxOWFjZjZkMGM2NjRhMGZiNzVjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.-kTHEd_LxbT2x3wv89NkF3g-COd_q8kz3Gl6fLrvnIQ)
 
-When a node sees a trace come in that it has minted itself, it can immediately conclude that a loop was found.
+When a node sees a trace come in that it has minted itself, it can immediately conclude that a loop was found, but in order to trace it,
+and to deal with other cases in which there may still be doubt, this algorithm uses Traces (see below) which do the final loop detection,
+using the information from the Probe paths.
 
 Another situation is if a trace is received twice, but was never sent out. We call this a kite-to-leaf, because it has the shape of a kite and the top of the kite is like a leaf in a tree structure in that it has no outgoing links:
 
@@ -67,4 +69,38 @@ or the top in a kite-to-non-leaf loop:
 
 ![Kite-to-non-leaf loop](https://github.com/ledgerloops/strategy-pit/assets/408412/9f8f2f2c-4cb9-4868-b590-e0efee5368e5)
 
-In all cases, if a known probe comes in, the node should trigger a trace for that probel
+In all cases, if a known probe comes in, the node should trigger a trace for that probe, using the nonce from the probe as the `probeId`.
+
+## Traces
+Traces don't need a semaphore, and they are handled according to three rules: the minting rule, the forwarding rule, and the bouncing rule.
+### Definitions
+A Probe is identified by the nonce it carries, which we refer to as its `probeId`.
+
+The neighbours from which a probe message with a given `probeId` was received are a node's `from`-neighbours for that probe.
+The neighbours to which a probe message with a given `probeId` was sent are a node's `from`-neighbours for that probe.
+
+A Trace message carries three nonces: `probeId`, `traceId` and `legId`. All messages that have the same three nonces together form  a Leg.
+All messages that differ only in `legId` form a Trace. This way, a Leg pertains to a Trace, and a Trace in turn pertains to a Probe through
+its `probeId`.
+A Trace message that travel in the same direction as the corresponding Probe message, i.e. they are received from a `from`-neighbour of the
+Probe they pertain to, and/or sent to a `to`-neighbour thereof, are probe-wise trace messages.
+Trace messages that travel in the opposite direction are counter-probe-wise trace messages.
+
+If a Trace is received from a `to`-neighbour of the corresponding Probe, then the "opposite" neighbours are the `from`-neighbours, and likewise,
+if a Trace is received from a `from`-neighbour of the corresponding Probe, then the "opposite" neighbours are the `to`-neighbours.
+
+### Minting rule
+A node that receives a Probe whose nonce it has seen before should
+mint one `traceId`, and one `legId` per `from`-neighbour, and send each `from`-neighbour a trace message with three nonces in it: the `probeId` nonce from
+the probe, the `traceId` and the `legId`. If it sees one of these loop back to itself, then it can announce that a loop was detected.
+
+### Forwarding rule
+If a Trace with known `probeId` but unknown `traceId` and `legId` is received, remember it and forward it to all opposite neighbours for the Probe to which
+the Trace pertains.
+
+### Bouncing rule
+If a Trace with known `probeId` and `traceId` but unknown `legId` is received, remember it and forward it to all neighbours from which a Trace with that
+`probeId` and `traceId`  was received. Note that this means the trace changes direction; if it arrived as a probe-wise trace message then it will continue
+from here on as a counter-probe-wise trace message, and vice versa.
+
+
