@@ -35,10 +35,13 @@ describe(`${TEST_NAME} - until the music stops`, () => {
     networkSimulator.addNode('Charlie', charlie);
     flushReport = await networkSimulator.flush();
     await alice.meet('Bob');
-    flushReport = await networkSimulator.flush();
-    await bob.meet('Charlie');
-    flushReport = await networkSimulator.flush();
-    await charlie.meet('Alice');
+    // suppressing probe creation in meet of Bob with Charlie and Charlie with Alice:
+    await bob.meet('Charlie', false);
+    await charlie.meet('Alice', false);
+    // flushReport = await networkSimulator.flush();
+    // await bob.meet('Charlie');
+    // flushReport = await networkSimulator.flush();
+    // await charlie.meet('Alice');
     let counter = 0;
     do {
       flushReport = await networkSimulator.flush();

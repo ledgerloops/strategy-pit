@@ -23,24 +23,26 @@ export class TracesEngine extends EventEmitter {
     if (messageType !== 'trace') {
       throw new Error(`expected trace message but got ${messageType}`);
     }
-    this.emit('lookup-probe', probeId, (probeFrom) => {
+    this.emit('lookup-probe', probeId, (probeFrom: string[]) => {
       const otherLeg = this.getOtherLeg(probeId, traceId, legId);
+      this.emit('debug', `[TraceEngine] in the context of trace message from ${sender}: ${message}, we found these upstreams: [${probeFrom.join(', ')}], and otherLeg ${otherLeg}`);
       if (typeof otherLeg === 'undefined') {
         const legs = {};
         probeFrom.forEach((from) => {
           legs[from] = legId;
           this.emit('debug', `[TracesEngine] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
-          // this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
+          this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
         });
         if (typeof this.tracesForwarded[probeId] === 'undefined') {
           this.tracesForwarded[probeId] = {};
         }
         this.tracesForwarded[probeId][traceId] = legs;
       } else {
+        this.emit('debug', `[TracesEngine] found otherLeg ${otherLeg} for trace ${traceId} of probe ${probeId}`);
         if (otherLeg === sender) {
           this.emit('debug', `UNEXPECTED: Received two different legs from the same node`);
         }
-        this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`)
+        // this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`)
       }
     });
   }

@@ -193,11 +193,11 @@ export class ProbesEngine extends EventEmitter {
     this.emit('debug', `creating flood probe`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }
-  public addFriend(other: string, weInitiate: boolean): void {
-    this.friends[other] = new Friend(null, weInitiate ? HandRaisingStatus.Talking : HandRaisingStatus.Listening);
+  public addFriend(other: string, createFloodProbe: boolean): void {
+    this.friends[other] = new Friend(null, createFloodProbe ? HandRaisingStatus.Talking : HandRaisingStatus.Listening);
 
     this.queueAllFloodProbes(other);
-    if (weInitiate) {
+    if (createFloodProbe) {
       this.emit('debug', `and create a new flood probe for other friends than ${other} [3/4]`);
       this.createFloodProbe();      
     }
