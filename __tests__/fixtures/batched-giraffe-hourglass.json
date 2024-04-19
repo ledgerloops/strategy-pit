@@ -117,7 +117,11 @@
       "[TraceEngine] handling trace message from Dave: trace genRanHex0 genRanHex3 genRanHex5",
       "loop-found genRanHex0 genRanHex3"
     ],
-    "loopsFound": []
+    "loopsFound": [
+      "genRanHex0 genRanHex1",
+      "genRanHex0 genRanHex3",
+      "genRanHex0 genRanHex3"
+    ]
   },
   "bob": {
     "debugLog": [

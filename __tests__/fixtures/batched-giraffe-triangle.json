@@ -128,7 +128,10 @@
       "[TracesEngine] sending message to Charlie: trace genRanHex2 genRanHex8 genRanHex10",
       "[Node#sendTraceMessage] Alice sends trace message to Charlie: trace genRanHex2 genRanHex8 genRanHex10"
     ],
-    "loopsFound": []
+    "loopsFound": [
+      "genRanHex0 genRanHex3",
+      "genRanHex1 genRanHex5"
+    ]
   },
   "bob": {
     "debugLog": [
@@ -197,7 +200,9 @@
       "[TraceEngine] handling trace message from Charlie: trace genRanHex2 genRanHex8 genRanHex10",
       "loop-found genRanHex2 genRanHex8"
     ],
-    "loopsFound": []
+    "loopsFound": [
+      "genRanHex2 genRanHex8"
+    ]
   },
   "charlie": {
     "debugLog": [
