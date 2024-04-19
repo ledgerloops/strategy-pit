@@ -9,7 +9,7 @@ Probes carry a high-entropy nonce and get forwarded from node to node, flooding 
 ### Meeting
 When a new link is added to the network, between "first party" and "second party", the first party receives a "meet" event.
 The first party sends a meet message to the second party and enters talking mode.
-The second party receives the meet mesage and enters listening mode.
+The second party receives the meet message and enters listening mode.
 
 ### Probe sending
 Probes are sent with a semaphore, because if two probe messages with the same nonce pass in mid-air, it will be impossible for
@@ -28,13 +28,14 @@ were sent ([causal ordering of messages](https://www.geeksforgeeks.org/causal-or
 
 ### Exchanging probes on meet
 When a node meets a new neighbour, regardless of whether it is in first party or second party role, it will send that neighbour
-all its known probes,observing the probe sending mechanism, and unless the other neighbour sends that one to them first.
-Note that a probe may be queue for sending, but by the time the sending nodes goes into talking mode, that probe was already received
+all its known probes, observing the probe sending mechanism, and unless the other neighbour sends that one to them first.
+Note that a probe may be queued for sending, but by the time the sending node goes into talking mode, that probe might already be received
 from the other neighbour, so it's important to do the check at the actual time of sending and not at the time of queueing.
 
 ### Minting a new probe
-In addition, the first party node mints a new probe and sends that to all its neighbours, observing the semaphore protocol for each
-neighbour. This is because a change in network topology where a new link is introduce may introduce new loops, so this is a good time
+In addition to this exchange of known probes, the first party node mints a new probe and sends that to all its neighbours including the new one,
+observing the semaphore protocol for each
+neighbour. This is because a change in network topology where a new link is introduced may introduce new loops, so this is a good time
 to do a new probe.
 
 Of course, any node could mint a new probe at any time, and the other nodes would just play along without knowing who minted it and why.
@@ -43,13 +44,14 @@ probe traffic volume within reason.
 
 ### Forwarding a probe
 When a probe comes in from one neighbour, if the probe wasn't seen before, a node should always forward it to all its other neighbours.
-This means each probe spread exponentially across the entire network. This could lead to high probe traffic, but if the nonces are not
+This means each probe spreads exponentially across the entire network. This could lead to high probe traffic, but if the nonces are not
 too long, then many probe messages can be compressed into a relatively manageable file size for a batch of many probes, and the delay
 a node may build in before forwarding a batch of probes, will linearly decrease the bandwidth requirements.
 
 ### Detecting a loop
 There are a number of ways a probe can spread before a loop is detected. The simplest one is a probe that loops back to the node
-where it was minted. We call this an O-loop (black lines are link, red lines are how the probe was forwarded):
+where it was minted. We call this an O-loop. Black lines are link, red arrows are probe messages that play a part in the loop.
+Probe messages that went in other directions and did not contribute to the loop are not displayed:
 
 ![O-loop](https://private-user-images.githubusercontent.com/408412/323499096-c3ffc1c5-d270-4f91-883b-6cdb49ab5d31.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MTM1MjU5MDcsIm5iZiI6MTcxMzUyNTYwNywicGF0aCI6Ii80MDg0MTIvMzIzNDk5MDk2LWMzZmZjMWM1LWQyNzAtNGY5MS04ODNiLTZjZGI0OWFiNWQzMS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjQwNDE5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI0MDQxOVQxMTIwMDdaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT0yZTE0YTBkMzY4MzQwOTA0OWVhZGI1YzQzYzExMWYwYjgxZmE3NTJjZDcwMDcxOWFjZjZkMGM2NjRhMGZiNzVjJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZhY3Rvcl9pZD0wJmtleV9pZD0wJnJlcG9faWQ9MCJ9.-kTHEd_LxbT2x3wv89NkF3g-COd_q8kz3Gl6fLrvnIQ)
 
