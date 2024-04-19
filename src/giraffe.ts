@@ -99,4 +99,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   getFriends(): string[] {
     return Object.keys(this.friendsengine.getFriends());
   }
+  getLoops(): string[] {
+    return [];
+  }
 }
