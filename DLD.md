@@ -1,15 +1,15 @@
 # Decentralized Loop Detection (DLD)
 Decentralized Loop Detection is an algorithm to help a network of collaborating nodes to detect loops.
-This can be useful in cases where loops are undesired (such as routing) or desired (such as decentralized multilateral netting)
+This can be useful in cases where loops are undesired (such as routing) or desired (such as decentralized multilateral netting).
 The DLD algorithm works on two phases: probes and traces. This version of the DLD algorithm is implemented in
-the [Giraffe strategy](https://github.com/ledgerloops/strategy-pit/tree/main?tab=readme-ov-file#-giraffe).
+the [Giraffe strategy](https://github.com/ledgerloops/strategy-pit/tree/main?tab=readme-ov-file#-giraffe) of this repository.
 
 ## Probes
 Probes carry a high-entropy nonce and get forwarded from node to node, flooding the network until they cannot go any further.
 ### Meeting
-When a new link is added to the network, between "first party" and "second party", the first party receives a "meet" event
-The first party sends a meet message to the second party and enters talking mode
-The second party receives the meet mesage and enters listening mode
+When a new link is added to the network, between "first party" and "second party", the first party receives a "meet" event.
+The first party sends a meet message to the second party and enters talking mode.
+The second party receives the meet mesage and enters listening mode.
 
 ### Probe sending
 Probes are sent with a semaphore, because if two probe messages with the same nonce pass in mid-air, it will be impossible for
