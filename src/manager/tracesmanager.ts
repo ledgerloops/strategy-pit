@@ -28,6 +28,7 @@ export class TracesManager extends EventEmitter {
         const legs = {};
         probeFrom.forEach((from) => {
           legs[from] = legId;
+          this.emit('debug', `[TraceManager] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
           this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
         });
         if (typeof this.tracesForwarded[probeId] === 'undefined') {

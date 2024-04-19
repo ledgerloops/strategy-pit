@@ -37,6 +37,14 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     tracesManager.on('debug', (message: string) => {
       this.debugLog.push(message);
     });
+    tracesManager.on('lookup-probe', (probeId: string, callback: (probeFrom: string[]) => void) => {
+      this.debugLog.push(`[Node#lookup-probe] ${this.name} is looking up probe ${probeId}`);
+      callback(probesManager.get(probeId).getFrom());
+    });
+    tracesManager.on('message', (to: string, message: string) => {
+      this.debugLog.push(`[Node#sendTraceMessage] ${this.name} sends trace message to ${to}: ${message}`);
+      this.emit('message', to, message);
+    });
     return tracesManager;
   }
   process(sender: string, message: string): void {
