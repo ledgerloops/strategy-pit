@@ -18,6 +18,7 @@ export class TracesEngine extends EventEmitter {
     return Object.keys(legs).find((to) => legs[to] !== thisLegId);
   }
   handleTraceMessage(sender: string, message: string): void {
+    this.emit('debug', `[TraceEngine] handling trace message from ${sender}: ${message}`);
     const [messageType, probeId, traceId, legId] = message.split(' ');
     if (messageType !== 'trace') {
       throw new Error(`expected trace message but got ${messageType}`);
@@ -28,7 +29,7 @@ export class TracesEngine extends EventEmitter {
         const legs = {};
         probeFrom.forEach((from) => {
           legs[from] = legId;
-          this.emit('debug', `[Traceengine] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
+          this.emit('debug', `[TracesEngine] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
           // this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
         });
         if (typeof this.tracesForwarded[probeId] === 'undefined') {
