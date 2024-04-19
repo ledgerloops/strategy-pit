@@ -5,6 +5,14 @@ Some strategies will integrate discovery of loops with negotiation of exchange r
 
 The strategies are tested in different network models and with different network topologies.
 
+## Usage
+```
+npm install
+npm test
+npm run build
+node ./build/src/run.js
+```
+
 ## Network simulators
 See also 2024 work on ngraph generator in [ledgerloops/ledgerloops repo](https://github.com/ledgerloops/ledgerloops).
 
