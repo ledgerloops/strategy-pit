@@ -8,4 +8,5 @@ Alice -[#green]-> Charlie: probe genRanHex0
 Charlie -[#green]-> Bob: trace genRanHex0 genRanHex1 genRanHex2
 Charlie -[#green]-> Alice: trace genRanHex0 genRanHex1 genRanHex3
 Bob -[#green]-> Alice: trace genRanHex0 genRanHex1 genRanHex2
+Alice -[#green]-> Charlie: trace genRanHex0 genRanHex1 genRanHex2
 @enduml

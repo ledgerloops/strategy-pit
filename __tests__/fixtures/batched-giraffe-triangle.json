@@ -26,6 +26,8 @@
     "[Bob]->[Charlie] okay-to-send-probes",
     "[Bob]->[Alice] trace genRanHex0 genRanHex1 genRanHex2",
     "[---]->[---] ---",
+    "[Alice]->[Charlie] trace genRanHex0 genRanHex1 genRanHex2",
+    "[---]->[---] ---",
     "[---]->[---] ---"
   ],
   "probes": {
@@ -62,11 +64,17 @@
       "[Node#receiveMessage] Alice receives message from Charlie",
       "[TraceEngine] handling trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex3",
       "[Node#lookup-probe] Alice is looking up probe genRanHex0",
-      "[TraceEngine] in the context of trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex3, we found these upstreams: [], and otherLeg undefined",
+      "[TraceEngine] forwarding a counter-probe-wise trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex3",
+      "Looking for other leg genRanHex0 genRanHex1 genRanHex3 in {\"Charlie\":\"genRanHex3\"}",
+      "[TraceEngine] in the context of trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex3, we found these counter-probe-wise next hops: [], and otherLeg undefined",
       "[Node#receiveMessage] Alice receives message from Bob",
       "[TraceEngine] handling trace message from Bob: trace genRanHex0 genRanHex1 genRanHex2",
       "[Node#lookup-probe] Alice is looking up probe genRanHex0",
-      "[TraceEngine] in the context of trace message from Bob: trace genRanHex0 genRanHex1 genRanHex2, we found these upstreams: [], and otherLeg undefined"
+      "[TraceEngine] forwarding a counter-probe-wise trace message from Bob: trace genRanHex0 genRanHex1 genRanHex2",
+      "Looking for other leg genRanHex0 genRanHex1 genRanHex2 in {\"Charlie\":\"genRanHex3\",\"Bob\":\"genRanHex2\"}",
+      "[TraceEngine] in the context of trace message from Bob: trace genRanHex0 genRanHex1 genRanHex2, we found these counter-probe-wise next hops: [], and otherLeg Charlie",
+      "[TracesEngine] found otherLeg Charlie for trace genRanHex1 of probe genRanHex0",
+      "[Node#sendTraceMessage] Alice sends trace message to Charlie: trace genRanHex0 genRanHex1 genRanHex2"
     ],
     "loopsFound": []
   },
@@ -94,7 +102,9 @@
       "[Node#receiveMessage] Bob receives message from Charlie",
       "[TraceEngine] handling trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex2",
       "[Node#lookup-probe] Bob is looking up probe genRanHex0",
-      "[TraceEngine] in the context of trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex2, we found these upstreams: [Alice], and otherLeg undefined",
+      "[TraceEngine] forwarding a counter-probe-wise trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex2",
+      "Looking for other leg genRanHex0 genRanHex1 genRanHex2 in {\"Charlie\":\"genRanHex2\"}",
+      "[TraceEngine] in the context of trace message from Charlie: trace genRanHex0 genRanHex1 genRanHex2, we found these counter-probe-wise next hops: [Alice], and otherLeg undefined",
       "[TracesEngine] sending message to Alice: trace genRanHex0 genRanHex1 genRanHex2",
       "[Node#sendTraceMessage] Bob sends trace message to Alice: trace genRanHex0 genRanHex1 genRanHex2"
     ],
@@ -126,7 +136,10 @@
       "[Node#receiveMessage] Charlie receives message from Alice",
       "Charlie receives okay-to-send-probes from Alice",
       "[Node#receiveMessage] Charlie receives message from Bob",
-      "Charlie receives okay-to-send-probes from Bob"
+      "Charlie receives okay-to-send-probes from Bob",
+      "[Node#receiveMessage] Charlie receives message from Alice",
+      "[TraceEngine] handling trace message from Alice: trace genRanHex0 genRanHex1 genRanHex2",
+      "loop-found genRanHex0 genRanHex1"
     ],
     "loopsFound": []
   }
