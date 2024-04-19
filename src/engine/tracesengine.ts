@@ -78,7 +78,8 @@ export class TracesEngine extends EventEmitter {
           this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`);
         }
       } else {
-        throw new Error(`received trace message '${message}' from unexpected sender ${sender}`);
+        this.emit('debug', `received trace message '${message}' from unexpected sender ${sender}`);
+        // throw new Error(`received trace message '${message}' from unexpected sender ${sender}`);
       }
     });
   }

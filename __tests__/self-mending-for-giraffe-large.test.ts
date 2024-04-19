@@ -5,8 +5,8 @@ import { readFileSync, writeFileSync } from 'fs';
 
 const TESTNET_CSV = '__tests__/fixtures/testnet.csv';
 const NUM_ROUNDS = 100000;
-const NUM_NODES = 100;
-const TEST_NAME = `batched-giraffe-circle-${NUM_NODES}`;
+// const NUM_NODES = 100;
+const TEST_NAME = `batched-giraffe-testnet-csv`;
 const JSON_FILE = `__tests__/fixtures/${TEST_NAME}.json`;
 const PUML_FILE = `__tests__/fixtures/${TEST_NAME}.puml`;
 
@@ -34,16 +34,16 @@ describe(`${TEST_NAME} - until the music stops`, () => {
     }).filter(line => line.from !== 'from' && line.from !== '');
     lines.forEach(async line => {
       if (typeof nodes[line.from] === 'undefined') {
-        console.log("Adding node", line.from);
+        // console.log("Adding node", line.from);
         nodes[line.from] = new Giraffe(line.from);
         networkSimulator.addNode(line.from, nodes[line.from]);
       }
       if (typeof nodes[line.to] === 'undefined') {
-        console.log("Adding node", line.to);
+        // console.log("Adding node", line.to);
         nodes[line.to] = new Giraffe(line.to);
         networkSimulator.addNode(line.to, nodes[line.to]);
       }
-      console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
+      // console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
       await nodes[line.from].meet(line.to);
       flushReport = await networkSimulator.flush();
     });
