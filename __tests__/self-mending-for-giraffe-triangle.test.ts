@@ -4,7 +4,7 @@ import { jest } from '@jest/globals';
 import { readFileSync, writeFileSync } from 'fs';
 
 const NUM_ROUNDS = 100;
-const TEST_NAME = 'batched-giraffe-hourglass';
+const TEST_NAME = 'batched-giraffe-triangle';
 const JSON_FILE = `__tests__/fixtures/${TEST_NAME}.json`;
 const PUML_FILE = `__tests__/fixtures/${TEST_NAME}.puml`;
 
@@ -22,8 +22,6 @@ describe(`${TEST_NAME} - until the music stops`, () => {
   let alice: any;
   let bob: any;
   let charlie: any;
-  let dave: any;
-  let edward: any;
   let networkSimulator: any;
   let flushReport: string[];
   beforeAll(async () => {
@@ -35,22 +33,12 @@ describe(`${TEST_NAME} - until the music stops`, () => {
     networkSimulator.addNode('Bob', bob);
     charlie = new Giraffe('Charlie');
     networkSimulator.addNode('Charlie', charlie);
-    dave = new Giraffe('Dave');
-    networkSimulator.addNode('Dave', dave);
-    edward = new Giraffe('Edward');
-    networkSimulator.addNode('Edward', edward);
     flushReport = await networkSimulator.flush();
     await alice.meet('Bob');
     flushReport = await networkSimulator.flush();
     await bob.meet('Charlie');
     flushReport = await networkSimulator.flush();
     await charlie.meet('Alice');
-    flushReport = await networkSimulator.flush();
-    await alice.meet('Dave');
-    flushReport = await networkSimulator.flush();
-    await dave.meet('Edward');
-    flushReport = await networkSimulator.flush();
-    await edward.meet('Alice');
     let counter = 0;
     do {
       flushReport = await networkSimulator.flush();
@@ -94,14 +82,6 @@ describe(`${TEST_NAME} - until the music stops`, () => {
         charlie: {
           debugLog: charlie.getDebugLog(),
           loopsFound: charlie.getLoops(),
-        },
-        dave: {
-          debugLog: dave.getDebugLog(),
-          loopsFound: dave.getLoops(),
-        },
-        edward: {
-          debugLog: edward.getDebugLog(),
-          loopsFound: edward.getLoops(),
         },
       };
       writeFileSync(JSON_FILE, JSON.stringify(actual, null, 2) + '\n');

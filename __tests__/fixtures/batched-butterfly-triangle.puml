@@ -1,4 +1,4 @@
-@startuml
+@startuml messages
 Alice -[#green]-> Bob: meet
 Alice -[#green]-> Bob: probe genRanHex0
 Bob -[#green]-> Alice: have-probes

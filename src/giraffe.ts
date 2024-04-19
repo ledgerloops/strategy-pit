@@ -31,8 +31,8 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   }
   protected connectTracesManager(probesManager: ProbesManager): TracesManager {
     const tracesManager = new TracesManager();
-    probesManager.on('probe-loopback', (probeId: string, situation: string, from: string[], to: string[]): void => {
-      tracesManager.handleProbeLoopback(probeId, situation, from, to);
+    probesManager.on('probe-loopback', (probeId: string): void => {
+      tracesManager.handleProbeLoopback(probeId);
     });
     tracesManager.on('debug', (message: string) => {
       this.debugLog.push(message);

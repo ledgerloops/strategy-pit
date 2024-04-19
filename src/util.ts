@@ -29,13 +29,16 @@ export class Entry {
   }
 }
 function createPreamble(): string {
-  return `@startuml\n`;
+  return `@startuml messages\n`;
 }
 function createLine(entry: Entry): string {
   if (entry.sender === '---') {
     return '';
   }
   if (entry.event !== 'sent') {
+    return '';
+  }
+  if ((entry.message === 'have-probes') || (entry.message === 'okay-to-send-probes')) {
     return '';
   }
   const color = 'green';

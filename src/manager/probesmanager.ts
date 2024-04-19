@@ -33,7 +33,6 @@ export class Probe {
   private from: string[];
   private to: string[];
   private homeMinted: boolean;
-  private traces: Trace[] = [];
 
   constructor (probeId: string, from: string[], to: string[], homeMinted: boolean) {
     this.probeId = probeId;
@@ -62,35 +61,17 @@ export class Probe {
   isVirginFor(friend: string): boolean {
     return !this.from.includes(friend) && !this.to.includes(friend);
   }
-  getTraces(): Trace[] {
-    return this.traces;
-  }
-  addTrace(trace: Trace): void {
-    this.traces.push(trace);
-  }
   toObject(): {
     probeId: string,
     from: string[],
     to: string[],
     homeMinted: boolean,
-    traces: {
-      from: string | undefined,
-      to: string,
-      traceId: string
-    }[]
    } {
     return {
       probeId: this.probeId,
       from: this.from,
       to: this.to,
       homeMinted: this.homeMinted,
-      traces: this.traces.map(trace => {
-        return {
-          from: trace.getFrom(),
-          to: trace.getTo(),
-          traceId: trace.getTraceId()
-        };
-      })
     };
   }
 }
@@ -212,11 +193,6 @@ export class ProbesManager extends EventEmitter {
     this.emit('debug', `creating flood probe`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }
-  protected createPinnedFloodProbe(recipient: string): void {
-    const probeForNewLink = genRanHex(8);
-    this.emit('debug', `creating pinned flood probe ${probeForNewLink} for ${recipient}`);
-    this.queueProbe(recipient, probeForNewLink, true);
-  }
   public addFriend(other: string, weInitiate: boolean): void {
     this.friends[other] = new Friend(null, weInitiate ? HandRaisingStatus.Talking : HandRaisingStatus.Listening);
 
@@ -250,7 +226,6 @@ export class ProbesManager extends EventEmitter {
           } else {
             this.emit('probe-loopback', probeId, 'leaf', probe.getFrom(), probe.getTo());
           }
-          this.createPinnedFloodProbe(sender);
         }
       } else {
         this.emit('debug', `PROBE ${probeId} ALREADY KNOWN TO US, BUT NOT VIRGIN FOR ${sender}!`);
