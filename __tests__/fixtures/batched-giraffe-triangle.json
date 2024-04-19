@@ -19,8 +19,11 @@
     "[Bob]->[Alice] probe genRanHex1",
     "[Bob]->[Charlie] okay-to-send-probes",
     "[Alice]->[Charlie] have-probes",
+    "[Alice]->[Charlie] trace genRanHex0 genRanHex3 genRanHex4",
     "[Alice]->[Bob] have-probes",
     "[---]->[---] ---",
+    "[Alice]->[Charlie] trace genRanHex1 genRanHex5 genRanHex6",
+    "[Alice]->[Bob] trace genRanHex1 genRanHex5 genRanHex7",
     "[Charlie]->[Bob] probe genRanHex2",
     "[Charlie]->[Alice] okay-to-send-probes",
     "[Bob]->[Alice] okay-to-send-probes",
@@ -31,6 +34,8 @@
     "[---]->[---] ---",
     "[Alice]->[Bob] okay-to-send-probes",
     "[Charlie]->[Bob] okay-to-send-probes",
+    "[Bob]->[Charlie] trace genRanHex2 genRanHex8 genRanHex9",
+    "[Bob]->[Alice] trace genRanHex2 genRanHex8 genRanHex10",
     "[---]->[---] ---",
     "[---]->[---] ---"
   ],
@@ -99,7 +104,10 @@
       "[Node#receiveMessage] Alice receives message from Bob",
       "Alice receives okay-to-send-probes from Bob",
       "QUEUEING PROBE genRanHex2 TO Bob [3/4]",
-      "[Node#receiveMessage] Alice receives message from Bob"
+      "[Node#receiveMessage] Alice receives message from Bob",
+      "[Node#receiveMessage] Alice receives message from Bob",
+      "[Node#lookup-probe] Alice is looking up probe genRanHex2",
+      "[TraceManager] sending message to Charlie: trace genRanHex2 genRanHex8 genRanHex10"
     ],
     "loopsFound": []
   },
@@ -128,6 +136,8 @@
       "QUEUEING PROBE genRanHex1 TO Alice [3/4]",
       "[Node#receiveMessage] Bob receives message from Charlie",
       "[Node#receiveMessage] Bob receives message from Alice",
+      "[Node#receiveMessage] Bob receives message from Alice",
+      "[Node#lookup-probe] Bob is looking up probe genRanHex1",
       "[Node#receiveMessage] Bob receives message from Charlie",
       "INCOMING PROBE genRanHex2 IS NEW TO US, FLOOD IT FORWARD",
       "Bob starts waiting to talk to Alice",
@@ -176,7 +186,15 @@
       "Charlie receives okay-to-send-probes from Bob",
       "QUEUEING PROBE genRanHex2 TO Bob [3/4]",
       "[Node#receiveMessage] Charlie receives message from Alice",
-      "[Node#receiveMessage] Charlie receives message from Bob"
+      "[Node#receiveMessage] Charlie receives message from Alice",
+      "[Node#lookup-probe] Charlie is looking up probe genRanHex0",
+      "[TraceManager] sending message to Bob: trace genRanHex0 genRanHex3 genRanHex4",
+      "[Node#receiveMessage] Charlie receives message from Alice",
+      "[Node#lookup-probe] Charlie is looking up probe genRanHex1",
+      "[TraceManager] sending message to Bob: trace genRanHex1 genRanHex5 genRanHex6",
+      "[Node#receiveMessage] Charlie receives message from Bob",
+      "[Node#receiveMessage] Charlie receives message from Bob",
+      "[Node#lookup-probe] Charlie is looking up probe genRanHex2"
     ],
     "loopsFound": []
   }
