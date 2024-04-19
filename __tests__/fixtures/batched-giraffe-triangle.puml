@@ -2,11 +2,24 @@
 Alice -[#green]-> Bob: meet
 Alice -[#green]-> Bob: probe genRanHex0
 Bob -[#green]-> Charlie: meet
-Charlie -[#green]-> Alice: meet
 Bob -[#green]-> Charlie: probe genRanHex0
-Alice -[#green]-> Charlie: probe genRanHex0
-Charlie -[#green]-> Bob: trace genRanHex0 genRanHex1 genRanHex2
-Charlie -[#green]-> Alice: trace genRanHex0 genRanHex1 genRanHex3
-Bob -[#green]-> Alice: trace genRanHex0 genRanHex1 genRanHex2
-Alice -[#green]-> Charlie: trace genRanHex0 genRanHex1 genRanHex2
+Bob -[#green]-> Charlie: probe genRanHex1
+Charlie -[#green]-> Alice: meet
+Charlie -[#green]-> Alice: probe genRanHex0
+Charlie -[#green]-> Alice: probe genRanHex1
+Charlie -[#green]-> Alice: probe genRanHex2
+Bob -[#green]-> Alice: probe genRanHex1
+Alice -[#green]-> Charlie: trace genRanHex0 genRanHex3 genRanHex4
+Alice -[#green]-> Charlie: trace genRanHex1 genRanHex5 genRanHex6
+Alice -[#green]-> Bob: trace genRanHex1 genRanHex5 genRanHex7
+Charlie -[#green]-> Bob: probe genRanHex2
+Charlie -[#green]-> Bob: trace genRanHex0 genRanHex3 genRanHex4
+Charlie -[#green]-> Bob: trace genRanHex1 genRanHex5 genRanHex6
+Bob -[#green]-> Alice: trace genRanHex0 genRanHex3 genRanHex4
+Alice -[#green]-> Bob: probe genRanHex2
+Bob -[#green]-> Alice: trace genRanHex1 genRanHex5 genRanHex6
+Bob -[#green]-> Charlie: trace genRanHex2 genRanHex8 genRanHex9
+Bob -[#green]-> Alice: trace genRanHex2 genRanHex8 genRanHex10
+Alice -[#green]-> Charlie: trace genRanHex2 genRanHex8 genRanHex10
+Charlie -[#green]-> Bob: trace genRanHex2 genRanHex8 genRanHex10
 @enduml
