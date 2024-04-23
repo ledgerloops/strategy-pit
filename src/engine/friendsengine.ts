@@ -1,18 +1,24 @@
 export class FriendsEngine {
   protected name: string;
   protected friends: {
-    [name: string]: boolean
+    [name: string]: {
+      maxBalance: number,
+      exchangeRate: number,
+    },
   } = {};
   constructor(name: string) {
     this.name = name;
   }
-  addFriend(otherName: string): boolean {
+  addFriend(otherName: string, maxBalance: number = 0, exchangeRate: number = 0): boolean {
     // console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[otherName] !== 'undefined') {
       // console.log(this.debugLog);
       return false;
     }
-    this.friends[otherName] = true;
+    this.friends[otherName] = {
+      maxBalance,
+      exchangeRate,
+    };
     return true;
   }
   getFriends(): string[] {
