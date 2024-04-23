@@ -7,6 +7,7 @@ const TESTNET_CSV = '__tests__/fixtures/testnet.csv';
 const NUM_ROUNDS = 100000;
 
 function run(): void {
+  console.log("This simulation will take about 60 seconds to complete.");
   const nodes = {};
   let flushReport;
   const networkSimulator = new BatchedNetworkSimulator();
