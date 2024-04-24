@@ -33,14 +33,14 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     return probesengine;
   }
   protected connectTracesEngine(probesengine: ProbesEngine): TracesEngine {
-    const tracesengine = new TracesEngine();
+    const tracesEngine = new TracesEngine();
     probesengine.on('probe-loopback', (probeId: string): void => {
-      tracesengine.handleProbeLoopback(probeId);
+      tracesEngine.handleProbeLoopback(probeId);
     });
     // tracesengine.on('debug', (message: string) => {
     //   this.debugLog.push(message);
     // });
-    tracesengine.on('lookup-probe', (probeId: string, callback: (probeFrom: string[], probeTo: string[]) => void) => {
+    tracesEngine.on('lookup-probe', (probeId: string, callback: (probeFrom: string[], probeTo: string[]) => void) => {
       this.debugLog.push(`[Node#lookup-probe] ${this.name} is looking up probe ${probeId}`);
       const probe = probesengine.get(probeId);
       if (typeof probe === 'undefined') {
@@ -49,11 +49,11 @@ export class Giraffe extends EventEmitter implements NetworkNode {
         callback(probe.getFrom(), probe.getTo());
       }
     });
-    tracesengine.on('message', (to: string, message: string) => {
-      this.debugLog.push(`[Node#sendTraceMessage] ${this.name} sends trace message to ${to}: ${message}`);
+    tracesEngine.on('message', (to: string, message: string) => {
+      this.debugLog.push(`[traceEngine.on-message] ${this.name} sends trace message to ${to}: ${message}`);
       this.emit('message', to, message);
     });
-    return tracesengine;
+    return tracesEngine;
   }
   protected connectLoopsEngine(traceEngine: TracesEngine): LoopsEngine {
     const loopsEngine = new LoopsEngine();
@@ -61,9 +61,13 @@ export class Giraffe extends EventEmitter implements NetworkNode {
 
       loopsEngine.handleLoopFound(probeId, traceId, legId, this.friendsEngine.getFriend(outgoing), this.friendsEngine.getFriend(incoming));
     });
-    // loopsEngine.on('debug', (message: string) => {
-    //   this.debugLog.push(message);
-    // });
+    loopsEngine.on('debug', (message: string) => {
+      this.debugLog.push(message);
+    });
+    loopsEngine.on('message', (to: string, message: string) => {
+      this.debugLog.push(`[Node#sendTracMessage] ${this.name} sends trace message to ${to}: ${message}`);
+      this.emit('message', to, message);
+    });
     return loopsEngine;
   }
   process(sender: string, message: string): void {

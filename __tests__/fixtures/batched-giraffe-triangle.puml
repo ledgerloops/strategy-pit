@@ -15,8 +15,11 @@ Charlie -[#green]-> Bob: trace genRanHex1 genRanHex5 genRanHex6
 Bob -[#green]-> Alice: trace genRanHex0 genRanHex3 genRanHex4
 Alice -[#blue]-> Bob: probe genRanHex2
 Bob -[#green]-> Alice: trace genRanHex1 genRanHex5 genRanHex6
-Bob -[#green]-> Charlie: trace genRanHex2 genRanHex8 genRanHex9
-Bob -[#green]-> Alice: trace genRanHex2 genRanHex8 genRanHex10
-Alice -[#green]-> Charlie: trace genRanHex2 genRanHex8 genRanHex10
-Charlie -[#green]-> Bob: trace genRanHex2 genRanHex8 genRanHex10
+Alice -[#black]-> Charlie: lift genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad
+Bob -[#green]-> Charlie: trace genRanHex2 genRanHex9 genRanHex10
+Bob -[#green]-> Alice: trace genRanHex2 genRanHex9 genRanHex11
+Alice -[#black]-> Charlie: lift genRanHex1 genRanHex5 genRanHex6 1cfb9bc69068fa3e1a68ed4ec04c80d4e18e3f3ecec3cc40c355aee5b6c03933
+Alice -[#green]-> Charlie: trace genRanHex2 genRanHex9 genRanHex11
+Charlie -[#green]-> Bob: trace genRanHex2 genRanHex9 genRanHex11
+Bob -[#black]-> Alice: lift genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13
 @enduml

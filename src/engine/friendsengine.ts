@@ -2,6 +2,7 @@ export class FriendsEngine {
   protected name: string;
   protected friends: {
     [name: string]: {
+      name: string,
       maxBalance: number,
       exchangeRate: number,
     },
@@ -16,12 +17,13 @@ export class FriendsEngine {
       return false;
     }
     this.friends[otherName] = {
+      name: otherName,
       maxBalance,
       exchangeRate,
     };
     return true;
   }
-  getFriend(otherName: string): { maxBalance: number, exchangeRate: number } | undefined {
+  getFriend(otherName: string): { name: string, maxBalance: number, exchangeRate: number } | undefined {
     return this.friends[otherName];
   }
   getFriends(): string[] {
