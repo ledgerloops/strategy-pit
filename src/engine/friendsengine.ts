@@ -21,6 +21,9 @@ export class FriendsEngine {
     };
     return true;
   }
+  getFriend(otherName: string): { maxBalance: number, exchangeRate: number } | undefined {
+    return this.friends[otherName];
+  }
   getFriends(): string[] {
     return Object.keys(this.friends);
   }

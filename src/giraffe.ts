@@ -57,8 +57,9 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   }
   protected connectLoopsEngine(traceEngine: TracesEngine): LoopsEngine {
     const loopsEngine = new LoopsEngine();
-    traceEngine.on('loop-found', (probeId: string, traceId: string) => {
-      loopsEngine.handleLoopFound(probeId, traceId);
+    traceEngine.on('loop-found', (probeId: string, traceId: string, legId: string, outgoing: string, incoming: string) => {
+
+      loopsEngine.handleLoopFound(probeId, traceId, legId, this.friendsEngine.getFriend(outgoing), this.friendsEngine.getFriend(incoming));
     });
     // loopsEngine.on('debug', (message: string) => {
     //   this.debugLog.push(message);
@@ -69,7 +70,10 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender}`);
     // console.log(`${this.name} receives message from ${sender}`, message);
     switch(getMessageType(message)) {
-      case `meet`: return this.handleMeetMessage(sender);
+      case `meet`:
+        this.friendsEngine.addFriend(sender);
+        this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
+        return this.probesEngine.addFriend(sender, false, false);
       case `probe`: return this.probesEngine.handleProbeMessage(sender, message);
       case `trace`: return this.tracesEngine.handleTraceMessage(sender, message);
       // case `loop`: return this.probesengine.handleTraceMessage(sender, message);
@@ -89,13 +93,9 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     this.probesEngine.addFriend(other, true, createProbe);
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
-
-  // when this node has received a `meet` message
-  handleMeetMessage(sender: string): void {
-    this.friendsEngine.addFriend(sender);
-    this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
-    this.probesEngine.addFriend(sender, false, false);
-  }
+  // initiateLift(traceId: string) {
+  //   this.friendsEngine.
+  // }
   getProbes(): {
     [id: string]: {
       from: string[],

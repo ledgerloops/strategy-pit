@@ -10,8 +10,12 @@ export class TracesEngine extends EventEmitter {
   getLegsCreated(probeId: string, traceId: string): { [to: string]: string } | undefined {
     return this.tracesCreated[probeId]?.[traceId];
   }
-  wasCreatedByUs(probeId: string, traceId: string): boolean {
-    return typeof this.getLegsCreated(probeId, traceId) !== 'undefined';
+  wasCreatedByUs(probeId: string, traceId: string, legId: string): string | undefined {
+    const legs = this.getLegsCreated(probeId, traceId);
+    if (typeof legs !== 'undefined') {
+      return Object.keys(legs).find((to) => legs[to] === legId);
+    }
+    return undefined;
   }
   getOtherLeg(probeId: string, traceId: string, thisLegId: string): string | undefined {
     const legs = this.getLegsForwarded(probeId, traceId);
@@ -50,9 +54,10 @@ export class TracesEngine extends EventEmitter {
     if (messageType !== 'trace') {
       throw new Error(`expected trace message but got ${messageType}`);
     }
-    if (this.wasCreatedByUs(probeId, traceId)) {
-      this.emit('debug', `loop-found ${probeId} ${traceId}`);
-      this.emit('loop-found', probeId, traceId);
+    const to = this.wasCreatedByUs(probeId, traceId, legId);
+    if (to !== undefined) {
+      this.emit('debug', `loop-found ${probeId} ${traceId} ${legId} ${to} ${sender}`);
+      this.emit('loop-found', probeId, traceId, legId, to, sender);
       return;
     }
     if (this.seenThisTraceBefore(probeId, traceId, legId)) {
