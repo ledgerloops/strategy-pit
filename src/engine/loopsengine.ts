@@ -51,6 +51,7 @@ export class LoopsEngine extends EventEmitter {
     }
     if (typeof this.lifts[hash] !== 'undefined') {
       this.lifts[hash].incomingAmount = parseFloat(amount);
+      this.emit('debug', `initiator decides on lift: is ${this.lifts[hash].incomingAmount} more than ${this.lifts[hash].outgoingAmount}?`);
       if (this.lifts[hash].incomingAmount >= this.lifts[hash].outgoingAmount) {
         this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${amount} ${this.lifts[hash].secret}`);
       }
@@ -70,7 +71,7 @@ export class LoopsEngine extends EventEmitter {
   handleCommitMessage(from: string, message: string, committer: { name: string, maxBalance: number, exchangeRate: number }, proposer: { name: string, maxBalance: number, exchangeRate: number }): void {
     this.emit('debug', `${from} ${message} ${JSON.stringify(committer)} ${JSON.stringify(proposer)}`);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [messageType, _probeId, _traceId, _legId, hash, _amount, _secret] = message.split(' ');
+    const [messageType, probeId, traceId, legId, hash, amount, secret] = message.split(' ');
     if (messageType !== 'commit') {
       this.emit('debug', `expected commit message but got ${messageType}`);
     }
@@ -78,18 +79,18 @@ export class LoopsEngine extends EventEmitter {
       this.emit('debug', `commit message for unknown hash ${hash}`);
     }
     this.emit('debug', `${message} is about ${JSON.stringify(this.lifts[hash])}`);
-    // if (amount !== this.lifts[hash].outgoingAmount.toString()) {
-    //   this.emit('debug', `commit message for hash ${hash} with unexpected amount ${amount}`);
-    // }
-    // if (hash !== sha256(secret)) {
-    //   this.emit('debug', `commit message for hash ${hash} with unexpected secret ${secret}`);
-    // }
-    // if (typeof this.lifts[hash].secret !== 'undefined') {
-    //   // we are not the initiator
-    //   this.emit('debug', 'lift was successfully completed');
-    // } else {
-    //   this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${amount} ${this.lifts[hash].secret}`);
-    // }
+    if (amount !== this.lifts[hash].outgoingAmount.toString()) {
+      this.emit('debug', `commit message for hash ${hash} with unexpected amount ${amount}`);
+    }
+    if (hash !== sha256(secret)) {
+      this.emit('debug', `commit message for hash ${hash} with unexpected secret ${secret}`);
+    }
+    if (typeof this.lifts[hash].secret !== 'undefined') {
+      // we are not the initiator
+      this.emit('debug', 'lift was successfully completed');
+    } else {
+      this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${amount} ${this.lifts[hash].secret}`);
+    }
   }
   getLoops(): string[] {
     return this.loops;

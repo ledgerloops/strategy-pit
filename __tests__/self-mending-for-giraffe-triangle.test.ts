@@ -34,13 +34,13 @@ describe(`${TEST_NAME} - until the music stops`, () => {
     charlie = new Giraffe('Charlie');
     networkSimulator.addNode('Charlie', charlie);
     flushReport = await networkSimulator.flush();
-    await alice.meet('Bob');
+    await alice.meet('Bob', true, 10.0, 1.0);
     // await bob.meet('Charlie', false);
     // await charlie.meet('Alice', false);
     flushReport = await networkSimulator.flush();
-    await bob.meet('Charlie');
+    await bob.meet('Charlie', true, 10.0, 2.0);
     flushReport = await networkSimulator.flush();
-    await charlie.meet('Alice');
+    await charlie.meet('Alice', true, 10.0, 3.0);
     let counter = 0;
     do {
       flushReport = await networkSimulator.flush();
