@@ -21,6 +21,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     this.probesEngine = this.connectProbesEngine();
     this.tracesEngine = this.connectTracesEngine(this.probesEngine);
     this.loopsEngine = this.connectLoopsEngine(this.tracesEngine);
+    this.loopsEngine.setProfit(0.01);
   }
   protected connectProbesEngine(): ProbesEngine {
     const probesengine = new ProbesEngine(this.name);

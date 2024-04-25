@@ -53,8 +53,10 @@
     "[Alice]->[Bob] commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.880599999999999 genRanHex8",
     "[Bob]->[Alice] propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 1",
     "[---]->[---] ---",
-    "[Bob]->[Charlie] commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.9399999999999995 genRanHex8",
+    "[Bob]->[Charlie] commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 2.9699999999999998 genRanHex8",
     "[Alice]->[Charlie] propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 0.99",
+    "[---]->[---] ---",
+    "[Charlie]->[Alice] commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 1 genRanHex8",
     "[---]->[---] ---",
     "[---]->[---] ---"
   ],
@@ -136,7 +138,11 @@
       "Looking for a party in genRanHex2 genRanHex9 with genRanHex11 other than Bob in created: undefined",
       "Looking for a party in genRanHex2 genRanHex9 with genRanHex11 other than Bob in forwarded: {\"Bob\":\"genRanHex11\",\"Charlie\":\"genRanHex11\"}",
       "Bob propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 1 {\"name\":\"Charlie\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Bob\",\"maxBalance\":10,\"exchangeRate\":1}",
-      "[Node#sendTracMessage] Alice sends loops message to Charlie: propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 0.99"
+      "forwarding propose {\"loop\":\"genRanHex2 genRanHex9\",\"legId\":\"genRanHex11\",\"incomingAmount\":1,\"outgoingAmount\":0.99}",
+      "[Node#sendTracMessage] Alice sends loops message to Charlie: propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 0.99",
+      "[Node#receiveMessage] Alice receives message from Charlie",
+      "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Charlie in created: {\"Charlie\":\"genRanHex4\"}",
+      "other party not found for Charlie commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 1 genRanHex8"
     ],
     "loopsFound": [
       "genRanHex0 genRanHex3",
@@ -194,6 +200,7 @@
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Charlie in created: undefined",
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Charlie in forwarded: {\"Charlie\":\"genRanHex4\",\"Alice\":\"genRanHex4\"}",
       "Charlie propose genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 2.9699999999999998 {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Charlie\",\"maxBalance\":10,\"exchangeRate\":2}",
+      "forwarding propose {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":2.9699999999999998,\"outgoingAmount\":5.880599999999999}",
       "[Node#sendTracMessage] Bob sends loops message to Alice: propose genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.880599999999999",
       "[Node#receiveMessage] Bob receives message from Charlie",
       "Looking for a party in genRanHex1 genRanHex5 with genRanHex6 other than Charlie in created: undefined",
@@ -209,8 +216,9 @@
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Alice in created: undefined",
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Alice in forwarded: {\"Charlie\":\"genRanHex4\",\"Alice\":\"genRanHex4\"}",
       "Alice commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.880599999999999 genRanHex8 {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Charlie\",\"maxBalance\":10,\"exchangeRate\":2}",
-      "commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.880599999999999 genRanHex8 is about {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":5.9399999999999995,\"outgoingAmount\":5.880599999999999}",
-      "[Node#sendTracMessage] Bob sends loops message to Charlie: commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.9399999999999995 genRanHex8"
+      "commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.880599999999999 genRanHex8 is about {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":2.9699999999999998,\"outgoingAmount\":5.880599999999999}",
+      "forwarding commit {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":2.9699999999999998,\"outgoingAmount\":5.880599999999999,\"secret\":\"genRanHex8\"}",
+      "[Node#sendTracMessage] Bob sends loops message to Charlie: commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 2.9699999999999998 genRanHex8"
     ],
     "loopsFound": [
       "genRanHex2 genRanHex9"
@@ -254,6 +262,7 @@
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Alice in created: undefined",
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Alice in forwarded: {\"Alice\":\"genRanHex4\",\"Bob\":\"genRanHex4\"}",
       "Alice propose genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 1 {\"name\":\"Bob\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":3}",
+      "forwarding propose {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":1,\"outgoingAmount\":2.9699999999999998}",
       "[Node#sendTracMessage] Charlie sends loops message to Bob: propose genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 2.9699999999999998",
       "[Node#receiveMessage] Charlie receives message from Bob",
       "[TraceEngine] handling trace message from Bob: trace genRanHex2 genRanHex9 genRanHex10",
@@ -267,6 +276,7 @@
       "Looking for a party in genRanHex1 genRanHex5 with genRanHex6 other than Alice in created: undefined",
       "Looking for a party in genRanHex1 genRanHex5 with genRanHex6 other than Alice in forwarded: {\"Alice\":\"genRanHex6\",\"Bob\":\"genRanHex6\"}",
       "Alice propose genRanHex1 genRanHex5 genRanHex6 1cfb9bc69068fa3e1a68ed4ec04c80d4e18e3f3ecec3cc40c355aee5b6c03933 1 {\"name\":\"Bob\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":3}",
+      "forwarding propose {\"loop\":\"genRanHex1 genRanHex5\",\"legId\":\"genRanHex6\",\"incomingAmount\":1,\"outgoingAmount\":2.9699999999999998}",
       "[Node#sendTracMessage] Charlie sends loops message to Bob: propose genRanHex1 genRanHex5 genRanHex6 1cfb9bc69068fa3e1a68ed4ec04c80d4e18e3f3ecec3cc40c355aee5b6c03933 2.9699999999999998",
       "[Node#receiveMessage] Charlie receives message from Alice",
       "[TraceEngine] handling trace message from Alice: trace genRanHex2 genRanHex9 genRanHex11",
@@ -281,9 +291,10 @@
       "[Node#receiveMessage] Charlie receives message from Bob",
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Bob in created: undefined",
       "Looking for a party in genRanHex0 genRanHex3 with genRanHex4 other than Bob in forwarded: {\"Alice\":\"genRanHex4\",\"Bob\":\"genRanHex4\"}",
-      "Bob commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.9399999999999995 genRanHex8 {\"name\":\"Bob\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":3}",
-      "commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 5.9399999999999995 genRanHex8 is about {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":3,\"outgoingAmount\":2.9699999999999998}",
-      "commit message for hash 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad with unexpected amount 5.9399999999999995",
+      "Bob commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 2.9699999999999998 genRanHex8 {\"name\":\"Bob\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":3}",
+      "commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 2.9699999999999998 genRanHex8 is about {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":1,\"outgoingAmount\":2.9699999999999998}",
+      "forwarding commit {\"loop\":\"genRanHex0 genRanHex3\",\"legId\":\"genRanHex4\",\"incomingAmount\":1,\"outgoingAmount\":2.9699999999999998,\"secret\":\"genRanHex8\"}",
+      "[Node#sendTracMessage] Charlie sends loops message to Alice: commit genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 1 genRanHex8",
       "[Node#receiveMessage] Charlie receives message from Alice",
       "Looking for a party in genRanHex2 genRanHex9 with genRanHex11 other than Alice in created: undefined",
       "Looking for a party in genRanHex2 genRanHex9 with genRanHex11 other than Alice in forwarded: {\"Bob\":\"genRanHex10\",\"Alice\":\"genRanHex11\"}",

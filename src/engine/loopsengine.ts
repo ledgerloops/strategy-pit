@@ -7,6 +7,7 @@ function sha256(secret: string): string {
 }
 
 export class LoopsEngine extends EventEmitter {
+  profit: number;
   loops: string[];
   lifts: {
     [hash: string]: {
@@ -21,9 +22,13 @@ export class LoopsEngine extends EventEmitter {
     super();
     this.loops = [];
     this.lifts = {};
+    this.profit = 0.01;
+  }
+  setProfit(profit: number): void {
+    this.profit = profit;
   }
   makeProfit(incomingAmount: number): number {
-    return incomingAmount * 0.99;
+    return incomingAmount * (1 - this.profit);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,14 +61,15 @@ export class LoopsEngine extends EventEmitter {
         this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${this.lifts[hash].incomingAmount} ${this.lifts[hash].secret}`);
       }
     } else {
-      const incomingAmount = parseFloat(amount) * proposer.exchangeRate;
-      const outgoingAmount = this.makeProfit(incomingAmount / committer.exchangeRate);
+      const incomingAmount = parseFloat(amount);
+      const outgoingAmount = this.makeProfit(incomingAmount * proposer.exchangeRate / committer.exchangeRate);
       this.lifts[hash] = {
         loop: `${probeId} ${traceId}`,
         legId,
         incomingAmount,
         outgoingAmount,
       }
+      this.emit('debug', `forwarding propose ${JSON.stringify(this.lifts[hash])}`);
       this.emit('message', committer.name, `propose ${probeId} ${traceId} ${legId} ${hash} ${outgoingAmount}`);
     }
     // this.loops.push(`${probeId} ${traceId}`);
@@ -82,7 +88,7 @@ export class LoopsEngine extends EventEmitter {
     }
     this.emit('debug', `${message} is about ${JSON.stringify(this.lifts[hash])}`);
     if (amount !== this.lifts[hash].outgoingAmount.toString()) {
-      this.emit('debug', `commit message for hash ${hash} with unexpected amount ${amount}`);
+      this.emit('debug', `commit message for hash ${hash} with unexpected amount ${amount} != ${this.lifts[hash].outgoingAmount}`);
       return;
     }
     if (hash !== sha256(secret)) {
@@ -94,6 +100,7 @@ export class LoopsEngine extends EventEmitter {
       this.emit('debug', 'lift was successfully completed');
     } else {
       this.lifts[hash].secret = secret;
+      this.emit('debug', `forwarding commit ${JSON.stringify(this.lifts[hash])}`);
       this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${this.lifts[hash].incomingAmount} ${this.lifts[hash].secret}`);
     }
   }
