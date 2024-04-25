@@ -104,7 +104,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
       case `okay-to-send-probes`: return this.probesEngine.handleOkayToSendProbesMessage(sender);
     }
   }
-  meet(other: string, createProbe: boolean = true, maxBalance: number = 0, exchangeRate: number = 0): void {
+  meet(other: string, createProbe: boolean = true, maxBalance: number = 10.0, exchangeRate: number = 1.0): void {
     const newFriendship = this.friendsEngine.addFriend(other, maxBalance, exchangeRate);
     if (!newFriendship) {
       return;
