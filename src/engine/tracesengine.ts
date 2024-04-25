@@ -36,9 +36,10 @@ export class TracesEngine extends EventEmitter {
     this.emit('debug', `tracesForwarded now looks like this: ${JSON.stringify(this.tracesForwarded)}`)
   }
   forwardTraceMessage(probeId: string, traceId: string, legId: string, nextHops: string[]): void {
-    nextHops.forEach((from) => {
-      this.emit('debug', `[TracesEngine] sending message to ${from}: trace ${probeId} ${traceId} ${legId}`);
-      this.emit('message', from, `trace ${probeId} ${traceId} ${legId}`);
+    nextHops.forEach((to) => {
+      this.emit('debug', `[TracesEngine] sending message to ${to}: trace ${probeId} ${traceId} ${legId}`);
+      this.logTraceMessage(to, probeId, traceId, legId);
+      this.emit('message', to, `trace ${probeId} ${traceId} ${legId}`);
     });
   }
   seenThisTraceBefore(probeId: string, traceId: string, legId: string): boolean {
@@ -65,7 +66,7 @@ export class TracesEngine extends EventEmitter {
       this.emit('debug', `seen this trace before ${probeId} ${traceId} ${legId}`);
       return;
     }
-    this.logTraceMessage(sender,probeId, traceId, legId);
+    this.logTraceMessage(sender, probeId, traceId, legId);
     this.emit('lookup-probe', probeId, (probeFrom: string[], probeTo: string[]) => {
       if (probeFrom.includes(sender)) {
         this.emit('debug', `[TraceEngine] forwarding a probe-wise trace message from ${sender}: ${message}`);
@@ -107,12 +108,14 @@ export class TracesEngine extends EventEmitter {
   }
   getOtherParty(firstParty: string, probeId: string, traceId: string, legId: string): string | undefined {
     const legsCreated = this.getLegsCreated(probeId, traceId);
+    this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} other than ${firstParty} in created: ${JSON.stringify(legsCreated)}`);
     if (typeof legsCreated !== 'undefined') {
-      return Object.keys(legsCreated).find((to) => legsCreated[to] !== legId && to !== firstParty);
+      return Object.keys(legsCreated).find((to) => legsCreated[to] === legId && to !== firstParty);
     }
     const legsForwarded = this.getLegsForwarded(probeId, traceId);
+    this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} other than ${firstParty} in forwarded: ${JSON.stringify(legsForwarded)}`);
     if (typeof legsForwarded !== 'undefined') {
-      return Object.keys(legsForwarded).find((to) => legsForwarded[to] !== legId && to !== firstParty);
+      return Object.keys(legsForwarded).find((to) => legsForwarded[to] === legId && to !== firstParty);
     }
     return undefined;
   }
