@@ -33,6 +33,7 @@ export class TracesEngine extends EventEmitter {
       this.tracesForwarded[probeId][traceId] = {};
     }
     this.tracesForwarded[probeId][traceId][sender] = legId;
+    this.emit('debug', `tracesForwarded now looks like this: ${JSON.stringify(this.tracesForwarded)}`)
   }
   forwardTraceMessage(probeId: string, traceId: string, legId: string, nextHops: string[]): void {
     nextHops.forEach((from) => {

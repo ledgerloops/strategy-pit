@@ -99,10 +99,12 @@
       "[Node#receiveMessage] Alice receives message from Bob",
       "[Node#receiveMessage] Alice receives message from Bob",
       "genRanHex0 genRanHex3 genRanHex4 {\"name\":\"Charlie\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Bob\",\"maxBalance\":0,\"exchangeRate\":0}",
-      "[Node#sendTracMessage] Alice sends trace message to Charlie: propose genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 1",
+      "secret is genRanHex8 and hash is 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad",
+      "[Node#sendTracMessage] Alice sends loops message to Charlie: propose genRanHex0 genRanHex3 genRanHex4 07a57c2781ad32f96a052696b012bafbc84f6f379bed18a1c495c0fd84881aad 1",
       "[Node#receiveMessage] Alice receives message from Bob",
       "genRanHex1 genRanHex5 genRanHex6 {\"name\":\"Charlie\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Bob\",\"maxBalance\":0,\"exchangeRate\":0}",
-      "[Node#sendTracMessage] Alice sends trace message to Charlie: propose genRanHex1 genRanHex5 genRanHex6 1cfb9bc69068fa3e1a68ed4ec04c80d4e18e3f3ecec3cc40c355aee5b6c03933 1",
+      "secret is genRanHex12 and hash is 1cfb9bc69068fa3e1a68ed4ec04c80d4e18e3f3ecec3cc40c355aee5b6c03933",
+      "[Node#sendTracMessage] Alice sends loops message to Charlie: propose genRanHex1 genRanHex5 genRanHex6 1cfb9bc69068fa3e1a68ed4ec04c80d4e18e3f3ecec3cc40c355aee5b6c03933 1",
       "[Node#receiveMessage] Alice receives message from Bob",
       "[Node#lookup-probe] Alice is looking up probe genRanHex2",
       "[traceEngine.on-message] Alice sends trace message to Charlie: trace genRanHex2 genRanHex9 genRanHex11",
@@ -142,7 +144,8 @@
       "[Node#receiveMessage] Bob receives message from Charlie",
       "[Node#receiveMessage] Bob receives message from Charlie",
       "genRanHex2 genRanHex9 genRanHex11 {\"name\":\"Alice\",\"maxBalance\":10,\"exchangeRate\":1} {\"name\":\"Charlie\",\"maxBalance\":0,\"exchangeRate\":0}",
-      "[Node#sendTracMessage] Bob sends trace message to Alice: propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 1"
+      "secret is genRanHex13 and hash is 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13",
+      "[Node#sendTracMessage] Bob sends loops message to Alice: propose genRanHex2 genRanHex9 genRanHex11 65f02d86bab050169c984f0baff90573687c783688a57c4c06ad86e69bf0fa13 1"
     ],
     "loopsFound": [
       "genRanHex2 genRanHex9"

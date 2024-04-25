@@ -32,6 +32,7 @@ export class LoopsEngine extends EventEmitter {
     this.emit('debug', `${probeId} ${traceId} ${legId} ${JSON.stringify(outgoing)} ${JSON.stringify(incoming)}`);
     const secret = genRanHex(32);
     const hash = sha256(secret);
+    this.emit('debug', `secret is ${secret} and hash is ${hash}`);
 
     // const hash: string = SHA256(secret).toString();
     this.emit('message', outgoing.name, `propose ${probeId} ${traceId} ${legId} ${hash} 1`);  
