@@ -10,7 +10,7 @@ export class FriendsEngine {
   constructor(name: string) {
     this.name = name;
   }
-  addFriend(otherName: string, maxBalance: number = 0, exchangeRate: number = 0): boolean {
+  addFriend(otherName: string, maxBalance: number = 10.0, exchangeRate: number = 1.0): boolean {
     // console.log(`${this.name} meets ${otherName}`);
     if (typeof this.friends[otherName] !== 'undefined') {
       // console.log(this.debugLog);

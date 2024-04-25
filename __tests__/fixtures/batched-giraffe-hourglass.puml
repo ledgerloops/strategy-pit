@@ -32,7 +32,7 @@ Edward -[#blue]-> Alice: probe genRanHex5
 Edward -[#blue]-> Alice: probe genRanHex9
 Edward -[#blue]-> Alice: probe genRanHex10
 Bob -[#green]-> Alice: trace genRanHex1 genRanHex6 genRanHex7
-Alice -[#black]-> Charlie: lift genRanHex0 genRanHex3 genRanHex4 fb5a0f259dc33d551ecc9369d2adbb07fe33903ae66492935a710ef4b1e7f211
+Alice -[#black]-> Charlie: propose genRanHex0 genRanHex3 genRanHex4 fb5a0f259dc33d551ecc9369d2adbb07fe33903ae66492935a710ef4b1e7f211 1
 Bob -[#green]-> Charlie: trace genRanHex2 genRanHex12 genRanHex13
 Bob -[#green]-> Alice: trace genRanHex2 genRanHex12 genRanHex14
 Dave -[#blue]-> Alice: probe genRanHex9
@@ -46,7 +46,7 @@ Alice -[#green]-> Edward: trace genRanHex2 genRanHex22 genRanHex24
 Alice -[#green]-> Edward: trace genRanHex5 genRanHex25 genRanHex26
 Alice -[#blue]-> Charlie: probe genRanHex9
 Alice -[#blue]-> Charlie: probe genRanHex10
-Alice -[#black]-> Charlie: lift genRanHex1 genRanHex6 genRanHex7 1f8ddcc0ac057c7108179d1bdea997ffd414895d94deccd2c3816fbecc4eb34b
+Alice -[#black]-> Charlie: propose genRanHex1 genRanHex6 genRanHex7 1f8ddcc0ac057c7108179d1bdea997ffd414895d94deccd2c3816fbecc4eb34b 1
 Bob -[#blue]-> Charlie: probe genRanHex5
 Alice -[#green]-> Charlie: trace genRanHex2 genRanHex12 genRanHex14
 Alice -[#green]-> Edward: trace genRanHex2 genRanHex12 genRanHex14
@@ -77,15 +77,15 @@ Alice -[#blue]-> Bob: probe genRanHex10
 Alice -[#blue]-> Dave: probe genRanHex10
 Alice -[#green]-> Edward: trace genRanHex5 genRanHex31 genRanHex32
 Bob -[#green]-> Alice: trace genRanHex5 genRanHex31 genRanHex33
-Bob -[#black]-> Alice: lift genRanHex2 genRanHex12 genRanHex14 44a9efd5ba0c2e026f6e400e045b249a8d414ca0f1571cef571062bc88fa3581
+Bob -[#black]-> Alice: propose genRanHex2 genRanHex12 genRanHex14 44a9efd5ba0c2e026f6e400e045b249a8d414ca0f1571cef571062bc88fa3581 1
 Dave -[#green]-> Alice: trace genRanHex2 genRanHex12 genRanHex14
 Dave -[#green]-> Alice: trace genRanHex9 genRanHex28 genRanHex29
-Alice -[#black]-> Charlie: lift genRanHex0 genRanHex15 genRanHex16 aec4955b747d39d5c7c56a544b7bec13a148ca5ddabeec3f32908e31b3c38d8d
-Alice -[#black]-> Edward: lift genRanHex0 genRanHex15 genRanHex17 3379f4db531ccb2f126feeea6239ae695d301984b95006ea8d8788b6f419e1f9
-Alice -[#black]-> Charlie: lift genRanHex1 genRanHex18 genRanHex19 0c7b9e06d51b52fbd2e0e6b32b647c70f55904186840651b390c02297179c16b
-Alice -[#black]-> Edward: lift genRanHex1 genRanHex18 genRanHex21 cfcfda0f62988eafd101f4fa17997ceeb772c7fee9f46aeafc7d2d0528d3b2f5
-Alice -[#black]-> Edward: lift genRanHex2 genRanHex22 genRanHex24 e1cc00b9b1c6ec04f47aff95dda5cdc91cc78b33bc7046c16f171d2465fc79e6
-Alice -[#black]-> Edward: lift genRanHex5 genRanHex25 genRanHex26 99978333a35c92f2e11d6e01fb4127e5d9f74cbacc38cdebb89ba05ca059a4a0
+Alice -[#black]-> Charlie: propose genRanHex0 genRanHex15 genRanHex16 aec4955b747d39d5c7c56a544b7bec13a148ca5ddabeec3f32908e31b3c38d8d 1
+Alice -[#black]-> Edward: propose genRanHex0 genRanHex15 genRanHex17 3379f4db531ccb2f126feeea6239ae695d301984b95006ea8d8788b6f419e1f9 1
+Alice -[#black]-> Charlie: propose genRanHex1 genRanHex18 genRanHex19 0c7b9e06d51b52fbd2e0e6b32b647c70f55904186840651b390c02297179c16b 1
+Alice -[#black]-> Edward: propose genRanHex1 genRanHex18 genRanHex21 cfcfda0f62988eafd101f4fa17997ceeb772c7fee9f46aeafc7d2d0528d3b2f5 1
+Alice -[#black]-> Edward: propose genRanHex2 genRanHex22 genRanHex24 e1cc00b9b1c6ec04f47aff95dda5cdc91cc78b33bc7046c16f171d2465fc79e6 1
+Alice -[#black]-> Edward: propose genRanHex5 genRanHex25 genRanHex26 99978333a35c92f2e11d6e01fb4127e5d9f74cbacc38cdebb89ba05ca059a4a0 1
 Bob -[#green]-> Charlie: trace genRanHex9 genRanHex41 genRanHex42
 Bob -[#green]-> Alice: trace genRanHex9 genRanHex41 genRanHex43
 Bob -[#green]-> Charlie: trace genRanHex10 genRanHex44 genRanHex45
@@ -94,7 +94,7 @@ Dave -[#green]-> Edward: trace genRanHex10 genRanHex47 genRanHex48
 Dave -[#green]-> Alice: trace genRanHex10 genRanHex47 genRanHex49
 Edward -[#green]-> Dave: trace genRanHex5 genRanHex31 genRanHex32
 Alice -[#green]-> Charlie: trace genRanHex5 genRanHex31 genRanHex33
-Alice -[#black]-> Edward: lift genRanHex9 genRanHex28 genRanHex29 62b0500bca0de3d3ea82f89e19c163ad44153ca5ec85cbb2d154b4b609c32f34
+Alice -[#black]-> Edward: propose genRanHex9 genRanHex28 genRanHex29 62b0500bca0de3d3ea82f89e19c163ad44153ca5ec85cbb2d154b4b609c32f34 1
 Charlie -[#green]-> Alice: trace genRanHex9 genRanHex41 genRanHex42
 Alice -[#green]-> Edward: trace genRanHex9 genRanHex41 genRanHex43
 Alice -[#green]-> Dave: trace genRanHex9 genRanHex41 genRanHex43
@@ -102,12 +102,12 @@ Charlie -[#green]-> Alice: trace genRanHex10 genRanHex44 genRanHex45
 Alice -[#green]-> Edward: trace genRanHex10 genRanHex44 genRanHex46
 Alice -[#green]-> Edward: trace genRanHex10 genRanHex47 genRanHex49
 Dave -[#green]-> Alice: trace genRanHex5 genRanHex31 genRanHex32
-Charlie -[#black]-> Bob: lift genRanHex5 genRanHex31 genRanHex33 da72d4e3aec9b6be8d20acdf13ef52e1aa529da7799a2b719f098a74c4e63a35
+Charlie -[#black]-> Bob: propose genRanHex5 genRanHex31 genRanHex33 da72d4e3aec9b6be8d20acdf13ef52e1aa529da7799a2b719f098a74c4e63a35 1
 Alice -[#green]-> Bob: trace genRanHex9 genRanHex41 genRanHex42
 Edward -[#green]-> Dave: trace genRanHex9 genRanHex41 genRanHex43
 Alice -[#green]-> Bob: trace genRanHex10 genRanHex44 genRanHex45
 Edward -[#green]-> Dave: trace genRanHex10 genRanHex47 genRanHex49
-Bob -[#black]-> Charlie: lift genRanHex9 genRanHex41 genRanHex42 a5f7d1f7210bc93e915c4652816f410c1c1f416e66cd8e8edf20b3d6158b1319
-Bob -[#black]-> Charlie: lift genRanHex10 genRanHex44 genRanHex45 02182b2512f6132b6db6457e6232f3f395c76bfd28681c69f184f5f5b3f30fd6
-Dave -[#black]-> Alice: lift genRanHex10 genRanHex47 genRanHex49 3f9908d4f641ec7f28e0e021f9d6c8273d3fafffc0d780e929bba94abf50ede3
+Bob -[#black]-> Charlie: propose genRanHex9 genRanHex41 genRanHex42 a5f7d1f7210bc93e915c4652816f410c1c1f416e66cd8e8edf20b3d6158b1319 1
+Bob -[#black]-> Charlie: propose genRanHex10 genRanHex44 genRanHex45 02182b2512f6132b6db6457e6232f3f395c76bfd28681c69f184f5f5b3f30fd6 1
+Dave -[#black]-> Alice: propose genRanHex10 genRanHex47 genRanHex49 3f9908d4f641ec7f28e0e021f9d6c8273d3fafffc0d780e929bba94abf50ede3 1
 @enduml

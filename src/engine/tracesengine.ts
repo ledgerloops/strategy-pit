@@ -104,5 +104,16 @@ export class TracesEngine extends EventEmitter {
       this.tracesCreated[probeId][traceId] = legs;
     });
   }
+  getOtherParty(firstParty: string, probeId: string, traceId: string, legId: string): string | undefined {
+    const legsCreated = this.getLegsCreated(probeId, traceId);
+    if (typeof legsCreated !== 'undefined') {
+      return Object.keys(legsCreated).find((to) => legsCreated[to] !== legId && to !== firstParty);
+    }
+    const legsForwarded = this.getLegsForwarded(probeId, traceId);
+    if (typeof legsForwarded !== 'undefined') {
+      return Object.keys(legsForwarded).find((to) => legsForwarded[to] !== legId && to !== firstParty);
+    }
+    return undefined;
+  }
 }
   

@@ -58,7 +58,6 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   protected connectLoopsEngine(traceEngine: TracesEngine): LoopsEngine {
     const loopsEngine = new LoopsEngine();
     traceEngine.on('loop-found', (probeId: string, traceId: string, legId: string, outgoing: string, incoming: string) => {
-
       loopsEngine.handleLoopFound(probeId, traceId, legId, this.friendsEngine.getFriend(outgoing), this.friendsEngine.getFriend(incoming));
     });
     loopsEngine.on('debug', (message: string) => {
@@ -70,6 +69,22 @@ export class Giraffe extends EventEmitter implements NetworkNode {
     });
     return loopsEngine;
   }
+  protected handleLoopMessage(from: string, message: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [messageType, probeId, traceId, legId] = message.split(' ');
+    const otherPartyName = this.tracesEngine.getOtherParty(from, probeId, traceId, legId);
+    const sender = this.friendsEngine.getFriend(from);
+    const otherParty = this.friendsEngine.getFriend(otherPartyName);
+    if (typeof sender === 'undefined' || typeof otherParty === 'undefined') {
+      this.debugLog.push(`other party not found for ${from} ${message}`);
+      return;
+    }
+    if (messageType === 'propose') {
+      this.loopsEngine.handleProposeMessage(from, message, sender, otherParty);
+    } else if (messageType === 'commit') {
+      this.loopsEngine.handleCommitMessage(from, message, sender, otherParty);
+    }
+  }
   process(sender: string, message: string): void {
     this.debugLog.push(`[Node#receiveMessage] ${this.name} receives message from ${sender}`);
     // console.log(`${this.name} receives message from ${sender}`, message);
@@ -80,7 +95,8 @@ export class Giraffe extends EventEmitter implements NetworkNode {
         return this.probesEngine.addFriend(sender, false, false);
       case `probe`: return this.probesEngine.handleProbeMessage(sender, message);
       case `trace`: return this.tracesEngine.handleTraceMessage(sender, message);
-      // case `loop`: return this.probesengine.handleTraceMessage(sender, message);
+      case `propose`: return this.handleLoopMessage(sender, message);
+      case `commit`: return this.handleLoopMessage(sender, message);
       case `have-probes`: return this.probesEngine.handleHaveProbesMessage(sender);
       case `okay-to-send-probes`: return this.probesEngine.handleOkayToSendProbesMessage(sender);
     }
