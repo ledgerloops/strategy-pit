@@ -53,7 +53,7 @@ export class LoopsEngine extends EventEmitter {
       this.lifts[hash].incomingAmount = parseFloat(amount);
       this.emit('debug', `initiator decides on lift: is ${this.lifts[hash].incomingAmount} more than ${this.lifts[hash].outgoingAmount}?`);
       if (this.lifts[hash].incomingAmount >= this.lifts[hash].outgoingAmount) {
-        this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${amount} ${this.lifts[hash].secret}`);
+        this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${this.lifts[hash].outgoingAmount} ${this.lifts[hash].secret}`);
       }
     } else {
       const incomingAmount = parseFloat(amount) * proposer.exchangeRate;
@@ -74,21 +74,26 @@ export class LoopsEngine extends EventEmitter {
     const [messageType, probeId, traceId, legId, hash, amount, secret] = message.split(' ');
     if (messageType !== 'commit') {
       this.emit('debug', `expected commit message but got ${messageType}`);
+      return;
     }
     if (typeof this.lifts[hash] === 'undefined') {
       this.emit('debug', `commit message for unknown hash ${hash}`);
+      return;
     }
     this.emit('debug', `${message} is about ${JSON.stringify(this.lifts[hash])}`);
     if (amount !== this.lifts[hash].outgoingAmount.toString()) {
       this.emit('debug', `commit message for hash ${hash} with unexpected amount ${amount}`);
+      return;
     }
     if (hash !== sha256(secret)) {
       this.emit('debug', `commit message for hash ${hash} with unexpected secret ${secret}`);
+      return;
     }
     if (typeof this.lifts[hash].secret !== 'undefined') {
       // we are not the initiator
       this.emit('debug', 'lift was successfully completed');
     } else {
+      this.lifts[hash].secret = secret;
       this.emit('message', proposer.name, `commit ${probeId} ${traceId} ${legId} ${hash} ${amount} ${this.lifts[hash].secret}`);
     }
   }
