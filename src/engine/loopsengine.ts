@@ -6,7 +6,7 @@ function sha256(secret: string): string {
   return createHmac('sha256', secret).digest('hex');
 }
 
-export class LoopsEngine extends EventEmitter {
+export class GiraffeLoopsEngine extends EventEmitter {
   profit: number;
   loops: string[];
   lifts: {
@@ -106,5 +106,14 @@ export class LoopsEngine extends EventEmitter {
   }
   getLoops(): string[] {
     return this.loops;
+  }
+}
+
+export class SaigaLoopsEngine extends GiraffeLoopsEngine {
+  constructor() {
+    super();
+  }
+  makeProfit(incomingAmount: number): number {
+    return incomingAmount;
   }
 }

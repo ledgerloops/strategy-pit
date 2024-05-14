@@ -4,13 +4,13 @@ import { getMessageType } from "./messages.js";
 import { ProbesEngine } from "./engine/probesengine.js";
 import { FriendsEngine } from "./engine/friendsengine.js";
 import { TracesEngine } from "./engine/tracesengine.js";
-import { LoopsEngine } from "./engine/loopsengine.js";
+import { SaigaLoopsEngine } from "./engine/loopsengine.js";
 
 export class Saiga extends EventEmitter implements NetworkNode {
   protected friendsEngine: FriendsEngine;
   protected probesEngine: ProbesEngine;
   protected tracesEngine: TracesEngine;
-  protected loopsEngine: LoopsEngine;
+  protected loopsEngine: SaigaLoopsEngine;
   protected debugLog: string[] = [];
   protected name: string;
 
@@ -59,8 +59,8 @@ export class Saiga extends EventEmitter implements NetworkNode {
     });
     return tracesEngine;
   }
-  protected connectLoopsEngine(traceEngine: TracesEngine): LoopsEngine {
-    const loopsEngine = new LoopsEngine();
+  protected connectLoopsEngine(traceEngine: TracesEngine): SaigaLoopsEngine {
+    const loopsEngine = new SaigaLoopsEngine();
     traceEngine.on('loop-found', (probeId: string, traceId: string, legId: string, outgoing: string, incoming: string) => {
       loopsEngine.handleLoopFound(probeId, traceId, legId, this.friendsEngine.getFriend(outgoing), this.friendsEngine.getFriend(incoming));
     });
