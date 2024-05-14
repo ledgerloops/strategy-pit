@@ -82,6 +82,9 @@ The Giraffe is the first strategy to properly detect Kite Loops, see https://git
 ###  <img src="./img/saiga.png" style="width:50px;border-radius: 10px"/> Saiga
 The Saiga differs from the Giraffe in that it negotiates pegged loops (no exchange rates), see https://github.com/ledgerloops/strategy-pit/issues/24.
 
+###  <img src="./img/badger.png" style="width:50px;border-radius: 10px"/> Badger
+The Badger differs from the Saiga in that it uses majority-based all-or-nothing finality, see https://github.com/ledgerloops/strategy-pit/issues/29.
+
 ## Second Generation Strategies
 ###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
 The Stingray has a more detailed data storage (both for Flood Probes and for Trace Probes) than its predecessors Salmon, Pelican and Petrogale.

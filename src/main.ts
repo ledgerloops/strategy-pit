@@ -7,5 +7,6 @@ export { Squid } from './squid.js';
 export { Butterfly } from './butterfly.js';
 export { Giraffe } from './giraffe.js';
 export { Saiga } from './saiga.js';
+export { Badger } from './badger.js';
 export { BasicMessageForwarder, BatchedMessageForwarder } from './node.js';
 export { BasicNetworkSimulator, BatchedNetworkSimulator } from './simulator/networksimulator.js';
