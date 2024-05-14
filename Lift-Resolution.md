@@ -63,4 +63,18 @@ MyCHIPs are also working on a version of their protocol where each agent acts as
 
 LedgerLoops and Interledger assume that agents only communicate with their direct neighbours.
 
- 
+## Act on loan graph or on trust graph
+MTCS assumes the goal is to reduce debt (reduce the amount of deployed capital). Maybe not the global sum of it, but at least the sum of it for individual agents.
+But especially when agents are allowed to make a profit from providing liquidity or providing loans ([FIXME](https://github.com/ledgerloops/strategy-pit/issues/28)),
+they might want to participate in a lift even if it doesn't reduce their debt sum. It may even increase it, or move it to a place where the debt is less risky to them.
+
+Also, the cost function of a debt might be non-linear. For instance, if 100 people each owe me 1 euro, I could prefer to aggregate those tiny debts into one 100 euro debt, and remove the other 99 debts, because it will be less hassle for me to administer.
+
+On the other hand, if one person owes me 1000 euros, I might feel the risk is too high and I may not want to put all my eggs in one basket, so I might prefer to spread
+that debt into ten 100-euro debts.
+
+The Giraffe strategy in LedgerLoops Strategy Pit uses exchange rates between neighbours, so they have an ordered list of which debt they prefer to maximise/minimize, but they also want to make a 1% profit on each lift they participate in, so there is some inertia there.
+
+All these consideration might cause an agent to choose to participate in a lift or not. Knowledge of these motivations will allow loop detection and lift resolution, but especially also lift negotiation, to be optimised a bit - although in the end, it will be down to game theory how agents negotiate and which loops they participate in and
+which not. For Lift Resolution, these motivations are out of scope. Lift Resolution starts after a propose division of the profit pie is proposed, and only deals with
+the timely decision on whether to execute or not.
