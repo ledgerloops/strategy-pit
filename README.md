@@ -76,17 +76,17 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 
 ## Current Strategies
 
-###  <img src="./img/giraffe.png" style="width:50px;border-radius: 10px"/> Giraffe
+###  <img src="./img/giraffe.png" style="width:100px;border-radius: 10px"/> Giraffe
 The Giraffe is the first strategy to properly detect Kite Loops, see https://github.com/ledgerloops/strategy-pit/issues/15.
 
-###  <img src="./img/saiga.png" style="width:50px;border-radius: 10px"/> Saiga
+###  <img src="./img/saiga.png" style="width:100px;border-radius: 10px"/> Saiga
 The Saiga differs from the Giraffe in that it negotiates pegged loops (no exchange rates), see https://github.com/ledgerloops/strategy-pit/issues/24.
 
-###  <img src="./img/badger.png" style="width:50px;border-radius: 10px"/> Badger
+###  <img src="./img/badger.png" style="width:100px;border-radius: 10px"/> Badger
 The Badger differs from the Saiga in that it uses majority-based all-or-nothing finality, see https://github.com/ledgerloops/strategy-pit/issues/29.
 
 ## Second Generation Strategies
-###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
+###  <img src="./img/stingray.png" style="width:100px;border-radius: 10px"/> Stingray
 The Stingray has a more detailed data storage (both for Flood Probes and for Trace Probes) than its predecessors Salmon, Pelican and Petrogale.
 A Stingray reacts to events with actions. Events are:
 * Meet - a new neighbour is added. Although neighbour links are symmetrical, the Meet event is triggered in only one of the two parties
@@ -113,14 +113,14 @@ For every incoming trace:
 
 A Probe is *virgin* for a neighbour if it was never sent to them and never received from them.
 
-###  <img src="./img/jackal.png" style="width:50px;border-radius: 10px"/> Jackal
+###  <img src="./img/jackal.png" style="width:100px;border-radius: 10px"/> Jackal
 Same as Stingray except that, as a mitigation for https://github.com/ledgerloops/strategy-pit/issues/7, the other node is told to pauze its messages during the batch of messages that are triggered by an `onMeet` event.
 
-###  <img src="./img/squid.png" style="width:50px;border-radius: 10px"/> Squid
+###  <img src="./img/squid.png" style="width:100px;border-radius: 10px"/> Squid
 Same as Jackal except that, in consideration of https://github.com/ledgerloops/strategy-pit/issues/8, of the two nodes in a neighbour relationship, one unpauzes whenever the other one pauzes.
 
 ## First Generation Strategies
-### <img src="./img/salmon.png" style="width:50px;border-radius: 10px"/> Salmon
+### <img src="./img/salmon.png" style="width:100px;border-radius: 10px"/> Salmon
 
 The Salmon strategy works as follows:
 When a Salmon Node meets a new node, it:
@@ -160,14 +160,14 @@ Forwarding a Loop message to all other contacts is a bug unless the number of ot
 
 Also, Salmons don't implement exchange rate negotiation.
 
-### <img src="./img/pelican.png" style="width:50px;border-radius: 10px"/> Pelican
+### <img src="./img/pelican.png" style="width:100px;border-radius: 10px"/> Pelican
 
 Pelicans differ from Salmons in that they create multiple Loops per Probe - forking them whenever the network forks. This means they can handle not only the Triangle but also the Hourglass topology.
 
 Due to a bug in a mechanism that was meant to prevent unnecessary probes to a newly met node, nodes in the second triangle
 don't get to see all the probes and loops.
 
-###  <img src="./img/petrogale.png" style="width:50px;border-radius: 10px"/> Petrogale
+###  <img src="./img/petrogale.png" style="width:100px;border-radius: 10px"/> Petrogale
 
 The Petrogale is identical to the Pelican except that it always sends all existing probes to a newly met node, even if
 loops were already found for them.
@@ -175,7 +175,7 @@ loops were already found for them.
 I think in the hourglass test, the first triangle is found 3 times and the second triangle is found 8 times, although it's
 hard to tell because of #1 and #2.
 
-###  <img src="./img/butterfly.png" style="width:50px;border-radius: 10px"/> Butterfly
+###  <img src="./img/butterfly.png" style="width:100px;border-radius: 10px"/> Butterfly
 The Butterfly uses:
 * [Polite Messaging](https://github.com/ledgerloops/strategy-pit/issues/8) for Probes to avoid losing a chance for proof of communication due to probes crossing over
 * Flood probes in both directions when a new link is added
