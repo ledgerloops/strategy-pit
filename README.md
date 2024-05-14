@@ -79,6 +79,9 @@ This network topology has 5 nodes (Alice, Bob, Charlie, Dave and Edward), and it
 ###  <img src="./img/giraffe.png" style="width:50px;border-radius: 10px"/> Giraffe
 The Giraffe is the first strategy to properly detect Kite Loops, see https://github.com/ledgerloops/strategy-pit/issues/15.
 
+###  <img src="./img/saiga.png" style="width:50px;border-radius: 10px"/> Saiga
+The Saiga differs from the Giraffe in that it negotiates pegged loops (no exchange rates), see https://github.com/ledgerloops/strategy-pit/issues/24.
+
 ## Second Generation Strategies
 ###  <img src="./img/stingray.png" style="width:50px;border-radius: 10px"/> Stingray
 The Stingray has a more detailed data storage (both for Flood Probes and for Trace Probes) than its predecessors Salmon, Pelican and Petrogale.
