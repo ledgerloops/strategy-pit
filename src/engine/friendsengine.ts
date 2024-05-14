@@ -1,4 +1,4 @@
-export class FriendsEngine {
+export class GiraffeFriendsEngine {
   protected name: string;
   protected friends: {
     [name: string]: {
@@ -30,4 +30,12 @@ export class FriendsEngine {
     return Object.keys(this.friends);
   }
 
+}
+export class SaigaFriendsEngine extends GiraffeFriendsEngine {
+  constructor(name: string) {
+    super(name);
+  }
+  addFriend(otherName: string, maxBalance: number = 10.0): boolean {
+    return super.addFriend(otherName, maxBalance, 1.0);
+  }
 }

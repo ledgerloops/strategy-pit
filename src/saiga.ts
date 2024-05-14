@@ -2,12 +2,12 @@ import EventEmitter from "node:events";
 import { NetworkNode } from "./simulator/networksimulator.js";
 import { getMessageType } from "./messages.js";
 import { ProbesEngine } from "./engine/probesengine.js";
-import { FriendsEngine } from "./engine/friendsengine.js";
+import { SaigaFriendsEngine } from "./engine/friendsengine.js";
 import { TracesEngine } from "./engine/tracesengine.js";
 import { SaigaLoopsEngine } from "./engine/loopsengine.js";
 
 export class Saiga extends EventEmitter implements NetworkNode {
-  protected friendsEngine: FriendsEngine;
+  protected friendsEngine: SaigaFriendsEngine;
   protected probesEngine: ProbesEngine;
   protected tracesEngine: TracesEngine;
   protected loopsEngine: SaigaLoopsEngine;
@@ -17,7 +17,7 @@ export class Saiga extends EventEmitter implements NetworkNode {
   constructor(name: string) {
     super();
     this.name = name;
-    this.friendsEngine = new FriendsEngine(name);
+    this.friendsEngine = new SaigaFriendsEngine(name);
     this.probesEngine = this.connectProbesEngine();
     this.tracesEngine = this.connectTracesEngine(this.probesEngine);
     this.loopsEngine = this.connectLoopsEngine(this.tracesEngine);
@@ -105,8 +105,8 @@ export class Saiga extends EventEmitter implements NetworkNode {
       case `okay-to-send-probes`: return this.probesEngine.handleOkayToSendProbesMessage(sender);
     }
   }
-  meet(other: string, createProbe: boolean = true, maxBalance: number = 10.0, exchangeRate: number = 1.0): void {
-    const newFriendship = this.friendsEngine.addFriend(other, maxBalance, exchangeRate);
+  meet(other: string, createProbe: boolean = true, maxBalance: number = 10.0): void {
+    const newFriendship = this.friendsEngine.addFriend(other, maxBalance);
     if (!newFriendship) {
       return;
     }

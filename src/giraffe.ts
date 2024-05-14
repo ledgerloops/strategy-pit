@@ -2,12 +2,12 @@ import EventEmitter from "node:events";
 import { NetworkNode } from "./simulator/networksimulator.js";
 import { getMessageType } from "./messages.js";
 import { ProbesEngine } from "./engine/probesengine.js";
-import { FriendsEngine } from "./engine/friendsengine.js";
+import { GiraffeFriendsEngine } from "./engine/friendsengine.js";
 import { TracesEngine } from "./engine/tracesengine.js";
 import { GiraffeLoopsEngine } from "./engine/loopsengine.js";
 
 export class Giraffe extends EventEmitter implements NetworkNode {
-  protected friendsEngine: FriendsEngine;
+  protected friendsEngine: GiraffeFriendsEngine;
   protected probesEngine: ProbesEngine;
   protected tracesEngine: TracesEngine;
   protected loopsEngine: GiraffeLoopsEngine;
@@ -17,7 +17,7 @@ export class Giraffe extends EventEmitter implements NetworkNode {
   constructor(name: string) {
     super();
     this.name = name;
-    this.friendsEngine = new FriendsEngine(name);
+    this.friendsEngine = new GiraffeFriendsEngine(name);
     this.probesEngine = this.connectProbesEngine();
     this.tracesEngine = this.connectTracesEngine(this.probesEngine);
     this.loopsEngine = this.connectLoopsEngine(this.tracesEngine);
