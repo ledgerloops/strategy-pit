@@ -34,7 +34,7 @@
     "prettier": "prettier --config .prettierrc --write .",
     "test:watch": "jest --watch"
   },
-  "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
+  "author": "Michiel de Jong <michiel@unhosted.org>",
   "license": "Apache-2.0",
   "dependencies": {
     "crypto-js": "^4.2.0",
