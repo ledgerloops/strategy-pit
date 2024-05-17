@@ -25,8 +25,8 @@ describe(`${TEST_NAME} - until the music stops`, () => {
   let networkSimulator: any;
   let flushReport: string[];
   beforeAll(async () => {
-    const { BatchedNetworkSimulator, Saiga } = await import('../src/main.js');
-    networkSimulator = new BatchedNetworkSimulator();
+    const { MixedNetworkSimulator, Saiga } = await import('../src/main.js');
+    networkSimulator = new MixedNetworkSimulator();
     const data = readFileSync(TESTNET_CSV, 'utf8')
     const lines = data.split('\n').map(line => {
       const [ from, to ] = line.split(' ')

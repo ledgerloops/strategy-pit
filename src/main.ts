@@ -9,4 +9,4 @@ export { Giraffe } from './giraffe.js';
 export { Saiga } from './saiga.js';
 export { Badger } from './badger.js';
 export { BasicMessageForwarder, BatchedMessageForwarder } from './node.js';
-export { BasicNetworkSimulator, BatchedNetworkSimulator } from './simulator/networksimulator.js';
+export { BasicNetworkSimulator, BatchedNetworkSimulator, MixedNetworkSimulator } from './simulator/networksimulator.js';

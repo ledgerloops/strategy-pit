@@ -76,18 +76,28 @@ export class BasicNetworkSimulator extends LoggingNetworkSimulator {
   }
 }
 
+export class TransportPackage {
+  sender: string;
+  receiver: string;
+  message: string;
+}
+
 export class BatchedNetworkSimulator extends LoggingNetworkSimulator {
-  private batch: {
-    sender: string,
-    receiver: string,
-    message: string
-  }[] = [];
+  private batch: TransportPackage[] = [];
   addNode(name: string, node: NetworkNode): void {
     super.addNode(name, node);
     node.on('message', (to: string, message: string) => {
       this.logMessageSent(name, to, message);
       this.batch.push({ sender: name, receiver: to, message });    
     });
+  }
+  send(transportPackage: TransportPackage): void {
+    // taking advantage of all nodes living in the same process,
+    // so we can deliver the message immediately:
+    this.receive(transportPackage);
+  }
+  receive(transportPackage: TransportPackage): void {
+    this.nodes[transportPackage.receiver].process(transportPackage.sender, transportPackage.message);
   }
   flush(): string[] {
     this.logMessageSent('---', '---', '---');
@@ -96,7 +106,7 @@ export class BatchedNetworkSimulator extends LoggingNetworkSimulator {
     this.batch = [];
     batch.filter(entry => typeof this.nodes[entry.receiver] !== 'undefined').forEach(entry => {
       this.logMessageReceived(entry.sender, entry.receiver, entry.message);
-      this.nodes[entry.receiver].process(entry.sender, entry.message);
+      this.send(entry);
       flushReport.push(`[${entry.sender}]->[${entry.receiver}] ${entry.message}`);
     });
     return flushReport;
@@ -105,4 +115,15 @@ export class BatchedNetworkSimulator extends LoggingNetworkSimulator {
     return this.batch.map(entry => `[${entry.sender}]->[${entry.receiver}] ${entry.message}`);
   }
 
+}
+
+export class MixedNetworkSimulator extends BatchedNetworkSimulator {
+  send(transportPackage: TransportPackage): void {
+    // TODO: send this message out into the ether
+    // so that it somehow comes back to our receive method
+    this.receive(transportPackage);
+  }
+  receive(transportPackage: TransportPackage): void {
+    this.nodes[transportPackage.receiver].process(transportPackage.sender, transportPackage.message);
+  }
 }
