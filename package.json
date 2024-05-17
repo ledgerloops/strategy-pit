@@ -38,6 +38,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "crypto-js": "^4.2.0",
+    "earthstar": "^10.2.2",
     "ngraph.generators": "^20.1.0",
     "tslib": "~2.6"
   },

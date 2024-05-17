@@ -1,6 +1,7 @@
 import EventEmitter from "node:events";
 import { getMessageType } from "../messages.js";
 import { Entry, createPlantUml } from "../util.js";
+import { EarthstarMessaging } from "./earthstar.js";
 
 export abstract class NetworkNode extends EventEmitter {
   abstract process(from: string, message: string);
@@ -118,10 +119,15 @@ export class BatchedNetworkSimulator extends LoggingNetworkSimulator {
 }
 
 export class MixedNetworkSimulator extends BatchedNetworkSimulator {
+  private earthstarMessaging: EarthstarMessaging;
+  constructor() {
+    super();
+    this.earthstarMessaging = new EarthstarMessaging(this);
+  }
   send(transportPackage: TransportPackage): void {
     // TODO: send this message out into the ether
     // so that it somehow comes back to our receive method
-    this.receive(transportPackage);
+    this.earthstarMessaging.send(transportPackage);
   }
   receive(transportPackage: TransportPackage): void {
     this.nodes[transportPackage.receiver].process(transportPackage.sender, transportPackage.message);
