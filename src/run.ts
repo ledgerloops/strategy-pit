@@ -44,6 +44,10 @@ function run(): void {
   Object.keys(nodes).forEach((nodeId) => {
     console.log(nodeId, nodes[nodeId].getLoops());
   });
+  console.log('Debug logs:');
+  Object.keys(nodes).forEach((nodeId) => {
+    console.log(nodeId, nodes[nodeId].getDebugLog());
+  });
 }
 
 // ...
