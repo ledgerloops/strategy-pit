@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { readFileSync } from 'fs';
-import { BatchedNetworkSimulator, Giraffe } from './main.js';
+// import { BatchedNetworkSimulator, Giraffe as Node } from './main.js';
+import { BatchedNetworkSimulator, Badger as Node } from './main.js';
 
 const TESTNET_CSV = '__tests__/fixtures/testnet-sarafu.csv';
 const NUM_ROUNDS = 100000;
@@ -19,12 +20,12 @@ function run(): void {
   lines.forEach(async line => {
     if (typeof nodes[line.from] === 'undefined') {
       console.log("Adding node", line.from);
-      nodes[line.from] = new Giraffe(line.from);
+      nodes[line.from] = new Node(line.from);
       networkSimulator.addNode(line.from, nodes[line.from]);
     }
     if (typeof nodes[line.to] === 'undefined') {
       console.log("Adding node", line.to);
-      nodes[line.to] = new Giraffe(line.to);
+      nodes[line.to] = new Node(line.to);
       networkSimulator.addNode(line.to, nodes[line.to]);
     }
     console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
