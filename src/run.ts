@@ -18,26 +18,26 @@ function run(): void {
   }).filter(line => line.from !== 'from' && line.from !== '');
   lines.forEach(async line => {
     if (typeof nodes[line.from] === 'undefined') {
-      // console.log("Adding node", line.from);
+      console.log("Adding node", line.from);
       nodes[line.from] = new Giraffe(line.from);
       networkSimulator.addNode(line.from, nodes[line.from]);
     }
     if (typeof nodes[line.to] === 'undefined') {
-      // console.log("Adding node", line.to);
+      console.log("Adding node", line.to);
       nodes[line.to] = new Giraffe(line.to);
       networkSimulator.addNode(line.to, nodes[line.to]);
     }
-    // console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
+    console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
     await nodes[line.from].meet(line.to);
     networkSimulator.flush();
   });
   let counter = 0;
   do {
     flushReport = networkSimulator.flush();
+    Object.keys(nodes).forEach((nodeId) => {
+      console.log(nodeId, nodes[nodeId].getLoops());
+    });
   } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
-  Object.keys(nodes).forEach((nodeId) => {
-    console.log(nodeId, nodes[nodeId].getLoops());
-  });
 }
 
 // ...
