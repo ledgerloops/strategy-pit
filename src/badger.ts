@@ -103,6 +103,7 @@ export class Badger extends EventEmitter implements NetworkNode {
       case `commit`: return this.handleLoopMessage(sender, message);
       case `have-probes`: return this.probesEngine.handleHaveProbesMessage(sender);
       case `okay-to-send-probes`: return this.probesEngine.handleOkayToSendProbesMessage(sender);
+      case `announce`: return this.loopsEngine.handleAnnounceMessage(sender, message);
     }
   }
   meet(other: string, createProbe: boolean = true, maxBalance: number = 10.0): void {
