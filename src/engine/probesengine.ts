@@ -180,8 +180,14 @@ export class ProbesEngine extends EventEmitter {
 
     this.queueAllFloodProbes(other);
     if (createFloodProbe) {
-      this.emit('debug', `and create a new flood probe for other friends than ${other} [3/4]`);
-      this.createFloodProbe();      
+      if (Object.keys(this.friends).length === 0) {
+        this.emit('debug', `and no need to create a new flood probe for zero friends! [3/4]`);
+      } else if (Object.keys(this.friends).length === 1) {
+        this.emit('debug', `and no need to create a new flood probe just for ${other}! [3/4]`);
+      } else {
+        this.emit('debug', `and create a new flood probe for other friends than ${other} [3/4]`);
+        this.createFloodProbe();      
+      }
     }
   }
   public handleProbeMessage(sender: string, message: string): void {
