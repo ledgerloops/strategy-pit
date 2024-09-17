@@ -3,7 +3,7 @@
 import { readFileSync } from 'fs';
 import { BatchedNetworkSimulator, Giraffe } from './main.js';
 
-const TESTNET_CSV = '__tests__/fixtures/testnet.csv';
+const TESTNET_CSV = '__tests__/fixtures/testnet-sarafu.csv';
 const NUM_ROUNDS = 100000;
 
 function run(): void {
