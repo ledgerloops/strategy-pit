@@ -120,5 +120,29 @@ export class TracesEngine extends EventEmitter {
     }
     return undefined;
   }
+  get ({ probeId, traceId, legId }: { probeId: string, traceId: string, legId: string }): { from: string, to: string} | undefined {
+    const legsCreated = this.getLegsCreated(probeId, traceId);
+    this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} in created: ${JSON.stringify(legsCreated)}`);
+    if (typeof legsCreated !== 'undefined') {
+      const result = Object.keys(legsCreated).find((to) => legsCreated[to] === legId);
+      if (result) {
+        return {
+          from: '',
+          to: result
+        };
+      }
+    }
+    const legsForwarded = this.getLegsForwarded(probeId, traceId);
+    this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} in forwarded: ${JSON.stringify(legsForwarded)}`);
+    if (typeof legsForwarded !== 'undefined') {
+      const result = Object.keys(legsForwarded).find((to) => legsForwarded[to] === legId);
+      if (result) {
+        return {
+          from: '',
+          to: result
+        };
+      }
+    }
+    return undefined;
+  }
 }
-  

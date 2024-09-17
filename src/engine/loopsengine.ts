@@ -88,6 +88,9 @@ export class GiraffeLoopsEngine extends EventEmitter {
       this.emit('debug', `ANNOUNCE ${sender} ${JSON.stringify(parsed)}, checking our loops`);
       let forwardTo: string;
       parsed.forEach(announcement => {
+        this.emit('lookup-trace', announcement, (traceFrom: string, traceTo: string) => {
+          this.recordLoop(traceFrom, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
+        });
         let known = false;
         this.loops.forEach(loopStr => {
           const [ from, to, probeId, traceId, legId ] = loopStr.split(' ');
@@ -105,10 +108,8 @@ export class GiraffeLoopsEngine extends EventEmitter {
             if (typeof forwardTo === 'undefined') {
               this.emit('debug', `SETTING forwardTo ${thisForwardTo}`);
               forwardTo = thisForwardTo;
-              this.recordLoop(sender, thisForwardTo, probeId, traceId, legId);
             } else if (thisForwardTo === forwardTo) {
               this.emit('debug', `CONFIRMING forwardTo ${forwardTo}`);
-              this.recordLoop(sender, thisForwardTo, probeId, traceId, legId);
             } else {
               this.emit('debug', `FORK FOUND! thisForwardTo ${thisForwardTo} forwardTo ${forwardTo}`);
               // TODO: handle this case
