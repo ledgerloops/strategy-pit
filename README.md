@@ -16,6 +16,10 @@ time node ./build/src/run.js
 
 ## Network simulators
 See also 2024 work on ngraph generator in [ledgerloops/ledgerloops repo](https://github.com/ledgerloops/ledgerloops).
+To import the first 20 lines of Sarafu data, run `node ./sarafu.js`. This network should have 3 loops that compete to clear 6 -[.5]-> 4:
+* 4 -[323]-> 6 -[.5]-> 4
+* 4 -[2]-> 3 -[123]-> 6 -[.5]-> 4
+* 4 -[10]-> 7 -[12]-> 3 -[123]-> 6 -[.5]-> 4
 
 ### Basic
 In the basic network simulator, nodes Alice and Bob can become neighbours with:
