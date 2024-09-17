@@ -32,13 +32,18 @@ function run(): void {
     await nodes[line.from].meet(line.to);
     networkSimulator.flush();
   });
+  console.log();
   let counter = 0;
   do {
     flushReport = networkSimulator.flush();
-    Object.keys(nodes).forEach((nodeId) => {
-      console.log(nodeId, nodes[nodeId].getLoops(), nodes[nodeId].getDebugLog());
-    });
+    // console.log(`Round ${counter}:`);
+    flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
+    console.log();
   } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
+  console.log('Loops found:');
+  Object.keys(nodes).forEach((nodeId) => {
+    console.log(nodeId, nodes[nodeId].getLoops());
+  });
 }
 
 // ...
