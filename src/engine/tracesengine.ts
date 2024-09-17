@@ -78,10 +78,11 @@ export class TracesEngine extends EventEmitter {
         if (typeof otherLeg === 'undefined') {  
           this.forwardTraceMessage(probeId, traceId, legId, probeFrom);
         } else {
-          this.emit('debug', `[TracesEngine] found otherLeg ${otherLeg} for trace ${traceId} of probe ${probeId}`);
+          this.emit('debug', `[TraceEngine] found otherLeg ${otherLeg} for trace ${traceId} of probe ${probeId}`);
           if (otherLeg === sender) {
             this.emit('debug', `UNEXPECTED: Received two different legs from the same node`);
           }
+          this.logTraceMessage(otherLeg, probeId, traceId, legId);
           this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`);
         }
       } else {

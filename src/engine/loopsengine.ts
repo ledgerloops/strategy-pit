@@ -33,7 +33,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleLoopFound(probeId: string, traceId: string, legId: string, outgoing: { name: string, maxBalance: number, exchangeRate: number }, incoming: { name: string, maxBalance: number, exchangeRate: number }): void {
-    this.loops.push(`${probeId} ${traceId}`);
+    this.loops.push(`${incoming.name} ${outgoing.name} ${probeId} ${traceId}`);
     this.emit('debug', `${probeId} ${traceId} ${legId} ${JSON.stringify(outgoing)} ${JSON.stringify(incoming)}`);
     const secret = genRanHex(32);
     const hash = sha256(secret);
@@ -51,6 +51,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
   handleProposeMessage(from: string, message: string, proposer: { name: string, maxBalance: number, exchangeRate: number }, committer: { name: string, maxBalance: number, exchangeRate: number }): void {
     this.emit('debug', `${from} ${message} ${JSON.stringify(committer)} ${JSON.stringify(proposer)}`);
     const [messageType, probeId, traceId, legId, hash, amount] = message.split(' ');
+    this.loops.push(`${proposer.name} ${committer.name} ${probeId} ${traceId}`);
     if (messageType !== 'propose') {
       this.emit('debug', `expected propose message but got ${messageType}`);
     }
