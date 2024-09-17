@@ -157,7 +157,7 @@ export class ProbesEngine extends EventEmitter {
     this.tryToSendProbes(friend);
   }
   public queueAllFloodProbes(other: string): void {
-    this.emit('debug', `QUEUEING ALL FLOOD PROBES TO ${other}`);
+    this.emit('debug', `QUEUEING ALL ${this.getKeys().length} FLOOD PROBES TO ${other}`);
     this.getKeys().forEach((probeId) => {
       this.emit('debug', `QUEUEING PROBE ${probeId} TO ${other}`);
       // setting homeMinted to false but we don't expect it to matter since this probe already exists
@@ -170,6 +170,8 @@ export class ProbesEngine extends EventEmitter {
     });
   }
   protected createFloodProbe(): void {
+    // console.log('creating flood probe (probes engine)');
+    // throw new Error('stop');
     this.emit('debug', `creating flood probe`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }

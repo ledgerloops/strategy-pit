@@ -36,7 +36,7 @@ function run(): void {
   do {
     flushReport = networkSimulator.flush();
     Object.keys(nodes).forEach((nodeId) => {
-      console.log(nodeId, nodes[nodeId].getLoops());
+      console.log(nodeId, nodes[nodeId].getLoops(), nodes[nodeId].getDebugLog());
     });
   } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
 }

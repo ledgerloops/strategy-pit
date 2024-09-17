@@ -95,7 +95,7 @@ export class Badger extends EventEmitter implements NetworkNode {
     switch(getMessageType(message)) {
       case `meet`:
         this.friendsEngine.addFriend(sender);
-        this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all flood probes`);
+        this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all ${this.probesEngine.getKeys().length} flood probes`);
         return this.probesEngine.addFriend(sender, false, false);
       case `probe`: return this.probesEngine.handleProbeMessage(sender, message);
       case `trace`: return this.tracesEngine.handleTraceMessage(sender, message);
@@ -113,7 +113,7 @@ export class Badger extends EventEmitter implements NetworkNode {
     this.debugLog.push(`I meet ${other} [1/4]`);
     // this is safe to because it will just queue them for the next message round
     this.emit('message', other, 'meet');
-    this.debugLog.push(`I queue ${other} all my flood probes [2/4]`);
+    this.debugLog.push(`I queue ${other} my ${this.probesEngine.getKeys().length} flood probes [2/4]`);
     this.probesEngine.addFriend(other, true, createProbe);
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }

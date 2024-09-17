@@ -210,7 +210,7 @@ export class Butterfly extends Node {
     });
   }
   protected createFloodProbe(): void {
-    this.debugLog.push(`creating flood probe`);
+    this.debugLog.push(`creating flood probe (Butterfly)`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }
   protected createPinnedFloodProbe(recipient: string): void {
