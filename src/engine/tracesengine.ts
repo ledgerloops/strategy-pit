@@ -173,8 +173,9 @@ export class TracesEngine extends EventEmitter {
     this.emit('debug', `[TraceEngine] lookup ${sender} ${probeId} ${traceId} ${legId}`);
     const traceTo = this.getTraceTo({ probeId, traceId, legId });
     if (traceTo) {
-      this.emit('debug', `[TracesEngine] DETERMINING EQUIVALENTS ${sender} ${traceTo} ${JSON.stringify(this.tracesByPath)}`);
-      const equivalent = this.tracesByPath[`${sender} ${traceTo}`] || [];
+      // this.emit('debug', `[TracesEngine] DETERMINING EQUIVALENTS ${sender} ${traceTo} ${JSON.stringify(this.tracesByPath)}`);
+      // const equivalent = this.tracesByPath[`${sender} ${traceTo}`] || [];
+      const equivalent = [];
       return {
         to: traceTo,
         equivalent

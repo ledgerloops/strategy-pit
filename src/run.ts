@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { readFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 // import { BatchedNetworkSimulator, Giraffe as Node } from './main.js';
 import { BatchedNetworkSimulator, Badger as Node } from './main.js';
 
@@ -70,9 +70,9 @@ async function run(): Promise<void> {
     });
   });
   // console.log('Debug logs:');
-  // Object.keys(nodes).forEach((nodeId) => {
-  //   console.log(nodeId, nodes[nodeId].getDebugLog());
-  // });
+  Object.keys(nodes).forEach((nodeId) => {
+    writeFileSync(`logs/${nodeId}.log`, nodes[nodeId].getDebugLog().join('\n') + '\n');
+  });
   const paths = {};
   Object.keys(loops).map((loopId) => {
     const start = Math.min(... Object.keys(loops[loopId]).map(numStr => parseInt(numStr))).toString();

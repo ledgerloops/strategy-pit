@@ -11,7 +11,9 @@ npm install
 npm test
 npm run build
 node ../ledgerloops/src/network-generator.js > __tests__/fixtures/testnet.csv
+mkdir logs
 time node ./build/src/run.js
+ls logs
 ```
 
 ## Network simulators

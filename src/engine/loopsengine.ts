@@ -47,14 +47,14 @@ export class GiraffeLoopsEngine extends EventEmitter {
     };
     this.emit('lookup-trace', spec, (_traceTo: string | undefined, equivalent: string[]) => {
       this.emit('debug', `Trace lookup found equivalents ${JSON.stringify(equivalent)}`);
-      const duplicates = [`${probeId} ${traceId} ${legId}`].concat(equivalent.map(traceSpec => {
-        const [probeId, traceId, legId] = traceSpec.split(' ');
-        return { thisProbeId: probeId, traceId, legId };
-      }).filter(({ thisProbeId }) => {
-        return (probeId !== thisProbeId);
-      }).map(({ thisProbeId, traceId, legId}) => {
-        return `${thisProbeId} ${traceId} ${legId}`;
-      }));
+      const duplicates = [`${probeId} ${traceId} ${legId}`]; //.concat(equivalent.map(traceSpec => {
+      //   const [probeId, traceId, legId] = traceSpec.split(' ');
+      //   return { thisProbeId: probeId, traceId, legId };
+      // }).filter(({ thisProbeId }) => {
+      //   return (probeId !== thisProbeId);
+      // }).map(({ thisProbeId, traceId, legId}) => {
+      //   return `${thisProbeId} ${traceId} ${legId}`;
+      // }));
       this.recordAnnouncement(duplicates);
       this.emit('message', outgoing.name, `announce ${duplicates.join(' === ')}`);
     });
