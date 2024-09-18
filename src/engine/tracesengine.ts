@@ -5,6 +5,7 @@ export class TracesEngine extends EventEmitter {
   tracesCreated = {};
   tracesForwardedFrom = {};
   tracesForwardedTo = {};
+  tracesByPath = {};
   getLegsCreated(probeId: string, traceId: string): { [to: string]: string } | undefined {
     return this.tracesCreated[probeId]?.[traceId];
   }
@@ -40,8 +41,18 @@ export class TracesEngine extends EventEmitter {
     this.emit('debug', `tracesForwardedFrom now looks like this: ${JSON.stringify(this.tracesForwardedFrom)}`)
 
   }
+  logTracePath(from: string, to: string, probeId: string, traceId: string, legId: string): void {
+    if (typeof this.tracesByPath[`${from} ${to}`] === 'undefined') {
+      this.tracesByPath[`${from} ${to}`] = [];
+    }
+    if (this.tracesByPath[`${from} ${to}`].indexOf(`${probeId} ${traceId} ${legId}`) === -1) {
+      this.tracesByPath[`${from} ${to}`].push(`${probeId} ${traceId} ${legId}`);
+    }
+    this.emit('debug', `[TracesEngine] tracesByPath now: ${JSON.stringify(this.tracesByPath)}`);
+  }
   logTraceMessage(from: string, to: string, probeId: string, traceId: string, legId: string): void {
     this.logIncomingTraceMessage(from, probeId, traceId, legId);
+    this.logTracePath(from, to, probeId, traceId, legId);
     this.emit('debug', `logTraceMessage from="${from}" to="${to}" trace="${probeId} ${traceId} ${legId}"`);
     if (typeof this.tracesForwardedTo[probeId] === 'undefined') {
       this.tracesForwardedTo[probeId] = {};

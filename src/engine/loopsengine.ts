@@ -90,8 +90,10 @@ export class GiraffeLoopsEngine extends EventEmitter {
       this.emit('debug', `ANNOUNCE ${sender} ${JSON.stringify(parsed)}, checking our loops ${JSON.stringify(this.loops)}`);
       let forwardTo: string;
       parsed.forEach(announcement => {
-        this.emit('lookup-trace', announcement, (traceTo: string) => {
-          this.recordLoop(sender, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
+        this.emit('lookup-trace', announcement, (traceTo: string | undefined) => {
+          if (typeof traceTo !== 'undefined') {
+            this.recordLoop(sender, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
+          }
         });
         let known = false;
         this.loops.forEach(loopStr => {
