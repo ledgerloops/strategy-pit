@@ -138,7 +138,7 @@ export class TracesEngine extends EventEmitter {
     }
     return undefined;
   }
-  lookup ({ probeId, traceId, legId }: { probeId: string, traceId: string, legId: string }): string | undefined {
+  getTraceTo ({ probeId, traceId, legId }: { probeId: string, traceId: string, legId: string }): string | undefined {
     const legsCreated = this.getLegsCreated(probeId, traceId);
     this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} in created: ${JSON.stringify(legsCreated)}`);
     if (typeof legsCreated !== 'undefined') {
@@ -147,13 +147,25 @@ export class TracesEngine extends EventEmitter {
         return result;
       }
     }
-    const legsForwarded = this.getLegsForwardedTo(probeId, traceId);
-    this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} in forwarded: ${JSON.stringify(legsForwarded)}`);
-    if (typeof legsForwarded !== 'undefined') {
-      const result = Object.keys(legsForwarded).find((to) => legsForwarded[to] === legId);
+    const legsForwardedTo = this.getLegsForwardedTo(probeId, traceId);
+    this.emit('debug', `Looking for a party in ${probeId} ${traceId} with ${legId} in forwarded: ${JSON.stringify(legsForwardedTo)}`);
+    if (typeof legsForwardedTo !== 'undefined') {
+      const result = Object.keys(legsForwardedTo).find((to) => legsForwardedTo[to] === legId);
       if (result) {
         return result;
       }
+    }
+    return undefined;
+  }
+  lookup ({ sender, probeId, traceId, legId }: { sender: string, probeId: string, traceId: string, legId: string }): { to: string, equivalent: string[] } | undefined {
+    this.emit('debug', `[TraceEngine] lookup ${sender} ${probeId} ${traceId} ${legId}`);
+      const traceTo = this.getTraceTo({ probeId, traceId, legId });
+    const equivalent = [];
+    if (traceTo) {
+      return {
+        to: traceTo,
+        equivalent
+      };
     }
     return undefined;
   }
