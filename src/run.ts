@@ -17,7 +17,6 @@ async function run(): Promise<void> {
     const [ from, to, weight ] = line.split(' ')
     return { from, to, weight }
   }).filter(line => line.from !== 'from' && line.from !== '');
-  
   for (let lineNo = 0; lineNo < lines.length; lineNo++) {
     let counter = 0;
     const line = lines[lineNo];
@@ -100,6 +99,7 @@ async function run(): Promise<void> {
     // console.log(path, paths[path]);
     console.log(path);
   });
+  console.log(networkSimulator.getPlantUml());
 }
 
 
