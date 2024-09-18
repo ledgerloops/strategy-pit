@@ -39,14 +39,14 @@ export class GiraffeLoopsEngine extends EventEmitter {
   handleLoopFound(probeId: string, traceId: string, legId: string, outgoing: { name: string, maxBalance: number, exchangeRate: number }, incoming: { name: string, maxBalance: number, exchangeRate: number }): void {
     this.recordLoop(incoming.name, outgoing.name, probeId, traceId, legId);
     this.emit('debug', `${probeId} ${traceId} ${legId} ${JSON.stringify(outgoing)} ${JSON.stringify(incoming)}`);
-    const duplicates = this.loops.map(loop => {
+    const duplicates = [`${probeId} ${traceId} ${legId}`].concat(this.loops.map(loop => {
       const [from, to, probeId, traceId, legId] = loop.split(' ');
-      return { from, to, probeId, traceId, legId };
-    }).filter(({ from, to }) => {
-      return ((from === incoming.name) && (to === outgoing.name));    
-    }).map(({ probeId, traceId, legId}) => {
-      return `${probeId} ${traceId} ${legId}`;
-    });
+      return { from, to, thisProbeId: probeId, traceId, legId };
+    }).filter(({ from, to, thisProbeId }) => {
+      return ((from === incoming.name) && (to === outgoing.name) && (probeId !== thisProbeId));
+    }).map(({ thisProbeId, traceId, legId}) => {
+      return `${thisProbeId} ${traceId} ${legId}`;
+    }));
     this.recordAnnouncement(duplicates);
     this.emit('message', outgoing.name, `announce ${duplicates.join(' === ')}`);  
   }
