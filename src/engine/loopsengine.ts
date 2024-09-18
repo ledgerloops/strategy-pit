@@ -72,14 +72,16 @@ export class GiraffeLoopsEngine extends EventEmitter {
     }
   }
   handleAnnounceMessage(sender: string, message: string): void {
-    const parsed = message.substring(`announce `.length).split(' === ').map(spec => {
+    const strings = message.substring(`announce `.length).split(' === ');
+    const parsed = strings.map(spec => {
       const [ probeId, traceId, legId ] = spec.split(' ');
       return { probeId, traceId, legId };
     });
     let done = false;
+    this.emit('debug', `checking if announcement is ours ${JSON.stringify(this.announcements)} ${JSON.stringify(strings)}`);
     this.announcements.forEach(sent => {
-      if (JSON.stringify(sent) === JSON.stringify(parsed)) {
-        this.emit('debug', `ANNOUNCE COMPLETE ${sender} ${JSON.stringify(parsed)}`);
+      if (JSON.stringify(sent) === JSON.stringify(strings)) {
+          this.emit('debug', `ANNOUNCE COMPLETE ${sender} ${JSON.stringify(strings)}`);
         done = true;
         this.handleAnnounceComplete(parsed[0].probeId, parsed[0].traceId, parsed[0].legId, { name: '?', maxBalance: 0, exchangeRate: 1});
       }
@@ -121,7 +123,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
         }
       });
       if (typeof forwardTo === 'string') {
-        // this.emit('message', forwardTo, message);
+        this.emit('message', forwardTo, message);
       }
     }
   }
