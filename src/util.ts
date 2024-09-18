@@ -31,10 +31,10 @@ export class Entry {
 function createPreamble(): string {
   return `@startuml\n`;
 }
-function createLine(entry: Entry, probeId: string | undefined): string {
+function createLine(entry: Entry, probeId?: string): string {
   const colors = {
     'probe': 'blue',
-    'trace': ['green', 'orange'],
+    'trace': 'green',
     'announce': 'red',
   };
   if (entry.sender === '---') {
@@ -62,6 +62,6 @@ function createLine(entry: Entry, probeId: string | undefined): string {
 function createEpilogue(): string {
   return '@enduml';
 }
-export function createPlantUml(log: Entry[], probeId: string): string {
+export function createPlantUml(log: Entry[], probeId?: string): string {
   return createPreamble() + log.map(line => createLine(line, probeId)).join('') + createEpilogue();
 }
