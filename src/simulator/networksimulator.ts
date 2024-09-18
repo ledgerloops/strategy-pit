@@ -89,7 +89,7 @@ export class BatchedNetworkSimulator extends LoggingNetworkSimulator {
     super.addNode(name, node);
     node.on('message', (to: string, message: string) => {
       this.logMessageSent(name, to, message);
-      this.batch.push({ sender: name, receiver: to, message });    
+      this.batch.push({ sender: name, receiver: to, message });
     });
   }
   send(transportPackage: TransportPackage): void {

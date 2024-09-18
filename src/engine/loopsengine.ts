@@ -48,7 +48,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
       return `${thisProbeId} ${traceId} ${legId}`;
     }));
     this.recordAnnouncement(duplicates);
-    this.emit('message', outgoing.name, `announce ${duplicates.join(' === ')}`);  
+    this.emit('message', outgoing.name, `announce ${duplicates.join(' === ')}`);
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleAnnounceComplete(probeId: string, traceId: string, legId: string, outgoing: { name: string, maxBalance: number, exchangeRate: number }): void {
@@ -57,7 +57,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
     this.emit('debug', `secret is ${secret} and hash is ${hash}`);
 
     // const hash: string = SHA256(secret).toString();
-    this.emit('message', outgoing.name, `propose ${probeId} ${traceId} ${legId} ${hash} 1`);  
+    this.emit('message', outgoing.name, `propose ${probeId} ${traceId} ${legId} ${hash} 1`);
     this.lifts[hash] = {
       loop: `${probeId} ${traceId}`,
       legId,

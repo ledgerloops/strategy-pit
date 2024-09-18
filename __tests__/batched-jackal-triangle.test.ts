@@ -249,7 +249,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
           },
         });
       });
- 
+
       it('Bob is friends with Alice and Charlie', () => {
         expect(bob.getFriends()).toEqual(['Alice', 'Charlie']);
       });
@@ -269,7 +269,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
           }
         });
       });
- 
+
       it('Charlie is not friends with Bob yet', () => {
         expect(charlie.getFriends()).toEqual([]);
       });
@@ -277,7 +277,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
         expect(charlie.getProbes()).toEqual({
         });
       });
- 
+
       describe('Charlie meets Alice', () => {
         beforeAll(async () => {
           flushReport = await messageForwarder.flush();
@@ -417,7 +417,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
             "I meet Alice, and offer them all my flood probes",
             "OFFERING PROBE genRanHex1 TO Alice",
             "OFFERING PROBE genRanHex2 TO Alice",
- 
+
          ]);
         });
 
@@ -449,7 +449,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
             expectProbe('genRanHex2', bob, charlie, alice, 2);
             expectProbe('genRanHex3', charlie, alice, bob, 2);
           });
- 
+
 
           it('Alice, Bob and Charlie all know each other', () => {
             expect(alice.getFriends()).toEqual(['Bob', 'Charlie']);
@@ -471,7 +471,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                 "[Alice]->[Charlie] probe genRanHex1",
                 "[Alice]->[Charlie] probe genRanHex2",
                 "[Alice]->[Charlie] loop genRanHex1 genRanHex4",
-                "[Alice]->[Charlie] probe genRanHex5",  
+                "[Alice]->[Charlie] probe genRanHex5",
              ]);
               // messages5 is already sent but messages4 is still what was just flushed here
               expect(messageForwarder.getFullLog(true)).toEqual([].concat(fullLogRound4, fullLogRound5));
@@ -561,7 +561,7 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                   // messages5 is already sent but messages4 is still what was just flushed here
                   expect(messageForwarder.getFullLog(true)).toEqual([].concat(fullLogRound4, fullLogRound5, fullLogsRound6, fullLogsRound7));
                 });
-    
+
                 describe('Messages Round 8', () => {
                   it('Message Logs', async () => {
                     expect(await messageForwarder.flush()).toEqual([
@@ -628,11 +628,11 @@ describe('Batched Jackal Triangle - step-by-step', () => {
                       "PROBE genRanHex1 HAS FROM: Bob",
                       "PROBE genRanHex1 HAS TO: Alice",
                       "FORWARDING TRACE TO Bob",
-                  
+
                    ]);
                   });
-        
-        
+
+
                   it('Alice has loops', () => {
                     expect(alice.getLoops().sort()).toEqual([
                       "genRanHex1:genRanHex4",

@@ -186,7 +186,7 @@ export class ProbesEngine extends EventEmitter {
       //   this.emit('debug', `and no need to create a new flood probe just for ${other}! [3/4]`);
       } else {
         this.emit('debug', `and create a new flood probe for other friends than ${other} [3/4]`);
-        this.createFloodProbe();      
+        this.createFloodProbe();
       }
     }
   }
@@ -221,4 +221,3 @@ export class ProbesEngine extends EventEmitter {
     }
   }
 }
-  

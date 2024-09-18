@@ -92,7 +92,7 @@ export class TracesEngine extends EventEmitter {
         this.emit('debug', `[TraceEngine] forwarding a counter-probe-wise trace message from ${sender}: ${message}`);
         const otherLeg = this.getOtherLeg(probeId, traceId, legId);
         this.emit('debug', `[TraceEngine] in the context of trace message from ${sender}: ${message}, we found these counter-probe-wise next hops: [${probeFrom.join(', ')}], and otherLeg ${otherLeg}`);
-        if (typeof otherLeg === 'undefined') {  
+        if (typeof otherLeg === 'undefined') {
           this.emit('debug', `[TraceEngine] forwardTraceMessage ${sender} ${probeId} ${traceId} ${legId} ${probeFrom}`);
           this.forwardTraceMessage(sender, probeId, traceId, legId, probeFrom);
         } else {
