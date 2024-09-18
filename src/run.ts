@@ -59,13 +59,13 @@ async function run(): Promise<void> {
         // console.log('storing', loopId, from, nodeId);
         loops[loopId][from] = nodeId;
       } else if (loops[loopId][from] !== nodeId) {
-        console.log('loop route conflict!');
+        console.log(`loop route conflict! ${loopId} goes from ${from} to both ${loops[loopId][from]} and ${nodeId}`);
       }
       if (typeof loops[loopId][nodeId] === 'undefined') {
         // console.log('storing', loopId, nodeId, to);
         loops[loopId][nodeId] = to;
       } else if (loops[loopId][nodeId] !== to) {
-        console.log('loop route conflict!');
+        console.log(`loop route conflict! ${loopId} goes from ${nodeId} to both ${loops[loopId][nodeId]} and ${to}`);
       }
     });
   });
