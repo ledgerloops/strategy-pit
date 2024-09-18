@@ -14,8 +14,8 @@ async function run(): Promise<void> {
   const networkSimulator = new BatchedNetworkSimulator();
   const data = readFileSync(TESTNET_CSV, 'utf8')
   const lines = data.split('\n').map(line => {
-    const [ from, to ] = line.split(' ')
-    return { from, to }
+    const [ from, to, weight ] = line.split(' ')
+    return { from, to, weight }
   }).filter(line => line.from !== 'from' && line.from !== '');
   
   for (let lineNo = 0; lineNo < lines.length; lineNo++) {
@@ -39,7 +39,7 @@ async function run(): Promise<void> {
       if (counter > NUM_ROUNDS_PER_LINE) {
         process.exit();
       }
-      console.log(`Line ${lineNo} Round ${counter}:`);
+      console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
       flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
       console.log();
     } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS_PER_LINE));
