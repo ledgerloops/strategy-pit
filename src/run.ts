@@ -40,7 +40,7 @@ async function run(): Promise<void> {
         process.exit();
       }
       console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
-      flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
+      flushReport.forEach(msg => { console.log(`${lineNo}:${counter}: ${msg}`); });
       console.log();
     } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS_PER_LINE));
   }
