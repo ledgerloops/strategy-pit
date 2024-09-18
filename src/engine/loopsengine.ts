@@ -85,18 +85,18 @@ export class GiraffeLoopsEngine extends EventEmitter {
       }
     });
     if (!done) {
-      this.emit('debug', `ANNOUNCE ${sender} ${JSON.stringify(parsed)}, checking our loops`);
+      this.emit('debug', `ANNOUNCE ${sender} ${JSON.stringify(parsed)}, checking our loops ${JSON.stringify(this.loops)}`);
       let forwardTo: string;
       parsed.forEach(announcement => {
-        this.emit('lookup-trace', announcement, (traceFrom: string, traceTo: string) => {
-          this.recordLoop(traceFrom, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
+        this.emit('lookup-trace', announcement, (traceTo: string) => {
+          this.recordLoop(sender, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
         });
         let known = false;
         this.loops.forEach(loopStr => {
           const [ from, to, probeId, traceId, legId ] = loopStr.split(' ');
-          this.emit('debug', `considering ${message} against ${loopStr}`);
+          this.emit('debug', `considering "${message}" against "${loopStr}"`);
           if ((announcement.probeId === probeId) && (announcement.traceId === traceId) && (announcement.legId === legId)) {
-            this.emit('debug', `KNOWN LOOP IN ANOUNCEMENT ${from} ${to} ${probeId} ${traceId} ${legId}`);
+            this.emit('debug', `KNOWN LOOP IN ANOUNCEMENT ${from} ${to} ${probeId} ${traceId} ${legId} - comparing ${JSON.stringify(sender)} ${JSON.stringify(from)} ${JSON.stringify(to)}`);
             known = true;
             let thisForwardTo: string;
             if (from === sender) {
@@ -121,7 +121,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
         }
       });
       if (typeof forwardTo === 'string') {
-        this.emit('message', forwardTo, message);
+        // this.emit('message', forwardTo, message);
       }
     }
   }
