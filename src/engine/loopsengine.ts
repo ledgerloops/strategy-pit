@@ -39,16 +39,25 @@ export class GiraffeLoopsEngine extends EventEmitter {
   handleLoopFound(probeId: string, traceId: string, legId: string, outgoing: { name: string, maxBalance: number, exchangeRate: number }, incoming: { name: string, maxBalance: number, exchangeRate: number }): void {
     this.recordLoop(incoming.name, outgoing.name, probeId, traceId, legId);
     this.emit('debug', `${probeId} ${traceId} ${legId} ${JSON.stringify(outgoing)} ${JSON.stringify(incoming)}`);
-    const duplicates = [`${probeId} ${traceId} ${legId}`].concat(this.loops.map(loop => {
-      const [from, to, probeId, traceId, legId] = loop.split(' ');
-      return { from, to, thisProbeId: probeId, traceId, legId };
-    }).filter(({ from, to, thisProbeId }) => {
-      return ((from === incoming.name) && (to === outgoing.name) && (probeId !== thisProbeId));
-    }).map(({ thisProbeId, traceId, legId}) => {
-      return `${thisProbeId} ${traceId} ${legId}`;
-    }));
-    this.recordAnnouncement(duplicates);
-    this.emit('message', outgoing.name, `announce ${duplicates.join(' === ')}`);
+    const spec = {
+      sender: incoming.name,
+      probeId,
+      traceId,
+      legId
+    };
+    this.emit('lookup-trace', spec, (_traceTo: string | undefined, equivalent: string[]) => {
+      this.emit('debug', `Trace lookup found equivalents ${JSON.stringify(equivalent)}`);
+      const duplicates = [`${probeId} ${traceId} ${legId}`].concat(equivalent.map(traceSpec => {
+        const [probeId, traceId, legId] = traceSpec.split(' ');
+        return { thisProbeId: probeId, traceId, legId };
+      }).filter(({ thisProbeId }) => {
+        return (probeId !== thisProbeId);
+      }).map(({ thisProbeId, traceId, legId}) => {
+        return `${thisProbeId} ${traceId} ${legId}`;
+      }));
+      this.recordAnnouncement(duplicates);
+      this.emit('message', outgoing.name, `announce ${duplicates.join(' === ')}`);
+    });
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   handleAnnounceComplete(probeId: string, traceId: string, legId: string, outgoing: { name: string, maxBalance: number, exchangeRate: number }): void {
@@ -90,7 +99,8 @@ export class GiraffeLoopsEngine extends EventEmitter {
       this.emit('debug', `ANNOUNCE ${sender} ${JSON.stringify(parsed)}, checking our loops ${JSON.stringify(this.loops)}`);
       let forwardTo: string;
       parsed.forEach(announcement => {
-        this.emit('lookup-trace', announcement, (traceTo: string | undefined) => {
+        this.emit('lookup-trace', { sender, ... announcement }, (traceTo: string | undefined, equivalent: string[]) => {
+          this.emit('debug', `Trace lookup found equivalents ${JSON.stringify(equivalent)}`);
           if (typeof traceTo !== 'undefined') {
             this.recordLoop(sender, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
           }

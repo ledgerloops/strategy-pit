@@ -88,6 +88,7 @@ export class TracesEngine extends EventEmitter {
     if (to !== undefined) {
       this.emit('debug', `loop-found ${probeId} ${traceId} ${legId} ${to} ${sender}`);
       this.emit('loop-found', probeId, traceId, legId, to, sender);
+      this.logTracePath(sender, to, probeId, traceId, legId);
       return;
     }
     if (this.seenThisTraceBefore(probeId, traceId, legId)) {
@@ -168,16 +169,20 @@ export class TracesEngine extends EventEmitter {
     }
     return undefined;
   }
-  lookup ({ sender, probeId, traceId, legId }: { sender: string, probeId: string, traceId: string, legId: string }): { to: string, equivalent: string[] } | undefined {
+  lookup ({ sender, probeId, traceId, legId }: { sender: string, probeId: string, traceId: string, legId: string }): { to: string | undefined, equivalent: string[] } {
     this.emit('debug', `[TraceEngine] lookup ${sender} ${probeId} ${traceId} ${legId}`);
-      const traceTo = this.getTraceTo({ probeId, traceId, legId });
-    const equivalent = [];
+    const traceTo = this.getTraceTo({ probeId, traceId, legId });
     if (traceTo) {
+      this.emit('debug', `[TracesEngine] DETERMINING EQUIVALENTS ${sender} ${traceTo} ${JSON.stringify(this.tracesByPath)}`);
+      const equivalent = this.tracesByPath[`${sender} ${traceTo}`] || [];
       return {
         to: traceTo,
         equivalent
       };
     }
-    return undefined;
+    return {
+      to: undefined,
+      equivalent: []
+    };
   }
 }

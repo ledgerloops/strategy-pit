@@ -64,14 +64,10 @@ export class Badger extends EventEmitter implements NetworkNode {
     traceEngine.on('loop-found', (probeId: string, traceId: string, legId: string, outgoing: string, incoming: string) => {
       loopsEngine.handleLoopFound(probeId, traceId, legId, this.friendsEngine.getFriend(outgoing), this.friendsEngine.getFriend(incoming));
     });
-    loopsEngine.on('lookup-trace', (spec: { sender: string, probeId: string, traceId: string, legId: string }, callback: (traceTo: string, equivalent: string[]) => void) => {
+    loopsEngine.on('lookup-trace', (spec: { sender: string, probeId: string, traceId: string, legId: string }, callback: (traceTo: string | undefined, equivalent: string[]) => void) => {
       this.debugLog.push(`[Node#lookup-trace] ${this.name} is looking up trace ${spec.probeId} ${spec.traceId} ${spec.legId}`);
       const result = traceEngine.lookup(spec);
-      if (typeof result === 'undefined') {
-        callback(undefined, []);
-      } else {
-        callback(result.to, result.equivalent);
-      }
+      callback(result.to, result.equivalent);
     });
     loopsEngine.on('debug', (message: string) => {
       this.debugLog.push(message);
