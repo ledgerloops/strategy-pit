@@ -40,15 +40,64 @@ function run(): void {
     flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
     console.log();
   } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
-  console.log('Loops found:');
+  // console.log('Loops found:');
+  const loops = {};
   Object.keys(nodes).forEach((nodeId) => {
-    console.log(nodeId, nodes[nodeId].getLoops());
+    // console.log(nodeId, nodes[nodeId].getLoops());
+    nodes[nodeId].getLoops().forEach((loopStr: string) => {
+      const [ from, to, probeId, traceId, legId ] = loopStr.split(' ');
+      const loopId = `${probeId} ${traceId} ${legId}`;
+      // console.log('storing', from, nodeId, to, loopId, loops[loopId]);
+      if (typeof loops[loopId] === 'undefined') {
+        loops[loopId] = {};
+      }
+      if (typeof loops[loopId][from] === 'undefined') {
+        // console.log('storing', loopId, from, nodeId);
+        loops[loopId][from] = nodeId;
+      } else if (loops[loopId][from] !== nodeId) {
+        console.log('loop route conflict!');
+      }
+      if (typeof loops[loopId][nodeId] === 'undefined') {
+        // console.log('storing', loopId, nodeId, to);
+        loops[loopId][nodeId] = to;
+      } else if (loops[loopId][nodeId] !== to) {
+        console.log('loop route conflict!');
+      }
+    });
   });
-  console.log('Debug logs:');
-  Object.keys(nodes).forEach((nodeId) => {
-    console.log(nodeId, nodes[nodeId].getDebugLog());
+  // console.log('Debug logs:');
+  // Object.keys(nodes).forEach((nodeId) => {
+  //   console.log(nodeId, nodes[nodeId].getDebugLog());
+  // });
+  const paths = {};
+  Object.keys(loops).map((loopId) => {
+    const start = Math.min(... Object.keys(loops[loopId]).map(numStr => parseInt(numStr))).toString();
+    const hops = [];
+    let cursor = start;
+    do {
+      if (typeof cursor === 'undefined') {
+        throw new Error('path lost!');
+      }
+      // console.log(`${loopId} ${cursor} ${JSON.stringify(loops[loopId])}`);
+      hops.push(cursor);
+      cursor = loops[loopId][cursor];
+    } while ((typeof cursor !== 'undefined') && (cursor != start));
+    hops.push(cursor);
+    const path = hops.join('.');
+    if (typeof paths[path] === 'undefined') {
+      paths[path] = [];
+    }
+    if (paths[path].indexOf(loopId) === -1) {
+      paths[path].push(loopId);
+    }
+  });
+  console.log(`Found ${Object.keys(paths).length} paths:`);
+  Object.keys(paths).sort().forEach((path) => {
+    // console.log(path, paths[path]);
+    console.log(path);
   });
 }
+
 
 // ...
 run();
