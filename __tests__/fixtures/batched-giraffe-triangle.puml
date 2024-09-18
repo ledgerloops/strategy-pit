@@ -14,8 +14,12 @@ Charlie -[#green]-> Bob: trace genRanHex0 genRanHex3 genRanHex4
 Charlie -[#green]-> Bob: trace genRanHex1 genRanHex5 genRanHex6
 Bob -[#green]-> Alice: trace genRanHex0 genRanHex3 genRanHex4
 Alice -[#blue]-> Bob: probe genRanHex2
+Bob -[#green]-> Alice: trace genRanHex1 genRanHex5 genRanHex6
 Alice -[#black]-> Charlie: announce genRanHex0 genRanHex3 genRanHex4
 Bob -[#green]-> Charlie: trace genRanHex2 genRanHex8 genRanHex9
 Bob -[#green]-> Alice: trace genRanHex2 genRanHex8 genRanHex10
+Alice -[#black]-> Charlie: announce genRanHex1 genRanHex5 genRanHex6 === genRanHex0 genRanHex3 genRanHex4
 Alice -[#green]-> Charlie: trace genRanHex2 genRanHex8 genRanHex10
+Charlie -[#green]-> Bob: trace genRanHex2 genRanHex8 genRanHex10
+Bob -[#black]-> Alice: announce genRanHex2 genRanHex8 genRanHex10
 @enduml
