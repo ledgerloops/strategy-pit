@@ -59,8 +59,8 @@ export class LoggingNetworkSimulator extends NetworkSimulator {
     });
     return probeLogs;
   }
-  getPlantUml(): string {
-    return createPlantUml(this.log);
+  getPlantUml(probeId): string {
+    return createPlantUml(this.log, probeId);
   }
 }
 

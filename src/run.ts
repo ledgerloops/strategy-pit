@@ -99,7 +99,7 @@ async function run(): Promise<void> {
     // console.log(path, paths[path]);
     console.log(path);
   });
-  console.log(networkSimulator.getPlantUml());
+  console.log(networkSimulator.getPlantUml('possible'));
 }
 
 

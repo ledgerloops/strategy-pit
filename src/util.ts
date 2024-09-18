@@ -29,16 +29,13 @@ export class Entry {
   }
 }
 function createPreamble(): string {
-  return `@startuml messages\n`;
+  return `@startuml\n`;
 }
-function createLine(entry: Entry): string {
+function createLine(entry: Entry, probeId: string | undefined): string {
   const colors = {
     'probe': 'blue',
-    'trace': 'green',
-    'meet': 'orange',
-    'loop': 'red',
-    'have-probes': 'purple',
-    'okay-to-send-probes': 'purple',
+    'trace': ['green', 'orange'],
+    'announce': 'red',
   };
   if (entry.sender === '---') {
     return '';
@@ -53,15 +50,18 @@ function createLine(entry: Entry): string {
   if (parts.length < 2) {
     return '';
   }
+  if ((typeof probeId === 'string') && (parts[1] !== probeId)) {
+    return '';
+  }
   // if ((parts[0] !== 'meet') && (parts[1] !== 'genRanHex2')) {
   //   return '';
   // }
   const color = colors[entry.message.toString().split(' ')[0]] || 'black';
-  return `${entry.sender} -[#${color}]-> ${entry.receiver}: ${entry.message}\n`;
+  return `(${entry.sender}) -[#${color}]-> (${entry.receiver})\n`;
 }
 function createEpilogue(): string {
   return '@enduml';
 }
-export function createPlantUml(log: Entry[]): string {
-  return createPreamble() + log.map(line => createLine(line)).join('') + createEpilogue();
+export function createPlantUml(log: Entry[], probeId: string): string {
+  return createPreamble() + log.map(line => createLine(line, probeId)).join('') + createEpilogue();
 }
