@@ -5,9 +5,9 @@ import { readFileSync } from 'fs';
 import { BatchedNetworkSimulator, Badger as Node } from './main.js';
 
 const TESTNET_CSV = '__tests__/fixtures/testnet-sarafu.csv';
-const NUM_ROUNDS = 100000;
+const NUM_ROUNDS = 1000;
 
-function run(): void {
+async function run(): Promise<void> {
   console.log("This simulation will take about 60 seconds to complete.");
   const nodes = {};
   let flushReport;
@@ -17,7 +17,10 @@ function run(): void {
     const [ from, to ] = line.split(' ')
     return { from, to }
   }).filter(line => line.from !== 'from' && line.from !== '');
-  lines.forEach(async line => {
+  let counter = 0;
+
+  for (let lineNo = 0; lineNo < lines.length; lineNo++) {
+    const line = lines[lineNo];
     if (typeof nodes[line.from] === 'undefined') {
       console.log("Adding node", line.from);
       nodes[line.from] = new Node(line.from);
@@ -30,16 +33,17 @@ function run(): void {
     }
     console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
     await nodes[line.from].meet(line.to);
-    networkSimulator.flush();
-  });
-  console.log();
-  let counter = 0;
-  do {
-    flushReport = networkSimulator.flush();
-    // console.log(`Round ${counter}:`);
-    flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
-    console.log();
-  } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
+    console.log("Done meeting, now flushing");
+    do {
+      flushReport = networkSimulator.flush();
+      if (counter > NUM_ROUNDS) {
+        process.exit();
+      }
+      console.log(`Round ${counter}:`);
+      flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
+      console.log();
+    } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
+  }
   // console.log('Loops found:');
   const loops = {};
   Object.keys(nodes).forEach((nodeId) => {
