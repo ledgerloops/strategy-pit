@@ -98,18 +98,18 @@ export class GiraffeLoopsEngine extends EventEmitter {
     if (!done) {
       this.emit('debug', `ANNOUNCE ${sender} ${JSON.stringify(parsed)}, checking our loops ${JSON.stringify(this.loops)}`);
       let forwardTo: string;
-      parsed.forEach(announcement => {
-        this.emit('lookup-trace', { sender, ... announcement }, (traceTo: string | undefined, equivalent: string[]) => {
+      for(let i = 0; i < parsed.length; i++) {
+        this.emit('lookup-trace', { sender, ... parsed[i] }, (traceTo: string | undefined, equivalent: string[]) => {
           this.emit('debug', `Trace lookup found equivalents ${JSON.stringify(equivalent)}`);
-          if (typeof traceTo !== 'undefined') {
-            this.recordLoop(sender, traceTo, announcement.probeId, announcement.traceId, announcement.legId);
+          if (typeof traceTo !== 'undefined' && (i === 0)) { // only add a loop if it's the first one mentioned in the announcement, the others may still just be traces!
+            this.recordLoop(sender, traceTo, parsed[i].probeId, parsed[i].traceId, parsed[i].legId);
           }
         });
         let known = false;
         this.loops.forEach(loopStr => {
           const [ from, to, probeId, traceId, legId ] = loopStr.split(' ');
           this.emit('debug', `considering "${message}" against "${loopStr}"`);
-          if ((announcement.probeId === probeId) && (announcement.traceId === traceId) && (announcement.legId === legId)) {
+          if ((parsed[i].probeId === probeId) && (parsed[i].traceId === traceId) && (parsed[i].legId === legId)) {
             this.emit('debug', `KNOWN LOOP IN ANOUNCEMENT ${from} ${to} ${probeId} ${traceId} ${legId} - comparing ${JSON.stringify(sender)} ${JSON.stringify(from)} ${JSON.stringify(to)}`);
             known = true;
             let thisForwardTo: string;
@@ -133,7 +133,7 @@ export class GiraffeLoopsEngine extends EventEmitter {
         if (!known) {
           // this.recordLoop(...
         }
-      });
+      }
       if (typeof forwardTo === 'string') {
         this.emit('message', forwardTo, message);
       }
