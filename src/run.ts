@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 import { BatchedNetworkSimulator, Badger as Node } from './main.js';
 
 const TESTNET_CSV = '__tests__/fixtures/testnet-sarafu.csv';
-const NUM_ROUNDS = 1000;
+const NUM_ROUNDS_PER_LINE = 50;
 
 async function run(): Promise<void> {
   console.log("This simulation will take about 60 seconds to complete.");
@@ -17,9 +17,9 @@ async function run(): Promise<void> {
     const [ from, to ] = line.split(' ')
     return { from, to }
   }).filter(line => line.from !== 'from' && line.from !== '');
-  let counter = 0;
-
+  
   for (let lineNo = 0; lineNo < lines.length; lineNo++) {
+    let counter = 0;
     const line = lines[lineNo];
     if (typeof nodes[line.from] === 'undefined') {
       console.log("Adding node", line.from);
@@ -36,13 +36,13 @@ async function run(): Promise<void> {
     console.log("Done meeting, now flushing");
     do {
       flushReport = networkSimulator.flush();
-      if (counter > NUM_ROUNDS) {
+      if (counter > NUM_ROUNDS_PER_LINE) {
         process.exit();
       }
-      console.log(`Round ${counter}:`);
+      console.log(`Line ${lineNo} Round ${counter}:`);
       flushReport.forEach(msg => { console.log(`${counter}: ${msg}`); });
       console.log();
-    } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS));
+    } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS_PER_LINE));
   }
   // console.log('Loops found:');
   const loops = {};
