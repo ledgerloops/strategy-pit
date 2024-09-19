@@ -36,9 +36,9 @@ async function run(): Promise<void> {
       nodes[line.to] = new Node(line.to);
       networkSimulator.addNode(line.to, nodes[line.to]);
     }
-    // console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
+    console.log(`Line ${lineNo} meeting`, JSON.stringify(line.from), JSON.stringify(line.to));
     await nodes[line.from].meet(line.to);
-    // console.log("Done meeting, now flushing");
+    // console.log(`Line ${lineNo} done meeting, now flushing`);
     do {
       flushReport = networkSimulator.flush();
       if (counter > NUM_ROUNDS_PER_LINE) {
