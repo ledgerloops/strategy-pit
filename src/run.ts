@@ -44,9 +44,9 @@ async function run(): Promise<void> {
       if (counter > NUM_ROUNDS_PER_LINE) {
         process.exit();
       }
-      console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
+      // console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
       flushReport.forEach(msg => { console.log(`${lineNo}:${counter}: ${msg}`); });
-      console.log();
+      // console.log();
     } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS_PER_LINE));
   }
   // console.log('Loops found:');
@@ -75,9 +75,9 @@ async function run(): Promise<void> {
     });
   });
   // console.log('Debug logs:');
-  Object.keys(nodes).forEach((nodeId) => {
-    writeFileSync(`logs/${nodeId}.log`, nodes[nodeId].getDebugLog().join('\n') + '\n');
-  });
+  // Object.keys(nodes).forEach((nodeId) => {
+  //   writeFileSync(`logs/${nodeId}.log`, nodes[nodeId].getDebugLog().join('\n') + '\n');
+  // });
   const paths = {};
   Object.keys(loops).map((loopId) => {
     const start = Math.min(... Object.keys(loops[loopId]).map(numStr => parseInt(numStr))).toString();
