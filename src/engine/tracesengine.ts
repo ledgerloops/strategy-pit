@@ -64,6 +64,10 @@ export class TracesEngine extends EventEmitter {
     this.emit('debug', `tracesForwardedTo now looks like this: ${JSON.stringify(this.tracesForwardedTo)}`)
   }
   forwardTraceMessage(sender: string, probeId: string, traceId: string, legId: string, nextHops: string[]): void {
+    this.emit('debug', `forwardTraceMessage ${sender} ${probeId} ${traceId} ${legId} ${JSON.stringify(nextHops)}`);
+    if (nextHops.length !== 1) {
+      this.emit('debug', `Why are we forwarding a trace to ${nextHops.length} next hops?`);
+    }
     nextHops.forEach((to) => {
       this.emit('debug', `[TracesEngine] sending message to ${to}: trace ${probeId} ${traceId} ${legId}`);
       this.logTraceMessage(sender, to, probeId, traceId, legId);
@@ -77,6 +81,23 @@ export class TracesEngine extends EventEmitter {
       return false;
     }
     return Object.values(legs).includes(legId);
+  }
+  // handleDirectionalTraceMessage({ direction: string, sender: string, message: string, probeId: string, traceId: string, legId: string, probeTo: string[], probeFrom: string[] }) {
+  handleDirectionalTraceMessage({ direction, sender, message, probeId, traceId, legId, previousHops, nextHops }: { direction: string, sender: string, message: string, probeId: string, traceId: string, legId: string, previousHops: string[], nextHops: string[]}): void {
+    this.emit('debug', `[TraceEngine] forwarding a ${direction} trace message from ${sender}: ${message}`);
+    const otherLeg = this.getOtherLeg(probeId, traceId, legId);
+    this.emit('debug', `[TraceEngine] in the context of trace message from ${sender}: ${message}, we found these probe-wise next hops: [${nextHops.join(', ')}], and otherLeg ${otherLeg}`);
+    if (typeof otherLeg === 'undefined') {
+      this.emit('debug', `[TraceEngine] forwardTraceMessage ${sender} ${probeId} ${traceId} ${legId} ${JSON.stringify(previousHops)}`);
+      this.forwardTraceMessage(sender, probeId, traceId, legId, previousHops);
+    } else {
+      this.emit('debug', `[TraceEngine] found otherLeg ${otherLeg} for trace ${traceId} of probe ${probeId}`);
+      if (otherLeg === sender) {
+        this.emit('debug', `UNEXPECTED: Received two different legs from the same node`);
+      }
+      this.logTraceMessage(sender, otherLeg, probeId, traceId, legId);
+      this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`);
+    }
   }
   handleTraceMessage(sender: string, message: string): void {
     this.emit('debug', `[TraceEngine] handling trace message from ${sender}: ${message}`);
@@ -98,23 +119,17 @@ export class TracesEngine extends EventEmitter {
     this.logIncomingTraceMessage(sender, probeId, traceId, legId);
     this.emit('lookup-probe', probeId, (probeFrom: string[], probeTo: string[]) => {
       if (probeFrom.includes(sender)) {
-        this.emit('debug', `[TraceEngine] forwarding a probe-wise trace message from ${sender}: ${message}`);
-        this.forwardTraceMessage(sender, probeId, traceId, legId, probeTo);
+        this.handleDirectionalTraceMessage({
+          direction: 'probe-wise', sender, message,
+          probeId, traceId, legId,
+          nextHops: probeTo, previousHops: probeFrom
+        });
       } else if (probeTo.includes(sender)) {
-        this.emit('debug', `[TraceEngine] forwarding a counter-probe-wise trace message from ${sender}: ${message}`);
-        const otherLeg = this.getOtherLeg(probeId, traceId, legId);
-        this.emit('debug', `[TraceEngine] in the context of trace message from ${sender}: ${message}, we found these counter-probe-wise next hops: [${probeFrom.join(', ')}], and otherLeg ${otherLeg}`);
-        if (typeof otherLeg === 'undefined') {
-          this.emit('debug', `[TraceEngine] forwardTraceMessage ${sender} ${probeId} ${traceId} ${legId} ${probeFrom}`);
-          this.forwardTraceMessage(sender, probeId, traceId, legId, probeFrom);
-        } else {
-          this.emit('debug', `[TraceEngine] found otherLeg ${otherLeg} for trace ${traceId} of probe ${probeId}`);
-          if (otherLeg === sender) {
-            this.emit('debug', `UNEXPECTED: Received two different legs from the same node`);
-          }
-          this.logTraceMessage(sender, otherLeg, probeId, traceId, legId);
-          this.emit('message', otherLeg, `trace ${probeId} ${traceId} ${legId}`);
-        }
+        this.handleDirectionalTraceMessage({
+          direction: 'counter-probe-wise', sender, message,
+          probeId, traceId, legId,
+          nextHops: probeFrom, previousHops: probeTo
+        });
       } else {
         this.emit('debug', `received trace message '${message}' from unexpected sender ${sender}`);
         // throw new Error(`received trace message '${message}' from unexpected sender ${sender}`);
