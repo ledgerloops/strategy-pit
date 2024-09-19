@@ -6,6 +6,12 @@ import { BatchedNetworkSimulator, Badger as Node } from './main.js';
 
 const TESTNET_CSV = '__tests__/fixtures/testnet-sarafu.csv';
 const NUM_ROUNDS_PER_LINE = 50;
+function reversePath(path: string): string {
+  const hops = path.split('.');
+  const innerHops = hops.slice(1, hops.length - 1);
+  const reverseInnerHops = innerHops.reverse();
+  return [].concat(hops[0], reverseInnerHops, hops[0]).join('.');
+}
 
 async function run(): Promise<void> {
   console.log("This simulation will take about 60 seconds to complete.");
@@ -94,12 +100,18 @@ async function run(): Promise<void> {
       paths[path].push(loopId);
     }
   });
-  console.log(`Found ${Object.keys(paths).length} paths:`);
-  Object.keys(paths).sort().forEach((path) => {
+  const reverses = [];
+  const deduplicated = Object.keys(paths).sort().filter(path => {
+    reverses.push(reversePath(path));
+    return (reverses.indexOf(path) === -1);
+  });
+  console.log(`Found ${deduplicated.length} paths:`);
+  deduplicated.forEach((path) => {
     // console.log(path, paths[path]);
     console.log(path);
   });
-  console.log(networkSimulator.getPlantUml('possible'));
+  // console.log(reverses);
+  // console.log(networkSimulator.getPlantUml('possible'));
 }
 
 
