@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync /*, writeFileSync*/ } from 'fs';
 // import { BatchedNetworkSimulator, Giraffe as Node } from './main.js';
 import { BatchedNetworkSimulator, Badger as Node } from './main.js';
 
@@ -27,25 +27,25 @@ async function run(): Promise<void> {
     let counter = 0;
     const line = lines[lineNo];
     if (typeof nodes[line.from] === 'undefined') {
-      console.log("Adding node", line.from);
+      // console.log("Adding node", line.from);
       nodes[line.from] = new Node(line.from);
       networkSimulator.addNode(line.from, nodes[line.from]);
     }
     if (typeof nodes[line.to] === 'undefined') {
-      console.log("Adding node", line.to);
+      // console.log("Adding node", line.to);
       nodes[line.to] = new Node(line.to);
       networkSimulator.addNode(line.to, nodes[line.to]);
     }
-    console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
+    // console.log("Meeting", JSON.stringify(line.from), JSON.stringify(line.to));
     await nodes[line.from].meet(line.to);
-    console.log("Done meeting, now flushing");
+    // console.log("Done meeting, now flushing");
     do {
       flushReport = networkSimulator.flush();
       if (counter > NUM_ROUNDS_PER_LINE) {
         process.exit();
       }
       // console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
-      flushReport.forEach(msg => { console.log(`${lineNo}:${counter}: ${msg}`); });
+      // flushReport.forEach(msg => { console.log(`${lineNo}:${counter}: ${msg}`); });
       // console.log();
     } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS_PER_LINE));
   }
