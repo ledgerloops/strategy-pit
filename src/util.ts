@@ -57,6 +57,7 @@ function createLine(entry: Entry, probeId?: string): string {
   //   return '';
   // }
   const color = colors[entry.message.toString().split(' ')[0]] || 'black';
+  // return `' ${JSON.stringify(entry)}\n(${entry.sender}) -[#${color}]-> (${entry.receiver})\n`;
   return `(${entry.sender}) -[#${color}]-> (${entry.receiver})\n`;
 }
 function createEpilogue(): string {
