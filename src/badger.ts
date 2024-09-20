@@ -104,8 +104,9 @@ export class Badger extends EventEmitter implements NetworkNode {
       case `meet`:
         this.friendsEngine.addFriend(sender);
         this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all ${this.probesEngine.getKeys().length} flood probes`);
-        return this.probesEngine.addFriend(sender, false, false);
+        return this.probesEngine.addFriend(sender, false);
       case `probe`: return this.probesEngine.handleProbeMessage(sender, message);
+      case `ack`: return this.probesEngine.createFloodProbe();
       case `nack`: return this.friendsEngine.handleNackMessage(sender, message);
       case `trace`: return this.tracesEngine.handleTraceMessage(sender, message);
       case `propose`: return this.handleLoopMessage(sender, message);
@@ -115,7 +116,7 @@ export class Badger extends EventEmitter implements NetworkNode {
       case `announce`: return this.loopsEngine.handleAnnounceMessage(sender, message);
     }
   }
-  meet(other: string, createProbe: boolean = true, maxBalance: number = 10.0): void {
+  meet(other: string, maxBalance: number = 10.0): void {
     const newFriendship = this.friendsEngine.addFriend(other, maxBalance);
     if (!newFriendship) {
       return;
@@ -124,7 +125,7 @@ export class Badger extends EventEmitter implements NetworkNode {
     // this is safe to because it will just queue them for the next message round
     this.emit('message', other, 'meet');
     this.debugLog.push(`I queue ${other} my ${this.probesEngine.getKeys().length} flood probes [2/4]`);
-    this.probesEngine.addFriend(other, true, createProbe);
+    this.probesEngine.addFriend(other, true);
     this.debugLog.push(`Done onMeet ${other} [4/4]`);
   }
   // initiateLift(traceId: string) {

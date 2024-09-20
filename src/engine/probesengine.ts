@@ -169,24 +169,21 @@ export class ProbesEngine extends EventEmitter {
       this.queueProbe(friend, probeId, homeMinted);
     });
   }
-  protected createFloodProbe(): void {
+  public createFloodProbe(): void {
     // console.log('creating flood probe (probes engine)');
     // throw new Error('stop');
     this.emit('debug', `creating flood probe`);
     return this.queueFloodProbeToAll(genRanHex(8), true);
   }
-  public addFriend(other: string, weInitiate: boolean, createFloodProbe: boolean): void {
+  public addFriend(other: string, weInitiate: boolean): void {
     this.friends[other] = new Friend(null, weInitiate ? HandRaisingStatus.Talking : HandRaisingStatus.Listening);
-
-    this.queueAllFloodProbes(other);
-    if (createFloodProbe) {
-      if (Object.keys(this.friends).length === 0) {
-        this.emit('debug', `and no need to create a new flood probe for zero friends! [3/4]`);
-      // } else if (Object.keys(this.friends).length === 1) {
-      //   this.emit('debug', `and no need to create a new flood probe just for ${other}! [3/4]`);
+    if (weInitiate) {
+      this.queueAllFloodProbes(other);
+    } else {
+      if (Object.keys(this.friends).length > 1) {
+        this.emit('message', other, 'ack');
       } else {
-        this.emit('debug', `and create a new flood probe for other friends than ${other} [3/4]`);
-        this.createFloodProbe();
+        this.emit('message', other, 'nack');
       }
     }
   }

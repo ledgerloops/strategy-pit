@@ -7,6 +7,7 @@ export class GiraffeFriendsEngine extends EventEmitter {
       name: string,
       maxBalance: number,
       exchangeRate: number,
+      nack: boolean
     },
   } = {};
   constructor(name: string) {
@@ -23,6 +24,7 @@ export class GiraffeFriendsEngine extends EventEmitter {
       name: otherName,
       maxBalance,
       exchangeRate,
+      nack: false
     };
     return true;
   }
@@ -37,6 +39,10 @@ export class GiraffeFriendsEngine extends EventEmitter {
     // const [ _messageType ] = message.split(' ');
     // const probe: Probe | undefined = this.get(probeId);
     this.emit('debug', `nack received from sender "${sender}": "${message}"`);
+    if (typeof this.friends[sender] === 'undefined') {
+      throw new Error('unexpected: message from sender who is not a friend');
+    }
+    this.friends[sender].nack = true;
   }
 
 }
