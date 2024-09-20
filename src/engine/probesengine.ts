@@ -199,7 +199,14 @@ export class ProbesEngine extends EventEmitter {
       this.emit('debug', `INCOMING PROBE ${probeId} IS NEW TO US, FLOOD IT FORWARD`);
       probe = this.ensure(probeId, false);
       probe.recordIncoming(sender);
-      this.queueFloodProbeToAll(probeId, false);
+      if (typeof this.friends[sender] === 'undefined') {
+        throw new Error('Unexpected! incoming probe from non-friend?');
+      }
+      if (Object.keys(this.friends).length === 1) {
+        this.emit('message', sender, `nack ${probeId}`);
+      } else {
+        this.queueFloodProbeToAll(probeId, false);
+      }
     } else {
       this.emit('debug', `INCOMING PROBE ${probeId} IS KNOWN TO US`);
       if (probe.isVirginFor(sender)) {

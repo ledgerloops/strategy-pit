@@ -1,4 +1,6 @@
-export class GiraffeFriendsEngine {
+import { EventEmitter } from 'node:events';
+
+export class GiraffeFriendsEngine extends EventEmitter {
   protected name: string;
   protected friends: {
     [name: string]: {
@@ -8,6 +10,7 @@ export class GiraffeFriendsEngine {
     },
   } = {};
   constructor(name: string) {
+    super();
     this.name = name;
   }
   addFriend(otherName: string, maxBalance: number = 10.0, exchangeRate: number = 1.0): boolean {
@@ -28,6 +31,12 @@ export class GiraffeFriendsEngine {
   }
   getFriends(): string[] {
     return Object.keys(this.friends);
+  }
+  public handleNackMessage(sender: string, message: string): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // const [ _messageType ] = message.split(' ');
+    // const probe: Probe | undefined = this.get(probeId);
+    this.emit('debug', `nack received from sender "${sender}": "${message}"`);
   }
 
 }

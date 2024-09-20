@@ -18,6 +18,9 @@ export class Badger extends EventEmitter implements NetworkNode {
     super();
     this.name = name;
     this.friendsEngine = new SaigaFriendsEngine(name);
+    this.friendsEngine.on('debug', (message: string) => {
+      this.debugLog.push(message);
+    });
     this.probesEngine = this.connectProbesEngine();
     this.tracesEngine = this.connectTracesEngine(this.probesEngine);
     this.loopsEngine = this.connectLoopsEngine(this.tracesEngine);
@@ -103,6 +106,7 @@ export class Badger extends EventEmitter implements NetworkNode {
         this.debugLog.push(`MEET MESSAGE FROM ${sender}, queueing all ${this.probesEngine.getKeys().length} flood probes`);
         return this.probesEngine.addFriend(sender, false, false);
       case `probe`: return this.probesEngine.handleProbeMessage(sender, message);
+      case `nack`: return this.friendsEngine.handleNackMessage(sender, message);
       case `trace`: return this.tracesEngine.handleTraceMessage(sender, message);
       case `propose`: return this.handleLoopMessage(sender, message);
       case `commit`: return this.handleLoopMessage(sender, message);

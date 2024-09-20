@@ -36,17 +36,17 @@ async function run(): Promise<void> {
       nodes[line.to] = new Node(line.to);
       networkSimulator.addNode(line.to, nodes[line.to]);
     }
-    console.log(`Line ${lineNo} meeting`, JSON.stringify(line.from), JSON.stringify(line.to));
+    console.log(`Line ${lineNo + 1} meeting`, JSON.stringify(line.from), JSON.stringify(line.to));
     await nodes[line.from].meet(line.to);
-    // console.log(`Line ${lineNo} done meeting, now flushing`);
+    console.log(`Line ${lineNo + 1} done meeting, now flushing`);
     do {
       flushReport = networkSimulator.flush();
       if (counter > NUM_ROUNDS_PER_LINE) {
         process.exit();
       }
-      // console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
-      // flushReport.forEach(msg => { console.log(`${lineNo}:${counter}: ${msg}`); });
-      // console.log();
+      console.log(`Line ${lineNo + 1} [${line.from} ${line.to} ${line.weight}] Round ${counter}:`);
+      flushReport.forEach(msg => { console.log(`${lineNo}:${counter}: ${msg}`); });
+      console.log();
     } while ((flushReport.length > 0) && (counter++ < NUM_ROUNDS_PER_LINE));
   }
   // console.log('Loops found:');
