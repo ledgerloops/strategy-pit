@@ -39,6 +39,7 @@
   "dependencies": {
     "crypto-js": "^4.2.0",
     "earthstar": "^10.2.2",
+    "min-cost-flow": "^2.1.0",
     "ngraph.generators": "^20.1.0",
     "tslib": "~2.6"
   },

@@ -71,6 +71,13 @@ To analyse a solution, save it a for instance `solution.csv` and run:
 node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
 ```
 
+# Contestants
+## Bird's Eye Worm
+This centralized algorithm does a repeated depth-first search, stringing together paths through the graph similar to the 'Snake' game that was popular on feature phones in the 1990s.
+```
+node build/src/birdsEyeChallenge.js
+```
+
 
 # Older Experiments
 ## Usage
