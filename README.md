@@ -1,11 +1,38 @@
 # LedgerLoops Strategy Pit
 
 This repository is an experimentation ground for LedgerLoops strategies.
-Some strategies will integrate discovery of loops with negotiation of exchange rates, others may keep them separate.
 
-The strategies are tested in different network models and with different network topologies.
+## Sarafu-Based Netting Challenge
+This challenge compares cycle detection algorithms in two categories: centralised and decentralised.
 
-## Usage
+A centralised algorithm is allowed to base its next step on global state, whereas in a decentralised one steps can only be taken based on state that is available in a single network node after this node has exchanged messages with only its direct neighbours in the graph.
+
+### Input data
+The Sarafu Netting Challenge uses the transaction data from the [Sarafu Community Inclusion Currency, 2020-2021](https://www.nature.com/articles/s41597-022-01539-4) which is available for download free of charge from [UK Data Service](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=855142). To obtain the dataset you may be able to use your existing academic credentials, or you may need to create an account and wait a few days for it to be activated. The download will contain a folder named `Sarafu2021_UKdb_submission` which contains a folder named `sarafu_xDAI`, which contains a file named `sarafu_txns_20200125-20210615.csv`. It is this CSV file that will be used as an input here.
+
+### Debt Graph Construction
+The input for this challenge is a fictitious debt graph that is constructed from some real transaction data. Even though we use real transaction data, the setting is still fictitious.
+
+In reality, the Sarafu dataset contains three types of transactions: disbursement, standard and reclamation, and these transactions all really happened during 2020-2021.
+
+In a disbursement, Sarafu is added to a user's account. A standard transaction transfers Sarafu from one user to another. And in a reclamation, Sarafu is removed from a user's account.
+
+We look only at the standard transactions, and instead of treating them as payments in exchange for something, we pretend that they adjust bilateral balances.
+
+This way we construct a weighted, directed graph in which the weight of an edge from A to B is equal to the sum of the amounts of the transfers that went from A to B, minus the sum of the amounts of transfers that went from B to A.
+
+To generate `./debt.csv`, run:
+```
+npm install
+npm run build
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv
+```
+
+### Initial analysis
+As the `sarafu-to-debt.js` script will output, the debt graph after bilateral netting contains 94,223 non-zero balances between 37677 accounts.
+The [Net Internal Debt](https://cycles.money/blog/obligation-clearing-algorithm-design-101) after bilateral netting is around 17 million Sarafu.
+
+## Usage (older experiments)
 ```
 npm install
 npm test
