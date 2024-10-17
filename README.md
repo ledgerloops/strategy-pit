@@ -65,6 +65,7 @@ the cycle `8 5 21 3 5.3` is nettable and would result in a graph:
 ```
 with the same net positions and NID as before.
 
+## Solution Analysis
 To analyse a solution, save it a for instance `solution.csv` and run:
 ```
 node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
