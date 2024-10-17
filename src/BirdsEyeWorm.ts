@@ -89,63 +89,63 @@ export class BirdsEyeWorm {
       await writeFile(this.solutionFile, '');
     }
 
-    // eslint-disable-next-line no-constant-condition
     let counter = 0;
-    while (counter++ < MAX_NUM_STEPS) {
-      // console.log('Step', path, newStep);
-      path.push(newStep);
-      // console.log('picking first option from', newStep);
-      // console.log(path);
-      const backtracked = [];
-      while (path.length > 0 && !this.graph.hasOutgoingLinks(path[path.length - 1])) {
-        // console.log('no outgoing links', path);
-        // backtrack
-        const previousStep = path.pop();
-        backtracked.push(previousStep);
-        if (path.length > 0) {
-          this.graph.removeLink(path[path.length - 1], previousStep);
-        }
-      }
-      // we now now that either newStep has outgoing links, or path is empty
-      if (path.length === 0) {
-        if (backtracked.length > 0) {
-          // this.printLine('finished   ', path, backtracked.reverse());
-        }
-        // no paths left, start with a new worm
-        path = [];
-        try {
-          newStep = this.graph.getFirstNode();
-        } catch (e) {
-          if (e.message === 'Graph is empty') {
-            // We're done!
-            console.log(`Done after ${counter} steps`);
-            return;
-          } else {
-            throw e;
+    try {
+      // eslint-disable-next-line no-constant-condition
+      while (counter++ < MAX_NUM_STEPS) {
+        // console.log('Step', path, newStep);
+        path.push(newStep);
+        // console.log('picking first option from', newStep);
+        // console.log(path);
+        const backtracked = [];
+        while (path.length > 0 && !this.graph.hasOutgoingLinks(path[path.length - 1])) {
+          // console.log('no outgoing links', path);
+          // backtrack
+          const previousStep = path.pop();
+          backtracked.push(previousStep);
+          if (path.length > 0) {
+            this.graph.removeLink(path[path.length - 1], previousStep);
           }
         }
-      } else {
-        if (backtracked.length > 0) {
-          // this.printLine('backtracked', path, backtracked.reverse());
-          newStep = path[path.length - 1];
-          // console.log('continuing from', path, newStep);
-        }
+        // we now now that either newStep has outgoing links, or path is empty
+        if (path.length === 0) {
+          if (backtracked.length > 0) {
+            // this.printLine('finished   ', path, backtracked.reverse());
+          }
+          // no paths left, start with a new worm
+          path = [];
+          newStep = this.graph.getFirstNode();
+        } else {
+          if (backtracked.length > 0) {
+            // this.printLine('backtracked', path, backtracked.reverse());
+            newStep = path[path.length - 1];
+            // console.log('continuing from', path, newStep);
+          }
 
-        newStep = this.graph.getFirstNode(newStep);
-        // console.log('considering', path, newStep); 
+          newStep = this.graph.getFirstNode(newStep);
+          // console.log('considering', path, newStep); 
+        }
+        // check for loops in path
+        const pos = path.indexOf(newStep);
+        if (pos !== -1) {
+          const loop = path.splice(pos).concat(newStep);
+          const smallestWeight = this.netLoop(loop);
+          this.printLine(`found loop `, path, loop);
+          if (this.solutionFile) {
+            await appendFile(this.solutionFile, loop.slice(0, loop.length - 1).concat(smallestWeight).join(' ') + '\n');
+          }
+
+          newStep = this.graph.getFirstNode(path[path.length - 1]);
+          // console.log(`Continuing with`, path, newStep);
+        }
       }
-      // check for loops in path
-      const pos = path.indexOf(newStep);
-      if (pos !== -1) {
-        const loop = path.splice(pos).concat(newStep);
-        const smallestWeight = this.netLoop(loop);
-        this.printLine(`found loop `, path, loop);
-        if (this.solutionFile) {
-          await appendFile(this.solutionFile, loop.slice(0, loop.length - 1).concat(smallestWeight).join(' ') + '\n');
-        }
-
-        newStep = this.graph.getFirstNode(path[path.length - 1]);
-        // console.log(`Continuing with`, path, newStep);
+    } catch (e) {
+      if (e.message === 'Graph is empty') {
+        // We're done!
+        console.log(`Done after ${counter} steps`);
+        return;
+      } else {
+        throw e;
       }
     }
   }

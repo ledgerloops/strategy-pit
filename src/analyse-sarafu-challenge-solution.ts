@@ -1,22 +1,11 @@
 import { readCsv } from "./readCsv.js";
+import { scale } from "./util.js";
 
-const DEBTFILE = process.argv[2] || '../debt.csv';
+const DEBTFILE = process.argv[2] || './debt.csv';
 const SOLUTIONFILE = process.argv[3] || './solution.csv';
 
 const LEDGER_SCALE = 1000;
 const ROUNDING_MARGIN = 0.0000001;
-
-function scale(amountStr: string, filetype: string): number {
-  const amount = parseFloat(amountStr);
-  if (isNaN(amount)) {
-    throw new Error(`Cannot parse float '${amountStr}'`);
-  }
-  const scaledAmount = Math.round(amount * LEDGER_SCALE);
-  if (Math.abs(scaledAmount - amount * LEDGER_SCALE) > ROUNDING_MARGIN) {
-    throw new Error(`Ledger scale insufficient for amount in ${filetype} file: ${amountStr} -> ${amount * LEDGER_SCALE} -> ${scaledAmount}`);
-  }
-  return scaledAmount;
-}
 
 async function run(): Promise<void> {
   const graph: {
@@ -38,7 +27,7 @@ async function run(): Promise<void> {
     if (typeof graph[edge] === 'undefined') {
       graph[edge] = 0;
     }
-    const scaledAmount = scale(amountStr, 'debt');
+    const scaledAmount = scale(amountStr, 'debt', LEDGER_SCALE, ROUNDING_MARGIN);
     graph[edge] += scaledAmount;
     numTrans++;
     totalAmount += scaledAmount;
@@ -57,7 +46,7 @@ async function run(): Promise<void> {
   await readCsv(SOLUTIONFILE, ' ', (cells: string[]) => {
     // cells would be e.g. ['8', '5', '21', '3', '5.3']
     const amountStr = cells.pop();
-    const scaledAmount = scale(amountStr, 'solution');
+    const scaledAmount = scale(amountStr, 'solution', LEDGER_SCALE, ROUNDING_MARGIN);
     const nodes = cells.concat(cells[0]);
     // nodes would now be e.g. ['8', '5', '21', '3', 8']
     let possible = true;

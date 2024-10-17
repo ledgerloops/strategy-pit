@@ -2,9 +2,8 @@ import { createInterface } from 'readline';
 import { createReadStream } from 'fs';
 import { BirdsEyeWorm } from './BirdsEyeWorm.js';
 
-// const SARAFU_CSV = '../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv';
-const DEBTCSV = process.argv[2] || '../strategy-pit/debt.csv';
-const SOLUTIONCSV = process.argv[3] || '../strategy-pit/solution.csv';
+const DEBTCSV = process.argv[2] || './debt.csv';
+const SOLUTIONCSV = process.argv[3] || './solution.csv';
 console.log('Opening', DEBTCSV);
 
 const lineReader = createInterface({
