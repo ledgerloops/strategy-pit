@@ -43,6 +43,28 @@ A solution consists of a CSV file, where each line contains a space-delimited li
 
 This solution consists of two netting agreements, one for cycle 8 -> 5 -> 21 -> 3 -> 8 with amount 5.3 Sarafu, and the other for cycle 43 -> 2 -> 6 -> 3 -> 7 -> 43 with amount 62.
 
+A cycle [node_0, node_1, ..., node_n, amount] is nettable if its amount positive but smaller than each of the balances it traverses, that is to say, for each k such that 0 <= k <= n-1, graph[cycle[k] cycle[k+1]] > amount, and additionally for the last step that closes the cycle, graph[cycle[n] cycle[0]] > amount. So given the following debt graph:
+```
+8 5 20
+5 21 543
+21 3 12
+3 8 100
+```
+with net positions:
+8: -100 + 20 = -80
+5: -20 + 543 = 523
+21: -543 + 12 = -531
+3: -12 + 100 = 88
+and NID of (80+531) = (523+88) = 611,
+the cycle `8 5 21 3 5.3` is nettable and would result in a graph:
+```
+8 5 14.7
+5 21 537.7
+21 3 6.7
+3 8 94.7
+```
+with the same net positions and NID as before.
+
 To analyse a solution, save it a for instance `solution.csv` and run:
 ```
 node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
