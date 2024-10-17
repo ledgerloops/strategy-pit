@@ -31,8 +31,26 @@ node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sar
 ### Initial analysis
 As the `sarafu-to-debt.js` script will output, the debt graph after bilateral netting contains 94,223 non-zero balances between 37677 accounts.
 The [Net Internal Debt](https://cycles.money/blog/obligation-clearing-algorithm-design-101) after bilateral netting is around 17 million Sarafu.
+That is around 16 percent of the total of around 108 million Sarafu in bilateral balances.
 
-## Usage (older experiments)
+## Solution Format
+A solution consists of a CSV file, where each line contains a space-delimited list of 3 or more node numbers, followed by an amount, e.g.:
+
+```
+8 5 21 3 5.3
+43 2 6 3 7 62
+```
+
+This solution consists of two netting agreements, one for cycle 8 -> 5 -> 21 -> 3 -> 8 with amount 5.3 Sarafu, and the other for cycle 43 -> 2 -> 6 -> 3 -> 7 -> 43 with amount 62.
+
+To analyse a solution, save it a for instance `solution.csv` and run:
+```
+node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
+```
+
+
+# Older Experiments
+## Usage
 ```
 npm install
 npm test

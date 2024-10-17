@@ -1,4 +1,4 @@
-import { readCsv } from "./readCsv.js";
+import { readSarafuCsv } from "./readCsv.js";
 import { writeFile, appendFile } from "node:fs/promises";
 
 const INFILE = process.argv[2] || '../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv';
@@ -16,7 +16,7 @@ async function run(): Promise<void> {
   const nodesBefore: {
     [nodeNum: string]: boolean;
   }= {};
-  await readCsv(INFILE, (from, to, amount) => {
+  await readSarafuCsv(INFILE, (from, to, amount) => {
     nodesBefore[from] = true;
     nodesBefore[to] = true;
     
