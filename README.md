@@ -7,6 +7,22 @@ This challenge compares cycle detection algorithms in two categories: centralise
 
 A centralised algorithm is allowed to base its next step on global state, whereas in a decentralised one steps can only be taken based on state that is available in a single network node after this node has exchanged messages with only its direct neighbours in the graph.
 
+### Full Run
+To run DFS and MCF+DFS and compare their performance, do the following:
+```
+npm install
+python -m pip install ortools
+npm run build
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./drains.csv 1000000
+python mcf.py > flow.csv
+node build/src/subtractFlow.js ./debt.csv ./flow.csv ./mcf-out.csv
+node build/src/dfs.js debt.csv dfs.csv
+node build/src/dfs.js mcf-out.csv mcf-dfs.csv
+node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./dfs.csv
+node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./mcf-dfs.csv
+```
+You'll see MCF+DFS nets 67% of debt and DFS by itself only nets 60% of debt, so it's underperforming by about 10%.
+
 ### Input data
 The Sarafu Netting Challenge uses the transaction data from the [Sarafu Community Inclusion Currency, 2020-2021](https://www.nature.com/articles/s41597-022-01539-4) which is available for download free of charge from [UK Data Service](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=855142). To obtain the dataset you may be able to use your existing academic credentials, or you may need to create an account and wait a few days for it to be activated. The download will contain a folder named `Sarafu2021_UKdb_submission` which contains a folder named `sarafu_xDAI`, which contains a file named `sarafu_txns_20200125-20210615.csv`. It is this CSV file that will be used as an input here.
 
@@ -21,11 +37,11 @@ We look only at the standard transactions, and instead of treating them as payme
 
 This way we construct a weighted, directed graph in which the weight of an edge from A to B is equal to the sum of the amounts of the transfers that went from A to B, minus the sum of the amounts of transfers that went from B to A.
 
-To generate `./debt.csv`, run:
+To generate `./debt.csv` (and also `sources.csv` and `drains.csv` helper files for `mcf.py`), run:
 ```
 npm install
 npm run build
-node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./drains.csv
 ```
 
 ### Initial analysis
@@ -72,10 +88,18 @@ node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
 ```
 
 # Contestants
-## Bird's Eye Worm
+## Depth First Search ('DFS')
 This centralized algorithm does a repeated depth-first search, stringing together paths through the graph similar to the 'Snake' game that was popular on feature phones in the 1990s.
 ```
-node build/src/birdsEyeChallenge.js
+node build/src/dfs.js
+```
+
+## MCF+DFS
+We run a minimum-cost flow algorithm in python, followed by BEW, which leads to a slightly better performance:
+```
+python -m pip install ortools
+python mcf.py
+node build/src/dfs.js mcf-out.csv
 ```
 
 

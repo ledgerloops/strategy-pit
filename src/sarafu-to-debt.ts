@@ -3,6 +3,9 @@ import { writeFile, appendFile } from "node:fs/promises";
 
 const INFILE = process.argv[2] || '../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv';
 const OUTFILE = process.argv[3] || './debt.csv';
+const SOURCES_FILE = process.argv[4] || './sources.csv';
+const DRAINS_FILE = process.argv[5] || './drains.csv';
+const MAX_NUM_TRANS = parseInt(process.argv[6] || '1000000');
 
 const LEDGER_SCALE = 1000;
 
@@ -17,6 +20,9 @@ async function run(): Promise<void> {
     [nodeNum: string]: boolean;
   }= {};
   await readSarafuCsv(INFILE, (from, to, amount) => {
+    if (numTrans === MAX_NUM_TRANS) {
+      return;
+    }
     nodesBefore[from] = true;
     nodesBefore[to] = true;
     
@@ -74,13 +80,17 @@ async function run(): Promise<void> {
   console.log(`Removed ${numRemoved} zero balances, leaving ${Object.keys(graph).length} non-zero balances between ${Object.keys(netPositions).length} accounts`);
   let totalPos = 0;
   let totalNeg = 0;
-  Object.keys(netPositions).forEach(account => {
+  await writeFile(SOURCES_FILE, '');
+  await writeFile(DRAINS_FILE, '');
+  Promise.all(Object.keys(netPositions).map(async (account) => {
     if (netPositions[account] > 0) {
       totalPos += netPositions[account];
+      await appendFile(SOURCES_FILE, `${account} ${netPositions[account] / LEDGER_SCALE}\n`)
     } else if (netPositions[account] < 0) {
       totalNeg -= netPositions[account];
+      await appendFile(DRAINS_FILE, `${account} ${-netPositions[account] / LEDGER_SCALE}\n`)
     }
-  });
+  }));
   if (totalPos != totalNeg) {
     throw new Error(`Sum of positive net positions (${totalPos / LEDGER_SCALE / 1000000} million Sarafu) doesn't match`
                  + ` sum of negative net positions (${totalNeg / LEDGER_SCALE / 1000000} million Sarafu)`);

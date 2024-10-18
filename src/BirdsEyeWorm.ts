@@ -84,6 +84,10 @@ export class BirdsEyeWorm {
   // nets loops as it finds them.
   async runWorm(): Promise<void> {
     let path = [];
+    let numLoopsFound = 0;
+    const progressPrinter = setInterval(() => {
+      console.log(`Found ${numLoopsFound} loops so far`);
+    }, 1000);
     let newStep = this.graph.getFirstNode();
     if (this.solutionFile) {
       await writeFile(this.solutionFile, '');
@@ -130,7 +134,8 @@ export class BirdsEyeWorm {
         if (pos !== -1) {
           const loop = path.splice(pos).concat(newStep);
           const smallestWeight = this.netLoop(loop);
-          this.printLine(`found loop `, path, loop);
+          // this.printLine(`found loop `, path, loop);
+          numLoopsFound++;
           if (this.solutionFile) {
             await appendFile(this.solutionFile, loop.slice(0, loop.length - 1).concat(smallestWeight).join(' ') + '\n');
           }
@@ -143,10 +148,12 @@ export class BirdsEyeWorm {
       if (e.message === 'Graph is empty') {
         // We're done!
         console.log(`Done after ${counter} steps`);
+        clearInterval(progressPrinter);
         return;
       } else {
         throw e;
       }
     }
+    clearInterval(progressPrinter);
   }
 }
