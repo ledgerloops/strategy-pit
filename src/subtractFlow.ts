@@ -54,7 +54,7 @@ async function run(): Promise<void> {
     graph[edge] -= scaledAmount;
   });
   await writeFile(OUTFILE, '');
-  await Promise.all(Object.keys(graph).map((edge: string) => appendFile(OUTFILE, `${edge} ${graph[edge]}\n`)));
+  await Promise.all(Object.keys(graph).filter(edge => graph[edge] !== 0).map((edge: string) => appendFile(OUTFILE, `${edge} ${graph[edge]}\n`)));
 }
 
 // ...
