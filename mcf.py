@@ -1,20 +1,61 @@
 import numpy as np
+import csv
 
 from ortools.graph.python import min_cost_flow
 
 # Instantiate a SimpleMinCostFlow solver.
 smcf = min_cost_flow.SimpleMinCostFlow()
 
+startArr = []
+endArr = []
+capArr = []
+costArr = []
+suppliesArr = []
+
+print('reading debt-100.csv')
+with open('debt-100.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    for row in spamreader:
+        startArr.append(int(row[0]) + 2)
+        endArr.append(int(row[1]) + 2)
+        capArr.append(float(row[2]) * 1000)
+        costArr.append(1)
+        suppliesArr.append(0)
+        print(', '.join(row))
+
+source = 0
+drain  = 1
+flow = 10000000
+
+print('reading source-100.csv')
+with open('source-100.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    for row in spamreader:
+        startArr.append(source)
+        endArr.append(int(row[0]) + 2)
+        capArr.append(float(row[1]) * 1000)
+        costArr.append(0)
+        suppliesArr.append(0)
+        print(', '.join(row))
+        
+print('reading drain-100.csv')
+with open('drain-100.csv', newline='') as csvfile:
+    spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+    for row in spamreader:
+        startArr.append(int(row[0]) + 2)
+        endArr.append(drain)
+        capArr.append(float(row[1]) * 1000)
+        costArr.append(0)
+        suppliesArr.append(0)
+        print(', '.join(row))
+
 # Define four parallel arrays: sources, destinations, capacities,
 # and unit costs between each pair. For instance, the arc from node 0
 # to node 1 has a capacity of 15.
-start_nodes = np.array([0, 0, 1, 1, 1, 2, 2, 3, 4])
-end_nodes = np.array([1, 2, 2, 3, 4, 3, 4, 4, 2])
-capacities = np.array([15, 8, 20, 4, 10, 15, 4, 20, 5])
-unit_costs = np.array([4, 4, 2, 2, 6, 1, 3, 2, 3])
-
-# Define an array of supplies at each node.
-supplies = [20, 0, 0, -5, -15]
+start_nodes = np.array(startArr)
+end_nodes = np.array(endArr)
+capacities = np.array(capArr)
+unit_costs = np.array(costArr)
 
 # Add arcs, capacities and costs in bulk using numpy.
 all_arcs = smcf.add_arcs_with_capacity_and_unit_cost(
@@ -22,10 +63,10 @@ all_arcs = smcf.add_arcs_with_capacity_and_unit_cost(
 )
 
 # Add supply for each nodes.
-smcf.set_nodes_supplies(np.arange(0, len(supplies)), supplies)
+smcf.set_nodes_supplies(np.arange(0, 2), [ flow, -flow ])
 
 # Find the min cost flow.
-status = smcf.solve()
+status = smcf.solve_max_flow_with_min_cost()
 
 if status != smcf.OPTIMAL:
     print("There was an issue with the min cost flow input.")
@@ -38,7 +79,5 @@ solution_flows = smcf.flows(all_arcs)
 costs = solution_flows * unit_costs
 for arc, flow, cost in zip(all_arcs, solution_flows, costs):
     print(
-        f"{smcf.tail(arc):1} -> {smcf.head(arc)}  {flow:3}  / {smcf.capacity(arc):3}       {cost}"
+        f"{(smcf.tail(arc) - 2):1} -> {smcf.head(arc) - 2}  {flow:3}  / {smcf.capacity(arc):3}       {cost}"
     )
-
-
