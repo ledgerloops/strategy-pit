@@ -85,8 +85,8 @@ async function run(): Promise<void> {
   if (check + totalSolution !== totalAmount) {
     throw new Error(`${check} + ${totalSolution} != ${totalAmount}`);
   }
-  console.log(`Solution removed around ${Math.round(totalSolution / LEDGER_SCALE / 1000000)} million Sarafu debt in ${numSolution} cycles`);
-  console.log(`That is around ${Math.round(100 * totalSolution / totalAmount)} percent, leaving around ${Math.round(check / LEDGER_SCALE / 1000000)} million Sarafu`);
+  console.log(`Solution removed ${(totalSolution / LEDGER_SCALE / 1000000)} million Sarafu debt in ${numSolution} cycles`);
+  console.log(`That is ${(100 * totalSolution / totalAmount)} percent, leaving around ${Math.round(check / LEDGER_SCALE / 1000000)} million Sarafu`);
   console.log(`Done`);
 }
 
