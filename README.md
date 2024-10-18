@@ -16,8 +16,8 @@ node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sar
 python -m pip install ortools
 python mcf.py > flow.csv
 node build/src/subtractFlow.js ./debt.csv ./flow.csv ./mcf-out.csv
-node build/src/birdsEyeChallenge.js debt.csv dfs.csv
-node build/src/birdsEyeChallenge.js mcf-out.csv mcf-dfs.csv
+node build/src/dfs.js debt.csv dfs.csv
+node build/src/dfs.js mcf-out.csv mcf-dfs.csv
 node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./dfs.csv
 node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./mcf-dfs.csv
 ```
@@ -88,18 +88,18 @@ node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
 ```
 
 # Contestants
-## Bird's Eye Worm ('BEW')
+## Depth First Search ('DFS')
 This centralized algorithm does a repeated depth-first search, stringing together paths through the graph similar to the 'Snake' game that was popular on feature phones in the 1990s.
 ```
-node build/src/birdsEyeChallenge.js
+node build/src/dfs.js
 ```
 
-## MCF+BEW
+## MCF+DFS
 We run a minimum-cost flow algorithm in python, followed by BEW, which leads to a slightly better performance:
 ```
 python -m pip install ortools
 python mcf.py
-node build/src/birdsEyeChallenge.js mcf-out.csv
+node build/src/dfs.js mcf-out.csv
 ```
 
 
