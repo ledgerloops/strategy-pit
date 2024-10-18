@@ -7,6 +7,22 @@ This challenge compares cycle detection algorithms in two categories: centralise
 
 A centralised algorithm is allowed to base its next step on global state, whereas in a decentralised one steps can only be taken based on state that is available in a single network node after this node has exchanged messages with only its direct neighbours in the graph.
 
+### Full Run
+To run DFS and MCF+DFS and compare their performance, do the following:
+```
+npm install
+npm run build
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./drains.csv
+python -m pip install ortools
+python mcf.py > flow.csv
+node build/src/subtractFlow.js ./debt.csv ./flow.csv ./mcf-out.csv
+node build/src/birdsEyeChallenge.js debt.csv dfs.csv
+node build/src/birdsEyeChallenge.js mcf-out.csv mcf-dfs.csv
+node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./dfs.csv
+node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./mcf-dfs.csv
+```
+You'll see MCF+BEW nets 49% of debt and DFS by itself only nets 43% of debt, so it's underperforming by 15%.
+
 ### Input data
 The Sarafu Netting Challenge uses the transaction data from the [Sarafu Community Inclusion Currency, 2020-2021](https://www.nature.com/articles/s41597-022-01539-4) which is available for download free of charge from [UK Data Service](https://beta.ukdataservice.ac.uk/datacatalogue/studies/study?id=855142). To obtain the dataset you may be able to use your existing academic credentials, or you may need to create an account and wait a few days for it to be activated. The download will contain a folder named `Sarafu2021_UKdb_submission` which contains a folder named `sarafu_xDAI`, which contains a file named `sarafu_txns_20200125-20210615.csv`. It is this CSV file that will be used as an input here.
 

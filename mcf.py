@@ -12,8 +12,8 @@ capArr = []
 costArr = []
 suppliesArr = []
 
-print('reading debt-100.csv')
-with open('debt-100.csv', newline='') as csvfile:
+# print('reading debt.csv')
+with open('debt.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     for row in spamreader:
         startArr.append(int(row[0]) + 2)
@@ -21,14 +21,14 @@ with open('debt-100.csv', newline='') as csvfile:
         capArr.append(float(row[2]) * 1000)
         costArr.append(1)
         suppliesArr.append(0)
-        print(', '.join(row))
+        # print(', '.join(row))
 
 source = 0
 drain  = 1
-flow = 10000000
+flow = 10000000000000
 
-print('reading source-100.csv')
-with open('source-100.csv', newline='') as csvfile:
+# print('reading sources.csv')
+with open('sources.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     for row in spamreader:
         startArr.append(source)
@@ -36,10 +36,10 @@ with open('source-100.csv', newline='') as csvfile:
         capArr.append(float(row[1]) * 1000)
         costArr.append(0)
         suppliesArr.append(0)
-        print(', '.join(row))
+        # print(', '.join(row))
         
-print('reading drain-100.csv')
-with open('drain-100.csv', newline='') as csvfile:
+# print('reading drains.csv')
+with open('drains.csv', newline='') as csvfile:
     spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
     for row in spamreader:
         startArr.append(int(row[0]) + 2)
@@ -47,7 +47,7 @@ with open('drain-100.csv', newline='') as csvfile:
         capArr.append(float(row[1]) * 1000)
         costArr.append(0)
         suppliesArr.append(0)
-        print(', '.join(row))
+        # print(', '.join(row))
 
 # Define four parallel arrays: sources, destinations, capacities,
 # and unit costs between each pair. For instance, the arc from node 0
@@ -72,12 +72,13 @@ if status != smcf.OPTIMAL:
     print("There was an issue with the min cost flow input.")
     print(f"Status: {status}")
     exit(1)
-print(f"Minimum cost: {smcf.optimal_cost()}")
-print("")
-print(" Arc    Flow / Capacity Cost")
+# print(f"Minimum cost: {smcf.optimal_cost()}")
+# print("")
+# print(" Arc    Flow / Capacity Cost")
 solution_flows = smcf.flows(all_arcs)
 costs = solution_flows * unit_costs
 for arc, flow, cost in zip(all_arcs, solution_flows, costs):
-    print(
-        f"{(smcf.tail(arc) - 2):1} -> {smcf.head(arc) - 2}  {flow:3}  / {smcf.capacity(arc):3}       {cost}"
-    )
+    if flow > 0 and smcf.head(arc) != 1 and smcf.tail(arc) != 0:
+        print(
+            f"{(smcf.tail(arc) - 2)} {smcf.head(arc) - 2} {flow:3}"
+        )
