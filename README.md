@@ -21,11 +21,11 @@ We look only at the standard transactions, and instead of treating them as payme
 
 This way we construct a weighted, directed graph in which the weight of an edge from A to B is equal to the sum of the amounts of the transfers that went from A to B, minus the sum of the amounts of transfers that went from B to A.
 
-To generate `./debt.csv`, run:
+To generate `./debt.csv` (and also `sources.csv` and `drains.csv` helper files for `mcf.py`), run:
 ```
 npm install
 npm run build
-node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./drains.csv
 ```
 
 ### Initial analysis
@@ -72,10 +72,18 @@ node ./build/src/analyse-sarafu-challenge-solution.js ./debt.csv ./solution.csv
 ```
 
 # Contestants
-## Bird's Eye Worm
+## Bird's Eye Worm ('BEW')
 This centralized algorithm does a repeated depth-first search, stringing together paths through the graph similar to the 'Snake' game that was popular on feature phones in the 1990s.
 ```
 node build/src/birdsEyeChallenge.js
+```
+
+## MCF+BEW
+We run a minimum-cost flow algorithm in python, followed by BEW, which leads to a slightly better performance:
+```
+python -m pip install ortools
+python mcf.py
+node build/src/birdsEyeChallenge.js mcf-out.csv
 ```
 
 
