@@ -11,9 +11,9 @@ A centralised algorithm is allowed to base its next step on global state, wherea
 To run DFS and MCF+DFS and compare their performance, do the following:
 ```
 npm install
-npm run build
-node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./drains.csv
 python -m pip install ortools
+npm run build
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./drains.csv 100
 python mcf.py > flow.csv
 node build/src/subtractFlow.js ./debt.csv ./flow.csv ./mcf-out.csv
 node build/src/dfs.js debt.csv dfs.csv

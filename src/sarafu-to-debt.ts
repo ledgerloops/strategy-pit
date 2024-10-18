@@ -5,6 +5,7 @@ const INFILE = process.argv[2] || '../Sarafu2021_UKdb_submission/sarafu_xDAI/sar
 const OUTFILE = process.argv[3] || './debt.csv';
 const SOURCES_FILE = process.argv[4] || './sources.csv';
 const DRAINS_FILE = process.argv[5] || './drains.csv';
+const MAX_NUM_TRANS = parseInt(process.argv[6] || '1000000');
 
 const LEDGER_SCALE = 1000;
 
@@ -19,6 +20,9 @@ async function run(): Promise<void> {
     [nodeNum: string]: boolean;
   }= {};
   await readSarafuCsv(INFILE, (from, to, amount) => {
+    if (numTrans === MAX_NUM_TRANS) {
+      return;
+    }
     nodesBefore[from] = true;
     nodesBefore[to] = true;
     
