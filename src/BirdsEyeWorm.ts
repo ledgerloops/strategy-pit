@@ -85,7 +85,7 @@ export class BirdsEyeWorm {
   async runWorm(): Promise<void> {
     let path = [];
     let numLoopsFound = 0;
-    let progressPrinter = setInterval(() => {
+    const progressPrinter = setInterval(() => {
       console.log(`Found ${numLoopsFound} loops so far`);
     }, 1000);
     let newStep = this.graph.getFirstNode();
