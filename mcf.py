@@ -80,5 +80,5 @@ costs = solution_flows * unit_costs
 for arc, flow, cost in zip(all_arcs, solution_flows, costs):
     if flow > 0 and smcf.head(arc) != 1 and smcf.tail(arc) != 0:
         print(
-            f"{(smcf.tail(arc) - 2)} {smcf.head(arc) - 2} {flow:3}"
+            f"{(smcf.tail(arc) - 2)} {smcf.head(arc) - 2} {(flow / 1000):3}"
         )
