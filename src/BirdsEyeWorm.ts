@@ -77,6 +77,9 @@ export class BirdsEyeWorm {
     }
     // const after = this.graph.getTotalWeight();
     // console.log('total graph weight reduced by', before - after);
+    if (loop.length - 1 === 2) {
+      console.log('reporting on loop', loop);
+    }
     this.report(loop.length - 1, smallestWeight);
     return smallestWeight;
   }
