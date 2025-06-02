@@ -21,19 +21,30 @@ async function readCsv(filename, delimiter, callback) {
   });
 }
 
-const exits = {};
+const balances = {};
 await readCsv('./one-loop.csv', ',', (cells) => {
   const [ _id,_timeset, transfer_subtype,source,target,weight,_token_name,_token_address ] = cells;
-  if (typeof exits[source] === 'undefined') {
-    exits[source] = { id: _id, to: target, weight };
-  }
+  if (typeof balances[source] === 'undefined') { balances[source] = {}; }
+  if (typeof balances[source][target] === 'undefined') { balances[source][target] = 0; }
+  balances[source][target] += parseFloat(weight);
 });
-let cursor = Object.keys(exits)[0];
+console.log(JSON.stringify(balances, null, 2));
+// Object.keys(balances).map(key => {
+//   const parts = key.split(' ');
+//   console.log(`${parts[0]},${parts[0]},${balances[key]}`);
+// })
+
+let cursor = Object.keys(balances)[0];
 const start = cursor;
 do {
-  if (typeof exits[cursor] === 'undefined') {
+  if (typeof balances[cursor] === 'undefined') {
     throw new Error(`no way forward from ${cursor}`);
   }
-  console.log(exits[cursor].id, cursor, exits[cursor].to, exits[cursor].weight);
-  cursor = exits[cursor].to;
+  const exits = Object.keys(balances[cursor]);
+  if (exits.length !== 1) {
+    throw new Error(`Don't know how to exit from ${cursor}`);
+  }
+  const exit = exits[0];
+  console.log(cursor, exit, balances[cursor][exit]);
+  cursor = exit;
 } while(cursor !== start);
