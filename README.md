@@ -101,3 +101,12 @@ python -m pip install ortools
 python mcf.py
 node build/src/dfs.js mcf-out.csv
 ```
+
+## One-loop check
+```
+npm run build
+node ./build/src/sarafu-to-debt.js ../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv ./debt.csv ./sources.csv ./
+drains.csv 1000000 > one-loop.csv
+// hand-edit one-loop.csv to remove text lines and leave only the data lines (including a newline at the end of the file).
+node checkOneLoop.js
+```
