@@ -2,6 +2,8 @@ import { Graph } from './BirdsEyeGraph.js';
 import { writeFile, appendFile } from 'node:fs/promises';
 
 const MAX_NUM_STEPS = 1000000;
+let longestLoop = [];
+let longestLoopAmount = 0;
 
 export function printLine(preface: string, first: string[], second: string[]): void {
   const firstStr = first.length > 0 ? `[ ${first.map(x => `'${x}'`).join(', ')} ]` : `[]`;
@@ -81,6 +83,10 @@ export class BirdsEyeWorm {
       console.log('reporting on loop', loop);
     }
     this.report(loop.length - 1, smallestWeight);
+    if (loop.length > longestLoop.length) {
+      longestLoop = loop;
+      longestLoopAmount = smallestWeight;
+    }
     return smallestWeight;
   }
   // removes dead ends as it finds them.
@@ -152,11 +158,13 @@ export class BirdsEyeWorm {
         // We're done!
         console.log(`Done after ${counter} steps`);
         clearInterval(progressPrinter);
+        console.log(longestLoop.join(' '), longestLoopAmount, longestLoop.length);
         return;
       } else {
         throw e;
       }
     }
     clearInterval(progressPrinter);
+    console.log(longestLoop.join(' '), longestLoopAmount, longestLoop.length);
   }
 }

@@ -1,6 +1,8 @@
 import { createInterface } from 'readline';
 import { createReadStream} from 'fs';
 
+const filter = '19897 23610 21257 20069 22568 27857 27867 27868 27869 27865 27872 21250 21549 9410 21925 22969 22100 22112 21523 24137 20484 22590 22103 21750 27561 21770 21811 29414 19882 20467 24126 20493 22591 22102 21768 27560 24105 22579 22105 21745 27562 21429 21822 29406 19855 22578 22110 21520 27564 21420 21833 19585 21851 22569 22107 21743 27563 21426 21823 23620 21253 21280 33361 31417 31376 31420 31382 20475 19939 29405'.split(' ');
+
 export async function readCsv(filename: string, delimiter: string, callback: (cells: string[]) => void): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
@@ -35,6 +37,9 @@ export async function readSarafuCsv(filename: string, callback: (from: string, t
       nodes[target] = (counter++).toString();
     }
     if (transfer_subtype === 'STANDARD') {
+      if ((filter.indexOf(nodes[source]) >= 0) && (filter.indexOf(nodes[source]) === filter.indexOf(nodes[target]) - 1)) {
+        console.log(cells.join(','));
+      }
       callback(nodes[source], nodes[target], parseFloat(weight));
     }
   });
