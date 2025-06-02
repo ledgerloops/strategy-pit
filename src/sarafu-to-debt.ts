@@ -1,5 +1,5 @@
 import { readSarafuCsv } from "./readCsv.js";
-import { writeFile, appendFile } from "node:fs/promises";
+import { createWriteStream } from "node:fs";
 
 const INFILE = process.argv[2] || '../Sarafu2021_UKdb_submission/sarafu_xDAI/sarafu_txns_20200125-20210615.csv';
 const OUTFILE = process.argv[3] || './debt.csv';
@@ -80,15 +80,15 @@ async function run(): Promise<void> {
   console.log(`Removed ${numRemoved} zero balances, leaving ${Object.keys(graph).length} non-zero balances between ${Object.keys(netPositions).length} accounts`);
   let totalPos = 0;
   let totalNeg = 0;
-  await writeFile(SOURCES_FILE, '');
-  await writeFile(DRAINS_FILE, '');
+  const sourcesStream = createWriteStream(SOURCES_FILE);
+  const drainsStream = createWriteStream(DRAINS_FILE);
   Promise.all(Object.keys(netPositions).map(async (account) => {
     if (netPositions[account] > 0) {
       totalPos += netPositions[account];
-      await appendFile(SOURCES_FILE, `${account} ${netPositions[account] / LEDGER_SCALE}\n`)
+      await new Promise(resolve => sourcesStream.write(`${account} ${netPositions[account] / LEDGER_SCALE}\n`, resolve))
     } else if (netPositions[account] < 0) {
       totalNeg -= netPositions[account];
-      await appendFile(DRAINS_FILE, `${account} ${-netPositions[account] / LEDGER_SCALE}\n`)
+      await new Promise(resolve => drainsStream.write(`${account} ${-netPositions[account] / LEDGER_SCALE}\n`, resolve))
     }
   }));
   if (totalPos != totalNeg) {
@@ -98,8 +98,8 @@ async function run(): Promise<void> {
   console.log(`Net Internal Debt (NID): around ${Math.round(totalPos / LEDGER_SCALE / 1000000)} million Sarafu. That is around ${Math.round(100 * totalPos / check)} percent of the total of around ${Math.round(check / LEDGER_SCALE / 1000000)} million Sarafu in bilateral balances`);
 
   console.log(`Writing to ${OUTFILE}...`);
-  await writeFile(OUTFILE, '');
-  const promises = Object.keys(graph).map(pair => appendFile(OUTFILE, `${pair} ${graph[pair] / LEDGER_SCALE}\n`));
+  const outStream = createWriteStream(OUTFILE);
+  const promises = Object.keys(graph).map(pair => new Promise((resolve) => outStream.write(`${pair} ${graph[pair] / LEDGER_SCALE}\n`, resolve)));
   await Promise.all(promises);
   console.log(`Done`);
 
