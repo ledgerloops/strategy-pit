@@ -23,10 +23,10 @@ async function readCsv(filename, delimiter, callback) {
 
 const balances = {};
 await readCsv('./one-loop.csv', ',', (cells) => {
-  const [ _id,_timeset, transfer_subtype,source,target,weight,_token_name,_token_address ] = cells;
+  const [ id,_timeset,_transfer_subtype,source,target,_weight,_token_name,_token_address ] = cells;
   if (typeof balances[source] === 'undefined') { balances[source] = {}; }
-  if (typeof balances[source][target] === 'undefined') { balances[source][target] = 0; }
-  balances[source][target] += parseFloat(weight);
+  if (typeof balances[source][target] === 'undefined') { balances[source][target] = []; }
+  balances[source][target].push(parseInt(id));
 });
 console.log(JSON.stringify(balances, null, 2));
 // Object.keys(balances).map(key => {
@@ -45,6 +45,6 @@ do {
     throw new Error(`Don't know how to exit from ${cursor}`);
   }
   const exit = exits[0];
-  console.log(cursor, exit, balances[cursor][exit]);
+  console.log(cursor, exit, JSON.stringify(balances[cursor][exit]));
   cursor = exit;
 } while(cursor !== start);
