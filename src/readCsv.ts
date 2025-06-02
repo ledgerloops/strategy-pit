@@ -37,7 +37,10 @@ export async function readSarafuCsv(filename: string, callback: (from: string, t
       nodes[target] = (counter++).toString();
     }
     if (transfer_subtype === 'STANDARD') {
-      if ((filter.indexOf(nodes[source]) >= 0) && (filter.indexOf(nodes[source]) === filter.indexOf(nodes[target]) - 1)) {
+      const sourceIndex = filter.indexOf(nodes[source]);
+      const targetIndex = filter.indexOf(nodes[target]);
+      
+      if ((sourceIndex !== -1) && ((sourceIndex === targetIndex - 1) || (targetIndex === 0 && sourceIndex === filter.length - 1))) {
         console.log(cells.join(','));
       }
       callback(nodes[source], nodes[target], parseFloat(weight));
