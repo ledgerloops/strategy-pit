@@ -21,11 +21,19 @@ async function readCsv(filename, delimiter, callback) {
   });
 }
 
-const graph = {};
+const exits = {};
 await readCsv('./one-loop.csv', ',', (cells) => {
   const [ _id,_timeset, transfer_subtype,source,target,weight,_token_name,_token_address ] = cells;
-  if (typeof graph[source] === 'undefined') { graph[source] = {}; }
-  if (typeof graph[source][target] === 'undefined') { graph[source][target] = 0; }
-  graph[source][target] += parseFloat(weight);
+  if (typeof exits[source] === 'undefined') {
+    exits[source] = { id: _id, to: target, weight };
+  }
 });
-console.log(JSON.stringify(graph, null, 2));
+let cursor = Object.keys(exits)[0];
+const start = cursor;
+do {
+  if (typeof exits[cursor] === 'undefined') {
+    throw new Error(`no way forward from ${cursor}`);
+  }
+  console.log(exits[cursor].id, cursor, exits[cursor].to, exits[cursor].weight);
+  cursor = exits[cursor].to;
+} while(cursor !== start);
