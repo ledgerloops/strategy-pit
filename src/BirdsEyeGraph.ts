@@ -100,6 +100,14 @@ export class Graph {
     }
     return nodes[0];
   }
+  
+  public getOutgoingLinks(after: string): string[] {
+    if (this.links[after] === undefined) {
+      return [];
+    }
+    return Object.keys(this.links[after]);
+  }
+  
   public hasOutgoingLinks(after: string): boolean {
     if (typeof after !== 'string') {
       throw new Error(`after param ${JSON.stringify(after)} is not a string in call to hasOutgoingLinks`);
