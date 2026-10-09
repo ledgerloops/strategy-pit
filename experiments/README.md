@@ -2,6 +2,10 @@
 
 These are reproducible research experiments, separate from the existing TypeScript implementation. They test a simple DFS improvement and a distributed variant where each node makes decisions using its own outgoing obligations and messages from neighbors. They are **not production settlement software**.
 
+## Numbat
+
+The [Numbat study](NUMBAT.md) tests capacity-weighted node-local search and observed bottleneck proposals against the same 80 synthetic cases, with separate training seeds and independently audited results. It improves the larger cases but does not dominate the small ones.
+
 ## Signed trustline extension
 
 The [trustline study](TRUSTLINES.md) adds bilateral balance limits, exact cycle moves that may increase some debts, an alternating-credit ratchet, and comparison with a global convex-flow optimum. This model is separate from the asynchronous distributed prototype below.
