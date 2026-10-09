@@ -1,0 +1,2825 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "complete": true,
+  "expected_cases": 2,
+  "ortools_version": "9.14.6206",
+  "python_version": "3.12.14",
+  "source_sha256": {
+    "simulate.py": "525f345566676b7900de126f6173864007b937c248a74a419acc146799f26a21",
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637"
+  },
+  "assumptions": [
+    "Reliable bounded-delay messages, no crashes or Byzantine behavior.",
+    "Neighbors communicate along either direction of an obligation link.",
+    "Amounts are synthetic integers; time is abstract ticks.",
+    "Hindsight references see the complete stream; online methods do not.",
+    "Acyclic residual means maximal cancellation, not globally maximum clearing.",
+    "Debt-area includes unpaid obligations through the observation horizon.",
+    "Periodic and distributed discovery stop at the search horizon; distributed in-flight work drains.",
+    "Message counts exclude payload sizes; search tokens disclose and carry discovered paths."
+  ],
+  "cases": [
+    {
+      "scenario": "sparse-steady",
+      "seed": 0,
+      "nodes": 300,
+      "additions": 7541,
+      "distinct_links": 3004,
+      "input_amount": 192534,
+      "last_addition_tick": 500,
+      "search_horizon": 2000,
+      "observation_horizon": 4000,
+      "stream_sha256": "fd8275201bc28c735dcad99e2a80fa90bb51e380fb1bd076709a36f2f90f364d",
+      "max_message_delay": 7,
+      "retry_interval": 50,
+      "max_hops": 300,
+      "search_budget": 2400,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 130664,
+          "cleared_percent": 67.86541597847653,
+          "cycles": 1677,
+          "cycle_hops": 27654,
+          "max_cycle_length": 62,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 33,
+              "cleared_scaled": 2157
+            },
+            "4": {
+              "cycles": 45,
+              "cleared_scaled": 3012
+            },
+            "5": {
+              "cycles": 47,
+              "cleared_scaled": 3630
+            },
+            "6": {
+              "cycles": 59,
+              "cleared_scaled": 4860
+            },
+            "7": {
+              "cycles": 80,
+              "cleared_scaled": 5439
+            },
+            "8": {
+              "cycles": 75,
+              "cleared_scaled": 5480
+            },
+            "9": {
+              "cycles": 86,
+              "cleared_scaled": 6264
+            },
+            "10": {
+              "cycles": 74,
+              "cleared_scaled": 6380
+            },
+            "11": {
+              "cycles": 76,
+              "cleared_scaled": 5522
+            },
+            "12": {
+              "cycles": 81,
+              "cleared_scaled": 6192
+            },
+            "13": {
+              "cycles": 68,
+              "cleared_scaled": 5239
+            },
+            "14": {
+              "cycles": 71,
+              "cleared_scaled": 5082
+            },
+            "15": {
+              "cycles": 75,
+              "cleared_scaled": 5760
+            },
+            "16": {
+              "cycles": 74,
+              "cleared_scaled": 5152
+            },
+            "17": {
+              "cycles": 76,
+              "cleared_scaled": 5984
+            },
+            "18": {
+              "cycles": 45,
+              "cleared_scaled": 4320
+            },
+            "19": {
+              "cycles": 61,
+              "cleared_scaled": 4883
+            },
+            "20": {
+              "cycles": 57,
+              "cleared_scaled": 4660
+            },
+            "21": {
+              "cycles": 51,
+              "cleared_scaled": 3192
+            },
+            "22": {
+              "cycles": 53,
+              "cleared_scaled": 4488
+            },
+            "23": {
+              "cycles": 48,
+              "cleared_scaled": 4140
+            },
+            "24": {
+              "cycles": 46,
+              "cleared_scaled": 3168
+            },
+            "25": {
+              "cycles": 39,
+              "cleared_scaled": 3575
+            },
+            "26": {
+              "cycles": 38,
+              "cleared_scaled": 3120
+            },
+            "27": {
+              "cycles": 25,
+              "cleared_scaled": 2025
+            },
+            "28": {
+              "cycles": 17,
+              "cleared_scaled": 1260
+            },
+            "29": {
+              "cycles": 17,
+              "cleared_scaled": 1595
+            },
+            "30": {
+              "cycles": 24,
+              "cleared_scaled": 2310
+            },
+            "31": {
+              "cycles": 22,
+              "cleared_scaled": 1488
+            },
+            "32": {
+              "cycles": 13,
+              "cleared_scaled": 1184
+            },
+            "33": {
+              "cycles": 24,
+              "cleared_scaled": 2706
+            },
+            "34": {
+              "cycles": 15,
+              "cleared_scaled": 1632
+            },
+            "35": {
+              "cycles": 6,
+              "cleared_scaled": 490
+            },
+            "36": {
+              "cycles": 7,
+              "cleared_scaled": 540
+            },
+            "37": {
+              "cycles": 8,
+              "cleared_scaled": 925
+            },
+            "38": {
+              "cycles": 8,
+              "cleared_scaled": 456
+            },
+            "39": {
+              "cycles": 7,
+              "cleared_scaled": 507
+            },
+            "40": {
+              "cycles": 4,
+              "cleared_scaled": 200
+            },
+            "41": {
+              "cycles": 3,
+              "cleared_scaled": 246
+            },
+            "42": {
+              "cycles": 3,
+              "cleared_scaled": 168
+            },
+            "43": {
+              "cycles": 2,
+              "cleared_scaled": 215
+            },
+            "44": {
+              "cycles": 2,
+              "cleared_scaled": 88
+            },
+            "45": {
+              "cycles": 1,
+              "cleared_scaled": 45
+            },
+            "47": {
+              "cycles": 2,
+              "cleared_scaled": 188
+            },
+            "50": {
+              "cycles": 3,
+              "cleared_scaled": 150
+            },
+            "51": {
+              "cycles": 1,
+              "cleared_scaled": 102
+            },
+            "52": {
+              "cycles": 1,
+              "cleared_scaled": 52
+            },
+            "53": {
+              "cycles": 1,
+              "cleared_scaled": 212
+            },
+            "59": {
+              "cycles": 1,
+              "cleared_scaled": 59
+            },
+            "60": {
+              "cycles": 1,
+              "cleared_scaled": 60
+            },
+            "62": {
+              "cycles": 1,
+              "cleared_scaled": 62
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.016507989958978755,
+            "5": 0.06734066001346967,
+            "10": 0.28486805853180674,
+            "20": 0.6889120186126247,
+            "50": 0.9958136900753076
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 264390845,
+          "mean_observed_outstanding_ticks": 1373.2163929487779,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 133391,
+          "cleared_percent": 69.28178919048064,
+          "cycles": 982,
+          "cycle_hops": 12626,
+          "max_cycle_length": 46,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 60,
+              "cleared_scaled": 3570
+            },
+            "4": {
+              "cycles": 58,
+              "cleared_scaled": 5256
+            },
+            "5": {
+              "cycles": 64,
+              "cleared_scaled": 5880
+            },
+            "6": {
+              "cycles": 66,
+              "cleared_scaled": 4698
+            },
+            "7": {
+              "cycles": 70,
+              "cleared_scaled": 6286
+            },
+            "8": {
+              "cycles": 54,
+              "cleared_scaled": 4584
+            },
+            "9": {
+              "cycles": 58,
+              "cleared_scaled": 4293
+            },
+            "10": {
+              "cycles": 46,
+              "cleared_scaled": 5470
+            },
+            "11": {
+              "cycles": 50,
+              "cleared_scaled": 6446
+            },
+            "12": {
+              "cycles": 40,
+              "cleared_scaled": 5568
+            },
+            "13": {
+              "cycles": 45,
+              "cleared_scaled": 5278
+            },
+            "14": {
+              "cycles": 38,
+              "cleared_scaled": 6020
+            },
+            "15": {
+              "cycles": 30,
+              "cleared_scaled": 4995
+            },
+            "16": {
+              "cycles": 28,
+              "cleared_scaled": 4576
+            },
+            "17": {
+              "cycles": 35,
+              "cleared_scaled": 5270
+            },
+            "18": {
+              "cycles": 32,
+              "cleared_scaled": 5040
+            },
+            "19": {
+              "cycles": 25,
+              "cleared_scaled": 3857
+            },
+            "20": {
+              "cycles": 21,
+              "cleared_scaled": 4720
+            },
+            "21": {
+              "cycles": 19,
+              "cleared_scaled": 4767
+            },
+            "22": {
+              "cycles": 17,
+              "cleared_scaled": 3058
+            },
+            "23": {
+              "cycles": 15,
+              "cleared_scaled": 3036
+            },
+            "24": {
+              "cycles": 15,
+              "cleared_scaled": 1968
+            },
+            "25": {
+              "cycles": 13,
+              "cleared_scaled": 4025
+            },
+            "26": {
+              "cycles": 8,
+              "cleared_scaled": 1716
+            },
+            "27": {
+              "cycles": 11,
+              "cleared_scaled": 1647
+            },
+            "28": {
+              "cycles": 9,
+              "cleared_scaled": 3080
+            },
+            "29": {
+              "cycles": 12,
+              "cleared_scaled": 1131
+            },
+            "30": {
+              "cycles": 5,
+              "cleared_scaled": 1680
+            },
+            "31": {
+              "cycles": 2,
+              "cleared_scaled": 248
+            },
+            "32": {
+              "cycles": 6,
+              "cleared_scaled": 800
+            },
+            "33": {
+              "cycles": 2,
+              "cleared_scaled": 99
+            },
+            "34": {
+              "cycles": 3,
+              "cleared_scaled": 3842
+            },
+            "35": {
+              "cycles": 1,
+              "cleared_scaled": 35
+            },
+            "36": {
+              "cycles": 2,
+              "cleared_scaled": 432
+            },
+            "37": {
+              "cycles": 2,
+              "cleared_scaled": 259
+            },
+            "38": {
+              "cycles": 4,
+              "cleared_scaled": 608
+            },
+            "39": {
+              "cycles": 2,
+              "cleared_scaled": 663
+            },
+            "40": {
+              "cycles": 3,
+              "cleared_scaled": 2920
+            },
+            "41": {
+              "cycles": 2,
+              "cleared_scaled": 328
+            },
+            "42": {
+              "cycles": 4,
+              "cleared_scaled": 1554
+            },
+            "43": {
+              "cycles": 1,
+              "cleared_scaled": 1849
+            },
+            "44": {
+              "cycles": 2,
+              "cleared_scaled": 616
+            },
+            "45": {
+              "cycles": 1,
+              "cleared_scaled": 855
+            },
+            "46": {
+              "cycles": 1,
+              "cleared_scaled": 368
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.026763424818765882,
+            "5": 0.11024731803494989,
+            "10": 0.3001476861257506,
+            "20": 0.6882548297861175,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 254846345,
+          "mean_observed_outstanding_ticks": 1323.643330528634,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 148140,
+          "cleared_percent": 76.94225435507495,
+          "cycles": 2000,
+          "cycle_hops": 36379,
+          "max_cycle_length": 53,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 35,
+              "cleared_scaled": 2184
+            },
+            "4": {
+              "cycles": 40,
+              "cleared_scaled": 2836
+            },
+            "5": {
+              "cycles": 39,
+              "cleared_scaled": 2120
+            },
+            "6": {
+              "cycles": 54,
+              "cleared_scaled": 3126
+            },
+            "7": {
+              "cycles": 61,
+              "cleared_scaled": 4305
+            },
+            "8": {
+              "cycles": 84,
+              "cleared_scaled": 6032
+            },
+            "9": {
+              "cycles": 58,
+              "cleared_scaled": 5112
+            },
+            "10": {
+              "cycles": 83,
+              "cleared_scaled": 5810
+            },
+            "11": {
+              "cycles": 91,
+              "cleared_scaled": 6655
+            },
+            "12": {
+              "cycles": 84,
+              "cleared_scaled": 6084
+            },
+            "13": {
+              "cycles": 86,
+              "cleared_scaled": 6071
+            },
+            "14": {
+              "cycles": 96,
+              "cleared_scaled": 6552
+            },
+            "15": {
+              "cycles": 86,
+              "cleared_scaled": 6465
+            },
+            "16": {
+              "cycles": 84,
+              "cleared_scaled": 7024
+            },
+            "17": {
+              "cycles": 82,
+              "cleared_scaled": 6885
+            },
+            "18": {
+              "cycles": 74,
+              "cleared_scaled": 5148
+            },
+            "19": {
+              "cycles": 78,
+              "cleared_scaled": 5700
+            },
+            "20": {
+              "cycles": 73,
+              "cleared_scaled": 5680
+            },
+            "21": {
+              "cycles": 63,
+              "cleared_scaled": 4851
+            },
+            "22": {
+              "cycles": 61,
+              "cleared_scaled": 4466
+            },
+            "23": {
+              "cycles": 51,
+              "cleared_scaled": 4531
+            },
+            "24": {
+              "cycles": 59,
+              "cleared_scaled": 4008
+            },
+            "25": {
+              "cycles": 50,
+              "cleared_scaled": 3275
+            },
+            "26": {
+              "cycles": 45,
+              "cleared_scaled": 2808
+            },
+            "27": {
+              "cycles": 53,
+              "cleared_scaled": 4536
+            },
+            "28": {
+              "cycles": 33,
+              "cleared_scaled": 2576
+            },
+            "29": {
+              "cycles": 35,
+              "cleared_scaled": 2436
+            },
+            "30": {
+              "cycles": 35,
+              "cleared_scaled": 2670
+            },
+            "31": {
+              "cycles": 36,
+              "cleared_scaled": 2666
+            },
+            "32": {
+              "cycles": 17,
+              "cleared_scaled": 1312
+            },
+            "33": {
+              "cycles": 25,
+              "cleared_scaled": 2376
+            },
+            "34": {
+              "cycles": 25,
+              "cleared_scaled": 2006
+            },
+            "35": {
+              "cycles": 18,
+              "cleared_scaled": 1400
+            },
+            "36": {
+              "cycles": 15,
+              "cleared_scaled": 1584
+            },
+            "37": {
+              "cycles": 20,
+              "cleared_scaled": 1480
+            },
+            "38": {
+              "cycles": 9,
+              "cleared_scaled": 608
+            },
+            "39": {
+              "cycles": 7,
+              "cleared_scaled": 429
+            },
+            "40": {
+              "cycles": 10,
+              "cleared_scaled": 760
+            },
+            "41": {
+              "cycles": 9,
+              "cleared_scaled": 656
+            },
+            "42": {
+              "cycles": 7,
+              "cleared_scaled": 462
+            },
+            "43": {
+              "cycles": 5,
+              "cleared_scaled": 559
+            },
+            "44": {
+              "cycles": 5,
+              "cleared_scaled": 440
+            },
+            "45": {
+              "cycles": 1,
+              "cleared_scaled": 45
+            },
+            "46": {
+              "cycles": 5,
+              "cleared_scaled": 322
+            },
+            "47": {
+              "cycles": 1,
+              "cleared_scaled": 47
+            },
+            "48": {
+              "cycles": 2,
+              "cleared_scaled": 192
+            },
+            "49": {
+              "cycles": 5,
+              "cleared_scaled": 392
+            },
+            "50": {
+              "cycles": 2,
+              "cleared_scaled": 200
+            },
+            "51": {
+              "cycles": 1,
+              "cleared_scaled": 153
+            },
+            "52": {
+              "cycles": 1,
+              "cleared_scaled": 52
+            },
+            "53": {
+              "cycles": 1,
+              "cleared_scaled": 53
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.014742810854597003,
+            "5": 0.048197650870797894,
+            "10": 0.2128054542999865,
+            "20": 0.6331105710814094,
+            "50": 0.9982584042122317
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 203224845,
+          "mean_observed_outstanding_ticks": 1055.5270497678332,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 131598,
+          "cleared_percent": 68.35052510205989,
+          "cycles": 2901,
+          "cycle_hops": 45154,
+          "max_cycle_length": 58,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 70,
+              "cleared_scaled": 2469
+            },
+            "4": {
+              "cycles": 97,
+              "cleared_scaled": 3556
+            },
+            "5": {
+              "cycles": 111,
+              "cleared_scaled": 3980
+            },
+            "6": {
+              "cycles": 108,
+              "cleared_scaled": 4152
+            },
+            "7": {
+              "cycles": 138,
+              "cleared_scaled": 4914
+            },
+            "8": {
+              "cycles": 136,
+              "cleared_scaled": 6384
+            },
+            "9": {
+              "cycles": 125,
+              "cleared_scaled": 6147
+            },
+            "10": {
+              "cycles": 126,
+              "cleared_scaled": 5800
+            },
+            "11": {
+              "cycles": 113,
+              "cleared_scaled": 5170
+            },
+            "12": {
+              "cycles": 155,
+              "cleared_scaled": 6996
+            },
+            "13": {
+              "cycles": 159,
+              "cleared_scaled": 6773
+            },
+            "14": {
+              "cycles": 136,
+              "cleared_scaled": 5726
+            },
+            "15": {
+              "cycles": 151,
+              "cleared_scaled": 6360
+            },
+            "16": {
+              "cycles": 139,
+              "cleared_scaled": 6384
+            },
+            "17": {
+              "cycles": 107,
+              "cleared_scaled": 4998
+            },
+            "18": {
+              "cycles": 118,
+              "cleared_scaled": 5706
+            },
+            "19": {
+              "cycles": 94,
+              "cleared_scaled": 4161
+            },
+            "20": {
+              "cycles": 92,
+              "cleared_scaled": 4320
+            },
+            "21": {
+              "cycles": 87,
+              "cleared_scaled": 4158
+            },
+            "22": {
+              "cycles": 79,
+              "cleared_scaled": 3806
+            },
+            "23": {
+              "cycles": 71,
+              "cleared_scaled": 3611
+            },
+            "24": {
+              "cycles": 63,
+              "cleared_scaled": 3624
+            },
+            "25": {
+              "cycles": 52,
+              "cleared_scaled": 2700
+            },
+            "26": {
+              "cycles": 50,
+              "cleared_scaled": 2470
+            },
+            "27": {
+              "cycles": 41,
+              "cleared_scaled": 2025
+            },
+            "28": {
+              "cycles": 41,
+              "cleared_scaled": 2128
+            },
+            "29": {
+              "cycles": 30,
+              "cleared_scaled": 1711
+            },
+            "30": {
+              "cycles": 38,
+              "cleared_scaled": 1920
+            },
+            "31": {
+              "cycles": 31,
+              "cleared_scaled": 1550
+            },
+            "32": {
+              "cycles": 30,
+              "cleared_scaled": 1440
+            },
+            "33": {
+              "cycles": 16,
+              "cleared_scaled": 891
+            },
+            "34": {
+              "cycles": 14,
+              "cleared_scaled": 782
+            },
+            "35": {
+              "cycles": 15,
+              "cleared_scaled": 770
+            },
+            "36": {
+              "cycles": 15,
+              "cleared_scaled": 900
+            },
+            "37": {
+              "cycles": 7,
+              "cleared_scaled": 444
+            },
+            "38": {
+              "cycles": 7,
+              "cleared_scaled": 304
+            },
+            "39": {
+              "cycles": 7,
+              "cleared_scaled": 468
+            },
+            "40": {
+              "cycles": 6,
+              "cleared_scaled": 320
+            },
+            "41": {
+              "cycles": 4,
+              "cleared_scaled": 205
+            },
+            "42": {
+              "cycles": 2,
+              "cleared_scaled": 126
+            },
+            "43": {
+              "cycles": 6,
+              "cleared_scaled": 301
+            },
+            "44": {
+              "cycles": 2,
+              "cleared_scaled": 88
+            },
+            "45": {
+              "cycles": 3,
+              "cleared_scaled": 180
+            },
+            "46": {
+              "cycles": 2,
+              "cleared_scaled": 322
+            },
+            "48": {
+              "cycles": 2,
+              "cleared_scaled": 96
+            },
+            "49": {
+              "cycles": 1,
+              "cleared_scaled": 49
+            },
+            "50": {
+              "cycles": 1,
+              "cleared_scaled": 50
+            },
+            "52": {
+              "cycles": 1,
+              "cleared_scaled": 52
+            },
+            "53": {
+              "cycles": 1,
+              "cleared_scaled": 53
+            },
+            "58": {
+              "cycles": 1,
+              "cleared_scaled": 58
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.018761683308256963,
+            "5": 0.07602699129166096,
+            "10": 0.28421404580616727,
+            "20": 0.7142661742579675,
+            "50": 0.9987613793522698
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 234726995,
+          "mean_observed_outstanding_ticks": 1219.1456833598222,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 133332,
+          "cleared_percent": 69.25114525226714,
+          "cycles": 2346,
+          "cycle_hops": 29243,
+          "max_cycle_length": 45,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 111,
+              "cleared_scaled": 4041
+            },
+            "4": {
+              "cycles": 122,
+              "cleared_scaled": 4272
+            },
+            "5": {
+              "cycles": 134,
+              "cleared_scaled": 5175
+            },
+            "6": {
+              "cycles": 144,
+              "cleared_scaled": 7914
+            },
+            "7": {
+              "cycles": 159,
+              "cleared_scaled": 7385
+            },
+            "8": {
+              "cycles": 160,
+              "cleared_scaled": 7248
+            },
+            "9": {
+              "cycles": 163,
+              "cleared_scaled": 8406
+            },
+            "10": {
+              "cycles": 147,
+              "cleared_scaled": 8420
+            },
+            "11": {
+              "cycles": 131,
+              "cleared_scaled": 7414
+            },
+            "12": {
+              "cycles": 124,
+              "cleared_scaled": 7632
+            },
+            "13": {
+              "cycles": 101,
+              "cleared_scaled": 5655
+            },
+            "14": {
+              "cycles": 101,
+              "cleared_scaled": 4914
+            },
+            "15": {
+              "cycles": 83,
+              "cleared_scaled": 5295
+            },
+            "16": {
+              "cycles": 75,
+              "cleared_scaled": 4768
+            },
+            "17": {
+              "cycles": 85,
+              "cleared_scaled": 6426
+            },
+            "18": {
+              "cycles": 60,
+              "cleared_scaled": 4122
+            },
+            "19": {
+              "cycles": 58,
+              "cleared_scaled": 3895
+            },
+            "20": {
+              "cycles": 47,
+              "cleared_scaled": 3640
+            },
+            "21": {
+              "cycles": 47,
+              "cleared_scaled": 2982
+            },
+            "22": {
+              "cycles": 38,
+              "cleared_scaled": 2046
+            },
+            "23": {
+              "cycles": 40,
+              "cleared_scaled": 2990
+            },
+            "24": {
+              "cycles": 35,
+              "cleared_scaled": 3408
+            },
+            "25": {
+              "cycles": 32,
+              "cleared_scaled": 3550
+            },
+            "26": {
+              "cycles": 27,
+              "cleared_scaled": 1768
+            },
+            "27": {
+              "cycles": 24,
+              "cleared_scaled": 1485
+            },
+            "28": {
+              "cycles": 14,
+              "cleared_scaled": 1232
+            },
+            "29": {
+              "cycles": 16,
+              "cleared_scaled": 1044
+            },
+            "30": {
+              "cycles": 13,
+              "cleared_scaled": 1230
+            },
+            "31": {
+              "cycles": 13,
+              "cleared_scaled": 1023
+            },
+            "32": {
+              "cycles": 6,
+              "cleared_scaled": 384
+            },
+            "33": {
+              "cycles": 3,
+              "cleared_scaled": 198
+            },
+            "34": {
+              "cycles": 9,
+              "cleared_scaled": 816
+            },
+            "35": {
+              "cycles": 7,
+              "cleared_scaled": 630
+            },
+            "36": {
+              "cycles": 4,
+              "cleared_scaled": 864
+            },
+            "37": {
+              "cycles": 2,
+              "cleared_scaled": 222
+            },
+            "38": {
+              "cycles": 2,
+              "cleared_scaled": 228
+            },
+            "39": {
+              "cycles": 1,
+              "cleared_scaled": 195
+            },
+            "40": {
+              "cycles": 3,
+              "cleared_scaled": 160
+            },
+            "41": {
+              "cycles": 1,
+              "cleared_scaled": 41
+            },
+            "42": {
+              "cycles": 2,
+              "cleared_scaled": 126
+            },
+            "43": {
+              "cycles": 1,
+              "cleared_scaled": 43
+            },
+            "45": {
+              "cycles": 1,
+              "cleared_scaled": 45
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.03030780307803078,
+            "5": 0.1011610116101161,
+            "10": 0.39646146461464615,
+            "20": 0.7996729967299673,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 228160395,
+          "mean_observed_outstanding_ticks": 1185.0394995169684,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 92624,
+          "cleared_percent": 48.107866662511555,
+          "cycles": 1158,
+          "cycle_hops": 10585,
+          "max_cycle_length": 41,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 120,
+              "cleared_scaled": 7260
+            },
+            "4": {
+              "cycles": 125,
+              "cleared_scaled": 7620
+            },
+            "5": {
+              "cycles": 143,
+              "cleared_scaled": 9595
+            },
+            "6": {
+              "cycles": 107,
+              "cleared_scaled": 7998
+            },
+            "7": {
+              "cycles": 66,
+              "cleared_scaled": 5166
+            },
+            "8": {
+              "cycles": 82,
+              "cleared_scaled": 7096
+            },
+            "9": {
+              "cycles": 83,
+              "cleared_scaled": 6246
+            },
+            "10": {
+              "cycles": 69,
+              "cleared_scaled": 5590
+            },
+            "11": {
+              "cycles": 62,
+              "cleared_scaled": 6237
+            },
+            "12": {
+              "cycles": 55,
+              "cleared_scaled": 4992
+            },
+            "13": {
+              "cycles": 36,
+              "cleared_scaled": 2522
+            },
+            "14": {
+              "cycles": 29,
+              "cleared_scaled": 2968
+            },
+            "15": {
+              "cycles": 33,
+              "cleared_scaled": 3360
+            },
+            "16": {
+              "cycles": 29,
+              "cleared_scaled": 2832
+            },
+            "17": {
+              "cycles": 18,
+              "cleared_scaled": 1768
+            },
+            "18": {
+              "cycles": 17,
+              "cleared_scaled": 2574
+            },
+            "19": {
+              "cycles": 8,
+              "cleared_scaled": 760
+            },
+            "20": {
+              "cycles": 17,
+              "cleared_scaled": 2080
+            },
+            "21": {
+              "cycles": 6,
+              "cleared_scaled": 273
+            },
+            "22": {
+              "cycles": 8,
+              "cleared_scaled": 682
+            },
+            "23": {
+              "cycles": 9,
+              "cleared_scaled": 1219
+            },
+            "24": {
+              "cycles": 5,
+              "cleared_scaled": 480
+            },
+            "25": {
+              "cycles": 5,
+              "cleared_scaled": 400
+            },
+            "26": {
+              "cycles": 6,
+              "cleared_scaled": 702
+            },
+            "27": {
+              "cycles": 5,
+              "cleared_scaled": 243
+            },
+            "28": {
+              "cycles": 2,
+              "cleared_scaled": 392
+            },
+            "29": {
+              "cycles": 2,
+              "cleared_scaled": 348
+            },
+            "30": {
+              "cycles": 2,
+              "cleared_scaled": 270
+            },
+            "33": {
+              "cycles": 3,
+              "cleared_scaled": 297
+            },
+            "34": {
+              "cycles": 3,
+              "cleared_scaled": 204
+            },
+            "36": {
+              "cycles": 1,
+              "cleared_scaled": 72
+            },
+            "37": {
+              "cycles": 1,
+              "cleared_scaled": 296
+            },
+            "41": {
+              "cycles": 1,
+              "cleared_scaled": 82
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.07838141302470202,
+            "5": 0.2642403696666091,
+            "10": 0.6107596303333909,
+            "20": 0.9356538262221454,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 446482779,
+          "mean_observed_outstanding_ticks": 2318.9814734021006,
+          "last_settlement_tick": 2426,
+          "residual_greedy_clearable": 37081,
+          "protocol": {
+            "added": 192534,
+            "events": 152103,
+            "searches": 2217,
+            "messages": 136174,
+            "messages_step": 52922,
+            "message_node_ids": 6555132,
+            "max_message_node_ids": 215,
+            "exhausted_searches": 40,
+            "proposals": 2177,
+            "messages_prepare": 17289,
+            "live_reservations": 0,
+            "max_reservations": 604,
+            "messages_commit": 10585,
+            "aborted": 1019,
+            "messages_abort": 5685,
+            "messages_finish": 49693,
+            "cycles": 1158,
+            "cleared": 92624
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2660,
+          "messages_per_cleared_unit": 1.4701805147693903,
+          "transaction_duration_mean": 73.35233160621762,
+          "transaction_duration_max": 308
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 55026,
+          "cleared_percent": 28.57988718875627,
+          "cycles": 238,
+          "cycle_hops": 2326,
+          "max_cycle_length": 34,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 13,
+              "cleared_scaled": 2202
+            },
+            "4": {
+              "cycles": 21,
+              "cleared_scaled": 3020
+            },
+            "5": {
+              "cycles": 27,
+              "cleared_scaled": 4240
+            },
+            "6": {
+              "cycles": 19,
+              "cleared_scaled": 3918
+            },
+            "7": {
+              "cycles": 16,
+              "cleared_scaled": 3661
+            },
+            "8": {
+              "cycles": 14,
+              "cleared_scaled": 4120
+            },
+            "9": {
+              "cycles": 24,
+              "cleared_scaled": 6894
+            },
+            "10": {
+              "cycles": 19,
+              "cleared_scaled": 5120
+            },
+            "11": {
+              "cycles": 11,
+              "cleared_scaled": 2519
+            },
+            "12": {
+              "cycles": 15,
+              "cleared_scaled": 3576
+            },
+            "13": {
+              "cycles": 12,
+              "cleared_scaled": 2496
+            },
+            "14": {
+              "cycles": 9,
+              "cleared_scaled": 2520
+            },
+            "15": {
+              "cycles": 9,
+              "cleared_scaled": 3210
+            },
+            "16": {
+              "cycles": 7,
+              "cleared_scaled": 1952
+            },
+            "17": {
+              "cycles": 1,
+              "cleared_scaled": 238
+            },
+            "18": {
+              "cycles": 4,
+              "cleared_scaled": 630
+            },
+            "19": {
+              "cycles": 3,
+              "cleared_scaled": 1178
+            },
+            "20": {
+              "cycles": 3,
+              "cleared_scaled": 940
+            },
+            "23": {
+              "cycles": 3,
+              "cleared_scaled": 253
+            },
+            "24": {
+              "cycles": 2,
+              "cleared_scaled": 384
+            },
+            "25": {
+              "cycles": 3,
+              "cleared_scaled": 1225
+            },
+            "28": {
+              "cycles": 1,
+              "cleared_scaled": 84
+            },
+            "34": {
+              "cycles": 2,
+              "cleared_scaled": 646
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.04001744629811362,
+            "5": 0.17195507578235744,
+            "10": 0.6028968124159488,
+            "20": 0.9528949950932286,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 557539763,
+          "mean_observed_outstanding_ticks": 2895.798991346983,
+          "last_settlement_tick": 2454,
+          "residual_greedy_clearable": 76116,
+          "protocol": {
+            "added": 192534,
+            "events": 150988,
+            "searches": 2322,
+            "messages": 135100,
+            "messages_step": 58468,
+            "message_node_ids": 6156974,
+            "max_message_node_ids": 203,
+            "exhausted_searches": 20,
+            "proposals": 2302,
+            "messages_prepare": 9609,
+            "live_reservations": 0,
+            "max_reservations": 279,
+            "aborted": 2064,
+            "messages_finish": 59478,
+            "messages_commit": 2326,
+            "messages_abort": 5219,
+            "cycles": 238,
+            "cleared": 55026
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2659,
+          "messages_per_cleared_unit": 2.4552029949478427,
+          "transaction_duration_mean": 77.6890756302521,
+          "transaction_duration_max": 258
+        }
+      }
+    },
+    {
+      "scenario": "community-burst",
+      "seed": 0,
+      "nodes": 300,
+      "additions": 21994,
+      "distinct_links": 8786,
+      "input_amount": 555679,
+      "last_addition_tick": 500,
+      "search_horizon": 2000,
+      "observation_horizon": 4000,
+      "stream_sha256": "6b2f2d5441eaea6818524c92d47b9eb3cab4c0915d1ef55b95bff3cdd052573a",
+      "max_message_delay": 7,
+      "retry_interval": 50,
+      "max_hops": 300,
+      "search_budget": 2400,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 444944,
+          "cleared_percent": 80.07212797316436,
+          "cycles": 6221,
+          "cycle_hops": 81507,
+          "max_cycle_length": 47,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 171,
+              "cleared_scaled": 11466
+            },
+            "4": {
+              "cycles": 269,
+              "cleared_scaled": 18468
+            },
+            "5": {
+              "cycles": 293,
+              "cleared_scaled": 19310
+            },
+            "6": {
+              "cycles": 397,
+              "cleared_scaled": 26304
+            },
+            "7": {
+              "cycles": 325,
+              "cleared_scaled": 22729
+            },
+            "8": {
+              "cycles": 374,
+              "cleared_scaled": 26240
+            },
+            "9": {
+              "cycles": 371,
+              "cleared_scaled": 27063
+            },
+            "10": {
+              "cycles": 344,
+              "cleared_scaled": 22610
+            },
+            "11": {
+              "cycles": 380,
+              "cleared_scaled": 28743
+            },
+            "12": {
+              "cycles": 332,
+              "cleared_scaled": 23868
+            },
+            "13": {
+              "cycles": 344,
+              "cleared_scaled": 25649
+            },
+            "14": {
+              "cycles": 322,
+              "cleared_scaled": 24304
+            },
+            "15": {
+              "cycles": 301,
+              "cleared_scaled": 22230
+            },
+            "16": {
+              "cycles": 274,
+              "cleared_scaled": 19408
+            },
+            "17": {
+              "cycles": 244,
+              "cleared_scaled": 18343
+            },
+            "18": {
+              "cycles": 204,
+              "cleared_scaled": 16218
+            },
+            "19": {
+              "cycles": 178,
+              "cleared_scaled": 12654
+            },
+            "20": {
+              "cycles": 196,
+              "cleared_scaled": 12900
+            },
+            "21": {
+              "cycles": 152,
+              "cleared_scaled": 9954
+            },
+            "22": {
+              "cycles": 110,
+              "cleared_scaled": 8668
+            },
+            "23": {
+              "cycles": 105,
+              "cleared_scaled": 7429
+            },
+            "24": {
+              "cycles": 86,
+              "cleared_scaled": 6120
+            },
+            "25": {
+              "cycles": 86,
+              "cleared_scaled": 6875
+            },
+            "26": {
+              "cycles": 79,
+              "cleared_scaled": 5850
+            },
+            "27": {
+              "cycles": 67,
+              "cleared_scaled": 5373
+            },
+            "28": {
+              "cycles": 48,
+              "cleared_scaled": 3388
+            },
+            "29": {
+              "cycles": 38,
+              "cleared_scaled": 2320
+            },
+            "30": {
+              "cycles": 31,
+              "cleared_scaled": 2730
+            },
+            "31": {
+              "cycles": 23,
+              "cleared_scaled": 1705
+            },
+            "32": {
+              "cycles": 20,
+              "cleared_scaled": 1664
+            },
+            "33": {
+              "cycles": 17,
+              "cleared_scaled": 1485
+            },
+            "34": {
+              "cycles": 10,
+              "cleared_scaled": 1054
+            },
+            "35": {
+              "cycles": 9,
+              "cleared_scaled": 595
+            },
+            "36": {
+              "cycles": 5,
+              "cleared_scaled": 360
+            },
+            "37": {
+              "cycles": 4,
+              "cleared_scaled": 222
+            },
+            "38": {
+              "cycles": 5,
+              "cleared_scaled": 266
+            },
+            "39": {
+              "cycles": 2,
+              "cleared_scaled": 117
+            },
+            "40": {
+              "cycles": 2,
+              "cleared_scaled": 80
+            },
+            "44": {
+              "cycles": 2,
+              "cleared_scaled": 88
+            },
+            "47": {
+              "cycles": 1,
+              "cleared_scaled": 94
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.025769535042612104,
+            "5": 0.11067460174763566,
+            "10": 0.3914874680858715,
+            "20": 0.8506845805314827,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 559099972,
+          "mean_observed_outstanding_ticks": 1006.156381651997,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 461348,
+          "cleared_percent": 83.02419202453216,
+          "cycles": 3355,
+          "cycle_hops": 41377,
+          "max_cycle_length": 54,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 288,
+              "cleared_scaled": 16260
+            },
+            "4": {
+              "cycles": 274,
+              "cleared_scaled": 18144
+            },
+            "5": {
+              "cycles": 248,
+              "cleared_scaled": 17470
+            },
+            "6": {
+              "cycles": 227,
+              "cleared_scaled": 17454
+            },
+            "7": {
+              "cycles": 213,
+              "cleared_scaled": 19222
+            },
+            "8": {
+              "cycles": 193,
+              "cleared_scaled": 20096
+            },
+            "9": {
+              "cycles": 190,
+              "cleared_scaled": 19323
+            },
+            "10": {
+              "cycles": 168,
+              "cleared_scaled": 23410
+            },
+            "11": {
+              "cycles": 133,
+              "cleared_scaled": 11660
+            },
+            "12": {
+              "cycles": 126,
+              "cleared_scaled": 13920
+            },
+            "13": {
+              "cycles": 116,
+              "cleared_scaled": 17589
+            },
+            "14": {
+              "cycles": 104,
+              "cleared_scaled": 9982
+            },
+            "15": {
+              "cycles": 105,
+              "cleared_scaled": 15165
+            },
+            "16": {
+              "cycles": 93,
+              "cleared_scaled": 13504
+            },
+            "17": {
+              "cycles": 100,
+              "cleared_scaled": 19958
+            },
+            "18": {
+              "cycles": 83,
+              "cleared_scaled": 15174
+            },
+            "19": {
+              "cycles": 58,
+              "cleared_scaled": 11514
+            },
+            "20": {
+              "cycles": 55,
+              "cleared_scaled": 13040
+            },
+            "21": {
+              "cycles": 67,
+              "cleared_scaled": 13503
+            },
+            "22": {
+              "cycles": 66,
+              "cleared_scaled": 15884
+            },
+            "23": {
+              "cycles": 48,
+              "cleared_scaled": 7383
+            },
+            "24": {
+              "cycles": 46,
+              "cleared_scaled": 7008
+            },
+            "25": {
+              "cycles": 58,
+              "cleared_scaled": 12150
+            },
+            "26": {
+              "cycles": 38,
+              "cleared_scaled": 12506
+            },
+            "27": {
+              "cycles": 35,
+              "cleared_scaled": 7263
+            },
+            "28": {
+              "cycles": 28,
+              "cleared_scaled": 8092
+            },
+            "29": {
+              "cycles": 23,
+              "cleared_scaled": 9135
+            },
+            "30": {
+              "cycles": 25,
+              "cleared_scaled": 9150
+            },
+            "31": {
+              "cycles": 15,
+              "cleared_scaled": 3596
+            },
+            "32": {
+              "cycles": 23,
+              "cleared_scaled": 3136
+            },
+            "33": {
+              "cycles": 18,
+              "cleared_scaled": 10230
+            },
+            "34": {
+              "cycles": 15,
+              "cleared_scaled": 5168
+            },
+            "35": {
+              "cycles": 13,
+              "cleared_scaled": 1785
+            },
+            "36": {
+              "cycles": 6,
+              "cleared_scaled": 504
+            },
+            "37": {
+              "cycles": 10,
+              "cleared_scaled": 5365
+            },
+            "38": {
+              "cycles": 6,
+              "cleared_scaled": 836
+            },
+            "39": {
+              "cycles": 6,
+              "cleared_scaled": 819
+            },
+            "40": {
+              "cycles": 5,
+              "cleared_scaled": 4360
+            },
+            "41": {
+              "cycles": 7,
+              "cleared_scaled": 8077
+            },
+            "42": {
+              "cycles": 4,
+              "cleared_scaled": 6132
+            },
+            "43": {
+              "cycles": 3,
+              "cleared_scaled": 2322
+            },
+            "44": {
+              "cycles": 4,
+              "cleared_scaled": 2376
+            },
+            "45": {
+              "cycles": 1,
+              "cleared_scaled": 90
+            },
+            "46": {
+              "cycles": 3,
+              "cleared_scaled": 4324
+            },
+            "47": {
+              "cycles": 4,
+              "cleared_scaled": 2209
+            },
+            "49": {
+              "cycles": 2,
+              "cleared_scaled": 4312
+            },
+            "50": {
+              "cycles": 1,
+              "cleared_scaled": 100
+            },
+            "54": {
+              "cycles": 1,
+              "cleared_scaled": 648
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.03524454424859325,
+            "5": 0.11244006693428822,
+            "10": 0.32812323885656813,
+            "20": 0.6348461465097931,
+            "50": 0.9985954203768088
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 501685972,
+          "mean_observed_outstanding_ticks": 902.8341398541244,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 489663,
+          "cleared_percent": 88.1197597893748,
+          "cycles": 6996,
+          "cycle_hops": 97120,
+          "max_cycle_length": 49,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 172,
+              "cleared_scaled": 10494
+            },
+            "4": {
+              "cycles": 345,
+              "cleared_scaled": 22724
+            },
+            "5": {
+              "cycles": 247,
+              "cleared_scaled": 15995
+            },
+            "6": {
+              "cycles": 377,
+              "cleared_scaled": 24198
+            },
+            "7": {
+              "cycles": 289,
+              "cleared_scaled": 18361
+            },
+            "8": {
+              "cycles": 452,
+              "cleared_scaled": 29816
+            },
+            "9": {
+              "cycles": 354,
+              "cleared_scaled": 23373
+            },
+            "10": {
+              "cycles": 424,
+              "cleared_scaled": 28420
+            },
+            "11": {
+              "cycles": 355,
+              "cleared_scaled": 25047
+            },
+            "12": {
+              "cycles": 402,
+              "cleared_scaled": 27120
+            },
+            "13": {
+              "cycles": 368,
+              "cleared_scaled": 26585
+            },
+            "14": {
+              "cycles": 348,
+              "cleared_scaled": 25466
+            },
+            "15": {
+              "cycles": 295,
+              "cleared_scaled": 22755
+            },
+            "16": {
+              "cycles": 312,
+              "cleared_scaled": 20176
+            },
+            "17": {
+              "cycles": 303,
+              "cleared_scaled": 21607
+            },
+            "18": {
+              "cycles": 259,
+              "cleared_scaled": 19440
+            },
+            "19": {
+              "cycles": 216,
+              "cleared_scaled": 16416
+            },
+            "20": {
+              "cycles": 212,
+              "cleared_scaled": 15600
+            },
+            "21": {
+              "cycles": 188,
+              "cleared_scaled": 12747
+            },
+            "22": {
+              "cycles": 157,
+              "cleared_scaled": 11858
+            },
+            "23": {
+              "cycles": 139,
+              "cleared_scaled": 10787
+            },
+            "24": {
+              "cycles": 145,
+              "cleared_scaled": 11280
+            },
+            "25": {
+              "cycles": 104,
+              "cleared_scaled": 7025
+            },
+            "26": {
+              "cycles": 85,
+              "cleared_scaled": 5486
+            },
+            "27": {
+              "cycles": 86,
+              "cleared_scaled": 6021
+            },
+            "28": {
+              "cycles": 69,
+              "cleared_scaled": 5684
+            },
+            "29": {
+              "cycles": 52,
+              "cleared_scaled": 5510
+            },
+            "30": {
+              "cycles": 44,
+              "cleared_scaled": 3720
+            },
+            "31": {
+              "cycles": 45,
+              "cleared_scaled": 3348
+            },
+            "32": {
+              "cycles": 33,
+              "cleared_scaled": 2720
+            },
+            "33": {
+              "cycles": 25,
+              "cleared_scaled": 2376
+            },
+            "34": {
+              "cycles": 21,
+              "cleared_scaled": 1496
+            },
+            "35": {
+              "cycles": 20,
+              "cleared_scaled": 1435
+            },
+            "36": {
+              "cycles": 15,
+              "cleared_scaled": 1368
+            },
+            "37": {
+              "cycles": 8,
+              "cleared_scaled": 518
+            },
+            "38": {
+              "cycles": 11,
+              "cleared_scaled": 1026
+            },
+            "39": {
+              "cycles": 5,
+              "cleared_scaled": 351
+            },
+            "40": {
+              "cycles": 2,
+              "cleared_scaled": 160
+            },
+            "41": {
+              "cycles": 5,
+              "cleared_scaled": 369
+            },
+            "42": {
+              "cycles": 3,
+              "cleared_scaled": 420
+            },
+            "43": {
+              "cycles": 1,
+              "cleared_scaled": 43
+            },
+            "44": {
+              "cycles": 1,
+              "cleared_scaled": 132
+            },
+            "46": {
+              "cycles": 1,
+              "cleared_scaled": 92
+            },
+            "49": {
+              "cycles": 1,
+              "cleared_scaled": 98
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.021431065855496534,
+            "5": 0.10050381588970374,
+            "10": 0.3540822974167948,
+            "20": 0.8038038406005763,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 402583472,
+          "mean_observed_outstanding_ticks": 724.4892680846316,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 451371,
+          "cleared_percent": 81.22873097597714,
+          "cycles": 10904,
+          "cycle_hops": 142236,
+          "max_cycle_length": 46,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 355,
+              "cleared_scaled": 12963
+            },
+            "4": {
+              "cycles": 495,
+              "cleared_scaled": 17576
+            },
+            "5": {
+              "cycles": 499,
+              "cleared_scaled": 18800
+            },
+            "6": {
+              "cycles": 546,
+              "cleared_scaled": 21618
+            },
+            "7": {
+              "cycles": 656,
+              "cleared_scaled": 23758
+            },
+            "8": {
+              "cycles": 664,
+              "cleared_scaled": 25400
+            },
+            "9": {
+              "cycles": 644,
+              "cleared_scaled": 23283
+            },
+            "10": {
+              "cycles": 669,
+              "cleared_scaled": 26030
+            },
+            "11": {
+              "cycles": 625,
+              "cleared_scaled": 25575
+            },
+            "12": {
+              "cycles": 623,
+              "cleared_scaled": 25308
+            },
+            "13": {
+              "cycles": 622,
+              "cleared_scaled": 26507
+            },
+            "14": {
+              "cycles": 533,
+              "cleared_scaled": 21518
+            },
+            "15": {
+              "cycles": 549,
+              "cleared_scaled": 23625
+            },
+            "16": {
+              "cycles": 436,
+              "cleared_scaled": 19936
+            },
+            "17": {
+              "cycles": 409,
+              "cleared_scaled": 16745
+            },
+            "18": {
+              "cycles": 381,
+              "cleared_scaled": 16164
+            },
+            "19": {
+              "cycles": 353,
+              "cleared_scaled": 16473
+            },
+            "20": {
+              "cycles": 276,
+              "cleared_scaled": 12400
+            },
+            "21": {
+              "cycles": 255,
+              "cleared_scaled": 11781
+            },
+            "22": {
+              "cycles": 210,
+              "cleared_scaled": 9988
+            },
+            "23": {
+              "cycles": 193,
+              "cleared_scaled": 9085
+            },
+            "24": {
+              "cycles": 157,
+              "cleared_scaled": 7056
+            },
+            "25": {
+              "cycles": 126,
+              "cleared_scaled": 6325
+            },
+            "26": {
+              "cycles": 131,
+              "cleared_scaled": 6656
+            },
+            "27": {
+              "cycles": 98,
+              "cleared_scaled": 5103
+            },
+            "28": {
+              "cycles": 88,
+              "cleared_scaled": 4256
+            },
+            "29": {
+              "cycles": 59,
+              "cleared_scaled": 3364
+            },
+            "30": {
+              "cycles": 51,
+              "cleared_scaled": 2580
+            },
+            "31": {
+              "cycles": 56,
+              "cleared_scaled": 2666
+            },
+            "32": {
+              "cycles": 39,
+              "cleared_scaled": 2624
+            },
+            "33": {
+              "cycles": 28,
+              "cleared_scaled": 1584
+            },
+            "34": {
+              "cycles": 18,
+              "cleared_scaled": 1224
+            },
+            "35": {
+              "cycles": 19,
+              "cleared_scaled": 1085
+            },
+            "36": {
+              "cycles": 10,
+              "cleared_scaled": 540
+            },
+            "37": {
+              "cycles": 8,
+              "cleared_scaled": 444
+            },
+            "38": {
+              "cycles": 3,
+              "cleared_scaled": 152
+            },
+            "39": {
+              "cycles": 3,
+              "cleared_scaled": 117
+            },
+            "40": {
+              "cycles": 3,
+              "cleared_scaled": 120
+            },
+            "41": {
+              "cycles": 4,
+              "cleared_scaled": 164
+            },
+            "42": {
+              "cycles": 2,
+              "cleared_scaled": 252
+            },
+            "43": {
+              "cycles": 3,
+              "cleared_scaled": 258
+            },
+            "44": {
+              "cycles": 3,
+              "cleared_scaled": 176
+            },
+            "46": {
+              "cycles": 2,
+              "cleared_scaled": 92
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.028719168931987213,
+            "5": 0.10930919354588575,
+            "10": 0.37536306054221474,
+            "20": 0.8278755170358751,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 415176222,
+          "mean_observed_outstanding_ticks": 747.1511826072247,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 461924,
+          "cleared_percent": 83.12784899195398,
+          "cycles": 7190,
+          "cycle_hops": 85100,
+          "max_cycle_length": 56,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 603,
+              "cleared_scaled": 20439
+            },
+            "4": {
+              "cycles": 598,
+              "cleared_scaled": 21696
+            },
+            "5": {
+              "cycles": 574,
+              "cleared_scaled": 21530
+            },
+            "6": {
+              "cycles": 523,
+              "cleared_scaled": 22158
+            },
+            "7": {
+              "cycles": 478,
+              "cleared_scaled": 22988
+            },
+            "8": {
+              "cycles": 410,
+              "cleared_scaled": 19392
+            },
+            "9": {
+              "cycles": 367,
+              "cleared_scaled": 18603
+            },
+            "10": {
+              "cycles": 387,
+              "cleared_scaled": 20310
+            },
+            "11": {
+              "cycles": 324,
+              "cleared_scaled": 18073
+            },
+            "12": {
+              "cycles": 242,
+              "cleared_scaled": 14316
+            },
+            "13": {
+              "cycles": 286,
+              "cleared_scaled": 20436
+            },
+            "14": {
+              "cycles": 280,
+              "cleared_scaled": 18900
+            },
+            "15": {
+              "cycles": 220,
+              "cleared_scaled": 16950
+            },
+            "16": {
+              "cycles": 205,
+              "cleared_scaled": 15744
+            },
+            "17": {
+              "cycles": 164,
+              "cleared_scaled": 15062
+            },
+            "18": {
+              "cycles": 195,
+              "cleared_scaled": 20394
+            },
+            "19": {
+              "cycles": 150,
+              "cleared_scaled": 13604
+            },
+            "20": {
+              "cycles": 119,
+              "cleared_scaled": 9940
+            },
+            "21": {
+              "cycles": 137,
+              "cleared_scaled": 14007
+            },
+            "22": {
+              "cycles": 98,
+              "cleared_scaled": 10978
+            },
+            "23": {
+              "cycles": 108,
+              "cleared_scaled": 10120
+            },
+            "24": {
+              "cycles": 99,
+              "cleared_scaled": 9048
+            },
+            "25": {
+              "cycles": 93,
+              "cleared_scaled": 10350
+            },
+            "26": {
+              "cycles": 71,
+              "cleared_scaled": 6292
+            },
+            "27": {
+              "cycles": 55,
+              "cleared_scaled": 7722
+            },
+            "28": {
+              "cycles": 63,
+              "cleared_scaled": 8708
+            },
+            "29": {
+              "cycles": 57,
+              "cleared_scaled": 7656
+            },
+            "30": {
+              "cycles": 34,
+              "cleared_scaled": 5400
+            },
+            "31": {
+              "cycles": 36,
+              "cleared_scaled": 2945
+            },
+            "32": {
+              "cycles": 38,
+              "cleared_scaled": 5952
+            },
+            "33": {
+              "cycles": 37,
+              "cleared_scaled": 4158
+            },
+            "34": {
+              "cycles": 25,
+              "cleared_scaled": 4760
+            },
+            "35": {
+              "cycles": 18,
+              "cleared_scaled": 1680
+            },
+            "36": {
+              "cycles": 21,
+              "cleared_scaled": 3024
+            },
+            "37": {
+              "cycles": 14,
+              "cleared_scaled": 3700
+            },
+            "38": {
+              "cycles": 12,
+              "cleared_scaled": 1444
+            },
+            "39": {
+              "cycles": 4,
+              "cleared_scaled": 819
+            },
+            "40": {
+              "cycles": 6,
+              "cleared_scaled": 1680
+            },
+            "41": {
+              "cycles": 12,
+              "cleared_scaled": 1353
+            },
+            "42": {
+              "cycles": 6,
+              "cleared_scaled": 2646
+            },
+            "43": {
+              "cycles": 4,
+              "cleared_scaled": 645
+            },
+            "44": {
+              "cycles": 2,
+              "cleared_scaled": 88
+            },
+            "45": {
+              "cycles": 2,
+              "cleared_scaled": 315
+            },
+            "46": {
+              "cycles": 1,
+              "cleared_scaled": 828
+            },
+            "47": {
+              "cycles": 4,
+              "cleared_scaled": 329
+            },
+            "48": {
+              "cycles": 2,
+              "cleared_scaled": 864
+            },
+            "49": {
+              "cycles": 2,
+              "cleared_scaled": 2009
+            },
+            "50": {
+              "cycles": 2,
+              "cleared_scaled": 100
+            },
+            "55": {
+              "cycles": 1,
+              "cleared_scaled": 1265
+            },
+            "56": {
+              "cycles": 1,
+              "cleared_scaled": 504
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.04424753855612611,
+            "5": 0.13782570292948623,
+            "10": 0.36178245772031764,
+            "20": 0.7155614343485075,
+            "50": 0.9961703656878621
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 375140672,
+          "mean_observed_outstanding_ticks": 675.1032016685892,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 186945,
+          "cleared_percent": 33.64262460881192,
+          "cycles": 1922,
+          "cycle_hops": 19259,
+          "max_cycle_length": 47,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 251,
+              "cleared_scaled": 17796
+            },
+            "4": {
+              "cycles": 188,
+              "cleared_scaled": 14848
+            },
+            "5": {
+              "cycles": 167,
+              "cleared_scaled": 14350
+            },
+            "6": {
+              "cycles": 140,
+              "cleared_scaled": 13416
+            },
+            "7": {
+              "cycles": 143,
+              "cleared_scaled": 13797
+            },
+            "8": {
+              "cycles": 124,
+              "cleared_scaled": 12048
+            },
+            "9": {
+              "cycles": 127,
+              "cleared_scaled": 11295
+            },
+            "10": {
+              "cycles": 108,
+              "cleared_scaled": 12750
+            },
+            "11": {
+              "cycles": 78,
+              "cleared_scaled": 9251
+            },
+            "12": {
+              "cycles": 75,
+              "cleared_scaled": 8004
+            },
+            "13": {
+              "cycles": 76,
+              "cleared_scaled": 8359
+            },
+            "14": {
+              "cycles": 58,
+              "cleared_scaled": 5446
+            },
+            "15": {
+              "cycles": 36,
+              "cleared_scaled": 3135
+            },
+            "16": {
+              "cycles": 41,
+              "cleared_scaled": 5552
+            },
+            "17": {
+              "cycles": 41,
+              "cleared_scaled": 4250
+            },
+            "18": {
+              "cycles": 32,
+              "cleared_scaled": 3150
+            },
+            "19": {
+              "cycles": 33,
+              "cleared_scaled": 3097
+            },
+            "20": {
+              "cycles": 28,
+              "cleared_scaled": 3440
+            },
+            "21": {
+              "cycles": 25,
+              "cleared_scaled": 2772
+            },
+            "22": {
+              "cycles": 20,
+              "cleared_scaled": 2684
+            },
+            "23": {
+              "cycles": 15,
+              "cleared_scaled": 1426
+            },
+            "24": {
+              "cycles": 21,
+              "cleared_scaled": 3528
+            },
+            "25": {
+              "cycles": 17,
+              "cleared_scaled": 2175
+            },
+            "26": {
+              "cycles": 9,
+              "cleared_scaled": 1014
+            },
+            "27": {
+              "cycles": 13,
+              "cleared_scaled": 2430
+            },
+            "28": {
+              "cycles": 9,
+              "cleared_scaled": 1344
+            },
+            "29": {
+              "cycles": 7,
+              "cleared_scaled": 783
+            },
+            "30": {
+              "cycles": 4,
+              "cleared_scaled": 870
+            },
+            "31": {
+              "cycles": 8,
+              "cleared_scaled": 961
+            },
+            "32": {
+              "cycles": 5,
+              "cleared_scaled": 384
+            },
+            "33": {
+              "cycles": 3,
+              "cleared_scaled": 198
+            },
+            "34": {
+              "cycles": 5,
+              "cleared_scaled": 442
+            },
+            "35": {
+              "cycles": 1,
+              "cleared_scaled": 105
+            },
+            "36": {
+              "cycles": 5,
+              "cleared_scaled": 324
+            },
+            "37": {
+              "cycles": 2,
+              "cleared_scaled": 111
+            },
+            "38": {
+              "cycles": 3,
+              "cleared_scaled": 228
+            },
+            "39": {
+              "cycles": 1,
+              "cleared_scaled": 39
+            },
+            "41": {
+              "cycles": 1,
+              "cleared_scaled": 779
+            },
+            "43": {
+              "cycles": 1,
+              "cleared_scaled": 129
+            },
+            "47": {
+              "cycles": 1,
+              "cleared_scaled": 235
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.09519377356976651,
+            "5": 0.2513787477600364,
+            "10": 0.5900131054588248,
+            "20": 0.8771777795608334,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 1572724265,
+          "mean_observed_outstanding_ticks": 2830.274789941675,
+          "last_settlement_tick": 2412,
+          "residual_greedy_clearable": 264555,
+          "protocol": {
+            "added": 555679,
+            "events": 169275,
+            "searches": 2268,
+            "messages": 138888,
+            "messages_step": 47030,
+            "message_node_ids": 6918935,
+            "max_message_node_ids": 213,
+            "proposals": 2268,
+            "messages_prepare": 22414,
+            "live_reservations": 0,
+            "max_reservations": 883,
+            "messages_commit": 19259,
+            "cycles": 1922,
+            "cleared": 186945,
+            "messages_finish": 47376,
+            "aborted": 346,
+            "messages_abort": 2809
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2592,
+          "messages_per_cleared_unit": 0.7429350878600658,
+          "transaction_duration_mean": 79.60301768990635,
+          "transaction_duration_max": 401
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 95499,
+          "cleared_percent": 17.18600127051769,
+          "cycles": 284,
+          "cycle_hops": 2317,
+          "max_cycle_length": 52,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 29,
+              "cleared_scaled": 6996
+            },
+            "4": {
+              "cycles": 37,
+              "cleared_scaled": 10472
+            },
+            "5": {
+              "cycles": 33,
+              "cleared_scaled": 9605
+            },
+            "6": {
+              "cycles": 25,
+              "cleared_scaled": 8088
+            },
+            "7": {
+              "cycles": 34,
+              "cleared_scaled": 12285
+            },
+            "8": {
+              "cycles": 24,
+              "cleared_scaled": 10048
+            },
+            "9": {
+              "cycles": 19,
+              "cleared_scaled": 7416
+            },
+            "10": {
+              "cycles": 15,
+              "cleared_scaled": 5500
+            },
+            "11": {
+              "cycles": 13,
+              "cleared_scaled": 4290
+            },
+            "12": {
+              "cycles": 11,
+              "cleared_scaled": 5712
+            },
+            "13": {
+              "cycles": 13,
+              "cleared_scaled": 3276
+            },
+            "14": {
+              "cycles": 7,
+              "cleared_scaled": 1274
+            },
+            "15": {
+              "cycles": 3,
+              "cleared_scaled": 1800
+            },
+            "16": {
+              "cycles": 6,
+              "cleared_scaled": 1232
+            },
+            "17": {
+              "cycles": 3,
+              "cleared_scaled": 2108
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 90
+            },
+            "19": {
+              "cycles": 3,
+              "cleared_scaled": 1140
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 280
+            },
+            "22": {
+              "cycles": 4,
+              "cleared_scaled": 1276
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 23
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 1704
+            },
+            "52": {
+              "cycles": 1,
+              "cleared_scaled": 884
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.07325731159488581,
+            "5": 0.28348987947517773,
+            "10": 0.7372852071749443,
+            "20": 0.9592980031204515,
+            "50": 0.9907433585691997
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 1843164314,
+          "mean_observed_outstanding_ticks": 3316.9587369686456,
+          "last_settlement_tick": 2582,
+          "residual_greedy_clearable": 352284,
+          "protocol": {
+            "added": 555679,
+            "events": 166343,
+            "searches": 2465,
+            "messages": 135950,
+            "messages_step": 58156,
+            "message_node_ids": 5973260,
+            "max_message_node_ids": 225,
+            "proposals": 2465,
+            "messages_prepare": 9819,
+            "live_reservations": 0,
+            "max_reservations": 248,
+            "aborted": 2181,
+            "messages_finish": 60337,
+            "messages_abort": 5321,
+            "messages_commit": 2317,
+            "cycles": 284,
+            "cleared": 95499
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2864,
+          "messages_per_cleared_unit": 1.4235751159698007,
+          "transaction_duration_mean": 65.5105633802817,
+          "transaction_duration_max": 436
+        }
+      }
+    }
+  ]
+}

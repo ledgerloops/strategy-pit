@@ -2,6 +2,10 @@
 
 This repository is an experimentation ground for LedgerLoops strategies.
 
+## Reproducible DFS and streaming experiments
+
+See [the research harness](experiments/README.md) for pinned Sarafu baseline reproduction, traversal-order experiments, a neighbor-message distributed DFS prototype, and synthetic simulations with continuously arriving links. Results and limitations are recorded alongside the code; the existing TypeScript implementation remains available below.
+
 ## Sarafu-Based Netting Challenge
 This challenge compares cycle detection algorithms in two categories: centralised and decentralised.
 

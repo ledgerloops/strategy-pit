@@ -1,0 +1,4447 @@
+{
+  "schema_version": 1,
+  "synthetic": true,
+  "complete": true,
+  "expected_cases": 6,
+  "ortools_version": "9.14.6206",
+  "python_version": "3.12.14",
+  "source_sha256": {
+    "simulate.py": "525f345566676b7900de126f6173864007b937c248a74a419acc146799f26a21",
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637"
+  },
+  "assumptions": [
+    "Reliable bounded-delay messages, no crashes or Byzantine behavior.",
+    "Neighbors communicate along either direction of an obligation link.",
+    "Amounts are synthetic integers; time is abstract ticks.",
+    "Hindsight references see the complete stream; online methods do not.",
+    "Acyclic residual means maximal cancellation, not globally maximum clearing.",
+    "Debt-area includes unpaid obligations through the observation horizon.",
+    "Periodic and distributed discovery stop at the search horizon; distributed in-flight work drains.",
+    "Message counts exclude payload sizes; search tokens disclose and carry discovered paths."
+  ],
+  "cases": [
+    {
+      "scenario": "sparse-steady",
+      "seed": 0,
+      "nodes": 72,
+      "additions": 607,
+      "distinct_links": 241,
+      "input_amount": 15477,
+      "last_addition_tick": 499,
+      "search_horizon": 1999,
+      "observation_horizon": 3999,
+      "stream_sha256": "e2bb4e348228d1292711f6deb9e583d33ef6bff8a3858498489f3836a2e38266",
+      "max_message_delay": 1,
+      "retry_interval": 50,
+      "max_hops": 72,
+      "search_budget": 576,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 5963,
+          "cleared_percent": 38.52813852813853,
+          "cycles": 64,
+          "cycle_hops": 525,
+          "max_cycle_length": 18,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 5,
+              "cleared_scaled": 204
+            },
+            "4": {
+              "cycles": 6,
+              "cleared_scaled": 444
+            },
+            "5": {
+              "cycles": 10,
+              "cleared_scaled": 820
+            },
+            "6": {
+              "cycles": 6,
+              "cleared_scaled": 636
+            },
+            "7": {
+              "cycles": 5,
+              "cleared_scaled": 763
+            },
+            "8": {
+              "cycles": 5,
+              "cleared_scaled": 312
+            },
+            "9": {
+              "cycles": 6,
+              "cleared_scaled": 477
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 560
+            },
+            "11": {
+              "cycles": 1,
+              "cleared_scaled": 33
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 348
+            },
+            "13": {
+              "cycles": 2,
+              "cleared_scaled": 182
+            },
+            "14": {
+              "cycles": 4,
+              "cleared_scaled": 462
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 300
+            },
+            "16": {
+              "cycles": 2,
+              "cleared_scaled": 224
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 198
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.03421096763374141,
+            "5": 0.2461848063055509,
+            "10": 0.7070266644306558,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 37357014,
+          "mean_observed_outstanding_ticks": 2413.7115720100796,
+          "last_settlement_tick": 499,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 5982,
+          "cleared_percent": 38.650901337468504,
+          "cycles": 50,
+          "cycle_hops": 382,
+          "max_cycle_length": 21,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 4,
+              "cleared_scaled": 459
+            },
+            "4": {
+              "cycles": 5,
+              "cleared_scaled": 160
+            },
+            "5": {
+              "cycles": 11,
+              "cleared_scaled": 830
+            },
+            "6": {
+              "cycles": 7,
+              "cleared_scaled": 1230
+            },
+            "7": {
+              "cycles": 3,
+              "cleared_scaled": 168
+            },
+            "8": {
+              "cycles": 5,
+              "cleared_scaled": 600
+            },
+            "9": {
+              "cycles": 1,
+              "cleared_scaled": 207
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 660
+            },
+            "11": {
+              "cycles": 2,
+              "cleared_scaled": 209
+            },
+            "12": {
+              "cycles": 2,
+              "cleared_scaled": 72
+            },
+            "14": {
+              "cycles": 1,
+              "cleared_scaled": 714
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 240
+            },
+            "17": {
+              "cycles": 1,
+              "cleared_scaled": 85
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 180
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 168
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.07673019057171515,
+            "5": 0.24222668004012035,
+            "10": 0.7211634904714143,
+            "20": 0.9719157472417251,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 37290514,
+          "mean_observed_outstanding_ticks": 2409.4148736835305,
+          "last_settlement_tick": 499,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 7143,
+          "cleared_percent": 46.15235510757899,
+          "cycles": 95,
+          "cycle_hops": 1062,
+          "max_cycle_length": 24,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 5,
+              "cleared_scaled": 249
+            },
+            "4": {
+              "cycles": 3,
+              "cleared_scaled": 352
+            },
+            "5": {
+              "cycles": 7,
+              "cleared_scaled": 405
+            },
+            "6": {
+              "cycles": 9,
+              "cleared_scaled": 678
+            },
+            "7": {
+              "cycles": 3,
+              "cleared_scaled": 371
+            },
+            "8": {
+              "cycles": 13,
+              "cleared_scaled": 1024
+            },
+            "9": {
+              "cycles": 3,
+              "cleared_scaled": 144
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 410
+            },
+            "11": {
+              "cycles": 6,
+              "cleared_scaled": 594
+            },
+            "12": {
+              "cycles": 7,
+              "cleared_scaled": 348
+            },
+            "13": {
+              "cycles": 7,
+              "cleared_scaled": 338
+            },
+            "14": {
+              "cycles": 1,
+              "cleared_scaled": 84
+            },
+            "15": {
+              "cycles": 4,
+              "cleared_scaled": 240
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 224
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 68
+            },
+            "18": {
+              "cycles": 6,
+              "cleared_scaled": 486
+            },
+            "19": {
+              "cycles": 3,
+              "cleared_scaled": 190
+            },
+            "20": {
+              "cycles": 3,
+              "cleared_scaled": 260
+            },
+            "21": {
+              "cycles": 3,
+              "cleared_scaled": 231
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 66
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 69
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 312
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.03485930281394372,
+            "5": 0.14083718325633487,
+            "10": 0.5086098278034439,
+            "20": 0.9050818983620328,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 33227014,
+          "mean_observed_outstanding_ticks": 2146.863991729663,
+          "last_settlement_tick": 499,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 5999,
+          "cleared_percent": 38.760741745816375,
+          "cycles": 111,
+          "cycle_hops": 834,
+          "max_cycle_length": 19,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 8,
+              "cleared_scaled": 384
+            },
+            "4": {
+              "cycles": 12,
+              "cleared_scaled": 568
+            },
+            "5": {
+              "cycles": 18,
+              "cleared_scaled": 1090
+            },
+            "6": {
+              "cycles": 14,
+              "cleared_scaled": 798
+            },
+            "7": {
+              "cycles": 9,
+              "cleared_scaled": 357
+            },
+            "8": {
+              "cycles": 17,
+              "cleared_scaled": 872
+            },
+            "9": {
+              "cycles": 8,
+              "cleared_scaled": 180
+            },
+            "10": {
+              "cycles": 6,
+              "cleared_scaled": 370
+            },
+            "11": {
+              "cycles": 5,
+              "cleared_scaled": 330
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 360
+            },
+            "13": {
+              "cycles": 1,
+              "cleared_scaled": 78
+            },
+            "14": {
+              "cycles": 3,
+              "cleared_scaled": 294
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 60
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 112
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 51
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 95
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.06401066844474079,
+            "5": 0.34039006501083513,
+            "10": 0.7699616602767128,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 36124063,
+          "mean_observed_outstanding_ticks": 2334.0481359436585,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 5910,
+          "cleared_percent": 38.185694902112814,
+          "cycles": 103,
+          "cycle_hops": 737,
+          "max_cycle_length": 16,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 9,
+              "cleared_scaled": 354
+            },
+            "4": {
+              "cycles": 10,
+              "cleared_scaled": 476
+            },
+            "5": {
+              "cycles": 18,
+              "cleared_scaled": 785
+            },
+            "6": {
+              "cycles": 19,
+              "cleared_scaled": 1590
+            },
+            "7": {
+              "cycles": 8,
+              "cleared_scaled": 294
+            },
+            "8": {
+              "cycles": 10,
+              "cleared_scaled": 488
+            },
+            "9": {
+              "cycles": 7,
+              "cleared_scaled": 288
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 170
+            },
+            "11": {
+              "cycles": 5,
+              "cleared_scaled": 407
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 240
+            },
+            "13": {
+              "cycles": 2,
+              "cleared_scaled": 247
+            },
+            "14": {
+              "cycles": 3,
+              "cleared_scaled": 266
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 225
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 80
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.05989847715736041,
+            "5": 0.2732656514382403,
+            "10": 0.7521150592216582,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 36399974,
+          "mean_observed_outstanding_ticks": 2351.8752988305228,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 5859,
+          "cleared_percent": 37.8561736770692,
+          "cycles": 105,
+          "cycle_hops": 637,
+          "max_cycle_length": 15,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 9,
+              "cleared_scaled": 501
+            },
+            "4": {
+              "cycles": 15,
+              "cleared_scaled": 708
+            },
+            "5": {
+              "cycles": 22,
+              "cleared_scaled": 870
+            },
+            "6": {
+              "cycles": 28,
+              "cleared_scaled": 2046
+            },
+            "7": {
+              "cycles": 11,
+              "cleared_scaled": 581
+            },
+            "8": {
+              "cycles": 5,
+              "cleared_scaled": 296
+            },
+            "9": {
+              "cycles": 5,
+              "cleared_scaled": 324
+            },
+            "10": {
+              "cycles": 6,
+              "cleared_scaled": 410
+            },
+            "11": {
+              "cycles": 1,
+              "cleared_scaled": 33
+            },
+            "12": {
+              "cycles": 2,
+              "cleared_scaled": 60
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 30
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.0855094726062468,
+            "5": 0.3548387096774194,
+            "10": 0.9790066564260113,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 36838350,
+          "mean_observed_outstanding_ticks": 2380.1996510951735,
+          "last_settlement_tick": 639,
+          "residual_greedy_clearable": 0,
+          "protocol": {
+            "added": 15477,
+            "events": 58957,
+            "searches": 1482,
+            "messages": 56342,
+            "messages_step": 50581,
+            "message_node_ids": 1405499,
+            "max_message_node_ids": 87,
+            "exhausted_searches": 1166,
+            "proposals": 316,
+            "messages_prepare": 1259,
+            "live_reservations": 0,
+            "max_reservations": 41,
+            "messages_commit": 637,
+            "cycles": 105,
+            "cleared": 5859,
+            "messages_finish": 3454,
+            "aborted": 211,
+            "messages_abort": 411
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2090,
+          "messages_per_cleared_unit": 9.6163167776071,
+          "transaction_duration_mean": 12.133333333333333,
+          "transaction_duration_max": 30
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 5900,
+          "cleared_percent": 38.1210828972023,
+          "cycles": 86,
+          "cycle_hops": 599,
+          "max_cycle_length": 19,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 6,
+              "cleared_scaled": 378
+            },
+            "4": {
+              "cycles": 9,
+              "cleared_scaled": 364
+            },
+            "5": {
+              "cycles": 17,
+              "cleared_scaled": 990
+            },
+            "6": {
+              "cycles": 16,
+              "cleared_scaled": 1116
+            },
+            "7": {
+              "cycles": 12,
+              "cleared_scaled": 931
+            },
+            "8": {
+              "cycles": 3,
+              "cleared_scaled": 144
+            },
+            "9": {
+              "cycles": 6,
+              "cleared_scaled": 279
+            },
+            "10": {
+              "cycles": 3,
+              "cleared_scaled": 380
+            },
+            "11": {
+              "cycles": 8,
+              "cleared_scaled": 638
+            },
+            "12": {
+              "cycles": 1,
+              "cleared_scaled": 144
+            },
+            "13": {
+              "cycles": 3,
+              "cleared_scaled": 260
+            },
+            "14": {
+              "cycles": 1,
+              "cleared_scaled": 238
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 38
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.0640677966101695,
+            "5": 0.2935593220338983,
+            "10": 0.7766101694915254,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 36869286,
+          "mean_observed_outstanding_ticks": 2382.198488079085,
+          "last_settlement_tick": 788,
+          "residual_greedy_clearable": 0,
+          "protocol": {
+            "added": 15477,
+            "events": 59822,
+            "searches": 1474,
+            "messages": 57220,
+            "messages_step": 50723,
+            "message_node_ids": 1538506,
+            "max_message_node_ids": 115,
+            "exhausted_searches": 1134,
+            "proposals": 340,
+            "messages_prepare": 1334,
+            "live_reservations": 0,
+            "max_reservations": 42,
+            "messages_commit": 599,
+            "cycles": 86,
+            "cleared": 5900,
+            "messages_finish": 4083,
+            "aborted": 254,
+            "messages_abort": 481
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2093,
+          "messages_per_cleared_unit": 9.698305084745762,
+          "transaction_duration_mean": 13.930232558139535,
+          "transaction_duration_max": 38
+        }
+      }
+    },
+    {
+      "scenario": "sparse-steady",
+      "seed": 0,
+      "nodes": 72,
+      "additions": 607,
+      "distinct_links": 241,
+      "input_amount": 15477,
+      "last_addition_tick": 499,
+      "search_horizon": 1999,
+      "observation_horizon": 3999,
+      "stream_sha256": "e2bb4e348228d1292711f6deb9e583d33ef6bff8a3858498489f3836a2e38266",
+      "max_message_delay": 15,
+      "retry_interval": 50,
+      "max_hops": 72,
+      "search_budget": 576,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 5963,
+          "cleared_percent": 38.52813852813853,
+          "cycles": 64,
+          "cycle_hops": 525,
+          "max_cycle_length": 18,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 5,
+              "cleared_scaled": 204
+            },
+            "4": {
+              "cycles": 6,
+              "cleared_scaled": 444
+            },
+            "5": {
+              "cycles": 10,
+              "cleared_scaled": 820
+            },
+            "6": {
+              "cycles": 6,
+              "cleared_scaled": 636
+            },
+            "7": {
+              "cycles": 5,
+              "cleared_scaled": 763
+            },
+            "8": {
+              "cycles": 5,
+              "cleared_scaled": 312
+            },
+            "9": {
+              "cycles": 6,
+              "cleared_scaled": 477
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 560
+            },
+            "11": {
+              "cycles": 1,
+              "cleared_scaled": 33
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 348
+            },
+            "13": {
+              "cycles": 2,
+              "cleared_scaled": 182
+            },
+            "14": {
+              "cycles": 4,
+              "cleared_scaled": 462
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 300
+            },
+            "16": {
+              "cycles": 2,
+              "cleared_scaled": 224
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 198
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.03421096763374141,
+            "5": 0.2461848063055509,
+            "10": 0.7070266644306558,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 37357014,
+          "mean_observed_outstanding_ticks": 2413.7115720100796,
+          "last_settlement_tick": 499,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 5982,
+          "cleared_percent": 38.650901337468504,
+          "cycles": 50,
+          "cycle_hops": 382,
+          "max_cycle_length": 21,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 4,
+              "cleared_scaled": 459
+            },
+            "4": {
+              "cycles": 5,
+              "cleared_scaled": 160
+            },
+            "5": {
+              "cycles": 11,
+              "cleared_scaled": 830
+            },
+            "6": {
+              "cycles": 7,
+              "cleared_scaled": 1230
+            },
+            "7": {
+              "cycles": 3,
+              "cleared_scaled": 168
+            },
+            "8": {
+              "cycles": 5,
+              "cleared_scaled": 600
+            },
+            "9": {
+              "cycles": 1,
+              "cleared_scaled": 207
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 660
+            },
+            "11": {
+              "cycles": 2,
+              "cleared_scaled": 209
+            },
+            "12": {
+              "cycles": 2,
+              "cleared_scaled": 72
+            },
+            "14": {
+              "cycles": 1,
+              "cleared_scaled": 714
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 240
+            },
+            "17": {
+              "cycles": 1,
+              "cleared_scaled": 85
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 180
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 168
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.07673019057171515,
+            "5": 0.24222668004012035,
+            "10": 0.7211634904714143,
+            "20": 0.9719157472417251,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 37290514,
+          "mean_observed_outstanding_ticks": 2409.4148736835305,
+          "last_settlement_tick": 499,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 7143,
+          "cleared_percent": 46.15235510757899,
+          "cycles": 95,
+          "cycle_hops": 1062,
+          "max_cycle_length": 24,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 5,
+              "cleared_scaled": 249
+            },
+            "4": {
+              "cycles": 3,
+              "cleared_scaled": 352
+            },
+            "5": {
+              "cycles": 7,
+              "cleared_scaled": 405
+            },
+            "6": {
+              "cycles": 9,
+              "cleared_scaled": 678
+            },
+            "7": {
+              "cycles": 3,
+              "cleared_scaled": 371
+            },
+            "8": {
+              "cycles": 13,
+              "cleared_scaled": 1024
+            },
+            "9": {
+              "cycles": 3,
+              "cleared_scaled": 144
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 410
+            },
+            "11": {
+              "cycles": 6,
+              "cleared_scaled": 594
+            },
+            "12": {
+              "cycles": 7,
+              "cleared_scaled": 348
+            },
+            "13": {
+              "cycles": 7,
+              "cleared_scaled": 338
+            },
+            "14": {
+              "cycles": 1,
+              "cleared_scaled": 84
+            },
+            "15": {
+              "cycles": 4,
+              "cleared_scaled": 240
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 224
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 68
+            },
+            "18": {
+              "cycles": 6,
+              "cleared_scaled": 486
+            },
+            "19": {
+              "cycles": 3,
+              "cleared_scaled": 190
+            },
+            "20": {
+              "cycles": 3,
+              "cleared_scaled": 260
+            },
+            "21": {
+              "cycles": 3,
+              "cleared_scaled": 231
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 66
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 69
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 312
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.03485930281394372,
+            "5": 0.14083718325633487,
+            "10": 0.5086098278034439,
+            "20": 0.9050818983620328,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 33227014,
+          "mean_observed_outstanding_ticks": 2146.863991729663,
+          "last_settlement_tick": 499,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 5999,
+          "cleared_percent": 38.760741745816375,
+          "cycles": 111,
+          "cycle_hops": 834,
+          "max_cycle_length": 19,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 8,
+              "cleared_scaled": 384
+            },
+            "4": {
+              "cycles": 12,
+              "cleared_scaled": 568
+            },
+            "5": {
+              "cycles": 18,
+              "cleared_scaled": 1090
+            },
+            "6": {
+              "cycles": 14,
+              "cleared_scaled": 798
+            },
+            "7": {
+              "cycles": 9,
+              "cleared_scaled": 357
+            },
+            "8": {
+              "cycles": 17,
+              "cleared_scaled": 872
+            },
+            "9": {
+              "cycles": 8,
+              "cleared_scaled": 180
+            },
+            "10": {
+              "cycles": 6,
+              "cleared_scaled": 370
+            },
+            "11": {
+              "cycles": 5,
+              "cleared_scaled": 330
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 360
+            },
+            "13": {
+              "cycles": 1,
+              "cleared_scaled": 78
+            },
+            "14": {
+              "cycles": 3,
+              "cleared_scaled": 294
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 60
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 112
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 51
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 95
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.06401066844474079,
+            "5": 0.34039006501083513,
+            "10": 0.7699616602767128,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 36124063,
+          "mean_observed_outstanding_ticks": 2334.0481359436585,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 5910,
+          "cleared_percent": 38.185694902112814,
+          "cycles": 103,
+          "cycle_hops": 737,
+          "max_cycle_length": 16,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 9,
+              "cleared_scaled": 354
+            },
+            "4": {
+              "cycles": 10,
+              "cleared_scaled": 476
+            },
+            "5": {
+              "cycles": 18,
+              "cleared_scaled": 785
+            },
+            "6": {
+              "cycles": 19,
+              "cleared_scaled": 1590
+            },
+            "7": {
+              "cycles": 8,
+              "cleared_scaled": 294
+            },
+            "8": {
+              "cycles": 10,
+              "cleared_scaled": 488
+            },
+            "9": {
+              "cycles": 7,
+              "cleared_scaled": 288
+            },
+            "10": {
+              "cycles": 5,
+              "cleared_scaled": 170
+            },
+            "11": {
+              "cycles": 5,
+              "cleared_scaled": 407
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 240
+            },
+            "13": {
+              "cycles": 2,
+              "cleared_scaled": 247
+            },
+            "14": {
+              "cycles": 3,
+              "cleared_scaled": 266
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 225
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 80
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.05989847715736041,
+            "5": 0.2732656514382403,
+            "10": 0.7521150592216582,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 36399974,
+          "mean_observed_outstanding_ticks": 2351.8752988305228,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 5662,
+          "cleared_percent": 36.5833171803321,
+          "cycles": 87,
+          "cycle_hops": 545,
+          "max_cycle_length": 18,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 10,
+              "cleared_scaled": 498
+            },
+            "4": {
+              "cycles": 13,
+              "cleared_scaled": 852
+            },
+            "5": {
+              "cycles": 16,
+              "cleared_scaled": 1190
+            },
+            "6": {
+              "cycles": 16,
+              "cleared_scaled": 1002
+            },
+            "7": {
+              "cycles": 10,
+              "cleared_scaled": 595
+            },
+            "8": {
+              "cycles": 6,
+              "cleared_scaled": 312
+            },
+            "9": {
+              "cycles": 8,
+              "cleared_scaled": 675
+            },
+            "10": {
+              "cycles": 2,
+              "cleared_scaled": 40
+            },
+            "11": {
+              "cycles": 3,
+              "cleared_scaled": 319
+            },
+            "13": {
+              "cycles": 2,
+              "cleared_scaled": 143
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 36
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.08795478629459555,
+            "5": 0.4486047333097845,
+            "10": 0.9120452137054045,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 39992234,
+          "mean_observed_outstanding_ticks": 2583.97841959036,
+          "last_settlement_tick": 2390,
+          "residual_greedy_clearable": 0,
+          "protocol": {
+            "added": 15477,
+            "events": 18012,
+            "searches": 536,
+            "messages": 15412,
+            "messages_step": 10390,
+            "message_node_ids": 393287,
+            "max_message_node_ids": 76,
+            "exhausted_searches": 267,
+            "proposals": 269,
+            "messages_prepare": 1076,
+            "live_reservations": 0,
+            "max_reservations": 71,
+            "messages_commit": 545,
+            "aborted": 182,
+            "messages_abort": 349,
+            "messages_finish": 3052,
+            "cycles": 87,
+            "cleared": 5662
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2766,
+          "messages_per_cleared_unit": 2.7220063581773224,
+          "transaction_duration_mean": 101.35632183908046,
+          "transaction_duration_max": 286
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 5271,
+          "cleared_percent": 34.05698778833107,
+          "cycles": 62,
+          "cycle_hops": 406,
+          "max_cycle_length": 15,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 7,
+              "cleared_scaled": 480
+            },
+            "4": {
+              "cycles": 7,
+              "cleared_scaled": 568
+            },
+            "5": {
+              "cycles": 11,
+              "cleared_scaled": 615
+            },
+            "6": {
+              "cycles": 12,
+              "cleared_scaled": 1230
+            },
+            "7": {
+              "cycles": 4,
+              "cleared_scaled": 476
+            },
+            "8": {
+              "cycles": 8,
+              "cleared_scaled": 496
+            },
+            "9": {
+              "cycles": 6,
+              "cleared_scaled": 738
+            },
+            "10": {
+              "cycles": 2,
+              "cleared_scaled": 270
+            },
+            "12": {
+              "cycles": 3,
+              "cleared_scaled": 228
+            },
+            "13": {
+              "cycles": 1,
+              "cleared_scaled": 65
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 105
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.09106431417188389,
+            "5": 0.3154999051413394,
+            "10": 0.9244925061658129,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 42648290,
+          "mean_observed_outstanding_ticks": 2755.5915229049556,
+          "last_settlement_tick": 2695,
+          "residual_greedy_clearable": 510,
+          "protocol": {
+            "added": 15477,
+            "events": 17963,
+            "searches": 497,
+            "messages": 15364,
+            "messages_step": 8895,
+            "message_node_ids": 411232,
+            "max_message_node_ids": 87,
+            "exhausted_searches": 160,
+            "proposals": 337,
+            "messages_prepare": 1191,
+            "live_reservations": 0,
+            "max_reservations": 65,
+            "messages_commit": 406,
+            "aborted": 275,
+            "messages_finish": 4362,
+            "messages_abort": 510,
+            "cycles": 62,
+            "cleared": 5271
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2776,
+          "messages_per_cleared_unit": 2.9148169227850502,
+          "transaction_duration_mean": 103.95161290322581,
+          "transaction_duration_max": 260
+        }
+      }
+    },
+    {
+      "scenario": "dense-steady",
+      "seed": 0,
+      "nodes": 72,
+      "additions": 3274,
+      "distinct_links": 1299,
+      "input_amount": 82683,
+      "last_addition_tick": 500,
+      "search_horizon": 2000,
+      "observation_horizon": 4000,
+      "stream_sha256": "7f22fb010924dfeade964930df6e2078f5e71496a266fc27b6f5592744a38933",
+      "max_message_delay": 1,
+      "retry_interval": 50,
+      "max_hops": 72,
+      "search_budget": 576,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 63184,
+          "cleared_percent": 76.41715951283818,
+          "cycles": 877,
+          "cycle_hops": 7762,
+          "max_cycle_length": 30,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 53,
+              "cleared_scaled": 3627
+            },
+            "4": {
+              "cycles": 84,
+              "cleared_scaled": 5628
+            },
+            "5": {
+              "cycles": 83,
+              "cleared_scaled": 5925
+            },
+            "6": {
+              "cycles": 93,
+              "cleared_scaled": 6678
+            },
+            "7": {
+              "cycles": 97,
+              "cleared_scaled": 6839
+            },
+            "8": {
+              "cycles": 67,
+              "cleared_scaled": 5632
+            },
+            "9": {
+              "cycles": 62,
+              "cleared_scaled": 4140
+            },
+            "10": {
+              "cycles": 68,
+              "cleared_scaled": 4560
+            },
+            "11": {
+              "cycles": 52,
+              "cleared_scaled": 3674
+            },
+            "12": {
+              "cycles": 49,
+              "cleared_scaled": 3744
+            },
+            "13": {
+              "cycles": 35,
+              "cleared_scaled": 2392
+            },
+            "14": {
+              "cycles": 24,
+              "cleared_scaled": 1946
+            },
+            "15": {
+              "cycles": 36,
+              "cleared_scaled": 2505
+            },
+            "16": {
+              "cycles": 21,
+              "cleared_scaled": 1520
+            },
+            "17": {
+              "cycles": 11,
+              "cleared_scaled": 867
+            },
+            "18": {
+              "cycles": 17,
+              "cleared_scaled": 1638
+            },
+            "19": {
+              "cycles": 8,
+              "cleared_scaled": 532
+            },
+            "20": {
+              "cycles": 5,
+              "cleared_scaled": 300
+            },
+            "21": {
+              "cycles": 7,
+              "cleared_scaled": 777
+            },
+            "22": {
+              "cycles": 1,
+              "cleared_scaled": 22
+            },
+            "23": {
+              "cycles": 2,
+              "cleared_scaled": 184
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 24
+            },
+            "30": {
+              "cycles": 1,
+              "cleared_scaled": 30
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.057403773107115724,
+            "5": 0.2402506963788301,
+            "10": 0.6810110154469486,
+            "20": 0.9835876171182578,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 88913966,
+          "mean_observed_outstanding_ticks": 1075.3596990917117,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 64126,
+          "cleared_percent": 77.55645054001427,
+          "cycles": 489,
+          "cycle_hops": 3607,
+          "max_cycle_length": 27,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 72,
+              "cleared_scaled": 4653
+            },
+            "4": {
+              "cycles": 68,
+              "cleared_scaled": 4896
+            },
+            "5": {
+              "cycles": 61,
+              "cleared_scaled": 4365
+            },
+            "6": {
+              "cycles": 47,
+              "cleared_scaled": 5790
+            },
+            "7": {
+              "cycles": 43,
+              "cleared_scaled": 4984
+            },
+            "8": {
+              "cycles": 39,
+              "cleared_scaled": 4224
+            },
+            "9": {
+              "cycles": 43,
+              "cleared_scaled": 6975
+            },
+            "10": {
+              "cycles": 26,
+              "cleared_scaled": 3980
+            },
+            "11": {
+              "cycles": 18,
+              "cleared_scaled": 3289
+            },
+            "12": {
+              "cycles": 17,
+              "cleared_scaled": 3204
+            },
+            "13": {
+              "cycles": 13,
+              "cleared_scaled": 3653
+            },
+            "14": {
+              "cycles": 10,
+              "cleared_scaled": 5250
+            },
+            "15": {
+              "cycles": 12,
+              "cleared_scaled": 1845
+            },
+            "16": {
+              "cycles": 6,
+              "cleared_scaled": 1472
+            },
+            "17": {
+              "cycles": 1,
+              "cleared_scaled": 1190
+            },
+            "18": {
+              "cycles": 6,
+              "cleared_scaled": 1656
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 171
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 160
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 1176
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 69
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 480
+            },
+            "26": {
+              "cycles": 1,
+              "cleared_scaled": 104
+            },
+            "27": {
+              "cycles": 1,
+              "cleared_scaled": 540
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.07256027196456975,
+            "5": 0.21697907245111187,
+            "10": 0.6216979072451112,
+            "20": 0.9630571063219288,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 85616966,
+          "mean_observed_outstanding_ticks": 1035.4845131405489,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 68836,
+          "cleared_percent": 83.25290567589468,
+          "cycles": 995,
+          "cycle_hops": 9281,
+          "max_cycle_length": 26,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 60,
+              "cleared_scaled": 3888
+            },
+            "4": {
+              "cycles": 94,
+              "cleared_scaled": 6500
+            },
+            "5": {
+              "cycles": 72,
+              "cleared_scaled": 5360
+            },
+            "6": {
+              "cycles": 86,
+              "cleared_scaled": 5376
+            },
+            "7": {
+              "cycles": 89,
+              "cleared_scaled": 6223
+            },
+            "8": {
+              "cycles": 83,
+              "cleared_scaled": 5968
+            },
+            "9": {
+              "cycles": 74,
+              "cleared_scaled": 4923
+            },
+            "10": {
+              "cycles": 79,
+              "cleared_scaled": 5780
+            },
+            "11": {
+              "cycles": 74,
+              "cleared_scaled": 5027
+            },
+            "12": {
+              "cycles": 58,
+              "cleared_scaled": 3408
+            },
+            "13": {
+              "cycles": 48,
+              "cleared_scaled": 3666
+            },
+            "14": {
+              "cycles": 48,
+              "cleared_scaled": 3122
+            },
+            "15": {
+              "cycles": 28,
+              "cleared_scaled": 2025
+            },
+            "16": {
+              "cycles": 27,
+              "cleared_scaled": 1856
+            },
+            "17": {
+              "cycles": 24,
+              "cleared_scaled": 1989
+            },
+            "18": {
+              "cycles": 9,
+              "cleared_scaled": 666
+            },
+            "19": {
+              "cycles": 11,
+              "cleared_scaled": 874
+            },
+            "20": {
+              "cycles": 13,
+              "cleared_scaled": 1060
+            },
+            "21": {
+              "cycles": 5,
+              "cleared_scaled": 294
+            },
+            "22": {
+              "cycles": 4,
+              "cleared_scaled": 308
+            },
+            "23": {
+              "cycles": 4,
+              "cleared_scaled": 276
+            },
+            "24": {
+              "cycles": 2,
+              "cleared_scaled": 96
+            },
+            "25": {
+              "cycles": 2,
+              "cleared_scaled": 125
+            },
+            "26": {
+              "cycles": 1,
+              "cleared_scaled": 26
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.056482073333720725,
+            "5": 0.22877564065314662,
+            "10": 0.6394619094659771,
+            "20": 0.9836568074844558,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 69131966,
+          "mean_observed_outstanding_ticks": 836.1085833847345,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 63897,
+          "cleared_percent": 77.27948913319545,
+          "cycles": 1722,
+          "cycle_hops": 14052,
+          "max_cycle_length": 22,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 155,
+              "cleared_scaled": 5466
+            },
+            "4": {
+              "cycles": 154,
+              "cleared_scaled": 5188
+            },
+            "5": {
+              "cycles": 188,
+              "cleared_scaled": 6680
+            },
+            "6": {
+              "cycles": 182,
+              "cleared_scaled": 6426
+            },
+            "7": {
+              "cycles": 165,
+              "cleared_scaled": 5180
+            },
+            "8": {
+              "cycles": 176,
+              "cleared_scaled": 7048
+            },
+            "9": {
+              "cycles": 145,
+              "cleared_scaled": 4896
+            },
+            "10": {
+              "cycles": 133,
+              "cleared_scaled": 5240
+            },
+            "11": {
+              "cycles": 103,
+              "cleared_scaled": 4235
+            },
+            "12": {
+              "cycles": 80,
+              "cleared_scaled": 3408
+            },
+            "13": {
+              "cycles": 57,
+              "cleared_scaled": 2288
+            },
+            "14": {
+              "cycles": 55,
+              "cleared_scaled": 2156
+            },
+            "15": {
+              "cycles": 45,
+              "cleared_scaled": 1800
+            },
+            "16": {
+              "cycles": 35,
+              "cleared_scaled": 1584
+            },
+            "17": {
+              "cycles": 18,
+              "cleared_scaled": 731
+            },
+            "18": {
+              "cycles": 12,
+              "cleared_scaled": 684
+            },
+            "19": {
+              "cycles": 7,
+              "cleared_scaled": 228
+            },
+            "20": {
+              "cycles": 7,
+              "cleared_scaled": 420
+            },
+            "21": {
+              "cycles": 3,
+              "cleared_scaled": 63
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 176
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.08554392224987088,
+            "5": 0.27128034180008453,
+            "10": 0.7218492260982519,
+            "20": 0.9962596053022834,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 72995716,
+          "mean_observed_outstanding_ticks": 882.8382617950485,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 64428,
+          "cleared_percent": 77.92170095424694,
+          "cycles": 1266,
+          "cycle_hops": 8653,
+          "max_cycle_length": 20,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 176,
+              "cleared_scaled": 5655
+            },
+            "4": {
+              "cycles": 199,
+              "cleared_scaled": 7412
+            },
+            "5": {
+              "cycles": 171,
+              "cleared_scaled": 6670
+            },
+            "6": {
+              "cycles": 150,
+              "cleared_scaled": 6696
+            },
+            "7": {
+              "cycles": 138,
+              "cleared_scaled": 5915
+            },
+            "8": {
+              "cycles": 105,
+              "cleared_scaled": 6552
+            },
+            "9": {
+              "cycles": 88,
+              "cleared_scaled": 5913
+            },
+            "10": {
+              "cycles": 53,
+              "cleared_scaled": 3250
+            },
+            "11": {
+              "cycles": 50,
+              "cleared_scaled": 3157
+            },
+            "12": {
+              "cycles": 41,
+              "cleared_scaled": 4104
+            },
+            "13": {
+              "cycles": 27,
+              "cleared_scaled": 2366
+            },
+            "14": {
+              "cycles": 27,
+              "cleared_scaled": 2548
+            },
+            "15": {
+              "cycles": 14,
+              "cleared_scaled": 1425
+            },
+            "16": {
+              "cycles": 8,
+              "cleared_scaled": 832
+            },
+            "17": {
+              "cycles": 11,
+              "cleared_scaled": 1394
+            },
+            "18": {
+              "cycles": 3,
+              "cleared_scaled": 288
+            },
+            "19": {
+              "cycles": 4,
+              "cleared_scaled": 171
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 80
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.08777239709443099,
+            "5": 0.30634196312162415,
+            "10": 0.745995529893835,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 70966116,
+          "mean_observed_outstanding_ticks": 858.2914988570807,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 62685,
+          "cleared_percent": 75.81364972243388,
+          "cycles": 1017,
+          "cycle_hops": 6863,
+          "max_cycle_length": 26,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 162,
+              "cleared_scaled": 8151
+            },
+            "4": {
+              "cycles": 168,
+              "cleared_scaled": 9260
+            },
+            "5": {
+              "cycles": 158,
+              "cleared_scaled": 9220
+            },
+            "6": {
+              "cycles": 109,
+              "cleared_scaled": 6576
+            },
+            "7": {
+              "cycles": 95,
+              "cleared_scaled": 5586
+            },
+            "8": {
+              "cycles": 80,
+              "cleared_scaled": 5032
+            },
+            "9": {
+              "cycles": 44,
+              "cleared_scaled": 3465
+            },
+            "10": {
+              "cycles": 51,
+              "cleared_scaled": 4050
+            },
+            "11": {
+              "cycles": 42,
+              "cleared_scaled": 3597
+            },
+            "12": {
+              "cycles": 20,
+              "cleared_scaled": 1344
+            },
+            "13": {
+              "cycles": 20,
+              "cleared_scaled": 1625
+            },
+            "14": {
+              "cycles": 20,
+              "cleared_scaled": 1596
+            },
+            "15": {
+              "cycles": 19,
+              "cleared_scaled": 1245
+            },
+            "16": {
+              "cycles": 5,
+              "cleared_scaled": 256
+            },
+            "17": {
+              "cycles": 12,
+              "cleared_scaled": 935
+            },
+            "18": {
+              "cycles": 5,
+              "cleared_scaled": 324
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 19
+            },
+            "20": {
+              "cycles": 4,
+              "cleared_scaled": 280
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 72
+            },
+            "26": {
+              "cycles": 1,
+              "cleared_scaled": 52
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.13003110792055517,
+            "5": 0.42483847810480974,
+            "10": 0.8190157134880753,
+            "20": 0.9980218553082875,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 102203841,
+          "mean_observed_outstanding_ticks": 1236.0925583251696,
+          "last_settlement_tick": 1954,
+          "residual_greedy_clearable": 0,
+          "protocol": {
+            "added": 82683,
+            "events": 72570,
+            "searches": 1674,
+            "messages": 67272,
+            "messages_step": 37368,
+            "message_node_ids": 1898050,
+            "max_message_node_ids": 124,
+            "exhausted_searches": 378,
+            "proposals": 1296,
+            "messages_prepare": 8232,
+            "live_reservations": 0,
+            "max_reservations": 114,
+            "messages_commit": 6863,
+            "cycles": 1017,
+            "cleared": 62685,
+            "messages_finish": 13719,
+            "aborted": 279,
+            "messages_abort": 1090
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2102,
+          "messages_per_cleared_unit": 1.0731754008135919,
+          "transaction_duration_mean": 13.496558505408062,
+          "transaction_duration_max": 52
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 59255,
+          "cleared_percent": 71.66527581244029,
+          "cycles": 483,
+          "cycle_hops": 3043,
+          "max_cycle_length": 19,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 76,
+              "cleared_scaled": 6540
+            },
+            "4": {
+              "cycles": 73,
+              "cleared_scaled": 6848
+            },
+            "5": {
+              "cycles": 67,
+              "cleared_scaled": 7520
+            },
+            "6": {
+              "cycles": 71,
+              "cleared_scaled": 8826
+            },
+            "7": {
+              "cycles": 56,
+              "cleared_scaled": 8295
+            },
+            "8": {
+              "cycles": 43,
+              "cleared_scaled": 5528
+            },
+            "9": {
+              "cycles": 38,
+              "cleared_scaled": 5526
+            },
+            "10": {
+              "cycles": 20,
+              "cleared_scaled": 2480
+            },
+            "11": {
+              "cycles": 15,
+              "cleared_scaled": 2893
+            },
+            "12": {
+              "cycles": 9,
+              "cleared_scaled": 2028
+            },
+            "13": {
+              "cycles": 6,
+              "cleared_scaled": 1118
+            },
+            "14": {
+              "cycles": 6,
+              "cleared_scaled": 1106
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 300
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 247
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.11037043287486288,
+            "5": 0.3528478609400051,
+            "10": 0.8701881697747026,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 117409534,
+          "mean_observed_outstanding_ticks": 1419.996057230628,
+          "last_settlement_tick": 2050,
+          "residual_greedy_clearable": 5309,
+          "protocol": {
+            "added": 82683,
+            "events": 72197,
+            "searches": 1779,
+            "messages": 66912,
+            "messages_step": 33497,
+            "message_node_ids": 1735324,
+            "max_message_node_ids": 96,
+            "exhausted_searches": 83,
+            "proposals": 1696,
+            "messages_prepare": 6851,
+            "live_reservations": 0,
+            "max_reservations": 60,
+            "aborted": 1213,
+            "messages_abort": 2595,
+            "messages_finish": 20926,
+            "messages_commit": 3043,
+            "cycles": 483,
+            "cleared": 59255
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2098,
+          "messages_per_cleared_unit": 1.1292211627710742,
+          "transaction_duration_mean": 12.600414078674948,
+          "transaction_duration_max": 38
+        }
+      }
+    },
+    {
+      "scenario": "dense-steady",
+      "seed": 0,
+      "nodes": 72,
+      "additions": 3274,
+      "distinct_links": 1299,
+      "input_amount": 82683,
+      "last_addition_tick": 500,
+      "search_horizon": 2000,
+      "observation_horizon": 4000,
+      "stream_sha256": "7f22fb010924dfeade964930df6e2078f5e71496a266fc27b6f5592744a38933",
+      "max_message_delay": 15,
+      "retry_interval": 50,
+      "max_hops": 72,
+      "search_budget": 576,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 63184,
+          "cleared_percent": 76.41715951283818,
+          "cycles": 877,
+          "cycle_hops": 7762,
+          "max_cycle_length": 30,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 53,
+              "cleared_scaled": 3627
+            },
+            "4": {
+              "cycles": 84,
+              "cleared_scaled": 5628
+            },
+            "5": {
+              "cycles": 83,
+              "cleared_scaled": 5925
+            },
+            "6": {
+              "cycles": 93,
+              "cleared_scaled": 6678
+            },
+            "7": {
+              "cycles": 97,
+              "cleared_scaled": 6839
+            },
+            "8": {
+              "cycles": 67,
+              "cleared_scaled": 5632
+            },
+            "9": {
+              "cycles": 62,
+              "cleared_scaled": 4140
+            },
+            "10": {
+              "cycles": 68,
+              "cleared_scaled": 4560
+            },
+            "11": {
+              "cycles": 52,
+              "cleared_scaled": 3674
+            },
+            "12": {
+              "cycles": 49,
+              "cleared_scaled": 3744
+            },
+            "13": {
+              "cycles": 35,
+              "cleared_scaled": 2392
+            },
+            "14": {
+              "cycles": 24,
+              "cleared_scaled": 1946
+            },
+            "15": {
+              "cycles": 36,
+              "cleared_scaled": 2505
+            },
+            "16": {
+              "cycles": 21,
+              "cleared_scaled": 1520
+            },
+            "17": {
+              "cycles": 11,
+              "cleared_scaled": 867
+            },
+            "18": {
+              "cycles": 17,
+              "cleared_scaled": 1638
+            },
+            "19": {
+              "cycles": 8,
+              "cleared_scaled": 532
+            },
+            "20": {
+              "cycles": 5,
+              "cleared_scaled": 300
+            },
+            "21": {
+              "cycles": 7,
+              "cleared_scaled": 777
+            },
+            "22": {
+              "cycles": 1,
+              "cleared_scaled": 22
+            },
+            "23": {
+              "cycles": 2,
+              "cleared_scaled": 184
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 24
+            },
+            "30": {
+              "cycles": 1,
+              "cleared_scaled": 30
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.057403773107115724,
+            "5": 0.2402506963788301,
+            "10": 0.6810110154469486,
+            "20": 0.9835876171182578,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 88913966,
+          "mean_observed_outstanding_ticks": 1075.3596990917117,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 64126,
+          "cleared_percent": 77.55645054001427,
+          "cycles": 489,
+          "cycle_hops": 3607,
+          "max_cycle_length": 27,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 72,
+              "cleared_scaled": 4653
+            },
+            "4": {
+              "cycles": 68,
+              "cleared_scaled": 4896
+            },
+            "5": {
+              "cycles": 61,
+              "cleared_scaled": 4365
+            },
+            "6": {
+              "cycles": 47,
+              "cleared_scaled": 5790
+            },
+            "7": {
+              "cycles": 43,
+              "cleared_scaled": 4984
+            },
+            "8": {
+              "cycles": 39,
+              "cleared_scaled": 4224
+            },
+            "9": {
+              "cycles": 43,
+              "cleared_scaled": 6975
+            },
+            "10": {
+              "cycles": 26,
+              "cleared_scaled": 3980
+            },
+            "11": {
+              "cycles": 18,
+              "cleared_scaled": 3289
+            },
+            "12": {
+              "cycles": 17,
+              "cleared_scaled": 3204
+            },
+            "13": {
+              "cycles": 13,
+              "cleared_scaled": 3653
+            },
+            "14": {
+              "cycles": 10,
+              "cleared_scaled": 5250
+            },
+            "15": {
+              "cycles": 12,
+              "cleared_scaled": 1845
+            },
+            "16": {
+              "cycles": 6,
+              "cleared_scaled": 1472
+            },
+            "17": {
+              "cycles": 1,
+              "cleared_scaled": 1190
+            },
+            "18": {
+              "cycles": 6,
+              "cleared_scaled": 1656
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 171
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 160
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 1176
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 69
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 480
+            },
+            "26": {
+              "cycles": 1,
+              "cleared_scaled": 104
+            },
+            "27": {
+              "cycles": 1,
+              "cleared_scaled": 540
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.07256027196456975,
+            "5": 0.21697907245111187,
+            "10": 0.6216979072451112,
+            "20": 0.9630571063219288,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 85616966,
+          "mean_observed_outstanding_ticks": 1035.4845131405489,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 68836,
+          "cleared_percent": 83.25290567589468,
+          "cycles": 995,
+          "cycle_hops": 9281,
+          "max_cycle_length": 26,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 60,
+              "cleared_scaled": 3888
+            },
+            "4": {
+              "cycles": 94,
+              "cleared_scaled": 6500
+            },
+            "5": {
+              "cycles": 72,
+              "cleared_scaled": 5360
+            },
+            "6": {
+              "cycles": 86,
+              "cleared_scaled": 5376
+            },
+            "7": {
+              "cycles": 89,
+              "cleared_scaled": 6223
+            },
+            "8": {
+              "cycles": 83,
+              "cleared_scaled": 5968
+            },
+            "9": {
+              "cycles": 74,
+              "cleared_scaled": 4923
+            },
+            "10": {
+              "cycles": 79,
+              "cleared_scaled": 5780
+            },
+            "11": {
+              "cycles": 74,
+              "cleared_scaled": 5027
+            },
+            "12": {
+              "cycles": 58,
+              "cleared_scaled": 3408
+            },
+            "13": {
+              "cycles": 48,
+              "cleared_scaled": 3666
+            },
+            "14": {
+              "cycles": 48,
+              "cleared_scaled": 3122
+            },
+            "15": {
+              "cycles": 28,
+              "cleared_scaled": 2025
+            },
+            "16": {
+              "cycles": 27,
+              "cleared_scaled": 1856
+            },
+            "17": {
+              "cycles": 24,
+              "cleared_scaled": 1989
+            },
+            "18": {
+              "cycles": 9,
+              "cleared_scaled": 666
+            },
+            "19": {
+              "cycles": 11,
+              "cleared_scaled": 874
+            },
+            "20": {
+              "cycles": 13,
+              "cleared_scaled": 1060
+            },
+            "21": {
+              "cycles": 5,
+              "cleared_scaled": 294
+            },
+            "22": {
+              "cycles": 4,
+              "cleared_scaled": 308
+            },
+            "23": {
+              "cycles": 4,
+              "cleared_scaled": 276
+            },
+            "24": {
+              "cycles": 2,
+              "cleared_scaled": 96
+            },
+            "25": {
+              "cycles": 2,
+              "cleared_scaled": 125
+            },
+            "26": {
+              "cycles": 1,
+              "cleared_scaled": 26
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.056482073333720725,
+            "5": 0.22877564065314662,
+            "10": 0.6394619094659771,
+            "20": 0.9836568074844558,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 69131966,
+          "mean_observed_outstanding_ticks": 836.1085833847345,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 63897,
+          "cleared_percent": 77.27948913319545,
+          "cycles": 1722,
+          "cycle_hops": 14052,
+          "max_cycle_length": 22,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 155,
+              "cleared_scaled": 5466
+            },
+            "4": {
+              "cycles": 154,
+              "cleared_scaled": 5188
+            },
+            "5": {
+              "cycles": 188,
+              "cleared_scaled": 6680
+            },
+            "6": {
+              "cycles": 182,
+              "cleared_scaled": 6426
+            },
+            "7": {
+              "cycles": 165,
+              "cleared_scaled": 5180
+            },
+            "8": {
+              "cycles": 176,
+              "cleared_scaled": 7048
+            },
+            "9": {
+              "cycles": 145,
+              "cleared_scaled": 4896
+            },
+            "10": {
+              "cycles": 133,
+              "cleared_scaled": 5240
+            },
+            "11": {
+              "cycles": 103,
+              "cleared_scaled": 4235
+            },
+            "12": {
+              "cycles": 80,
+              "cleared_scaled": 3408
+            },
+            "13": {
+              "cycles": 57,
+              "cleared_scaled": 2288
+            },
+            "14": {
+              "cycles": 55,
+              "cleared_scaled": 2156
+            },
+            "15": {
+              "cycles": 45,
+              "cleared_scaled": 1800
+            },
+            "16": {
+              "cycles": 35,
+              "cleared_scaled": 1584
+            },
+            "17": {
+              "cycles": 18,
+              "cleared_scaled": 731
+            },
+            "18": {
+              "cycles": 12,
+              "cleared_scaled": 684
+            },
+            "19": {
+              "cycles": 7,
+              "cleared_scaled": 228
+            },
+            "20": {
+              "cycles": 7,
+              "cleared_scaled": 420
+            },
+            "21": {
+              "cycles": 3,
+              "cleared_scaled": 63
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 176
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.08554392224987088,
+            "5": 0.27128034180008453,
+            "10": 0.7218492260982519,
+            "20": 0.9962596053022834,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 72995716,
+          "mean_observed_outstanding_ticks": 882.8382617950485,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 64428,
+          "cleared_percent": 77.92170095424694,
+          "cycles": 1266,
+          "cycle_hops": 8653,
+          "max_cycle_length": 20,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 176,
+              "cleared_scaled": 5655
+            },
+            "4": {
+              "cycles": 199,
+              "cleared_scaled": 7412
+            },
+            "5": {
+              "cycles": 171,
+              "cleared_scaled": 6670
+            },
+            "6": {
+              "cycles": 150,
+              "cleared_scaled": 6696
+            },
+            "7": {
+              "cycles": 138,
+              "cleared_scaled": 5915
+            },
+            "8": {
+              "cycles": 105,
+              "cleared_scaled": 6552
+            },
+            "9": {
+              "cycles": 88,
+              "cleared_scaled": 5913
+            },
+            "10": {
+              "cycles": 53,
+              "cleared_scaled": 3250
+            },
+            "11": {
+              "cycles": 50,
+              "cleared_scaled": 3157
+            },
+            "12": {
+              "cycles": 41,
+              "cleared_scaled": 4104
+            },
+            "13": {
+              "cycles": 27,
+              "cleared_scaled": 2366
+            },
+            "14": {
+              "cycles": 27,
+              "cleared_scaled": 2548
+            },
+            "15": {
+              "cycles": 14,
+              "cleared_scaled": 1425
+            },
+            "16": {
+              "cycles": 8,
+              "cleared_scaled": 832
+            },
+            "17": {
+              "cycles": 11,
+              "cleared_scaled": 1394
+            },
+            "18": {
+              "cycles": 3,
+              "cleared_scaled": 288
+            },
+            "19": {
+              "cycles": 4,
+              "cleared_scaled": 171
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 80
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.08777239709443099,
+            "5": 0.30634196312162415,
+            "10": 0.745995529893835,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 70966116,
+          "mean_observed_outstanding_ticks": 858.2914988570807,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 33627,
+          "cleared_percent": 40.66978701788759,
+          "cycles": 389,
+          "cycle_hops": 2663,
+          "max_cycle_length": 21,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 71,
+              "cleared_scaled": 5583
+            },
+            "4": {
+              "cycles": 57,
+              "cleared_scaled": 4300
+            },
+            "5": {
+              "cycles": 50,
+              "cleared_scaled": 3770
+            },
+            "6": {
+              "cycles": 38,
+              "cleared_scaled": 3126
+            },
+            "7": {
+              "cycles": 35,
+              "cleared_scaled": 2590
+            },
+            "8": {
+              "cycles": 32,
+              "cleared_scaled": 3128
+            },
+            "9": {
+              "cycles": 28,
+              "cleared_scaled": 2394
+            },
+            "10": {
+              "cycles": 18,
+              "cleared_scaled": 2240
+            },
+            "11": {
+              "cycles": 15,
+              "cleared_scaled": 1078
+            },
+            "12": {
+              "cycles": 11,
+              "cleared_scaled": 1128
+            },
+            "13": {
+              "cycles": 8,
+              "cleared_scaled": 715
+            },
+            "14": {
+              "cycles": 11,
+              "cleared_scaled": 1582
+            },
+            "15": {
+              "cycles": 2,
+              "cleared_scaled": 105
+            },
+            "16": {
+              "cycles": 7,
+              "cleared_scaled": 1072
+            },
+            "17": {
+              "cycles": 1,
+              "cleared_scaled": 34
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 54
+            },
+            "19": {
+              "cycles": 2,
+              "cleared_scaled": 399
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 140
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 189
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.16602729949148007,
+            "5": 0.40601302524756894,
+            "10": 0.8068218990692003,
+            "20": 0.9943795164599875,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 214188683,
+          "mean_observed_outstanding_ticks": 2590.480304294716,
+          "last_settlement_tick": 2280,
+          "residual_greedy_clearable": 30510,
+          "protocol": {
+            "added": 82683,
+            "events": 22147,
+            "searches": 481,
+            "messages": 16854,
+            "messages_step": 5281,
+            "message_node_ids": 476813,
+            "max_message_node_ids": 89,
+            "exhausted_searches": 1,
+            "proposals": 480,
+            "messages_prepare": 3158,
+            "live_reservations": 0,
+            "max_reservations": 159,
+            "messages_commit": 2663,
+            "cycles": 389,
+            "cleared": 33627,
+            "messages_finish": 5348,
+            "aborted": 91,
+            "messages_abort": 404
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2417,
+          "messages_per_cleared_unit": 0.5012043893300027,
+          "transaction_duration_mean": 109.08740359897172,
+          "transaction_duration_max": 339
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 21739,
+          "cleared_percent": 26.291982632463746,
+          "cycles": 87,
+          "cycle_hops": 569,
+          "max_cycle_length": 15,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 8,
+              "cleared_scaled": 1452
+            },
+            "4": {
+              "cycles": 20,
+              "cleared_scaled": 3976
+            },
+            "5": {
+              "cycles": 14,
+              "cleared_scaled": 3850
+            },
+            "6": {
+              "cycles": 12,
+              "cleared_scaled": 3246
+            },
+            "7": {
+              "cycles": 5,
+              "cleared_scaled": 2212
+            },
+            "8": {
+              "cycles": 3,
+              "cleared_scaled": 1040
+            },
+            "9": {
+              "cycles": 6,
+              "cleared_scaled": 603
+            },
+            "10": {
+              "cycles": 12,
+              "cleared_scaled": 2830
+            },
+            "11": {
+              "cycles": 2,
+              "cleared_scaled": 1133
+            },
+            "13": {
+              "cycles": 3,
+              "cleared_scaled": 1183
+            },
+            "14": {
+              "cycles": 1,
+              "cleared_scaled": 154
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 60
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.06679240075440453,
+            "5": 0.42679056074336447,
+            "10": 0.8836193017158103,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 248348681,
+          "mean_observed_outstanding_ticks": 3003.6244572644923,
+          "last_settlement_tick": 2217,
+          "residual_greedy_clearable": 42373,
+          "protocol": {
+            "added": 82683,
+            "events": 21853,
+            "searches": 536,
+            "messages": 16576,
+            "messages_step": 6436,
+            "message_node_ids": 419871,
+            "max_message_node_ids": 95,
+            "exhausted_searches": 1,
+            "proposals": 535,
+            "messages_prepare": 1857,
+            "live_reservations": 0,
+            "max_reservations": 92,
+            "messages_commit": 569,
+            "aborted": 448,
+            "messages_finish": 6874,
+            "messages_abort": 840,
+            "cycles": 87,
+            "cleared": 21739
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2357,
+          "messages_per_cleared_unit": 0.76250057500345,
+          "transaction_duration_mean": 103.0,
+          "transaction_duration_max": 255
+        }
+      }
+    },
+    {
+      "scenario": "community-burst",
+      "seed": 0,
+      "nodes": 72,
+      "additions": 1268,
+      "distinct_links": 513,
+      "input_amount": 31801,
+      "last_addition_tick": 500,
+      "search_horizon": 2000,
+      "observation_horizon": 4000,
+      "stream_sha256": "c79888ba69a8862faaa3b3a6743a7a62cb401d08d228db83d1650063a057bc71",
+      "max_message_delay": 1,
+      "retry_interval": 50,
+      "max_hops": 72,
+      "search_budget": 576,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 20154,
+          "cleared_percent": 63.37536555454231,
+          "cycles": 275,
+          "cycle_hops": 2178,
+          "max_cycle_length": 24,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 27,
+              "cleared_scaled": 2148
+            },
+            "4": {
+              "cycles": 34,
+              "cleared_scaled": 1972
+            },
+            "5": {
+              "cycles": 30,
+              "cleared_scaled": 2040
+            },
+            "6": {
+              "cycles": 36,
+              "cleared_scaled": 2748
+            },
+            "7": {
+              "cycles": 24,
+              "cleared_scaled": 1855
+            },
+            "8": {
+              "cycles": 31,
+              "cleared_scaled": 2544
+            },
+            "9": {
+              "cycles": 21,
+              "cleared_scaled": 1143
+            },
+            "10": {
+              "cycles": 14,
+              "cleared_scaled": 1470
+            },
+            "11": {
+              "cycles": 14,
+              "cleared_scaled": 1463
+            },
+            "12": {
+              "cycles": 5,
+              "cleared_scaled": 432
+            },
+            "13": {
+              "cycles": 5,
+              "cleared_scaled": 117
+            },
+            "14": {
+              "cycles": 8,
+              "cleared_scaled": 700
+            },
+            "15": {
+              "cycles": 6,
+              "cleared_scaled": 390
+            },
+            "16": {
+              "cycles": 6,
+              "cleared_scaled": 368
+            },
+            "17": {
+              "cycles": 6,
+              "cleared_scaled": 391
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 108
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 38
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 20
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 66
+            },
+            "23": {
+              "cycles": 2,
+              "cleared_scaled": 69
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 72
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10657933908901458,
+            "5": 0.30564652178227647,
+            "10": 0.7899176342165327,
+            "20": 0.9897290860375112,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 50658214,
+          "mean_observed_outstanding_ticks": 1592.9755039149711,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 21085,
+          "cleared_percent": 66.3029464482249,
+          "cycles": 172,
+          "cycle_hops": 1272,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 30,
+              "cleared_scaled": 2274
+            },
+            "4": {
+              "cycles": 19,
+              "cleared_scaled": 1136
+            },
+            "5": {
+              "cycles": 26,
+              "cleared_scaled": 1750
+            },
+            "6": {
+              "cycles": 12,
+              "cleared_scaled": 1092
+            },
+            "7": {
+              "cycles": 12,
+              "cleared_scaled": 1085
+            },
+            "8": {
+              "cycles": 18,
+              "cleared_scaled": 2912
+            },
+            "9": {
+              "cycles": 5,
+              "cleared_scaled": 918
+            },
+            "10": {
+              "cycles": 18,
+              "cleared_scaled": 3210
+            },
+            "11": {
+              "cycles": 8,
+              "cleared_scaled": 1892
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 372
+            },
+            "13": {
+              "cycles": 4,
+              "cleared_scaled": 1066
+            },
+            "14": {
+              "cycles": 4,
+              "cleared_scaled": 1218
+            },
+            "15": {
+              "cycles": 3,
+              "cleared_scaled": 450
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 208
+            },
+            "17": {
+              "cycles": 3,
+              "cleared_scaled": 799
+            },
+            "18": {
+              "cycles": 4,
+              "cleared_scaled": 450
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 253
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10784918188285511,
+            "5": 0.244723737253972,
+            "10": 0.6818591415698364,
+            "20": 0.9880009485416172,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 47399714,
+          "mean_observed_outstanding_ticks": 1490.5101726360806,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 23453,
+          "cleared_percent": 73.74925316813936,
+          "cycles": 342,
+          "cycle_hops": 3017,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 17,
+              "cleared_scaled": 1185
+            },
+            "4": {
+              "cycles": 23,
+              "cleared_scaled": 1560
+            },
+            "5": {
+              "cycles": 41,
+              "cleared_scaled": 2685
+            },
+            "6": {
+              "cycles": 38,
+              "cleared_scaled": 1758
+            },
+            "7": {
+              "cycles": 29,
+              "cleared_scaled": 2569
+            },
+            "8": {
+              "cycles": 35,
+              "cleared_scaled": 2400
+            },
+            "9": {
+              "cycles": 35,
+              "cleared_scaled": 2538
+            },
+            "10": {
+              "cycles": 23,
+              "cleared_scaled": 1080
+            },
+            "11": {
+              "cycles": 21,
+              "cleared_scaled": 1001
+            },
+            "12": {
+              "cycles": 11,
+              "cleared_scaled": 816
+            },
+            "13": {
+              "cycles": 21,
+              "cleared_scaled": 2093
+            },
+            "14": {
+              "cycles": 16,
+              "cleared_scaled": 952
+            },
+            "15": {
+              "cycles": 8,
+              "cleared_scaled": 600
+            },
+            "16": {
+              "cycles": 8,
+              "cleared_scaled": 592
+            },
+            "17": {
+              "cycles": 4,
+              "cleared_scaled": 306
+            },
+            "18": {
+              "cycles": 4,
+              "cleared_scaled": 540
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 133
+            },
+            "20": {
+              "cycles": 4,
+              "cleared_scaled": 280
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 252
+            },
+            "22": {
+              "cycles": 1,
+              "cleared_scaled": 44
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 69
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.05052658508506375,
+            "5": 0.23152688355434273,
+            "10": 0.6726218394235279,
+            "20": 0.9844369590244318,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 39111714,
+          "mean_observed_outstanding_ticks": 1229.8894374390743,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 20985,
+          "cleared_percent": 65.98849092795824,
+          "cycles": 453,
+          "cycle_hops": 3665,
+          "max_cycle_length": 22,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 46,
+              "cleared_scaled": 2295
+            },
+            "4": {
+              "cycles": 52,
+              "cleared_scaled": 2148
+            },
+            "5": {
+              "cycles": 57,
+              "cleared_scaled": 2265
+            },
+            "6": {
+              "cycles": 38,
+              "cleared_scaled": 1650
+            },
+            "7": {
+              "cycles": 45,
+              "cleared_scaled": 1995
+            },
+            "8": {
+              "cycles": 36,
+              "cleared_scaled": 1688
+            },
+            "9": {
+              "cycles": 41,
+              "cleared_scaled": 1962
+            },
+            "10": {
+              "cycles": 25,
+              "cleared_scaled": 1430
+            },
+            "11": {
+              "cycles": 29,
+              "cleared_scaled": 1606
+            },
+            "12": {
+              "cycles": 19,
+              "cleared_scaled": 864
+            },
+            "13": {
+              "cycles": 16,
+              "cleared_scaled": 689
+            },
+            "14": {
+              "cycles": 8,
+              "cleared_scaled": 476
+            },
+            "15": {
+              "cycles": 13,
+              "cleared_scaled": 795
+            },
+            "16": {
+              "cycles": 4,
+              "cleared_scaled": 192
+            },
+            "17": {
+              "cycles": 5,
+              "cleared_scaled": 153
+            },
+            "18": {
+              "cycles": 3,
+              "cleared_scaled": 90
+            },
+            "19": {
+              "cycles": 9,
+              "cleared_scaled": 304
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 20
+            },
+            "21": {
+              "cycles": 4,
+              "cleared_scaled": 231
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 132
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.1093638313080772,
+            "5": 0.31965689778413153,
+            "10": 0.7354300690969741,
+            "20": 0.9827019299499643,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 42593964,
+          "mean_observed_outstanding_ticks": 1339.3907109839313,
+          "last_settlement_tick": 400,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 21203,
+          "cleared_percent": 66.67400396213955,
+          "cycles": 335,
+          "cycle_hops": 2332,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 49,
+              "cleared_scaled": 2328
+            },
+            "4": {
+              "cycles": 56,
+              "cleared_scaled": 2380
+            },
+            "5": {
+              "cycles": 49,
+              "cleared_scaled": 2010
+            },
+            "6": {
+              "cycles": 33,
+              "cleared_scaled": 1446
+            },
+            "7": {
+              "cycles": 35,
+              "cleared_scaled": 2576
+            },
+            "8": {
+              "cycles": 23,
+              "cleared_scaled": 2144
+            },
+            "9": {
+              "cycles": 15,
+              "cleared_scaled": 783
+            },
+            "10": {
+              "cycles": 16,
+              "cleared_scaled": 1320
+            },
+            "11": {
+              "cycles": 12,
+              "cleared_scaled": 935
+            },
+            "12": {
+              "cycles": 15,
+              "cleared_scaled": 1512
+            },
+            "13": {
+              "cycles": 10,
+              "cleared_scaled": 715
+            },
+            "14": {
+              "cycles": 7,
+              "cleared_scaled": 1442
+            },
+            "15": {
+              "cycles": 5,
+              "cleared_scaled": 450
+            },
+            "16": {
+              "cycles": 4,
+              "cleared_scaled": 432
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 187
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 72
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 209
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 147
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 115
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10979578361552611,
+            "5": 0.31684195632693485,
+            "10": 0.7068339385935952,
+            "20": 0.9876432580295241,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 41770914,
+          "mean_observed_outstanding_ticks": 1313.509449388384,
+          "last_settlement_tick": 400,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 19928,
+          "cleared_percent": 62.66469607873966,
+          "cycles": 393,
+          "cycle_hops": 2493,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 58,
+              "cleared_scaled": 2742
+            },
+            "4": {
+              "cycles": 66,
+              "cleared_scaled": 3172
+            },
+            "5": {
+              "cycles": 68,
+              "cleared_scaled": 3295
+            },
+            "6": {
+              "cycles": 46,
+              "cleared_scaled": 2178
+            },
+            "7": {
+              "cycles": 44,
+              "cleared_scaled": 2471
+            },
+            "8": {
+              "cycles": 30,
+              "cleared_scaled": 1608
+            },
+            "9": {
+              "cycles": 26,
+              "cleared_scaled": 1269
+            },
+            "10": {
+              "cycles": 15,
+              "cleared_scaled": 800
+            },
+            "11": {
+              "cycles": 16,
+              "cleared_scaled": 704
+            },
+            "12": {
+              "cycles": 13,
+              "cleared_scaled": 744
+            },
+            "13": {
+              "cycles": 3,
+              "cleared_scaled": 78
+            },
+            "14": {
+              "cycles": 2,
+              "cleared_scaled": 112
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 120
+            },
+            "16": {
+              "cycles": 2,
+              "cleared_scaled": 448
+            },
+            "19": {
+              "cycles": 2,
+              "cleared_scaled": 95
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 92
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.13759534323564834,
+            "5": 0.4621136089923725,
+            "10": 0.8799177037334404,
+            "20": 0.995383380168607,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 48949951,
+          "mean_observed_outstanding_ticks": 1539.258230873243,
+          "last_settlement_tick": 943,
+          "residual_greedy_clearable": 0,
+          "protocol": {
+            "added": 31801,
+            "events": 64692,
+            "searches": 1458,
+            "messages": 61390,
+            "messages_step": 48011,
+            "message_node_ids": 1723174,
+            "max_message_node_ids": 100,
+            "proposals": 640,
+            "messages_prepare": 3368,
+            "live_reservations": 0,
+            "max_reservations": 79,
+            "messages_commit": 2493,
+            "cycles": 393,
+            "cleared": 19928,
+            "messages_finish": 6890,
+            "aborted": 247,
+            "messages_abort": 628,
+            "exhausted_searches": 818
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2099,
+          "messages_per_cleared_unit": 3.0805901244480127,
+          "transaction_duration_mean": 12.687022900763358,
+          "transaction_duration_max": 46
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 21166,
+          "cleared_percent": 66.5576554196409,
+          "cycles": 254,
+          "cycle_hops": 1685,
+          "max_cycle_length": 21,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 45,
+              "cleared_scaled": 2817
+            },
+            "4": {
+              "cycles": 27,
+              "cleared_scaled": 1808
+            },
+            "5": {
+              "cycles": 36,
+              "cleared_scaled": 2590
+            },
+            "6": {
+              "cycles": 24,
+              "cleared_scaled": 2124
+            },
+            "7": {
+              "cycles": 34,
+              "cleared_scaled": 2968
+            },
+            "8": {
+              "cycles": 35,
+              "cleared_scaled": 2480
+            },
+            "9": {
+              "cycles": 19,
+              "cleared_scaled": 2016
+            },
+            "10": {
+              "cycles": 8,
+              "cleared_scaled": 1070
+            },
+            "11": {
+              "cycles": 7,
+              "cleared_scaled": 858
+            },
+            "12": {
+              "cycles": 8,
+              "cleared_scaled": 696
+            },
+            "13": {
+              "cycles": 2,
+              "cleared_scaled": 351
+            },
+            "14": {
+              "cycles": 2,
+              "cleared_scaled": 280
+            },
+            "16": {
+              "cycles": 2,
+              "cleared_scaled": 672
+            },
+            "17": {
+              "cycles": 3,
+              "cleared_scaled": 187
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 144
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 105
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.1330908060096381,
+            "5": 0.34087687801190586,
+            "10": 0.8444202967022584,
+            "20": 0.9950392138335066,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 47818243,
+          "mean_observed_outstanding_ticks": 1503.671048080249,
+          "last_settlement_tick": 1738,
+          "residual_greedy_clearable": 0,
+          "protocol": {
+            "added": 31801,
+            "events": 68941,
+            "searches": 1576,
+            "messages": 65646,
+            "messages_step": 45071,
+            "message_node_ids": 1825979,
+            "max_message_node_ids": 103,
+            "proposals": 1023,
+            "messages_prepare": 4196,
+            "live_reservations": 0,
+            "max_reservations": 60,
+            "messages_commit": 1685,
+            "cycles": 254,
+            "cleared": 21166,
+            "messages_finish": 12952,
+            "aborted": 769,
+            "messages_abort": 1742,
+            "exhausted_searches": 553
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2108,
+          "messages_per_cleared_unit": 3.1014835112916943,
+          "transaction_duration_mean": 13.26771653543307,
+          "transaction_duration_max": 42
+        }
+      }
+    },
+    {
+      "scenario": "community-burst",
+      "seed": 0,
+      "nodes": 72,
+      "additions": 1268,
+      "distinct_links": 513,
+      "input_amount": 31801,
+      "last_addition_tick": 500,
+      "search_horizon": 2000,
+      "observation_horizon": 4000,
+      "stream_sha256": "c79888ba69a8862faaa3b3a6743a7a62cb401d08d228db83d1650063a057bc71",
+      "max_message_delay": 15,
+      "retry_interval": 50,
+      "max_hops": 72,
+      "search_budget": 576,
+      "periodic_interval": 50,
+      "methods": {
+        "hindsight_dfs": {
+          "cleared_scaled": 20154,
+          "cleared_percent": 63.37536555454231,
+          "cycles": 275,
+          "cycle_hops": 2178,
+          "max_cycle_length": 24,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 27,
+              "cleared_scaled": 2148
+            },
+            "4": {
+              "cycles": 34,
+              "cleared_scaled": 1972
+            },
+            "5": {
+              "cycles": 30,
+              "cleared_scaled": 2040
+            },
+            "6": {
+              "cycles": 36,
+              "cleared_scaled": 2748
+            },
+            "7": {
+              "cycles": 24,
+              "cleared_scaled": 1855
+            },
+            "8": {
+              "cycles": 31,
+              "cleared_scaled": 2544
+            },
+            "9": {
+              "cycles": 21,
+              "cleared_scaled": 1143
+            },
+            "10": {
+              "cycles": 14,
+              "cleared_scaled": 1470
+            },
+            "11": {
+              "cycles": 14,
+              "cleared_scaled": 1463
+            },
+            "12": {
+              "cycles": 5,
+              "cleared_scaled": 432
+            },
+            "13": {
+              "cycles": 5,
+              "cleared_scaled": 117
+            },
+            "14": {
+              "cycles": 8,
+              "cleared_scaled": 700
+            },
+            "15": {
+              "cycles": 6,
+              "cleared_scaled": 390
+            },
+            "16": {
+              "cycles": 6,
+              "cleared_scaled": 368
+            },
+            "17": {
+              "cycles": 6,
+              "cleared_scaled": 391
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 108
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 38
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 20
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 66
+            },
+            "23": {
+              "cycles": 2,
+              "cleared_scaled": 69
+            },
+            "24": {
+              "cycles": 1,
+              "cleared_scaled": 72
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10657933908901458,
+            "5": 0.30564652178227647,
+            "10": 0.7899176342165327,
+            "20": 0.9897290860375112,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 50658214,
+          "mean_observed_outstanding_ticks": 1592.9755039149711,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_largest_dfs": {
+          "cleared_scaled": 21085,
+          "cleared_percent": 66.3029464482249,
+          "cycles": 172,
+          "cycle_hops": 1272,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 30,
+              "cleared_scaled": 2274
+            },
+            "4": {
+              "cycles": 19,
+              "cleared_scaled": 1136
+            },
+            "5": {
+              "cycles": 26,
+              "cleared_scaled": 1750
+            },
+            "6": {
+              "cycles": 12,
+              "cleared_scaled": 1092
+            },
+            "7": {
+              "cycles": 12,
+              "cleared_scaled": 1085
+            },
+            "8": {
+              "cycles": 18,
+              "cleared_scaled": 2912
+            },
+            "9": {
+              "cycles": 5,
+              "cleared_scaled": 918
+            },
+            "10": {
+              "cycles": 18,
+              "cleared_scaled": 3210
+            },
+            "11": {
+              "cycles": 8,
+              "cleared_scaled": 1892
+            },
+            "12": {
+              "cycles": 4,
+              "cleared_scaled": 372
+            },
+            "13": {
+              "cycles": 4,
+              "cleared_scaled": 1066
+            },
+            "14": {
+              "cycles": 4,
+              "cleared_scaled": 1218
+            },
+            "15": {
+              "cycles": 3,
+              "cleared_scaled": 450
+            },
+            "16": {
+              "cycles": 1,
+              "cleared_scaled": 208
+            },
+            "17": {
+              "cycles": 3,
+              "cleared_scaled": 799
+            },
+            "18": {
+              "cycles": 4,
+              "cleared_scaled": 450
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 253
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10784918188285511,
+            "5": 0.244723737253972,
+            "10": 0.6818591415698364,
+            "20": 0.9880009485416172,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 47399714,
+          "mean_observed_outstanding_ticks": 1490.5101726360806,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "hindsight_mcf": {
+          "cleared_scaled": 23453,
+          "cleared_percent": 73.74925316813936,
+          "cycles": 342,
+          "cycle_hops": 3017,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 17,
+              "cleared_scaled": 1185
+            },
+            "4": {
+              "cycles": 23,
+              "cleared_scaled": 1560
+            },
+            "5": {
+              "cycles": 41,
+              "cleared_scaled": 2685
+            },
+            "6": {
+              "cycles": 38,
+              "cleared_scaled": 1758
+            },
+            "7": {
+              "cycles": 29,
+              "cleared_scaled": 2569
+            },
+            "8": {
+              "cycles": 35,
+              "cleared_scaled": 2400
+            },
+            "9": {
+              "cycles": 35,
+              "cleared_scaled": 2538
+            },
+            "10": {
+              "cycles": 23,
+              "cleared_scaled": 1080
+            },
+            "11": {
+              "cycles": 21,
+              "cleared_scaled": 1001
+            },
+            "12": {
+              "cycles": 11,
+              "cleared_scaled": 816
+            },
+            "13": {
+              "cycles": 21,
+              "cleared_scaled": 2093
+            },
+            "14": {
+              "cycles": 16,
+              "cleared_scaled": 952
+            },
+            "15": {
+              "cycles": 8,
+              "cleared_scaled": 600
+            },
+            "16": {
+              "cycles": 8,
+              "cleared_scaled": 592
+            },
+            "17": {
+              "cycles": 4,
+              "cleared_scaled": 306
+            },
+            "18": {
+              "cycles": 4,
+              "cleared_scaled": 540
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 133
+            },
+            "20": {
+              "cycles": 4,
+              "cleared_scaled": 280
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 252
+            },
+            "22": {
+              "cycles": 1,
+              "cleared_scaled": 44
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 69
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.05052658508506375,
+            "5": 0.23152688355434273,
+            "10": 0.6726218394235279,
+            "20": 0.9844369590244318,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 39111714,
+          "mean_observed_outstanding_ticks": 1229.8894374390743,
+          "last_settlement_tick": 500,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_dfs": {
+          "cleared_scaled": 20985,
+          "cleared_percent": 65.98849092795824,
+          "cycles": 453,
+          "cycle_hops": 3665,
+          "max_cycle_length": 22,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 46,
+              "cleared_scaled": 2295
+            },
+            "4": {
+              "cycles": 52,
+              "cleared_scaled": 2148
+            },
+            "5": {
+              "cycles": 57,
+              "cleared_scaled": 2265
+            },
+            "6": {
+              "cycles": 38,
+              "cleared_scaled": 1650
+            },
+            "7": {
+              "cycles": 45,
+              "cleared_scaled": 1995
+            },
+            "8": {
+              "cycles": 36,
+              "cleared_scaled": 1688
+            },
+            "9": {
+              "cycles": 41,
+              "cleared_scaled": 1962
+            },
+            "10": {
+              "cycles": 25,
+              "cleared_scaled": 1430
+            },
+            "11": {
+              "cycles": 29,
+              "cleared_scaled": 1606
+            },
+            "12": {
+              "cycles": 19,
+              "cleared_scaled": 864
+            },
+            "13": {
+              "cycles": 16,
+              "cleared_scaled": 689
+            },
+            "14": {
+              "cycles": 8,
+              "cleared_scaled": 476
+            },
+            "15": {
+              "cycles": 13,
+              "cleared_scaled": 795
+            },
+            "16": {
+              "cycles": 4,
+              "cleared_scaled": 192
+            },
+            "17": {
+              "cycles": 5,
+              "cleared_scaled": 153
+            },
+            "18": {
+              "cycles": 3,
+              "cleared_scaled": 90
+            },
+            "19": {
+              "cycles": 9,
+              "cleared_scaled": 304
+            },
+            "20": {
+              "cycles": 1,
+              "cleared_scaled": 20
+            },
+            "21": {
+              "cycles": 4,
+              "cleared_scaled": 231
+            },
+            "22": {
+              "cycles": 2,
+              "cleared_scaled": 132
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.1093638313080772,
+            "5": 0.31965689778413153,
+            "10": 0.7354300690969741,
+            "20": 0.9827019299499643,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 42593964,
+          "mean_observed_outstanding_ticks": 1339.3907109839313,
+          "last_settlement_tick": 400,
+          "residual_greedy_clearable": 0
+        },
+        "periodic_largest_dfs": {
+          "cleared_scaled": 21203,
+          "cleared_percent": 66.67400396213955,
+          "cycles": 335,
+          "cycle_hops": 2332,
+          "max_cycle_length": 23,
+          "residual_is_acyclic": true,
+          "by_length": {
+            "3": {
+              "cycles": 49,
+              "cleared_scaled": 2328
+            },
+            "4": {
+              "cycles": 56,
+              "cleared_scaled": 2380
+            },
+            "5": {
+              "cycles": 49,
+              "cleared_scaled": 2010
+            },
+            "6": {
+              "cycles": 33,
+              "cleared_scaled": 1446
+            },
+            "7": {
+              "cycles": 35,
+              "cleared_scaled": 2576
+            },
+            "8": {
+              "cycles": 23,
+              "cleared_scaled": 2144
+            },
+            "9": {
+              "cycles": 15,
+              "cleared_scaled": 783
+            },
+            "10": {
+              "cycles": 16,
+              "cleared_scaled": 1320
+            },
+            "11": {
+              "cycles": 12,
+              "cleared_scaled": 935
+            },
+            "12": {
+              "cycles": 15,
+              "cleared_scaled": 1512
+            },
+            "13": {
+              "cycles": 10,
+              "cleared_scaled": 715
+            },
+            "14": {
+              "cycles": 7,
+              "cleared_scaled": 1442
+            },
+            "15": {
+              "cycles": 5,
+              "cleared_scaled": 450
+            },
+            "16": {
+              "cycles": 4,
+              "cleared_scaled": 432
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 187
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 72
+            },
+            "19": {
+              "cycles": 1,
+              "cleared_scaled": 209
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 147
+            },
+            "23": {
+              "cycles": 1,
+              "cleared_scaled": 115
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10979578361552611,
+            "5": 0.31684195632693485,
+            "10": 0.7068339385935952,
+            "20": 0.9876432580295241,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 41770914,
+          "mean_observed_outstanding_ticks": 1313.509449388384,
+          "last_settlement_tick": 400,
+          "residual_greedy_clearable": 0
+        },
+        "distributed_dfs": {
+          "cleared_scaled": 17716,
+          "cleared_percent": 55.70893997044118,
+          "cycles": 272,
+          "cycle_hops": 1576,
+          "max_cycle_length": 18,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 59,
+              "cleared_scaled": 3207
+            },
+            "4": {
+              "cycles": 57,
+              "cleared_scaled": 4196
+            },
+            "5": {
+              "cycles": 41,
+              "cleared_scaled": 2145
+            },
+            "6": {
+              "cycles": 36,
+              "cleared_scaled": 2130
+            },
+            "7": {
+              "cycles": 21,
+              "cleared_scaled": 1274
+            },
+            "8": {
+              "cycles": 21,
+              "cleared_scaled": 1152
+            },
+            "9": {
+              "cycles": 7,
+              "cleared_scaled": 792
+            },
+            "10": {
+              "cycles": 4,
+              "cleared_scaled": 200
+            },
+            "11": {
+              "cycles": 12,
+              "cleared_scaled": 1155
+            },
+            "12": {
+              "cycles": 2,
+              "cleared_scaled": 96
+            },
+            "13": {
+              "cycles": 3,
+              "cleared_scaled": 143
+            },
+            "14": {
+              "cycles": 5,
+              "cleared_scaled": 560
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 165
+            },
+            "17": {
+              "cycles": 2,
+              "cleared_scaled": 357
+            },
+            "18": {
+              "cycles": 1,
+              "cleared_scaled": 144
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.1810228042447505,
+            "5": 0.5389478437570557,
+            "10": 0.8521110860239332,
+            "20": 1.0,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 66607586,
+          "mean_observed_outstanding_ticks": 2094.5123109336187,
+          "last_settlement_tick": 2473,
+          "residual_greedy_clearable": 1944,
+          "protocol": {
+            "added": 31801,
+            "events": 19839,
+            "searches": 499,
+            "messages": 16548,
+            "messages_step": 6720,
+            "message_node_ids": 434192,
+            "max_message_node_ids": 85,
+            "proposals": 469,
+            "messages_prepare": 2398,
+            "live_reservations": 0,
+            "max_reservations": 120,
+            "messages_commit": 1576,
+            "aborted": 197,
+            "messages_abort": 625,
+            "cycles": 272,
+            "cleared": 17716,
+            "messages_finish": 5229,
+            "exhausted_searches": 30
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2570,
+          "messages_per_cleared_unit": 0.934070896364868,
+          "transaction_duration_mean": 93.30514705882354,
+          "transaction_duration_max": 316
+        },
+        "distributed_largest_dfs": {
+          "cleared_scaled": 14868,
+          "cleared_percent": 46.753246753246756,
+          "cycles": 91,
+          "cycle_hops": 579,
+          "max_cycle_length": 21,
+          "residual_is_acyclic": false,
+          "by_length": {
+            "3": {
+              "cycles": 13,
+              "cleared_scaled": 1548
+            },
+            "4": {
+              "cycles": 21,
+              "cleared_scaled": 2568
+            },
+            "5": {
+              "cycles": 15,
+              "cleared_scaled": 1640
+            },
+            "6": {
+              "cycles": 11,
+              "cleared_scaled": 2196
+            },
+            "7": {
+              "cycles": 3,
+              "cleared_scaled": 826
+            },
+            "8": {
+              "cycles": 7,
+              "cleared_scaled": 1136
+            },
+            "9": {
+              "cycles": 8,
+              "cleared_scaled": 1755
+            },
+            "10": {
+              "cycles": 3,
+              "cleared_scaled": 530
+            },
+            "11": {
+              "cycles": 2,
+              "cleared_scaled": 286
+            },
+            "12": {
+              "cycles": 3,
+              "cleared_scaled": 828
+            },
+            "14": {
+              "cycles": 3,
+              "cleared_scaled": 616
+            },
+            "15": {
+              "cycles": 1,
+              "cleared_scaled": 645
+            },
+            "21": {
+              "cycles": 1,
+              "cleared_scaled": 294
+            }
+          },
+          "cleared_share_in_loops_up_to": {
+            "3": 0.10411622276029056,
+            "5": 0.38714016680118374,
+            "10": 0.820486951842884,
+            "20": 0.980225988700565,
+            "50": 1.0
+          },
+          "conservation_ok": true,
+          "nonnegative_balances": true,
+          "settlements_respect_arrival_times": true,
+          "debt_amount_ticks": 77817929,
+          "mean_observed_outstanding_ticks": 2447.0277349768876,
+          "last_settlement_tick": 2250,
+          "residual_greedy_clearable": 6426,
+          "protocol": {
+            "added": 31801,
+            "events": 19775,
+            "searches": 491,
+            "messages": 16478,
+            "messages_step": 6873,
+            "message_node_ids": 448146,
+            "max_message_node_ids": 110,
+            "proposals": 485,
+            "messages_prepare": 1697,
+            "live_reservations": 0,
+            "max_reservations": 67,
+            "aborted": 394,
+            "messages_abort": 724,
+            "messages_finish": 6605,
+            "messages_commit": 579,
+            "cycles": 91,
+            "cleared": 14868,
+            "exhausted_searches": 6
+          },
+          "pending_events_after_drain": 0,
+          "pending_reservations_after_drain": 0,
+          "drain_completed_at": 2374,
+          "messages_per_cleared_unit": 1.1082862523540489,
+          "transaction_duration_mean": 99.25274725274726,
+          "transaction_duration_max": 310
+        }
+      }
+    }
+  ]
+}
