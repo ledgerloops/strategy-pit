@@ -134,6 +134,10 @@ Bounds make a move feasible; they do not guarantee that every participant's inci
 
 If the agreed limits are standing authorization for that change, the global objective can be used as modeled. If participants require an additional per-cycle benefit condition, it must be part of negotiation and can reject some globally improving moves. Neither interpretation follows from the arithmetic alone.
 
+## Unlimited-neighbor-credit Sarafu follow-up
+
+The [full Sarafu calculation](UNLIMITED-CREDIT.md) removes credit bounds while retaining existing neighbor pairs and all signed net positions. It raises the exact clearing optimum from 67.3595% to 75.0903%, under the stated unlimited-credit assumption.
+
 ## Reproduce
 
 With the optional solver environment described in [README.md](README.md):

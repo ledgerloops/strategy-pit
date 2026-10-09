@@ -1,0 +1,59 @@
+{
+  "complete": true,
+  "dataset_commit": "06c6a2fb5702c7066ded7cf14672ba07ed5098c4",
+  "dataset_sha256": "c9b96860a57f0bfdced88c1605572ca8acd4a576716821fc90fae73ca0ab1be9",
+  "scale": 1000,
+  "source_sha256": {
+    "unlimited_credit.py": "1bf63ba5ee2559562967ceca1159056ec5fd2ca8445134e98006e3b66f776ad7",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637"
+  },
+  "python": "3.12.14",
+  "ortools": "9.14.6206",
+  "assumption": "Neighbors are the unordered nonzero pairs in the pinned debt.csv; no original zero-net historical pairs are recovered, no new pairs added. All existing neighbor relationships permit unbounded signed credit. No per-node absolute-exposure or gross-payable preservation condition.",
+  "runs": [
+    {
+      "unlimited": false,
+      "solver_status": "OPTIMAL",
+      "seconds": 0.328752422999969,
+      "original_total_scaled": 107886628824,
+      "remaining_scaled": 35214739210,
+      "cleared_scaled": 72671889614,
+      "cleared_percent": 67.3594961731103,
+      "net_internal_debt_scaled": 16961471329,
+      "mean_hops_per_net_unit": 2.0761606423725363,
+      "positive_final_edges": 62098,
+      "nodes": 37677,
+      "neighbor_pairs": 94223,
+      "increased_or_new_direction_edges": 0,
+      "increased_existing_direction_edges": 0,
+      "reversed_original_edges": 0,
+      "total_reversed_amount_scaled": 0,
+      "total_increase_over_original_direction_scaled": 0,
+      "net_positions_preserved": true,
+      "neighbor_pairs_preserved": true,
+      "infinity_replaced_by_proven_supply_bound": null
+    },
+    {
+      "unlimited": true,
+      "solver_status": "OPTIMAL",
+      "seconds": 0.5334868349991666,
+      "original_total_scaled": 107886628824,
+      "remaining_scaled": 26874197893,
+      "cleared_scaled": 81012430931,
+      "cleared_percent": 75.09033493219904,
+      "net_internal_debt_scaled": 16961471329,
+      "mean_hops_per_net_unit": 1.5844261014698438,
+      "positive_final_edges": 39510,
+      "nodes": 37677,
+      "neighbor_pairs": 94223,
+      "increased_or_new_direction_edges": 13879,
+      "increased_existing_direction_edges": 11174,
+      "reversed_original_edges": 2705,
+      "total_reversed_amount_scaled": 3118156130,
+      "total_increase_over_original_direction_scaled": 11881711115,
+      "net_positions_preserved": true,
+      "neighbor_pairs_preserved": true,
+      "infinity_replaced_by_proven_supply_bound": 16961471329
+    }
+  ]
+}
