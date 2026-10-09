@@ -2,6 +2,10 @@
 
 These are reproducible research experiments, separate from the existing TypeScript implementation. They test a simple DFS improvement and a distributed variant where each node makes decisions using its own outgoing obligations and messages from neighbors. They are **not production settlement software**.
 
+## Signed trustline extension
+
+The [trustline study](TRUSTLINES.md) adds bilateral balance limits, exact cycle moves that may increase some debts, an alternating-credit ratchet, and comparison with a global convex-flow optimum. This model is separate from the asynchronous distributed prototype below.
+
 ## Run it
 
 Python 3.10+ is sufficient for the DFS and distributed simulations. The MCF reference additionally uses OR-Tools; the checked-in optional environment was tested with Python 3.12. From the repository root:
