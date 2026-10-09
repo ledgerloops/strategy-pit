@@ -1,0 +1,1241 @@
+{
+  "schema_version": 1,
+  "complete": true,
+  "expected_methods": 3,
+  "dataset_commit": "06c6a2fb5702c7066ded7cf14672ba07ed5098c4",
+  "dataset_sha256": "c9b96860a57f0bfdced88c1605572ca8acd4a576716821fc90fae73ca0ab1be9",
+  "input_edges": 94223,
+  "input_nodes": 37677,
+  "input_total_scaled": 107886628824,
+  "scale": 1000,
+  "python_version": "3.12.14",
+  "config": {
+    "seed": 0,
+    "max_delay": 5,
+    "retry_interval": 50,
+    "max_hops": 100,
+    "search_budget": 256,
+    "message_cutoff": 250000
+  },
+  "search_horizon": 500,
+  "source_sha256": {
+    "numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637",
+    "numbat_benchmark.py": "372134eddf9fc3a8d82774fedd5aba425938570bdf86c8a9775c72a32ec0cd11",
+    "numbat_sarafu.py": "3ea944ff583f3d1cc2b235ca85bae1ee09499c2f12c7f2af0e349132d0197b43"
+  },
+  "reference_scores": {
+    "dfs.csv": {
+      "sha256": "c928d33b9d628a857788c9d84743f9f3ce4db433d04027cda1ffb3275e19a772",
+      "cleared_scaled": 65105957641,
+      "cleared_percent": 60.34664198026809,
+      "cycles": 27106,
+      "cycle_hops": 315230,
+      "max_cycle_length": 70,
+      "residual_is_acyclic": true,
+      "by_length": {
+        "3": {
+          "cycles": 3413,
+          "cleared_scaled": 13158997905
+        },
+        "4": {
+          "cycles": 2646,
+          "cleared_scaled": 6902967524
+        },
+        "5": {
+          "cycles": 2025,
+          "cleared_scaled": 5435979200
+        },
+        "6": {
+          "cycles": 1803,
+          "cleared_scaled": 4789038030
+        },
+        "7": {
+          "cycles": 1593,
+          "cleared_scaled": 3768097256
+        },
+        "8": {
+          "cycles": 1597,
+          "cleared_scaled": 4357376208
+        },
+        "9": {
+          "cycles": 1615,
+          "cleared_scaled": 3172267728
+        },
+        "10": {
+          "cycles": 1085,
+          "cleared_scaled": 1819015290
+        },
+        "11": {
+          "cycles": 1010,
+          "cleared_scaled": 1765038198
+        },
+        "12": {
+          "cycles": 880,
+          "cleared_scaled": 1521890412
+        },
+        "13": {
+          "cycles": 777,
+          "cleared_scaled": 1342241290
+        },
+        "14": {
+          "cycles": 767,
+          "cleared_scaled": 1453322640
+        },
+        "15": {
+          "cycles": 785,
+          "cleared_scaled": 1685252550
+        },
+        "16": {
+          "cycles": 764,
+          "cleared_scaled": 1695388160
+        },
+        "17": {
+          "cycles": 632,
+          "cleared_scaled": 1238046760
+        },
+        "18": {
+          "cycles": 528,
+          "cleared_scaled": 907775280
+        },
+        "19": {
+          "cycles": 541,
+          "cleared_scaled": 953649520
+        },
+        "20": {
+          "cycles": 471,
+          "cleared_scaled": 759174200
+        },
+        "21": {
+          "cycles": 428,
+          "cleared_scaled": 827707020
+        },
+        "22": {
+          "cycles": 466,
+          "cleared_scaled": 947729860
+        },
+        "23": {
+          "cycles": 343,
+          "cleared_scaled": 724785200
+        },
+        "24": {
+          "cycles": 367,
+          "cleared_scaled": 718279200
+        },
+        "25": {
+          "cycles": 312,
+          "cleared_scaled": 603550500
+        },
+        "26": {
+          "cycles": 253,
+          "cleared_scaled": 482941160
+        },
+        "27": {
+          "cycles": 254,
+          "cleared_scaled": 492704370
+        },
+        "28": {
+          "cycles": 195,
+          "cleared_scaled": 357253680
+        },
+        "29": {
+          "cycles": 160,
+          "cleared_scaled": 323185860
+        },
+        "30": {
+          "cycles": 163,
+          "cleared_scaled": 319414800
+        },
+        "31": {
+          "cycles": 168,
+          "cleared_scaled": 320537210
+        },
+        "32": {
+          "cycles": 123,
+          "cleared_scaled": 253529280
+        },
+        "33": {
+          "cycles": 133,
+          "cleared_scaled": 288149070
+        },
+        "34": {
+          "cycles": 113,
+          "cleared_scaled": 241731160
+        },
+        "35": {
+          "cycles": 120,
+          "cleared_scaled": 248982300
+        },
+        "36": {
+          "cycles": 102,
+          "cleared_scaled": 215302680
+        },
+        "37": {
+          "cycles": 59,
+          "cleared_scaled": 149741960
+        },
+        "38": {
+          "cycles": 74,
+          "cleared_scaled": 126872500
+        },
+        "39": {
+          "cycles": 47,
+          "cleared_scaled": 110988540
+        },
+        "40": {
+          "cycles": 46,
+          "cleared_scaled": 88689600
+        },
+        "41": {
+          "cycles": 28,
+          "cleared_scaled": 66575800
+        },
+        "42": {
+          "cycles": 36,
+          "cleared_scaled": 77571480
+        },
+        "43": {
+          "cycles": 21,
+          "cleared_scaled": 36365530
+        },
+        "44": {
+          "cycles": 27,
+          "cleared_scaled": 54239240
+        },
+        "45": {
+          "cycles": 20,
+          "cleared_scaled": 54702000
+        },
+        "46": {
+          "cycles": 15,
+          "cleared_scaled": 18850800
+        },
+        "47": {
+          "cycles": 13,
+          "cleared_scaled": 18085600
+        },
+        "48": {
+          "cycles": 16,
+          "cleared_scaled": 39530880
+        },
+        "49": {
+          "cycles": 16,
+          "cleared_scaled": 28199010
+        },
+        "50": {
+          "cycles": 4,
+          "cleared_scaled": 9109000
+        },
+        "51": {
+          "cycles": 11,
+          "cleared_scaled": 35211420
+        },
+        "52": {
+          "cycles": 10,
+          "cleared_scaled": 15777320
+        },
+        "53": {
+          "cycles": 7,
+          "cleared_scaled": 19802920
+        },
+        "54": {
+          "cycles": 3,
+          "cleared_scaled": 4536000
+        },
+        "55": {
+          "cycles": 1,
+          "cleared_scaled": 1650000
+        },
+        "56": {
+          "cycles": 2,
+          "cleared_scaled": 6216000
+        },
+        "57": {
+          "cycles": 2,
+          "cleared_scaled": 4332000
+        },
+        "59": {
+          "cycles": 1,
+          "cleared_scaled": 10384000
+        },
+        "60": {
+          "cycles": 1,
+          "cleared_scaled": 2772000
+        },
+        "62": {
+          "cycles": 1,
+          "cleared_scaled": 334800
+        },
+        "63": {
+          "cycles": 4,
+          "cleared_scaled": 6185340
+        },
+        "64": {
+          "cycles": 5,
+          "cleared_scaled": 11366400
+        },
+        "65": {
+          "cycles": 1,
+          "cleared_scaled": 7410000
+        },
+        "66": {
+          "cycles": 2,
+          "cleared_scaled": 6006000
+        },
+        "70": {
+          "cycles": 1,
+          "cleared_scaled": 3150000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.20211664772001167,
+        "5": 0.39163765579792126,
+        "10": 0.6666630937268759,
+        "20": 0.8712799904394236,
+        "50": 0.9979243957865555
+      }
+    },
+    "mcf-dfs.csv": {
+      "sha256": "b3a37fd185da6350346514ed0d531d443795ef9c8fd015374d825f1e8617273e",
+      "cleared_scaled": 72671889338,
+      "cleared_percent": 67.3594959172862,
+      "cycles": 32482,
+      "cycle_hops": 504532,
+      "max_cycle_length": 141,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 2865,
+          "cleared_scaled": 11817756108
+        },
+        "4": {
+          "cycles": 2591,
+          "cleared_scaled": 6999417928
+        },
+        "5": {
+          "cycles": 2203,
+          "cleared_scaled": 5366610400
+        },
+        "6": {
+          "cycles": 1980,
+          "cleared_scaled": 5250393216
+        },
+        "7": {
+          "cycles": 1665,
+          "cleared_scaled": 3399613266
+        },
+        "8": {
+          "cycles": 1790,
+          "cleared_scaled": 4493207480
+        },
+        "9": {
+          "cycles": 1644,
+          "cleared_scaled": 3465571878
+        },
+        "10": {
+          "cycles": 1171,
+          "cleared_scaled": 2191750740
+        },
+        "11": {
+          "cycles": 1065,
+          "cleared_scaled": 1731158088
+        },
+        "12": {
+          "cycles": 924,
+          "cleared_scaled": 1559830692
+        },
+        "13": {
+          "cycles": 913,
+          "cleared_scaled": 1517777222
+        },
+        "14": {
+          "cycles": 864,
+          "cleared_scaled": 1525670048
+        },
+        "15": {
+          "cycles": 833,
+          "cleared_scaled": 1490078325
+        },
+        "16": {
+          "cycles": 856,
+          "cleared_scaled": 1678611088
+        },
+        "17": {
+          "cycles": 781,
+          "cleared_scaled": 1694692685
+        },
+        "18": {
+          "cycles": 694,
+          "cleared_scaled": 1370294064
+        },
+        "19": {
+          "cycles": 687,
+          "cleared_scaled": 1237077270
+        },
+        "20": {
+          "cycles": 658,
+          "cleared_scaled": 1256634200
+        },
+        "21": {
+          "cycles": 565,
+          "cleared_scaled": 977697567
+        },
+        "22": {
+          "cycles": 599,
+          "cleared_scaled": 1083151300
+        },
+        "23": {
+          "cycles": 485,
+          "cleared_scaled": 896950573
+        },
+        "24": {
+          "cycles": 486,
+          "cleared_scaled": 880829592
+        },
+        "25": {
+          "cycles": 488,
+          "cleared_scaled": 944690150
+        },
+        "26": {
+          "cycles": 373,
+          "cleared_scaled": 685972794
+        },
+        "27": {
+          "cycles": 343,
+          "cleared_scaled": 601466310
+        },
+        "28": {
+          "cycles": 363,
+          "cleared_scaled": 666733452
+        },
+        "29": {
+          "cycles": 354,
+          "cleared_scaled": 668480044
+        },
+        "30": {
+          "cycles": 313,
+          "cleared_scaled": 570600360
+        },
+        "31": {
+          "cycles": 298,
+          "cleared_scaled": 524956201
+        },
+        "32": {
+          "cycles": 235,
+          "cleared_scaled": 350166528
+        },
+        "33": {
+          "cycles": 226,
+          "cleared_scaled": 374798556
+        },
+        "34": {
+          "cycles": 222,
+          "cleared_scaled": 360609950
+        },
+        "35": {
+          "cycles": 192,
+          "cleared_scaled": 366871050
+        },
+        "36": {
+          "cycles": 186,
+          "cleared_scaled": 341638452
+        },
+        "37": {
+          "cycles": 182,
+          "cleared_scaled": 353436247
+        },
+        "38": {
+          "cycles": 172,
+          "cleared_scaled": 295178072
+        },
+        "39": {
+          "cycles": 178,
+          "cleared_scaled": 310517649
+        },
+        "40": {
+          "cycles": 161,
+          "cleared_scaled": 296938600
+        },
+        "41": {
+          "cycles": 149,
+          "cleared_scaled": 224848428
+        },
+        "42": {
+          "cycles": 151,
+          "cleared_scaled": 250062330
+        },
+        "43": {
+          "cycles": 106,
+          "cleared_scaled": 169510730
+        },
+        "44": {
+          "cycles": 99,
+          "cleared_scaled": 177019040
+        },
+        "45": {
+          "cycles": 102,
+          "cleared_scaled": 207454500
+        },
+        "46": {
+          "cycles": 82,
+          "cleared_scaled": 118942706
+        },
+        "47": {
+          "cycles": 78,
+          "cleared_scaled": 110911681
+        },
+        "48": {
+          "cycles": 67,
+          "cleared_scaled": 83358432
+        },
+        "49": {
+          "cycles": 59,
+          "cleared_scaled": 93111564
+        },
+        "50": {
+          "cycles": 44,
+          "cleared_scaled": 87226700
+        },
+        "51": {
+          "cycles": 58,
+          "cleared_scaled": 87086376
+        },
+        "52": {
+          "cycles": 38,
+          "cleared_scaled": 66772784
+        },
+        "53": {
+          "cycles": 48,
+          "cleared_scaled": 95958885
+        },
+        "54": {
+          "cycles": 46,
+          "cleared_scaled": 76653054
+        },
+        "55": {
+          "cycles": 42,
+          "cleared_scaled": 83896010
+        },
+        "56": {
+          "cycles": 38,
+          "cleared_scaled": 66286080
+        },
+        "57": {
+          "cycles": 36,
+          "cleared_scaled": 80350962
+        },
+        "58": {
+          "cycles": 32,
+          "cleared_scaled": 45335526
+        },
+        "59": {
+          "cycles": 30,
+          "cleared_scaled": 38932271
+        },
+        "60": {
+          "cycles": 28,
+          "cleared_scaled": 23736600
+        },
+        "61": {
+          "cycles": 43,
+          "cleared_scaled": 82705691
+        },
+        "62": {
+          "cycles": 26,
+          "cleared_scaled": 37497600
+        },
+        "63": {
+          "cycles": 29,
+          "cleared_scaled": 32922729
+        },
+        "64": {
+          "cycles": 30,
+          "cleared_scaled": 55548544
+        },
+        "65": {
+          "cycles": 25,
+          "cleared_scaled": 61187360
+        },
+        "66": {
+          "cycles": 26,
+          "cleared_scaled": 63263046
+        },
+        "67": {
+          "cycles": 30,
+          "cleared_scaled": 61803815
+        },
+        "68": {
+          "cycles": 27,
+          "cleared_scaled": 54007368
+        },
+        "69": {
+          "cycles": 21,
+          "cleared_scaled": 37420632
+        },
+        "70": {
+          "cycles": 20,
+          "cleared_scaled": 32390750
+        },
+        "71": {
+          "cycles": 11,
+          "cleared_scaled": 18126229
+        },
+        "72": {
+          "cycles": 22,
+          "cleared_scaled": 35685936
+        },
+        "73": {
+          "cycles": 12,
+          "cleared_scaled": 26327012
+        },
+        "74": {
+          "cycles": 11,
+          "cleared_scaled": 35102196
+        },
+        "75": {
+          "cycles": 9,
+          "cleared_scaled": 18247725
+        },
+        "76": {
+          "cycles": 9,
+          "cleared_scaled": 12510360
+        },
+        "77": {
+          "cycles": 10,
+          "cleared_scaled": 25875927
+        },
+        "78": {
+          "cycles": 7,
+          "cleared_scaled": 2138604
+        },
+        "79": {
+          "cycles": 3,
+          "cleared_scaled": 2803789
+        },
+        "80": {
+          "cycles": 12,
+          "cleared_scaled": 11391520
+        },
+        "81": {
+          "cycles": 12,
+          "cleared_scaled": 16030872
+        },
+        "82": {
+          "cycles": 14,
+          "cleared_scaled": 25250752
+        },
+        "83": {
+          "cycles": 6,
+          "cleared_scaled": 5323039
+        },
+        "84": {
+          "cycles": 10,
+          "cleared_scaled": 14070252
+        },
+        "85": {
+          "cycles": 7,
+          "cleared_scaled": 9049270
+        },
+        "86": {
+          "cycles": 4,
+          "cleared_scaled": 631756
+        },
+        "87": {
+          "cycles": 7,
+          "cleared_scaled": 16210710
+        },
+        "88": {
+          "cycles": 6,
+          "cleared_scaled": 14012328
+        },
+        "89": {
+          "cycles": 4,
+          "cleared_scaled": 8527802
+        },
+        "90": {
+          "cycles": 9,
+          "cleared_scaled": 17757270
+        },
+        "91": {
+          "cycles": 10,
+          "cleared_scaled": 8779862
+        },
+        "92": {
+          "cycles": 4,
+          "cleared_scaled": 7530292
+        },
+        "93": {
+          "cycles": 5,
+          "cleared_scaled": 12238428
+        },
+        "94": {
+          "cycles": 3,
+          "cleared_scaled": 692028
+        },
+        "95": {
+          "cycles": 5,
+          "cleared_scaled": 602300
+        },
+        "96": {
+          "cycles": 5,
+          "cleared_scaled": 3608736
+        },
+        "97": {
+          "cycles": 5,
+          "cleared_scaled": 8222787
+        },
+        "98": {
+          "cycles": 2,
+          "cleared_scaled": 193158
+        },
+        "99": {
+          "cycles": 6,
+          "cleared_scaled": 7226604
+        },
+        "100": {
+          "cycles": 2,
+          "cleared_scaled": 236300
+        },
+        "101": {
+          "cycles": 1,
+          "cleared_scaled": 503889
+        },
+        "102": {
+          "cycles": 3,
+          "cleared_scaled": 508776
+        },
+        "103": {
+          "cycles": 1,
+          "cleared_scaled": 105266
+        },
+        "104": {
+          "cycles": 2,
+          "cleared_scaled": 14352
+        },
+        "105": {
+          "cycles": 3,
+          "cleared_scaled": 195615
+        },
+        "106": {
+          "cycles": 2,
+          "cleared_scaled": 191224
+        },
+        "107": {
+          "cycles": 1,
+          "cleared_scaled": 163496
+        },
+        "108": {
+          "cycles": 2,
+          "cleared_scaled": 189216
+        },
+        "112": {
+          "cycles": 2,
+          "cleared_scaled": 2016
+        },
+        "113": {
+          "cycles": 3,
+          "cleared_scaled": 116842
+        },
+        "114": {
+          "cycles": 1,
+          "cleared_scaled": 1026
+        },
+        "115": {
+          "cycles": 1,
+          "cleared_scaled": 110515
+        },
+        "116": {
+          "cycles": 1,
+          "cleared_scaled": 232000
+        },
+        "118": {
+          "cycles": 1,
+          "cleared_scaled": 118000
+        },
+        "120": {
+          "cycles": 2,
+          "cleared_scaled": 603360
+        },
+        "125": {
+          "cycles": 1,
+          "cleared_scaled": 9125
+        },
+        "129": {
+          "cycles": 2,
+          "cleared_scaled": 5418
+        },
+        "131": {
+          "cycles": 2,
+          "cleared_scaled": 144886
+        },
+        "132": {
+          "cycles": 1,
+          "cleared_scaled": 112464
+        },
+        "133": {
+          "cycles": 1,
+          "cleared_scaled": 123158
+        },
+        "140": {
+          "cycles": 1,
+          "cleared_scaled": 140
+        },
+        "141": {
+          "cycles": 1,
+          "cleared_scaled": 4371
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.16261798359246066,
+        "5": 0.33278045550075364,
+        "10": 0.5914848424550808,
+        "20": 0.7987427494560511,
+        "50": 0.9786490334002
+      }
+    }
+  },
+  "methods": {
+    "distributed_dfs": {
+      "cleared_scaled": 22356516150,
+      "cleared_percent": 20.72223072839835,
+      "cycles": 9901,
+      "cycle_hops": 49050,
+      "max_cycle_length": 47,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 3866,
+          "cleared_scaled": 11767764810
+        },
+        "4": {
+          "cycles": 2260,
+          "cleared_scaled": 4758016280
+        },
+        "5": {
+          "cycles": 1326,
+          "cleared_scaled": 2242645900
+        },
+        "6": {
+          "cycles": 729,
+          "cleared_scaled": 1079980440
+        },
+        "7": {
+          "cycles": 478,
+          "cleared_scaled": 676488820
+        },
+        "8": {
+          "cycles": 338,
+          "cleared_scaled": 544662160
+        },
+        "9": {
+          "cycles": 235,
+          "cleared_scaled": 322632000
+        },
+        "10": {
+          "cycles": 154,
+          "cleared_scaled": 205882000
+        },
+        "11": {
+          "cycles": 110,
+          "cleared_scaled": 140624000
+        },
+        "12": {
+          "cycles": 94,
+          "cleared_scaled": 108798240
+        },
+        "13": {
+          "cycles": 65,
+          "cleared_scaled": 105092000
+        },
+        "14": {
+          "cycles": 53,
+          "cleared_scaled": 100450000
+        },
+        "15": {
+          "cycles": 45,
+          "cleared_scaled": 78720000
+        },
+        "16": {
+          "cycles": 25,
+          "cleared_scaled": 37648000
+        },
+        "17": {
+          "cycles": 22,
+          "cleared_scaled": 37315000
+        },
+        "18": {
+          "cycles": 12,
+          "cleared_scaled": 22626000
+        },
+        "19": {
+          "cycles": 16,
+          "cleared_scaled": 17223500
+        },
+        "20": {
+          "cycles": 8,
+          "cleared_scaled": 19040000
+        },
+        "21": {
+          "cycles": 14,
+          "cleared_scaled": 23562000
+        },
+        "22": {
+          "cycles": 9,
+          "cleared_scaled": 10164000
+        },
+        "23": {
+          "cycles": 10,
+          "cleared_scaled": 21045000
+        },
+        "24": {
+          "cycles": 6,
+          "cleared_scaled": 4344000
+        },
+        "25": {
+          "cycles": 4,
+          "cleared_scaled": 6950000
+        },
+        "26": {
+          "cycles": 4,
+          "cleared_scaled": 2912000
+        },
+        "27": {
+          "cycles": 3,
+          "cleared_scaled": 945000
+        },
+        "28": {
+          "cycles": 4,
+          "cleared_scaled": 2576000
+        },
+        "29": {
+          "cycles": 3,
+          "cleared_scaled": 3335000
+        },
+        "31": {
+          "cycles": 2,
+          "cleared_scaled": 2883000
+        },
+        "34": {
+          "cycles": 2,
+          "cleared_scaled": 2142000
+        },
+        "35": {
+          "cycles": 1,
+          "cleared_scaled": 3500000
+        },
+        "43": {
+          "cycles": 1,
+          "cleared_scaled": 4300000
+        },
+        "44": {
+          "cycles": 1,
+          "cleared_scaled": 792000
+        },
+        "47": {
+          "cycles": 1,
+          "cleared_scaled": 1457000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.5263684525372707,
+        "5": 0.8395058900981761,
+        "10": 0.9660750478781552,
+        "20": 0.9959337582210903,
+        "50": 1.0
+      },
+      "protocol": {
+        "added": 107886628824,
+        "searches": 32577,
+        "messages": 1813784,
+        "messages_step": 1168301,
+        "message_node_ids": 99343967,
+        "max_message_node_ids": 273,
+        "events": 1886887,
+        "exhausted_searches": 3442,
+        "proposals": 28316,
+        "messages_prepare": 93159,
+        "live_reservations": 0,
+        "max_reservations": 7373,
+        "messages_commit": 49050,
+        "aborted": 18415,
+        "messages_finish": 477580,
+        "messages_abort": 25694,
+        "cycles": 9901,
+        "cleared": 22356516150
+      },
+      "cutoff_tick": 46,
+      "message_overshoot": 1563784,
+      "drain_completed_at": 1080,
+      "pending_events_after_drain": 0,
+      "pending_reservations_after_drain": 0,
+      "conservation_ok": true,
+      "independent_replay_ok": true,
+      "seconds": 26.3618966009999
+    },
+    "distributed_largest_dfs": {
+      "cleared_scaled": 14871236080,
+      "cleared_percent": 13.784132697537592,
+      "cycles": 964,
+      "cycle_hops": 3930,
+      "max_cycle_length": 20,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 553,
+          "cleared_scaled": 7843804080
+        },
+        "4": {
+          "cycles": 202,
+          "cleared_scaled": 2628524000
+        },
+        "5": {
+          "cycles": 90,
+          "cleared_scaled": 1818395000
+        },
+        "6": {
+          "cycles": 43,
+          "cleared_scaled": 1272834000
+        },
+        "7": {
+          "cycles": 14,
+          "cleared_scaled": 150206000
+        },
+        "8": {
+          "cycles": 15,
+          "cleared_scaled": 573056000
+        },
+        "9": {
+          "cycles": 17,
+          "cleared_scaled": 248895000
+        },
+        "10": {
+          "cycles": 7,
+          "cleared_scaled": 44150000
+        },
+        "11": {
+          "cycles": 5,
+          "cleared_scaled": 17468000
+        },
+        "12": {
+          "cycles": 4,
+          "cleared_scaled": 96360000
+        },
+        "13": {
+          "cycles": 4,
+          "cleared_scaled": 21918000
+        },
+        "14": {
+          "cycles": 5,
+          "cleared_scaled": 151480000
+        },
+        "16": {
+          "cycles": 2,
+          "cleared_scaled": 4032000
+        },
+        "18": {
+          "cycles": 1,
+          "cleared_scaled": 36000
+        },
+        "19": {
+          "cycles": 1,
+          "cleared_scaled": 38000
+        },
+        "20": {
+          "cycles": 1,
+          "cleared_scaled": 40000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.5274480236749762,
+        "5": 0.8264762265814288,
+        "10": 0.9804070086418801,
+        "20": 1.0,
+        "50": 1.0
+      },
+      "protocol": {
+        "added": 107886628824,
+        "searches": 32616,
+        "messages": 1239182,
+        "messages_step": 749358,
+        "message_node_ids": 45651955,
+        "max_message_node_ids": 248,
+        "events": 1312285,
+        "exhausted_searches": 3189,
+        "proposals": 29206,
+        "messages_prepare": 37826,
+        "live_reservations": 0,
+        "max_reservations": 840,
+        "messages_commit": 3930,
+        "aborted": 28242,
+        "messages_finish": 442414,
+        "messages_abort": 5654,
+        "cycles": 964,
+        "cleared": 14871236080
+      },
+      "cutoff_tick": 46,
+      "message_overshoot": 989182,
+      "drain_completed_at": 1054,
+      "pending_events_after_drain": 0,
+      "pending_reservations_after_drain": 0,
+      "conservation_ok": true,
+      "independent_replay_ok": true,
+      "seconds": 20.43168580800011
+    },
+    "numbat": {
+      "cleared_scaled": 40457754031,
+      "cleared_percent": 37.50024861468277,
+      "cycles": 4403,
+      "cycle_hops": 21941,
+      "max_cycle_length": 40,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 1710,
+          "cleared_scaled": 14481658449
+        },
+        "4": {
+          "cycles": 977,
+          "cleared_scaled": 8781043512
+        },
+        "5": {
+          "cycles": 484,
+          "cleared_scaled": 4261374200
+        },
+        "6": {
+          "cycles": 293,
+          "cleared_scaled": 3009917520
+        },
+        "7": {
+          "cycles": 232,
+          "cleared_scaled": 2530691170
+        },
+        "8": {
+          "cycles": 279,
+          "cleared_scaled": 3596312000
+        },
+        "9": {
+          "cycles": 180,
+          "cleared_scaled": 1955151000
+        },
+        "10": {
+          "cycles": 69,
+          "cleared_scaled": 517040000
+        },
+        "11": {
+          "cycles": 44,
+          "cleared_scaled": 455442020
+        },
+        "12": {
+          "cycles": 37,
+          "cleared_scaled": 349070160
+        },
+        "13": {
+          "cycles": 25,
+          "cleared_scaled": 210613000
+        },
+        "14": {
+          "cycles": 9,
+          "cleared_scaled": 25004000
+        },
+        "15": {
+          "cycles": 17,
+          "cleared_scaled": 89220000
+        },
+        "16": {
+          "cycles": 14,
+          "cleared_scaled": 62400000
+        },
+        "17": {
+          "cycles": 5,
+          "cleared_scaled": 13005000
+        },
+        "18": {
+          "cycles": 7,
+          "cleared_scaled": 37872000
+        },
+        "19": {
+          "cycles": 5,
+          "cleared_scaled": 46550000
+        },
+        "20": {
+          "cycles": 1,
+          "cleared_scaled": 200000
+        },
+        "21": {
+          "cycles": 2,
+          "cleared_scaled": 14805000
+        },
+        "22": {
+          "cycles": 3,
+          "cleared_scaled": 3520000
+        },
+        "24": {
+          "cycles": 3,
+          "cleared_scaled": 6024000
+        },
+        "25": {
+          "cycles": 4,
+          "cleared_scaled": 1000000
+        },
+        "26": {
+          "cycles": 1,
+          "cleared_scaled": 26000
+        },
+        "29": {
+          "cycles": 1,
+          "cleared_scaled": 1015000
+        },
+        "40": {
+          "cycles": 1,
+          "cleared_scaled": 8800000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.357945189886312,
+        "5": 0.6803164639319866,
+        "10": 0.9672605113228708,
+        "20": 0.9991302038177148,
+        "50": 1.0
+      },
+      "protocol": {
+        "added": 107886628824,
+        "searches": 32605,
+        "message_capacity_values": 38868775,
+        "messages": 2209006,
+        "messages_step": 1526211,
+        "message_node_ids": 150987363,
+        "max_message_node_ids": 332,
+        "events": 2282109,
+        "proposals": 28593,
+        "messages_prepare": 71560,
+        "exhausted_searches": 3313,
+        "live_reservations": 0,
+        "max_reservations": 2460,
+        "aborted": 24190,
+        "messages_abort": 25429,
+        "messages_commit": 21941,
+        "messages_finish": 563865,
+        "cycles": 4403,
+        "cleared": 40457754031
+      },
+      "cutoff_tick": 46,
+      "message_overshoot": 1959006,
+      "drain_completed_at": 1297,
+      "pending_events_after_drain": 0,
+      "pending_reservations_after_drain": 0,
+      "conservation_ok": true,
+      "independent_replay_ok": true,
+      "seconds": 46.01161090900041
+    }
+  },
+  "assumptions": [
+    "Node decisions use only own balances/reservations and received tokens.",
+    "One scheduler seed and finite bounded searches; not an estimate of eventual maximal clearing.",
+    "Reliable exactly-once neighbor messaging; honest nodes and no crashes.",
+    "Stop admitting new searches at250000 messages or500ticks, then drain all admitted work.",
+    "Final messages can exceed cutoff; overshoot and drain tick are reported.",
+    "Offline historical DFS and MCF scores have global access and are quality references only.",
+    "Audit independently replays every completed cycle once and verifies all net positions."
+  ]
+}

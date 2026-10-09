@@ -49,6 +49,20 @@ python3 experiments/numbat_benchmark.py --output /tmp/numbat-heldout.json
 
 The second command reuses checked-in baseline scores only when their source and regenerated input hashes match. It needs no optimizer during algorithm execution. [Held-out results](results/numbat-heldout.json) contain the full 80-case matrix, configuration, source hashes and audit metrics. Independent locality tests run nodes behind a facade that denies access to other nodes and the global graph. Adversarial tests cover competing reservations, replenishment, newly arriving neighbours and hop-limit failures.
 
+## Finite run on the full Sarafu snapshot
+
+A separate run uses the pinned **94,223-edge, 37,677-node** Sarafu graph from the original study. All three node-local methods use seed 0, delays up to 5 ticks, a 100-node path limit and 256-step search budget. They stop admitting new searches after 250,000 sent messages or 500 ticks, then finish admitted work.
+
+| Method | Initial debt cleared | Actual messages after drain | Drain tick |
+| --- | ---: | ---: | ---: |
+| Local random DFS | 20.7222% | 1,813,784 | 1,080 |
+| Local largest-first DFS | 13.7841% | 1,239,182 | 1,054 |
+| Numbat | 37.5002% | 2,209,006 | 1,297 |
+
+Numbat clears more in this run, but also sends more messages and takes longer to drain. The very large, unequal tails make this **unsuitable for a strict bandwidth ranking**. It is one finite scheduler run, with incomplete discovery, not the eventual clearing achievable by these algorithms. Global DFS's 60.3466% and MCF's 67.3595% remain separate offline references. All three local results passed independent cycle replay, net-position and final-ledger checks.
+
+Run `python3 experiments/numbat_sarafu.py` from the repository root to reproduce [these results](results/numbat-sarafu.json). This command overwrites that result file and requires the pinned Git history. No global graph information is used in node decisions.
+
 ## Comparison with Jerboa
 
 We have not established that Numbat beats Jerboa. Jerboa's README reports 15.3% clearing against 16.6% centralized DFS and an 18.9% MCF optimum on its historical 50k Sarafu fixture. Those percentages use a different input and denominator from the table above. A direct comparison requires pinned implementations, identical obligations and declared time/message budgets.
