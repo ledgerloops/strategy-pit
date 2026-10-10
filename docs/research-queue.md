@@ -23,9 +23,9 @@ Find practical node-local clearing algorithms that perform well across static an
 ## Active work — verify files and completion before resuming
 
 1. **Full temporal scale:** `temporal_scale_benchmark.py`, `results/temporal-sarafu-full-10m.json`; 30,726 transfers, three clean methods, ten-million-event budget. Owner: `temporal_sarafu`.
-2. **Turns on 5,000 transfers:** `results/temporal-turn-sarafu5000.json`, 36 matched runs. Owner: `local_turns`.
-3. **Headroom search ordering:** separate decrease-first variant, fixed training seeds 101/102 then static 50k seeds 0/1. Preserve capacity-first and restoration-disabled controls. Owner: `headroom_impl`.
-4. **Local settlement priority:** prospective separate temporal variant, local queue decisions only, train before held-out comparisons. Owner: `temporal_protocol`.
+2. **Turns on 5,000 transfers completed:** all 36 runs audited; turns generally cost more. See `TEMPORAL-TURNS.md`.
+3. **Headroom search ordering completed:** decrease-first reaches 12.20–12.35% cold clearing; see `HEADROOM-SEARCH.md`. Next: strict-zero-channel temporal semantics, owners `headroom_math` / `headroom_impl`.
+4. **Local settlement priority completed:** 72 audited runs modestly improve FIFO turns but lose to concurrent Numbat; see `TEMPORAL-PRIORITY.md`. Next: versioned unposted-transfer and staged-commit exposure metrics, owners `temporal_protocol` / `jerboa_compare`.
 5. Review the campaign manifest before launching followups; avoid duplicating live runs or repeating known insufficient event budgets. Save commands, hashes and incomplete markers.
 6. Integrate Headroom into changing graphs only after specifying cap epochs and zero-channel reopening rules. Do not silently introduce unlimited trust or permanent channels.
 7. Bound protocol memory safely; investigate crash recovery separately from state-retaining sleep.
@@ -43,3 +43,34 @@ From the repository root:
 ```
 
 These benchmark commands overwrite their default result files. Inspect existing JSON and processes first. The temporary debt fixture can be regenerated using the pinned Jerboa 50k input and the command in [the comparison report](../experiments/ANIMAL-COMPARISON.md#reproduce). Live processes may not survive a cloud snapshot; saved files and commands are the checkpoint.
+
+## Live finite replay campaign (2026-10-10 07:09 UTC)
+
+The reviewed follow-up manifest is running with worker PID **43253**, execution
+session **48953**, a 5,400-second total wall-clock bound and 1,800 seconds per job.
+It tests full-prefix clean transport at 500 ticks (10M events), 4,000 ticks (20M),
+and 2,000 ticks with seed 1 (10M), each with all three algorithms. It does not
+repeat the separate seed-0 2,000-tick run in session **88817**. Source files are
+frozen for these jobs; inspect the saved heartbeat and process state before
+attempting a resume.
+
+State: `experiments/results/temporal-followup-campaign-state.json`.
+Per-job logs are saved beside that file. Exact resume command:
+
+```sh
+python experiments/research_campaign.py experiments/research_campaign_followups.json \
+  --state experiments/results/temporal-followup-campaign-state.json \
+  --resume --max-seconds 5400
+```
+
+The separate full-prefix seed-0 job checkpoints each algorithm and can be resumed
+with the identical command after verifying its original process has stopped:
+
+```sh
+python experiments/temporal_scale_benchmark.py \
+  --csv /workspace/jerboa-review/__tests__/fixtures/sarafu-50k.csv \
+  --output experiments/results/temporal-sarafu-full-10m.json
+```
+
+A running process is not a guarantee of survival after environment removal.
+Completed result rows and explicit incomplete markers are the durable evidence.

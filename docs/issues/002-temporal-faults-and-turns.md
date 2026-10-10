@@ -25,7 +25,7 @@ Compare node-local clearing under continuously arriving transactions, dropped me
 - [x] Implement an endpoint-local turn gate with reordered/duplicate-message tests.
 - [x] Complete synthetic and 1,000/5,000-transfer timestamped comparative matrices.
 - [ ] Complete larger full-prefix followups within declared event budgets.
-- [x] Integrate and benchmark the local turn gate (synthetic and 1,000-transfer matrices complete; 5,000-transfer followup running).
+- [x] Integrate and benchmark the local turn gate (504 audited runs across synthetic, 1,000-transfer and 5,000-transfer comparisons).
 - [x] Compare outstanding-debt area, posting delay, clearing and all message attempts.
 - [ ] Integrate Headroom with explicit changing-cap and reopening semantics.
 - [ ] Bound long-running protocol memory without allowing old packets to revive stale transactions.
