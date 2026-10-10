@@ -6,6 +6,14 @@ These are reproducible research experiments, separate from the existing TypeScri
 
 The [Numbat study](NUMBAT.md) tests capacity-weighted node-local search and observed bottleneck proposals against the same 80 synthetic cases, with separate training seeds and independently audited results. It improves the larger cases but does not dominate the small ones.
 
+## Headroom Clearing
+
+[Headroom experiments](HEADROOM.md) test restoring previously cleared debt within original limits. They validate the model and improve a Numbat postpass on the 50k fixture, while exposing weak cold-start performance and the need for local concurrency and channel-reopening rules.
+
+## Timestamped arrivals, loss and sleeping nodes
+
+[Temporal results](TEMPORAL-RESULTS.md) compare continuous transfers with unreliable messages and state-retaining sleep, including actual [Sarafu timestamps](TEMPORAL-SARAFU.md). [Neighbour-turn experiments](TEMPORAL-TURNS.md) test genuine endpoint-local turn ownership separately from a centralized transport reference. These experiments use stricter zero-balance channel closure than the earlier streaming simulations below.
+
 ## Signed trustline extension
 
 The [trustline study](TRUSTLINES.md) adds bilateral balance limits, exact cycle moves that may increase some debts, an alternating-credit ratchet, and comparison with a global convex-flow optimum. This model is separate from the asynchronous distributed prototype below.

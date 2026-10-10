@@ -1,0 +1,240 @@
+{
+  "complete": true,
+  "expected_runs": 2,
+  "input_sha256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+  "original_debt_scaled": 7434585295,
+  "scale": 1000,
+  "seeds": [
+    0,
+    1
+  ],
+  "numbat_config": {
+    "capacity_power": 4,
+    "snapshot_capacity": true,
+    "close_first": false,
+    "max_delay": 5,
+    "retry_interval": 50,
+    "max_hops": 100,
+    "search_budget": 256,
+    "message_cutoff": 1000000,
+    "search_horizon": 2000
+  },
+  "headroom_config": {
+    "search_budget": 64,
+    "max_hops": 64,
+    "rounds": 2
+  },
+  "source_sha256": {
+    "headroom_numbat_pipeline.py": "e5002a9a8805ee66bdc5f858c1862d3718beb889ced833f87b495953440fc2b4",
+    "headroom.py": "1ab12df9606422b9072c6dfc1574f358d362053deaa07206c543d3c1aff623d5",
+    "headroom_benchmark.py": "3ee34e156eb550e593e500876f0454b7fafd1fec61b8bda63849e4335d3900d3",
+    "numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+    "numbat_benchmark.py": "372134eddf9fc3a8d82774fedd5aba425938570bdf86c8a9775c72a32ec0cd11",
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637"
+  },
+  "runs": [
+    {
+      "seed": 0,
+      "numbat_cleared_percent": 13.68803987875964,
+      "numbat_metrics": {
+        "added": 7434585295,
+        "searches": 29580,
+        "message_capacity_values": 11543160,
+        "messages": 1575032,
+        "messages_step": 1389143,
+        "message_node_ids": 91428144,
+        "max_message_node_ids": 169,
+        "events": 1644244,
+        "exhausted_searches": 15190,
+        "proposals": 12062,
+        "messages_prepare": 21990,
+        "live_reservations": 0,
+        "max_reservations": 476,
+        "aborted": 11267,
+        "messages_finish": 153176,
+        "messages_commit": 3437,
+        "messages_abort": 7286,
+        "cycles": 795,
+        "cleared": 1017649000
+      },
+      "numbat_replay_ok": true,
+      "postpasses": {
+        "headroom": [
+          {
+            "round": 1,
+            "cleared_percent": 14.661275064435184,
+            "headroom_messages": 367930,
+            "total_pipeline_messages": 1942962,
+            "audit": {
+              "settlements": 102,
+              "mixed_settlements": 99,
+              "restored_scaled": 70415000,
+              "decreased_scaled": 142771000,
+              "participant_exposure_increase_events": 70,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          },
+          {
+            "round": 2,
+            "cleared_percent": 14.682190824202522,
+            "headroom_messages": 723917,
+            "total_pipeline_messages": 2298949,
+            "audit": {
+              "settlements": 109,
+              "mixed_settlements": 106,
+              "restored_scaled": 73015000,
+              "decreased_scaled": 146926000,
+              "participant_exposure_increase_events": 75,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          }
+        ],
+        "reduction-only-ablation": [
+          {
+            "round": 1,
+            "cleared_percent": 13.68803987875964,
+            "headroom_messages": 343305,
+            "total_pipeline_messages": 1918337,
+            "audit": {
+              "settlements": 0,
+              "mixed_settlements": 0,
+              "restored_scaled": 0,
+              "decreased_scaled": 0,
+              "participant_exposure_increase_events": 0,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          },
+          {
+            "round": 2,
+            "cleared_percent": 13.68803987875964,
+            "headroom_messages": 672779,
+            "total_pipeline_messages": 2247811,
+            "audit": {
+              "settlements": 0,
+              "mixed_settlements": 0,
+              "restored_scaled": 0,
+              "decreased_scaled": 0,
+              "participant_exposure_increase_events": 0,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          }
+        ]
+      },
+      "seconds_with_audits": 36.62325822500134
+    },
+    {
+      "seed": 1,
+      "numbat_cleared_percent": 13.499999800594123,
+      "numbat_metrics": {
+        "added": 7434585295,
+        "searches": 30205,
+        "message_capacity_values": 11645421,
+        "messages": 1607512,
+        "messages_step": 1417254,
+        "message_node_ids": 92548141,
+        "max_message_node_ids": 169,
+        "events": 1677073,
+        "exhausted_searches": 15445,
+        "proposals": 12141,
+        "messages_prepare": 22289,
+        "live_reservations": 0,
+        "max_reservations": 528,
+        "aborted": 11328,
+        "messages_finish": 157008,
+        "messages_commit": 3544,
+        "messages_abort": 7417,
+        "cycles": 813,
+        "cleared": 1003669000
+      },
+      "numbat_replay_ok": true,
+      "postpasses": {
+        "headroom": [
+          {
+            "round": 1,
+            "cleared_percent": 14.120975929969473,
+            "headroom_messages": 368304,
+            "total_pipeline_messages": 1975816,
+            "audit": {
+              "settlements": 65,
+              "mixed_settlements": 64,
+              "restored_scaled": 49426000,
+              "decreased_scaled": 95593000,
+              "participant_exposure_increase_events": 28,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          },
+          {
+            "round": 2,
+            "cleared_percent": 14.121379449450515,
+            "headroom_messages": 724323,
+            "total_pipeline_messages": 2331835,
+            "audit": {
+              "settlements": 66,
+              "mixed_settlements": 65,
+              "restored_scaled": 49456000,
+              "decreased_scaled": 95653000,
+              "participant_exposure_increase_events": 28,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          }
+        ],
+        "reduction-only-ablation": [
+          {
+            "round": 1,
+            "cleared_percent": 13.499999800594123,
+            "headroom_messages": 344221,
+            "total_pipeline_messages": 1951733,
+            "audit": {
+              "settlements": 0,
+              "mixed_settlements": 0,
+              "restored_scaled": 0,
+              "decreased_scaled": 0,
+              "participant_exposure_increase_events": 0,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          },
+          {
+            "round": 2,
+            "cleared_percent": 13.499999800594123,
+            "headroom_messages": 674611,
+            "total_pipeline_messages": 2282123,
+            "audit": {
+              "settlements": 0,
+              "mixed_settlements": 0,
+              "restored_scaled": 0,
+              "decreased_scaled": 0,
+              "participant_exposure_increase_events": 0,
+              "every_settlement_preserved_net_positions": true,
+              "every_settlement_strictly_reduced_total_debt": true,
+              "every_balance_within_original_cap": true,
+              "final_ledger_matches_independent_replay": true
+            }
+          }
+        ]
+      },
+      "seconds_with_audits": 41.12924846600072
+    }
+  ]
+}

@@ -6,6 +6,10 @@ Can we find loops of debt and clear them by talking to our neighbours? This is o
 
 The rule for a **node-local algorithm** is simple: each node makes decisions from its own balances and state, plus messages exchanged with its direct neighbours. No participant gets a bird’s-eye view of the credit graph. Finding a loop, agreeing how much to clear, and completing the settlement are separate problems.
 
+## Research issues
+
+The [issue tracker in `docs/issues/`](docs/issues/README.md) records proposals, experiments and open questions. Start with [Headroom Clearing](docs/issues/001-headroom-clearing.md): reusing cleared capacity without exceeding the original debt on any link.
+
 ## Meet the animals
 
 These are research prototypes from several generations. Early animals explored loop discovery and message ordering; later ones attempted negotiation and settlement. Their descriptions explain what we learned, rather than establish a performance ranking. The historical source links point to the last snapshot before the older implementations were removed.
