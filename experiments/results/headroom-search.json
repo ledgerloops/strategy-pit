@@ -1,0 +1,1923 @@
+{
+  "complete": true,
+  "python": "3.12.14",
+  "source_sha256": {
+    "headroom.py": "1ab12df9606422b9072c6dfc1574f358d362053deaa07206c543d3c1aff623d5",
+    "headroom_search.py": "6703e20b46e48720cbcb0e87ef5ecb69b68ec0515967d0eb7846b0b1a4f8847f",
+    "headroom_benchmark.py": "3ee34e156eb550e593e500876f0454b7fafd1fec61b8bda63849e4335d3900d3",
+    "simulate.py": "525f345566676b7900de126f6173864007b937c248a74a419acc146799f26a21",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637"
+  },
+  "input_sha256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+  "config": {
+    "search_budget": 64,
+    "max_hops": 64,
+    "rounds": 2
+  },
+  "ordering_frozen_before_training": true,
+  "training_seeds": [
+    101,
+    102
+  ],
+  "sarafu_seeds": [
+    0,
+    1
+  ],
+  "cases": [
+    {
+      "name": "alice",
+      "phase": "regression",
+      "seed": 101,
+      "nodes": 4,
+      "edges": 5,
+      "graph_sha256": "224f5038118f972ba500cae5be7365c828a58dce5976c605b2f09c2947f1858f",
+      "initial_debt": 25,
+      "starting_debt": 10,
+      "mcf_cleared_percent": 72.0,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 72.0,
+          "residual_debt": 7,
+          "metrics": {
+            "messages": 85,
+            "messages_advertise": 5,
+            "searches": 8,
+            "messages_search": 74,
+            "proposals": 1,
+            "messages_prepare": 3,
+            "messages_commit": 3,
+            "settlements": 1,
+            "exhausted_searches": 7
+          },
+          "audit": {
+            "settlements": 1,
+            "mixed_settlements": 1,
+            "restored_scaled": 3,
+            "decreased_scaled": 6,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.00048274200526066124
+        },
+        "decrease-first": {
+          "cleared_percent": 72.0,
+          "residual_debt": 7,
+          "metrics": {
+            "messages": 85,
+            "messages_advertise": 5,
+            "searches": 8,
+            "messages_search": 74,
+            "proposals": 1,
+            "messages_prepare": 3,
+            "messages_commit": 3,
+            "settlements": 1,
+            "exhausted_searches": 7
+          },
+          "audit": {
+            "settlements": 1,
+            "mixed_settlements": 1,
+            "restored_scaled": 3,
+            "decreased_scaled": 6,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0003639639980974607
+        },
+        "reduction-only": {
+          "cleared_percent": 60.0,
+          "residual_debt": 10,
+          "metrics": {
+            "messages": 17,
+            "messages_advertise": 5,
+            "searches": 8,
+            "messages_search": 12,
+            "exhausted_searches": 8
+          },
+          "audit": {
+            "settlements": 0,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 0,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.00010691000352380797
+        }
+      }
+    },
+    {
+      "name": "shared-edge",
+      "phase": "regression",
+      "seed": 101,
+      "nodes": 5,
+      "edges": 6,
+      "graph_sha256": "842dd5e28652db7881b3ab7453c5ccfbb04ab7e6ee552ebd0f1a532c82ad1313",
+      "initial_debt": 6,
+      "starting_debt": 3,
+      "mcf_cleared_percent": 66.66666666666667,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 66.66666666666667,
+          "residual_debt": 2,
+          "metrics": {
+            "messages": 116,
+            "messages_advertise": 6,
+            "searches": 10,
+            "messages_search": 100,
+            "proposals": 1,
+            "messages_prepare": 5,
+            "messages_commit": 5,
+            "settlements": 1,
+            "exhausted_searches": 9
+          },
+          "audit": {
+            "settlements": 1,
+            "mixed_settlements": 1,
+            "restored_scaled": 2,
+            "decreased_scaled": 3,
+            "participant_exposure_increase_events": 1,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.00040895099664339796
+        },
+        "decrease-first": {
+          "cleared_percent": 66.66666666666667,
+          "residual_debt": 2,
+          "metrics": {
+            "messages": 116,
+            "messages_advertise": 6,
+            "searches": 10,
+            "messages_search": 100,
+            "proposals": 1,
+            "messages_prepare": 5,
+            "messages_commit": 5,
+            "settlements": 1,
+            "exhausted_searches": 9
+          },
+          "audit": {
+            "settlements": 1,
+            "mixed_settlements": 1,
+            "restored_scaled": 2,
+            "decreased_scaled": 3,
+            "participant_exposure_increase_events": 1,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.00044667700421996415
+        },
+        "reduction-only": {
+          "cleared_percent": 50.0,
+          "residual_debt": 3,
+          "metrics": {
+            "messages": 30,
+            "messages_advertise": 6,
+            "searches": 10,
+            "exhausted_searches": 10,
+            "messages_search": 24
+          },
+          "audit": {
+            "settlements": 0,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 0,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0001287119957851246
+        }
+      }
+    },
+    {
+      "name": "sparse-24",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 24,
+      "edges": 44,
+      "graph_sha256": "73e846d14e691c6439f1574c797f9f093e3cfb79170f71edce08d9b84ebf9d86",
+      "initial_debt": 2683,
+      "starting_debt": 2683,
+      "mcf_cleared_percent": 27.54379426015654,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 25.866567275437944,
+          "residual_debt": 1989,
+          "metrics": {
+            "messages": 2623,
+            "messages_advertise": 44,
+            "searches": 48,
+            "messages_search": 2333,
+            "proposals": 18,
+            "messages_prepare": 123,
+            "messages_commit": 123,
+            "settlements": 18,
+            "budget_exhaustions": 30
+          },
+          "audit": {
+            "settlements": 18,
+            "mixed_settlements": 13,
+            "restored_scaled": 311,
+            "decreased_scaled": 1005,
+            "participant_exposure_increase_events": 17,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.011436861997935921
+        },
+        "decrease-first": {
+          "cleared_percent": 27.28289228475587,
+          "residual_debt": 1951,
+          "metrics": {
+            "messages": 2316,
+            "messages_advertise": 44,
+            "searches": 48,
+            "messages_search": 1918,
+            "proposals": 25,
+            "messages_prepare": 177,
+            "messages_commit": 177,
+            "settlements": 25,
+            "budget_exhaustions": 23
+          },
+          "audit": {
+            "settlements": 25,
+            "mixed_settlements": 20,
+            "restored_scaled": 402,
+            "decreased_scaled": 1134,
+            "participant_exposure_increase_events": 22,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.010424478998174891
+        },
+        "reduction-only": {
+          "cleared_percent": 23.89116660454715,
+          "residual_debt": 2042,
+          "metrics": {
+            "messages": 1481,
+            "messages_advertise": 44,
+            "searches": 48,
+            "messages_search": 1355,
+            "proposals": 6,
+            "messages_prepare": 41,
+            "messages_commit": 41,
+            "settlements": 6,
+            "exhausted_searches": 30,
+            "budget_exhaustions": 12
+          },
+          "audit": {
+            "settlements": 6,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 641,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0043518140009837225
+        }
+      }
+    },
+    {
+      "name": "sparse-24",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 24,
+      "edges": 33,
+      "graph_sha256": "40b77b984c26d0b9a0b7661a916c0979da702bee81d0e6fc689881dcdb68affa",
+      "initial_debt": 2016,
+      "starting_debt": 2016,
+      "mcf_cleared_percent": 35.56547619047619,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 35.56547619047619,
+          "residual_debt": 1299,
+          "metrics": {
+            "messages": 2949,
+            "messages_advertise": 33,
+            "searches": 48,
+            "messages_search": 2790,
+            "proposals": 8,
+            "messages_prepare": 63,
+            "messages_commit": 63,
+            "settlements": 8,
+            "budget_exhaustions": 40
+          },
+          "audit": {
+            "settlements": 8,
+            "mixed_settlements": 5,
+            "restored_scaled": 96,
+            "decreased_scaled": 813,
+            "participant_exposure_increase_events": 5,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.009855969998170622
+        },
+        "decrease-first": {
+          "cleared_percent": 35.56547619047619,
+          "residual_debt": 1299,
+          "metrics": {
+            "messages": 2916,
+            "messages_advertise": 33,
+            "searches": 48,
+            "messages_search": 2753,
+            "proposals": 8,
+            "messages_prepare": 65,
+            "messages_commit": 65,
+            "settlements": 8,
+            "budget_exhaustions": 40
+          },
+          "audit": {
+            "settlements": 8,
+            "mixed_settlements": 4,
+            "restored_scaled": 61,
+            "decreased_scaled": 778,
+            "participant_exposure_increase_events": 1,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.011193940001248848
+        },
+        "reduction-only": {
+          "cleared_percent": 31.79563492063492,
+          "residual_debt": 1375,
+          "metrics": {
+            "messages": 1081,
+            "messages_advertise": 33,
+            "searches": 48,
+            "messages_search": 986,
+            "proposals": 4,
+            "messages_prepare": 31,
+            "messages_commit": 31,
+            "settlements": 4,
+            "exhausted_searches": 38,
+            "budget_exhaustions": 6
+          },
+          "audit": {
+            "settlements": 4,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 641,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0032106979997479357
+        }
+      }
+    },
+    {
+      "name": "dense-24",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 24,
+      "edges": 155,
+      "graph_sha256": "44a7f5a916b32fd278106ebf622da6f42f1630b3ea48d11f7def625c02c6f5f2",
+      "initial_debt": 10005,
+      "starting_debt": 10005,
+      "mcf_cleared_percent": 75.32233883058471,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 49.72513743128436,
+          "residual_debt": 5030,
+          "metrics": {
+            "messages": 1330,
+            "messages_advertise": 155,
+            "searches": 48,
+            "messages_search": 689,
+            "proposals": 48,
+            "messages_prepare": 243,
+            "messages_commit": 243,
+            "settlements": 48
+          },
+          "audit": {
+            "settlements": 48,
+            "mixed_settlements": 41,
+            "restored_scaled": 3291,
+            "decreased_scaled": 8266,
+            "participant_exposure_increase_events": 21,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.008285191994218621
+        },
+        "decrease-first": {
+          "cleared_percent": 62.458770614692654,
+          "residual_debt": 3756,
+          "metrics": {
+            "messages": 1062,
+            "messages_advertise": 155,
+            "searches": 48,
+            "messages_search": 345,
+            "proposals": 48,
+            "messages_prepare": 281,
+            "messages_commit": 281,
+            "settlements": 48
+          },
+          "audit": {
+            "settlements": 48,
+            "mixed_settlements": 26,
+            "restored_scaled": 715,
+            "decreased_scaled": 6964,
+            "participant_exposure_increase_events": 14,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.005654931002936792
+        },
+        "reduction-only": {
+          "cleared_percent": 60.08995502248876,
+          "residual_debt": 3993,
+          "metrics": {
+            "messages": 1564,
+            "messages_advertise": 155,
+            "searches": 48,
+            "messages_search": 985,
+            "proposals": 38,
+            "messages_prepare": 212,
+            "messages_commit": 212,
+            "settlements": 38,
+            "exhausted_searches": 5,
+            "budget_exhaustions": 5
+          },
+          "audit": {
+            "settlements": 38,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 6012,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.008464320002531167
+        }
+      }
+    },
+    {
+      "name": "dense-24",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 24,
+      "edges": 141,
+      "graph_sha256": "9814204f6ffcaee6c49c5af679877b31ac7728917108a5eca12106e91f1197db",
+      "initial_debt": 9632,
+      "starting_debt": 9632,
+      "mcf_cleared_percent": 67.56644518272425,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 48.048172757475086,
+          "residual_debt": 5004,
+          "metrics": {
+            "messages": 1435,
+            "messages_advertise": 141,
+            "searches": 48,
+            "messages_search": 788,
+            "proposals": 48,
+            "messages_prepare": 253,
+            "messages_commit": 253,
+            "settlements": 48
+          },
+          "audit": {
+            "settlements": 48,
+            "mixed_settlements": 42,
+            "restored_scaled": 3134,
+            "decreased_scaled": 7762,
+            "participant_exposure_increase_events": 25,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.00982237899734173
+        },
+        "decrease-first": {
+          "cleared_percent": 53.20805647840532,
+          "residual_debt": 4507,
+          "metrics": {
+            "messages": 1027,
+            "messages_advertise": 141,
+            "searches": 48,
+            "messages_search": 336,
+            "proposals": 48,
+            "messages_prepare": 275,
+            "messages_commit": 275,
+            "settlements": 48
+          },
+          "audit": {
+            "settlements": 48,
+            "mixed_settlements": 28,
+            "restored_scaled": 1025,
+            "decreased_scaled": 6150,
+            "participant_exposure_increase_events": 19,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.010737917997175828
+        },
+        "reduction-only": {
+          "cleared_percent": 51.84800664451827,
+          "residual_debt": 4638,
+          "metrics": {
+            "messages": 1651,
+            "messages_advertise": 141,
+            "searches": 48,
+            "messages_search": 1162,
+            "proposals": 31,
+            "messages_prepare": 174,
+            "messages_commit": 174,
+            "settlements": 31,
+            "exhausted_searches": 8,
+            "budget_exhaustions": 9
+          },
+          "audit": {
+            "settlements": 31,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 4994,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0072172369982581586
+        }
+      }
+    },
+    {
+      "name": "community-24",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 24,
+      "edges": 64,
+      "graph_sha256": "f9d65357a4291b1e2396dc7a7e404d9969c440c72f5f69e862644d150c8c7eb8",
+      "initial_debt": 3988,
+      "starting_debt": 3988,
+      "mcf_cleared_percent": 62.487462387161486,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 42.87863590772317,
+          "residual_debt": 2278,
+          "metrics": {
+            "messages": 1969,
+            "messages_advertise": 64,
+            "searches": 48,
+            "messages_search": 1627,
+            "proposals": 34,
+            "messages_prepare": 139,
+            "messages_commit": 139,
+            "settlements": 34,
+            "budget_exhaustions": 14
+          },
+          "audit": {
+            "settlements": 34,
+            "mixed_settlements": 28,
+            "restored_scaled": 1012,
+            "decreased_scaled": 2722,
+            "participant_exposure_increase_events": 11,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.01227707300131442
+        },
+        "decrease-first": {
+          "cleared_percent": 43.45536609829488,
+          "residual_debt": 2255,
+          "metrics": {
+            "messages": 2285,
+            "messages_advertise": 64,
+            "searches": 48,
+            "messages_search": 2043,
+            "proposals": 20,
+            "messages_prepare": 89,
+            "messages_commit": 89,
+            "settlements": 20,
+            "budget_exhaustions": 28
+          },
+          "audit": {
+            "settlements": 20,
+            "mixed_settlements": 12,
+            "restored_scaled": 304,
+            "decreased_scaled": 2037,
+            "participant_exposure_increase_events": 7,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.011311185000522528
+        },
+        "reduction-only": {
+          "cleared_percent": 44.232698094282846,
+          "residual_debt": 2224,
+          "metrics": {
+            "messages": 1854,
+            "messages_advertise": 64,
+            "searches": 48,
+            "messages_search": 1672,
+            "proposals": 14,
+            "messages_prepare": 59,
+            "messages_commit": 59,
+            "settlements": 14,
+            "exhausted_searches": 21,
+            "budget_exhaustions": 13
+          },
+          "audit": {
+            "settlements": 14,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 1764,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.006822755996836349
+        }
+      }
+    },
+    {
+      "name": "community-24",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 24,
+      "edges": 60,
+      "graph_sha256": "19e59a5844229cd964b9629161a739a61f5076346a839e2459b9129cffa7038b",
+      "initial_debt": 4132,
+      "starting_debt": 4132,
+      "mcf_cleared_percent": 43.82865440464666,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 38.18973862536302,
+          "residual_debt": 2554,
+          "metrics": {
+            "messages": 1663,
+            "messages_advertise": 60,
+            "searches": 48,
+            "messages_search": 1253,
+            "proposals": 39,
+            "messages_prepare": 175,
+            "messages_commit": 175,
+            "settlements": 39,
+            "budget_exhaustions": 9
+          },
+          "audit": {
+            "settlements": 39,
+            "mixed_settlements": 29,
+            "restored_scaled": 881,
+            "decreased_scaled": 2459,
+            "participant_exposure_increase_events": 14,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.010212251996563282
+        },
+        "decrease-first": {
+          "cleared_percent": 39.8838334946757,
+          "residual_debt": 2484,
+          "metrics": {
+            "messages": 1454,
+            "messages_advertise": 60,
+            "searches": 48,
+            "messages_search": 980,
+            "proposals": 43,
+            "messages_prepare": 207,
+            "messages_commit": 207,
+            "settlements": 43,
+            "budget_exhaustions": 5
+          },
+          "audit": {
+            "settlements": 43,
+            "mixed_settlements": 36,
+            "restored_scaled": 811,
+            "decreased_scaled": 2459,
+            "participant_exposure_increase_events": 19,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.009682279996923171
+        },
+        "reduction-only": {
+          "cleared_percent": 28.557599225556633,
+          "residual_debt": 2952,
+          "metrics": {
+            "messages": 1451,
+            "messages_advertise": 60,
+            "searches": 48,
+            "messages_search": 1311,
+            "proposals": 10,
+            "messages_prepare": 40,
+            "messages_commit": 40,
+            "settlements": 10,
+            "exhausted_searches": 20,
+            "budget_exhaustions": 18
+          },
+          "audit": {
+            "settlements": 10,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 1180,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.005844765997608192
+        }
+      }
+    },
+    {
+      "name": "disconnected-24",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 24,
+      "edges": 46,
+      "graph_sha256": "1dbe20c9bc8917cf648056965d1323c129f192261ebc1371e7540a23625ff103",
+      "initial_debt": 2863,
+      "starting_debt": 2863,
+      "mcf_cleared_percent": 38.421236465246245,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 37.58295494236815,
+          "residual_debt": 1787,
+          "metrics": {
+            "messages": 1987,
+            "messages_advertise": 46,
+            "searches": 48,
+            "messages_search": 1653,
+            "proposals": 31,
+            "messages_prepare": 144,
+            "messages_commit": 144,
+            "settlements": 31,
+            "budget_exhaustions": 17
+          },
+          "audit": {
+            "settlements": 31,
+            "mixed_settlements": 25,
+            "restored_scaled": 150,
+            "decreased_scaled": 1226,
+            "participant_exposure_increase_events": 3,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.007472126999346074
+        },
+        "decrease-first": {
+          "cleared_percent": 38.421236465246245,
+          "residual_debt": 1763,
+          "metrics": {
+            "messages": 1678,
+            "messages_advertise": 46,
+            "searches": 48,
+            "messages_search": 1316,
+            "proposals": 33,
+            "messages_prepare": 158,
+            "messages_commit": 158,
+            "settlements": 33,
+            "budget_exhaustions": 15
+          },
+          "audit": {
+            "settlements": 33,
+            "mixed_settlements": 25,
+            "restored_scaled": 143,
+            "decreased_scaled": 1243,
+            "participant_exposure_increase_events": 5,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0060627710045082495
+        },
+        "reduction-only": {
+          "cleared_percent": 35.4872511351729,
+          "residual_debt": 1847,
+          "metrics": {
+            "messages": 615,
+            "messages_advertise": 46,
+            "searches": 48,
+            "messages_search": 479,
+            "proposals": 9,
+            "messages_prepare": 45,
+            "messages_commit": 45,
+            "settlements": 9,
+            "exhausted_searches": 39
+          },
+          "audit": {
+            "settlements": 9,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 1016,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0022105640018708073
+        }
+      }
+    },
+    {
+      "name": "disconnected-24",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 24,
+      "edges": 42,
+      "graph_sha256": "98a876d11e245131747893f8b54a9495fd668c50b423602b5dcb2d7d50696dd0",
+      "initial_debt": 2805,
+      "starting_debt": 2805,
+      "mcf_cleared_percent": 35.864527629233514,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 35.864527629233514,
+          "residual_debt": 1799,
+          "metrics": {
+            "messages": 2348,
+            "messages_advertise": 42,
+            "searches": 48,
+            "messages_search": 2148,
+            "proposals": 18,
+            "messages_prepare": 79,
+            "messages_commit": 79,
+            "settlements": 18,
+            "budget_exhaustions": 29,
+            "exhausted_searches": 1
+          },
+          "audit": {
+            "settlements": 18,
+            "mixed_settlements": 10,
+            "restored_scaled": 184,
+            "decreased_scaled": 1190,
+            "participant_exposure_increase_events": 2,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.00793600999895716
+        },
+        "decrease-first": {
+          "cleared_percent": 35.864527629233514,
+          "residual_debt": 1799,
+          "metrics": {
+            "messages": 2179,
+            "messages_advertise": 42,
+            "searches": 48,
+            "messages_search": 1941,
+            "proposals": 22,
+            "messages_prepare": 98,
+            "messages_commit": 98,
+            "settlements": 22,
+            "budget_exhaustions": 26
+          },
+          "audit": {
+            "settlements": 22,
+            "mixed_settlements": 17,
+            "restored_scaled": 204,
+            "decreased_scaled": 1210,
+            "participant_exposure_increase_events": 2,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.009278306002670433
+        },
+        "reduction-only": {
+          "cleared_percent": 27.094474153297682,
+          "residual_debt": 2045,
+          "metrics": {
+            "messages": 982,
+            "messages_advertise": 42,
+            "searches": 48,
+            "messages_search": 876,
+            "proposals": 8,
+            "messages_prepare": 32,
+            "messages_commit": 32,
+            "settlements": 8,
+            "exhausted_searches": 36,
+            "budget_exhaustions": 4
+          },
+          "audit": {
+            "settlements": 8,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 760,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0028608260035980493
+        }
+      }
+    },
+    {
+      "name": "sparse-72",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 72,
+      "edges": 224,
+      "graph_sha256": "7d96edc038ce3020ebbff812e89e853b3e5ba4a849302cadc3257cb837491ff2",
+      "initial_debt": 14955,
+      "starting_debt": 14955,
+      "mcf_cleared_percent": 49.5954530257439,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 37.545971247074554,
+          "residual_debt": 9340,
+          "metrics": {
+            "messages": 8520,
+            "messages_advertise": 224,
+            "searches": 144,
+            "messages_search": 6482,
+            "proposals": 97,
+            "messages_prepare": 907,
+            "messages_commit": 907,
+            "settlements": 97,
+            "budget_exhaustions": 47
+          },
+          "audit": {
+            "settlements": 97,
+            "mixed_settlements": 90,
+            "restored_scaled": 4335,
+            "decreased_scaled": 9950,
+            "participant_exposure_increase_events": 134,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.05043604200182017
+        },
+        "decrease-first": {
+          "cleared_percent": 44.14577064526914,
+          "residual_debt": 8353,
+          "metrics": {
+            "messages": 6872,
+            "messages_advertise": 224,
+            "searches": 144,
+            "messages_search": 3794,
+            "proposals": 139,
+            "messages_prepare": 1427,
+            "messages_commit": 1427,
+            "settlements": 139,
+            "budget_exhaustions": 5
+          },
+          "audit": {
+            "settlements": 139,
+            "mixed_settlements": 129,
+            "restored_scaled": 3644,
+            "decreased_scaled": 10246,
+            "participant_exposure_increase_events": 176,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.04434220999974059
+        },
+        "reduction-only": {
+          "cleared_percent": 32.83182881979271,
+          "residual_debt": 10045,
+          "metrics": {
+            "messages": 7216,
+            "messages_advertise": 224,
+            "searches": 144,
+            "messages_search": 6596,
+            "proposals": 21,
+            "messages_prepare": 198,
+            "messages_commit": 198,
+            "settlements": 21,
+            "exhausted_searches": 30,
+            "budget_exhaustions": 93
+          },
+          "audit": {
+            "settlements": 21,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 4910,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.0383409509959165
+        }
+      }
+    },
+    {
+      "name": "sparse-72",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 72,
+      "edges": 209,
+      "graph_sha256": "edff66e5430dfa44ea30989a0a5d64e5ac1f43153a70a88c99b24c891caa5261",
+      "initial_debt": 14060,
+      "starting_debt": 14060,
+      "mcf_cleared_percent": 56.11664295874822,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 42.652916073968704,
+          "residual_debt": 8063,
+          "metrics": {
+            "messages": 7985,
+            "messages_advertise": 209,
+            "searches": 144,
+            "messages_search": 6208,
+            "proposals": 84,
+            "messages_prepare": 784,
+            "messages_commit": 784,
+            "settlements": 84,
+            "budget_exhaustions": 60
+          },
+          "audit": {
+            "settlements": 84,
+            "mixed_settlements": 70,
+            "restored_scaled": 5072,
+            "decreased_scaled": 11069,
+            "participant_exposure_increase_events": 122,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.03999998099607183
+        },
+        "decrease-first": {
+          "cleared_percent": 49.60881934566145,
+          "residual_debt": 7085,
+          "metrics": {
+            "messages": 6110,
+            "messages_advertise": 209,
+            "searches": 144,
+            "messages_search": 2981,
+            "proposals": 143,
+            "messages_prepare": 1460,
+            "messages_commit": 1460,
+            "settlements": 143,
+            "budget_exhaustions": 1
+          },
+          "audit": {
+            "settlements": 143,
+            "mixed_settlements": 124,
+            "restored_scaled": 4265,
+            "decreased_scaled": 11240,
+            "participant_exposure_increase_events": 186,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.02650487100618193
+        },
+        "reduction-only": {
+          "cleared_percent": 40.88904694167852,
+          "residual_debt": 8311,
+          "metrics": {
+            "messages": 5732,
+            "messages_advertise": 209,
+            "searches": 144,
+            "messages_search": 4855,
+            "proposals": 40,
+            "messages_prepare": 334,
+            "messages_commit": 334,
+            "settlements": 40,
+            "exhausted_searches": 46,
+            "budget_exhaustions": 58
+          },
+          "audit": {
+            "settlements": 40,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 5749,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.032632709000608884
+        }
+      }
+    },
+    {
+      "name": "dense-72",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 72,
+      "edges": 1314,
+      "graph_sha256": "504a9d981cdc92f4059fc39c83ba02180cbf46ea96d3efd586e6add71ac5b99d",
+      "initial_debt": 83230,
+      "starting_debt": 83230,
+      "mcf_cleared_percent": 85.91012855941368,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 34.327766430373664,
+          "residual_debt": 54659,
+          "metrics": {
+            "messages": 7945,
+            "messages_advertise": 1314,
+            "searches": 144,
+            "messages_search": 4219,
+            "proposals": 143,
+            "messages_prepare": 1206,
+            "messages_commit": 1206,
+            "settlements": 143,
+            "budget_exhaustions": 1
+          },
+          "audit": {
+            "settlements": 143,
+            "mixed_settlements": 131,
+            "restored_scaled": 33140,
+            "decreased_scaled": 61711,
+            "participant_exposure_increase_events": 156,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.10033823599951575
+        },
+        "decrease-first": {
+          "cleared_percent": 56.11558332332092,
+          "residual_debt": 36525,
+          "metrics": {
+            "messages": 5128,
+            "messages_advertise": 1314,
+            "searches": 144,
+            "messages_search": 1574,
+            "proposals": 144,
+            "messages_prepare": 1120,
+            "messages_commit": 1120,
+            "settlements": 144
+          },
+          "audit": {
+            "settlements": 144,
+            "mixed_settlements": 54,
+            "restored_scaled": 2503,
+            "decreased_scaled": 49208,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.04255318600189639
+        },
+        "reduction-only": {
+          "cleared_percent": 59.431695302174695,
+          "residual_debt": 33765,
+          "metrics": {
+            "messages": 5769,
+            "messages_advertise": 1314,
+            "searches": 144,
+            "messages_search": 2101,
+            "proposals": 141,
+            "messages_prepare": 1177,
+            "messages_commit": 1177,
+            "settlements": 141,
+            "exhausted_searches": 3
+          },
+          "audit": {
+            "settlements": 141,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 49465,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.04633249500329839
+        }
+      }
+    },
+    {
+      "name": "dense-72",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 72,
+      "edges": 1292,
+      "graph_sha256": "0b065ffbfb75d149cab91036eb95d8ea044e65a67a8df18c4db02d1ea4369724",
+      "initial_debt": 85611,
+      "starting_debt": 85611,
+      "mcf_cleared_percent": 84.55105068273937,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 32.839237948394484,
+          "residual_debt": 57497,
+          "metrics": {
+            "messages": 8593,
+            "messages_advertise": 1292,
+            "searches": 144,
+            "messages_search": 5067,
+            "proposals": 141,
+            "messages_prepare": 1117,
+            "messages_commit": 1117,
+            "settlements": 141,
+            "budget_exhaustions": 3
+          },
+          "audit": {
+            "settlements": 141,
+            "mixed_settlements": 129,
+            "restored_scaled": 29998,
+            "decreased_scaled": 58112,
+            "participant_exposure_increase_events": 137,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.10726707200228702
+        },
+        "decrease-first": {
+          "cleared_percent": 53.64147130625737,
+          "residual_debt": 39688,
+          "metrics": {
+            "messages": 5230,
+            "messages_advertise": 1292,
+            "searches": 144,
+            "messages_search": 1658,
+            "proposals": 144,
+            "messages_prepare": 1140,
+            "messages_commit": 1140,
+            "settlements": 144
+          },
+          "audit": {
+            "settlements": 144,
+            "mixed_settlements": 32,
+            "restored_scaled": 1066,
+            "decreased_scaled": 46989,
+            "participant_exposure_increase_events": 3,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.04699620600149501
+        },
+        "reduction-only": {
+          "cleared_percent": 55.54075994907196,
+          "residual_debt": 38062,
+          "metrics": {
+            "messages": 5466,
+            "messages_advertise": 1292,
+            "searches": 144,
+            "messages_search": 1900,
+            "proposals": 142,
+            "messages_prepare": 1137,
+            "messages_commit": 1137,
+            "settlements": 142,
+            "exhausted_searches": 2
+          },
+          "audit": {
+            "settlements": 142,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 47549,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.04400973299925681
+        }
+      }
+    },
+    {
+      "name": "community-72",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 72,
+      "edges": 532,
+      "graph_sha256": "216ce750fc31c3f1e6cefe7aa1365b326e653c0af546d973b9b064423014dff8",
+      "initial_debt": 34666,
+      "starting_debt": 34666,
+      "mcf_cleared_percent": 74.31200600011539,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 45.309525183176596,
+          "residual_debt": 18959,
+          "metrics": {
+            "messages": 7325,
+            "messages_advertise": 532,
+            "searches": 144,
+            "messages_search": 4889,
+            "proposals": 134,
+            "messages_prepare": 952,
+            "messages_commit": 952,
+            "settlements": 134,
+            "budget_exhaustions": 10
+          },
+          "audit": {
+            "settlements": 134,
+            "mixed_settlements": 124,
+            "restored_scaled": 16064,
+            "decreased_scaled": 31771,
+            "participant_exposure_increase_events": 122,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.064560947001155
+        },
+        "decrease-first": {
+          "cleared_percent": 55.82703513529106,
+          "residual_debt": 15313,
+          "metrics": {
+            "messages": 4008,
+            "messages_advertise": 532,
+            "searches": 144,
+            "messages_search": 1512,
+            "proposals": 144,
+            "messages_prepare": 982,
+            "messages_commit": 982,
+            "settlements": 144
+          },
+          "audit": {
+            "settlements": 144,
+            "mixed_settlements": 107,
+            "restored_scaled": 3967,
+            "decreased_scaled": 23320,
+            "participant_exposure_increase_events": 46,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.03436686199711403
+        },
+        "reduction-only": {
+          "cleared_percent": 51.202907748225925,
+          "residual_debt": 16916,
+          "metrics": {
+            "messages": 6731,
+            "messages_advertise": 532,
+            "searches": 144,
+            "messages_search": 5017,
+            "proposals": 80,
+            "messages_prepare": 591,
+            "messages_commit": 591,
+            "settlements": 80,
+            "exhausted_searches": 17,
+            "budget_exhaustions": 47
+          },
+          "audit": {
+            "settlements": 80,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 17750,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.04521239000314381
+        }
+      }
+    },
+    {
+      "name": "community-72",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 72,
+      "edges": 509,
+      "graph_sha256": "da8e3fd5483d3b67999325a0fd1e064d5efaf7ae6e0b67eaf06c21275ee06f25",
+      "initial_debt": 33011,
+      "starting_debt": 33011,
+      "mcf_cleared_percent": 62.563993820241734,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 39.11726394232225,
+          "residual_debt": 20098,
+          "metrics": {
+            "messages": 7378,
+            "messages_advertise": 509,
+            "searches": 144,
+            "messages_search": 4921,
+            "proposals": 135,
+            "messages_prepare": 974,
+            "messages_commit": 974,
+            "settlements": 135,
+            "budget_exhaustions": 9
+          },
+          "audit": {
+            "settlements": 135,
+            "mixed_settlements": 125,
+            "restored_scaled": 12052,
+            "decreased_scaled": 24965,
+            "participant_exposure_increase_events": 115,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.05566797599749407
+        },
+        "decrease-first": {
+          "cleared_percent": 41.325618733149554,
+          "residual_debt": 19369,
+          "metrics": {
+            "messages": 4086,
+            "messages_advertise": 509,
+            "searches": 144,
+            "messages_search": 1587,
+            "proposals": 144,
+            "messages_prepare": 995,
+            "messages_commit": 995,
+            "settlements": 144
+          },
+          "audit": {
+            "settlements": 144,
+            "mixed_settlements": 111,
+            "restored_scaled": 4496,
+            "decreased_scaled": 18138,
+            "participant_exposure_increase_events": 54,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.02209822599979816
+        },
+        "reduction-only": {
+          "cleared_percent": 39.08697100966344,
+          "residual_debt": 20108,
+          "metrics": {
+            "messages": 6620,
+            "messages_advertise": 509,
+            "searches": 144,
+            "messages_search": 5107,
+            "proposals": 71,
+            "messages_prepare": 502,
+            "messages_commit": 502,
+            "settlements": 71,
+            "exhausted_searches": 22,
+            "budget_exhaustions": 51
+          },
+          "audit": {
+            "settlements": 71,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 12903,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.03374384099879535
+        }
+      }
+    },
+    {
+      "name": "disconnected-72",
+      "phase": "synthetic-training",
+      "seed": 101,
+      "nodes": 72,
+      "edges": 303,
+      "graph_sha256": "982754dfa1b684562c813eb9303e98a972f1c6f91251724bc4815d7d0c29f516",
+      "initial_debt": 19829,
+      "starting_debt": 19829,
+      "mcf_cleared_percent": 61.57647889454839,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 45.18634323465631,
+          "residual_debt": 10869,
+          "metrics": {
+            "messages": 6152,
+            "messages_advertise": 303,
+            "searches": 144,
+            "messages_search": 4289,
+            "proposals": 125,
+            "messages_prepare": 780,
+            "messages_commit": 780,
+            "settlements": 125,
+            "budget_exhaustions": 19
+          },
+          "audit": {
+            "settlements": 125,
+            "mixed_settlements": 109,
+            "restored_scaled": 6925,
+            "decreased_scaled": 15885,
+            "participant_exposure_increase_events": 94,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.038995007998892106
+        },
+        "decrease-first": {
+          "cleared_percent": 52.5190377729588,
+          "residual_debt": 9415,
+          "metrics": {
+            "messages": 3866,
+            "messages_advertise": 303,
+            "searches": 144,
+            "messages_search": 1551,
+            "proposals": 144,
+            "messages_prepare": 1006,
+            "messages_commit": 1006,
+            "settlements": 144
+          },
+          "audit": {
+            "settlements": 144,
+            "mixed_settlements": 120,
+            "restored_scaled": 4495,
+            "decreased_scaled": 14909,
+            "participant_exposure_increase_events": 80,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.017715244997816626
+        },
+        "reduction-only": {
+          "cleared_percent": 43.39099299006506,
+          "residual_debt": 11225,
+          "metrics": {
+            "messages": 5723,
+            "messages_advertise": 303,
+            "searches": 144,
+            "messages_search": 4652,
+            "proposals": 57,
+            "messages_prepare": 384,
+            "messages_commit": 384,
+            "settlements": 57,
+            "exhausted_searches": 35,
+            "budget_exhaustions": 52
+          },
+          "audit": {
+            "settlements": 57,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 8604,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.023582134002936073
+        }
+      }
+    },
+    {
+      "name": "disconnected-72",
+      "phase": "synthetic-training",
+      "seed": 102,
+      "nodes": 72,
+      "edges": 301,
+      "graph_sha256": "9049d00df39135a6914990511c9f420c5d20abb46ab6f3f27f95233423c089a1",
+      "initial_debt": 19906,
+      "starting_debt": 19906,
+      "mcf_cleared_percent": 67.0250175826384,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 46.53873204059078,
+          "residual_debt": 10642,
+          "metrics": {
+            "messages": 6348,
+            "messages_advertise": 301,
+            "searches": 144,
+            "messages_search": 4489,
+            "proposals": 119,
+            "messages_prepare": 779,
+            "messages_commit": 779,
+            "settlements": 119,
+            "budget_exhaustions": 25
+          },
+          "audit": {
+            "settlements": 119,
+            "mixed_settlements": 107,
+            "restored_scaled": 6843,
+            "decreased_scaled": 16107,
+            "participant_exposure_increase_events": 97,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.043377146997954696
+        },
+        "decrease-first": {
+          "cleared_percent": 58.16839143976691,
+          "residual_debt": 8327,
+          "metrics": {
+            "messages": 3898,
+            "messages_advertise": 301,
+            "searches": 144,
+            "messages_search": 1565,
+            "proposals": 144,
+            "messages_prepare": 1016,
+            "messages_commit": 1016,
+            "settlements": 144
+          },
+          "audit": {
+            "settlements": 144,
+            "mixed_settlements": 113,
+            "restored_scaled": 4000,
+            "decreased_scaled": 15579,
+            "participant_exposure_increase_events": 66,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.01681833500333596
+        },
+        "reduction-only": {
+          "cleared_percent": 50.49733748618507,
+          "residual_debt": 9854,
+          "metrics": {
+            "messages": 5297,
+            "messages_advertise": 301,
+            "searches": 144,
+            "messages_search": 4208,
+            "proposals": 63,
+            "messages_prepare": 394,
+            "messages_commit": 394,
+            "settlements": 63,
+            "exhausted_searches": 32,
+            "budget_exhaustions": 49
+          },
+          "audit": {
+            "settlements": 63,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 10052,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 0.020239527999365237
+        }
+      }
+    },
+    {
+      "name": "sarafu-50k-cold",
+      "phase": "sarafu-validation",
+      "seed": 0,
+      "nodes": 6908,
+      "edges": 13831,
+      "graph_sha256": "9cf08d3937d4077f28296b9c3676e81f204778f45fb76c16740c2b40996b1740",
+      "initial_debt": 7434585295,
+      "starting_debt": 7434585295,
+      "mcf_cleared_percent": 18.921188528781283,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 9.882622511495445,
+          "residual_debt": 6699853295,
+          "metrics": {
+            "messages": 717303,
+            "messages_advertise": 13831,
+            "searches": 13816,
+            "messages_search": 698986,
+            "proposals": 431,
+            "messages_prepare": 2243,
+            "messages_commit": 2243,
+            "settlements": 431,
+            "exhausted_searches": 2938,
+            "budget_exhaustions": 10447
+          },
+          "audit": {
+            "settlements": 431,
+            "mixed_settlements": 299,
+            "restored_scaled": 282844000,
+            "decreased_scaled": 1017576000,
+            "participant_exposure_increase_events": 222,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 9.848413011997764
+        },
+        "decrease-first": {
+          "cleared_percent": 12.35095117702863,
+          "residual_debt": 6516343295,
+          "metrics": {
+            "messages": 705318,
+            "messages_advertise": 13831,
+            "searches": 13816,
+            "messages_search": 677333,
+            "proposals": 1051,
+            "messages_prepare": 7077,
+            "messages_commit": 7077,
+            "settlements": 1051,
+            "exhausted_searches": 2938,
+            "budget_exhaustions": 9827
+          },
+          "audit": {
+            "settlements": 1051,
+            "mixed_settlements": 853,
+            "restored_scaled": 301635000,
+            "decreased_scaled": 1219877000,
+            "participant_exposure_increase_events": 876,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 9.58200607100298
+        },
+        "reduction-only": {
+          "cleared_percent": 10.608903774773358,
+          "residual_debt": 6645857295,
+          "metrics": {
+            "messages": 684962,
+            "messages_advertise": 13831,
+            "searches": 13816,
+            "messages_search": 668607,
+            "proposals": 264,
+            "messages_prepare": 1262,
+            "messages_commit": 1262,
+            "settlements": 264,
+            "exhausted_searches": 3577,
+            "budget_exhaustions": 9975
+          },
+          "audit": {
+            "settlements": 264,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 788728000,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 7.094291884000995
+        }
+      }
+    },
+    {
+      "name": "sarafu-50k-cold",
+      "phase": "sarafu-validation",
+      "seed": 1,
+      "nodes": 6908,
+      "edges": 13831,
+      "graph_sha256": "9cf08d3937d4077f28296b9c3676e81f204778f45fb76c16740c2b40996b1740",
+      "initial_debt": 7434585295,
+      "starting_debt": 7434585295,
+      "mcf_cleared_percent": 18.921188528781283,
+      "methods": {
+        "capacity-first": {
+          "cleared_percent": 9.886334890721029,
+          "residual_debt": 6699577295,
+          "metrics": {
+            "messages": 717288,
+            "messages_advertise": 13831,
+            "searches": 13816,
+            "messages_search": 699277,
+            "exhausted_searches": 2940,
+            "proposals": 395,
+            "messages_prepare": 2090,
+            "messages_commit": 2090,
+            "settlements": 395,
+            "budget_exhaustions": 10481
+          },
+          "audit": {
+            "settlements": 395,
+            "mixed_settlements": 271,
+            "restored_scaled": 306927000,
+            "decreased_scaled": 1041935000,
+            "participant_exposure_increase_events": 231,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 8.630561095997109
+        },
+        "decrease-first": {
+          "cleared_percent": 12.199913835274655,
+          "residual_debt": 6527572295,
+          "metrics": {
+            "messages": 707805,
+            "messages_advertise": 13831,
+            "searches": 13816,
+            "messages_search": 685618,
+            "exhausted_searches": 2940,
+            "proposals": 678,
+            "messages_prepare": 4178,
+            "messages_commit": 4178,
+            "settlements": 678,
+            "budget_exhaustions": 10198
+          },
+          "audit": {
+            "settlements": 678,
+            "mixed_settlements": 473,
+            "restored_scaled": 258986000,
+            "decreased_scaled": 1165999000,
+            "participant_exposure_increase_events": 391,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 10.880670847000147
+        },
+        "reduction-only": {
+          "cleared_percent": 10.340307757542513,
+          "residual_debt": 6665826295,
+          "metrics": {
+            "messages": 684367,
+            "messages_advertise": 13831,
+            "searches": 13816,
+            "messages_search": 668114,
+            "exhausted_searches": 3605,
+            "proposals": 262,
+            "messages_prepare": 1211,
+            "messages_commit": 1211,
+            "settlements": 262,
+            "budget_exhaustions": 9949
+          },
+          "audit": {
+            "settlements": 262,
+            "mixed_settlements": 0,
+            "restored_scaled": 0,
+            "decreased_scaled": 768759000,
+            "participant_exposure_increase_events": 0,
+            "every_settlement_preserved_net_positions": true,
+            "every_settlement_strictly_reduced_total_debt": true,
+            "every_balance_within_original_cap": true,
+            "final_ledger_matches_independent_replay": true
+          },
+          "seconds_with_audit": 8.652226156002143
+        }
+      }
+    }
+  ],
+  "assumptions": [
+    "Serialized searches and settlements; node-local routing only.",
+    "Same per-search hop budget and initiator rounds, not equal messages or CPU.",
+    "Static original caps, reliable messages, honest peers, no crashes.",
+    "All setup advertisements included in message counts.",
+    "Offline MCF/auditor never influence routing.",
+    "No parameter tuning or variant selection based on training results.",
+    "Numbat postpass skipped: published pipeline result has no saved residual ledger."
+  ],
+  "baseline_reference": {
+    "file": "headroom.json",
+    "sha256": "f07771905377904284fd2a57639c9c83c84f522519bea3afb932c3056ecda7e1"
+  }
+}

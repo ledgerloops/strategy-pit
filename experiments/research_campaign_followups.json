@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "purpose": "Finite full-prefix replay-speed and seed sensitivity; increased event budgets replace censored 2M trials. Clean transport baselines; no assistant wake-up service.",
+  "jobs": [
+    {
+      "id": "sarafu-clock-500",
+      "argv": [
+        "python3",
+        "experiments/temporal_scale_benchmark.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--arrival-ticks",
+        "500",
+        "--event-budget",
+        "10000000",
+        "--seed",
+        "0",
+        "--output",
+        "experiments/results/temporal-sarafu-clock-500.json"
+      ],
+      "timeout_seconds": 1800,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_scale_benchmark.py"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv"
+      ],
+      "outputs": [
+        "experiments/results/temporal-sarafu-clock-500.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "sarafu-clock-4000",
+      "argv": [
+        "python3",
+        "experiments/temporal_scale_benchmark.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--arrival-ticks",
+        "4000",
+        "--event-budget",
+        "20000000",
+        "--seed",
+        "0",
+        "--output",
+        "experiments/results/temporal-sarafu-clock-4000.json"
+      ],
+      "timeout_seconds": 1800,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_scale_benchmark.py"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv"
+      ],
+      "outputs": [
+        "experiments/results/temporal-sarafu-clock-4000.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "sarafu-clock-2000-seed1",
+      "argv": [
+        "python3",
+        "experiments/temporal_scale_benchmark.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--seed",
+        "1",
+        "--output",
+        "experiments/results/temporal-sarafu-clock-2000-seed1.json"
+      ],
+      "timeout_seconds": 1800,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_scale_benchmark.py"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv"
+      ],
+      "outputs": [
+        "experiments/results/temporal-sarafu-clock-2000-seed1.json"
+      ],
+      "require_json_complete": true
+    }
+  ]
+}

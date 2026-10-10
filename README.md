@@ -43,6 +43,8 @@ The [historical README](https://github.com/ledgerloops/strategy-pit/blob/e36c0ed
 
 [Held-out results and reproduction instructions](experiments/NUMBAT.md) show gains over our earlier node-local DFS variants in the larger synthetic cases, while largest-first remains stronger on average in the small cases. On the [shared 50k Sarafu comparison](experiments/ANIMAL-COMPARISON.md), it trails historical Jerboa and Jaribu in achieved clearing. Numbat remains provisional and does not guarantee optimal clearing.
 
+New [timestamped experiments](experiments/TEMPORAL-RESULTS.md) add dropped messages and sleeping peers; [local turn-taking](experiments/TEMPORAL-TURNS.md) has generally added cost in the tested workloads. A [Headroom postpass](experiments/HEADROOM.md) improves static Numbat clearing, but currently requires serialized initiation and retained zero-balance channels. These models have different assumptions and do not establish one universal winner.
+
 ## Try the experiments
 
 - [DFS, neighbour-message protocols and continuously growing graphs](experiments/README.md): reproducible runs, measured results and independent settlement checks.

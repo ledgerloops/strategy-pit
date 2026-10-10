@@ -55,3 +55,7 @@ python -m unittest discover -s experiments -p 'test_*.py' -q
 These write the default result files. Regenerate the temporary input using the instructions in [the animal comparison](ANIMAL-COMPARISON.md#reproduce). The global solver is only an external scoring reference; it does not guide node decisions.
 
 [All Headroom runs](results/headroom.json) · [Numbat pipeline and control](results/headroom-numbat-pipeline.json) · [Implementation](headroom.py)
+
+## Search-order followup
+
+[Decrease-first Headroom](HEADROOM-SEARCH.md) raises cold-start clearing to 12.20–12.35% at the same admission and hop limits. It still uses serialized initiation and does not establish a win over Numbat.
