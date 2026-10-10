@@ -1,0 +1,91 @@
+{
+  "code": 0,
+  "interval": 1000,
+  "seed": 2,
+  "inputWeight": 7434585.294999998,
+  "calls": {
+    "work1": 9734,
+    "work2": 9649
+  },
+  "wallSeconds": 90.014474468,
+  "loops": 1196,
+  "linksPruned": 2700,
+  "stats": {
+    "2": {
+      "numFound": 6921,
+      "totalAmount": 1195111.2000000007
+    },
+    "3": {
+      "numFound": 320,
+      "totalAmount": 96871.5
+    },
+    "4": {
+      "numFound": 201,
+      "totalAmount": 75693.89999999998
+    },
+    "5": {
+      "numFound": 151,
+      "totalAmount": 23904.7
+    },
+    "6": {
+      "numFound": 140,
+      "totalAmount": 25133.899999999998
+    },
+    "7": {
+      "numFound": 104,
+      "totalAmount": 12296.100000000002
+    },
+    "8": {
+      "numFound": 85,
+      "totalAmount": 9841
+    },
+    "9": {
+      "numFound": 65,
+      "totalAmount": 7488.199999999999
+    },
+    "10": {
+      "numFound": 38,
+      "totalAmount": 4394.3
+    },
+    "11": {
+      "numFound": 34,
+      "totalAmount": 1807.8999999999999
+    },
+    "12": {
+      "numFound": 17,
+      "totalAmount": 803.5999999999999
+    },
+    "13": {
+      "numFound": 11,
+      "totalAmount": 552
+    },
+    "14": {
+      "numFound": 11,
+      "totalAmount": 807.3
+    },
+    "15": {
+      "numFound": 6,
+      "totalAmount": 175
+    },
+    "16": {
+      "numFound": 5,
+      "totalAmount": 119.3
+    },
+    "17": {
+      "numFound": 4,
+      "totalAmount": 44
+    },
+    "18": {
+      "numFound": 1,
+      "totalAmount": 46.7
+    },
+    "19": {
+      "numFound": 2,
+      "totalAmount": 34
+    },
+    "20": {
+      "numFound": 1,
+      "totalAmount": 24
+    }
+  }
+}

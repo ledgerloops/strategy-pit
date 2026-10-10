@@ -63,8 +63,8 @@ Numbat clears more in this run, but also sends more messages and takes longer to
 
 Run `python3 experiments/numbat_sarafu.py` from the repository root to reproduce [these results](results/numbat-sarafu.json). This command overwrites that result file and requires the pinned Git history. No global graph information is used in node decisions.
 
-## Comparison with Jerboa
+## Comparison with Jerboa and Jaribu
 
-We have not established that Numbat beats Jerboa. Jerboa's README reports 15.3% clearing against 16.6% centralized DFS and an 18.9% MCF optimum on its historical 50k Sarafu fixture. Those percentages use a different input and denominator from the table above. A direct comparison requires pinned implementations, identical obligations and declared time/message budgets.
+The [same-input animal comparison](ANIMAL-COMPARISON.md) now tests the frozen prototype on Jerboa's 50k Sarafu fixture. Numbat clears **13.49–13.82%** in three longer runs, below fresh historical Jerboa's **15.37% valid-subset score** and Jaribu's **16.61%**. The MCF optimum on this fixture is **18.92%**.
 
-Numbat's useful contribution so far is a measured improvement on several larger synthetic cases while keeping decisions node-local. It remains greedy: earlier settlements can block better later choices, and finite searches may leave discoverable cycles.
+Historical Jerboa uses a central semaphore and emits some invalid proposals; Jaribu uses a shared global graph. The comparison records those qualifications, plus the much sparser schedule in semaphore-free June Jerboa. Numbat has not established superiority over the earlier prototypes. Its improvements on larger synthetic cases do not generalize to this fixture.

@@ -1,0 +1,87 @@
+{
+  "code": 0,
+  "interval": 1000,
+  "seed": 1,
+  "inputWeight": 7434585.294999998,
+  "wallSeconds": 90.00817659900001,
+  "loops": 1069,
+  "linksPruned": 2271,
+  "stats": {
+    "2": {
+      "numFound": 5928,
+      "totalAmount": 1164535.2000000002
+    },
+    "3": {
+      "numFound": 315,
+      "totalAmount": 96776.5
+    },
+    "4": {
+      "numFound": 186,
+      "totalAmount": 74647.89999999998
+    },
+    "5": {
+      "numFound": 130,
+      "totalAmount": 22593.7
+    },
+    "6": {
+      "numFound": 123,
+      "totalAmount": 24537.899999999998
+    },
+    "7": {
+      "numFound": 88,
+      "totalAmount": 11683.100000000002
+    },
+    "8": {
+      "numFound": 73,
+      "totalAmount": 9352
+    },
+    "9": {
+      "numFound": 57,
+      "totalAmount": 7406.199999999999
+    },
+    "10": {
+      "numFound": 31,
+      "totalAmount": 4270.3
+    },
+    "11": {
+      "numFound": 28,
+      "totalAmount": 1685.8999999999999
+    },
+    "12": {
+      "numFound": 14,
+      "totalAmount": 784.5999999999999
+    },
+    "13": {
+      "numFound": 7,
+      "totalAmount": 442
+    },
+    "14": {
+      "numFound": 7,
+      "totalAmount": 789.3
+    },
+    "15": {
+      "numFound": 2,
+      "totalAmount": 85
+    },
+    "16": {
+      "numFound": 4,
+      "totalAmount": 118.3
+    },
+    "17": {
+      "numFound": 3,
+      "totalAmount": 41
+    },
+    "18": {
+      "numFound": 1,
+      "totalAmount": 46.7
+    }
+  },
+  "residualIsAcyclic": false,
+  "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+  "validatedLoops": 1069,
+  "cleared": 1164535.2,
+  "initial": 7434585.295,
+  "percent": 15.663754651966771,
+  "conservedNetPositions": true,
+  "remaining": 6270050.095
+}

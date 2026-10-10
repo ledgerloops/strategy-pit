@@ -1,0 +1,886 @@
+{
+  "upstreamCommit": "06311d3c542f2f051a0690cc8d1706e62ae122ce",
+  "sourceSHA256": {
+    "src/BirdsEyeWorm.ts": "c4c95475aae124e9cbbe2be8fc1141c6a92c823bca2c303758086e3e5a0c4ad8",
+    "src/BirdsEyeGraph.ts": "9f93338aa59cf2689afa442a742ad27e0278e72a93e39bbcd62098da3ceca5cc"
+  },
+  "trials": [
+    {
+      "code": 1,
+      "interval": 10,
+      "seed": 1,
+      "inputWeight": 7434585.294999998,
+      "wallSeconds": 54.404948421,
+      "loops": 1312,
+      "linksPruned": 12390,
+      "stats": {
+        "2": {
+          "numFound": 7392,
+          "totalAmount": 1235222.1999999993
+        },
+        "3": {
+          "numFound": 385,
+          "totalAmount": 104663.5
+        },
+        "4": {
+          "numFound": 225,
+          "totalAmount": 77600.89999999998
+        },
+        "5": {
+          "numFound": 166,
+          "totalAmount": 25185.7
+        },
+        "6": {
+          "numFound": 145,
+          "totalAmount": 25262.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 41,
+          "totalAmount": 4529.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": true,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1312,
+      "cleared": 1235222.2,
+      "initial": 7434585.295,
+      "percent": 16.61454070384702,
+      "conservedNetPositions": true,
+      "remaining": 6199363.095,
+      "run": "jaribu-50k-node22-s1-i10",
+      "nodeVersion": "22.12.0"
+    },
+    {
+      "code": 0,
+      "interval": 100,
+      "seed": 1,
+      "inputWeight": 7434585.294999998,
+      "wallSeconds": 90.014352105,
+      "loops": 1294,
+      "linksPruned": 5324,
+      "stats": {
+        "2": {
+          "numFound": 7336,
+          "totalAmount": 1232970.2000000002
+        },
+        "3": {
+          "numFound": 369,
+          "totalAmount": 104019.5
+        },
+        "4": {
+          "numFound": 223,
+          "totalAmount": 77520.89999999998
+        },
+        "5": {
+          "numFound": 166,
+          "totalAmount": 25185.7
+        },
+        "6": {
+          "numFound": 145,
+          "totalAmount": 25262.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 41,
+          "totalAmount": 4529.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": false,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1294,
+      "cleared": 1232970.2,
+      "initial": 7434585.295,
+      "percent": 16.584249841470143,
+      "conservedNetPositions": true,
+      "remaining": 6201615.095,
+      "run": "jaribu-50k-node22-s1-i100",
+      "nodeVersion": "22.12.0"
+    },
+    {
+      "code": 0,
+      "interval": 1000,
+      "seed": 1,
+      "inputWeight": 7434585.294999998,
+      "wallSeconds": 90.00817659900001,
+      "loops": 1069,
+      "linksPruned": 2271,
+      "stats": {
+        "2": {
+          "numFound": 5928,
+          "totalAmount": 1164535.2000000002
+        },
+        "3": {
+          "numFound": 315,
+          "totalAmount": 96776.5
+        },
+        "4": {
+          "numFound": 186,
+          "totalAmount": 74647.89999999998
+        },
+        "5": {
+          "numFound": 130,
+          "totalAmount": 22593.7
+        },
+        "6": {
+          "numFound": 123,
+          "totalAmount": 24537.899999999998
+        },
+        "7": {
+          "numFound": 88,
+          "totalAmount": 11683.100000000002
+        },
+        "8": {
+          "numFound": 73,
+          "totalAmount": 9352
+        },
+        "9": {
+          "numFound": 57,
+          "totalAmount": 7406.199999999999
+        },
+        "10": {
+          "numFound": 31,
+          "totalAmount": 4270.3
+        },
+        "11": {
+          "numFound": 28,
+          "totalAmount": 1685.8999999999999
+        },
+        "12": {
+          "numFound": 14,
+          "totalAmount": 784.5999999999999
+        },
+        "13": {
+          "numFound": 7,
+          "totalAmount": 442
+        },
+        "14": {
+          "numFound": 7,
+          "totalAmount": 789.3
+        },
+        "15": {
+          "numFound": 2,
+          "totalAmount": 85
+        },
+        "16": {
+          "numFound": 4,
+          "totalAmount": 118.3
+        },
+        "17": {
+          "numFound": 3,
+          "totalAmount": 41
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        }
+      },
+      "residualIsAcyclic": false,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1069,
+      "cleared": 1164535.2,
+      "initial": 7434585.295,
+      "percent": 15.663754651966771,
+      "conservedNetPositions": true,
+      "remaining": 6270050.095,
+      "run": "jaribu-50k-node22-s1-i1000",
+      "nodeVersion": "22.12.0"
+    },
+    {
+      "code": 1,
+      "interval": 10,
+      "seed": 2,
+      "inputWeight": 7434585.294999998,
+      "calls": {
+        "work1": 26373,
+        "work2": 21068
+      },
+      "wallSeconds": 54.291734632,
+      "loops": 1312,
+      "linksPruned": 12390,
+      "stats": {
+        "2": {
+          "numFound": 7392,
+          "totalAmount": 1235222.1999999993
+        },
+        "3": {
+          "numFound": 385,
+          "totalAmount": 104663.5
+        },
+        "4": {
+          "numFound": 225,
+          "totalAmount": 77600.89999999998
+        },
+        "5": {
+          "numFound": 166,
+          "totalAmount": 25185.7
+        },
+        "6": {
+          "numFound": 145,
+          "totalAmount": 25262.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 41,
+          "totalAmount": 4529.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": true,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1312,
+      "cleared": 1235222.2,
+      "initial": 7434585.295,
+      "percent": 16.61454070384702,
+      "conservedNetPositions": true,
+      "remaining": 6199363.095,
+      "run": "jaribu-50k-node22-s2-i10",
+      "nodeVersion": "22.12.0"
+    },
+    {
+      "code": 0,
+      "interval": 100,
+      "seed": 2,
+      "inputWeight": 7434585.294999998,
+      "calls": {
+        "work1": 13687,
+        "work2": 12815
+      },
+      "wallSeconds": 90.010437542,
+      "loops": 1296,
+      "linksPruned": 5312,
+      "stats": {
+        "2": {
+          "numFound": 7342,
+          "totalAmount": 1231800.199999999
+        },
+        "3": {
+          "numFound": 371,
+          "totalAmount": 103629.5
+        },
+        "4": {
+          "numFound": 223,
+          "totalAmount": 77520.89999999998
+        },
+        "5": {
+          "numFound": 166,
+          "totalAmount": 25185.7
+        },
+        "6": {
+          "numFound": 145,
+          "totalAmount": 25262.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 41,
+          "totalAmount": 4529.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": false,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1296,
+      "cleared": 1231800.2,
+      "initial": 7434585.295,
+      "percent": 16.56851258170951,
+      "conservedNetPositions": true,
+      "remaining": 6202785.095,
+      "run": "jaribu-50k-node22-s2-i100",
+      "nodeVersion": "22.12.0"
+    },
+    {
+      "code": 0,
+      "interval": 1000,
+      "seed": 2,
+      "inputWeight": 7434585.294999998,
+      "calls": {
+        "work1": 9734,
+        "work2": 9649
+      },
+      "wallSeconds": 90.014474468,
+      "loops": 1196,
+      "linksPruned": 2700,
+      "stats": {
+        "2": {
+          "numFound": 6921,
+          "totalAmount": 1195111.2000000007
+        },
+        "3": {
+          "numFound": 320,
+          "totalAmount": 96871.5
+        },
+        "4": {
+          "numFound": 201,
+          "totalAmount": 75693.89999999998
+        },
+        "5": {
+          "numFound": 151,
+          "totalAmount": 23904.7
+        },
+        "6": {
+          "numFound": 140,
+          "totalAmount": 25133.899999999998
+        },
+        "7": {
+          "numFound": 104,
+          "totalAmount": 12296.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 38,
+          "totalAmount": 4394.3
+        },
+        "11": {
+          "numFound": 34,
+          "totalAmount": 1807.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 5,
+          "totalAmount": 119.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": false,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1196,
+      "cleared": 1195111.2,
+      "initial": 7434585.295,
+      "percent": 16.075021707044655,
+      "conservedNetPositions": true,
+      "remaining": 6239474.095,
+      "run": "jaribu-50k-node22-s2-i1000",
+      "nodeVersion": "22.12.0"
+    },
+    {
+      "code": 1,
+      "interval": 10,
+      "seed": 1,
+      "inputWeight": 7434585.294999998,
+      "wallSeconds": 54.515448114,
+      "loops": 1312,
+      "linksPruned": 12390,
+      "stats": {
+        "2": {
+          "numFound": 7392,
+          "totalAmount": 1235222.1999999993
+        },
+        "3": {
+          "numFound": 385,
+          "totalAmount": 104663.5
+        },
+        "4": {
+          "numFound": 225,
+          "totalAmount": 77600.89999999998
+        },
+        "5": {
+          "numFound": 166,
+          "totalAmount": 25185.7
+        },
+        "6": {
+          "numFound": 145,
+          "totalAmount": 25262.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 41,
+          "totalAmount": 4529.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": true,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1312,
+      "cleared": 1235222.2,
+      "initial": 7434585.295,
+      "percent": 16.61454070384702,
+      "conservedNetPositions": true,
+      "remaining": 6199363.095,
+      "run": "jaribu-50k-s1-i10",
+      "nodeVersion": "24.19.0"
+    },
+    {
+      "code": 0,
+      "interval": 100,
+      "seed": 1,
+      "inputWeight": 7434585.294999998,
+      "wallSeconds": 90.013677893,
+      "loops": 1298,
+      "linksPruned": 5315,
+      "stats": {
+        "2": {
+          "numFound": 7345,
+          "totalAmount": 1232480.199999999
+        },
+        "3": {
+          "numFound": 376,
+          "totalAmount": 104189.5
+        },
+        "4": {
+          "numFound": 220,
+          "totalAmount": 77270.89999999998
+        },
+        "5": {
+          "numFound": 166,
+          "totalAmount": 25185.7
+        },
+        "6": {
+          "numFound": 145,
+          "totalAmount": 25262.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 41,
+          "totalAmount": 4529.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": false,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1298,
+      "cleared": 1232480.2,
+      "initial": 7434585.295,
+      "percent": 16.577659023279793,
+      "conservedNetPositions": true,
+      "remaining": 6202105.095,
+      "run": "jaribu-50k-s1-i100",
+      "nodeVersion": "24.19.0"
+    },
+    {
+      "code": 0,
+      "interval": 1000,
+      "seed": 1,
+      "inputWeight": 7434585.294999998,
+      "wallSeconds": 90.012626648,
+      "loops": 1221,
+      "linksPruned": 2820,
+      "stats": {
+        "2": {
+          "numFound": 7060,
+          "totalAmount": 1202951.1999999993
+        },
+        "3": {
+          "numFound": 328,
+          "totalAmount": 98071.5
+        },
+        "4": {
+          "numFound": 207,
+          "totalAmount": 76027.89999999998
+        },
+        "5": {
+          "numFound": 155,
+          "totalAmount": 24206.7
+        },
+        "6": {
+          "numFound": 141,
+          "totalAmount": 25149.899999999998
+        },
+        "7": {
+          "numFound": 105,
+          "totalAmount": 12349.100000000002
+        },
+        "8": {
+          "numFound": 85,
+          "totalAmount": 9841
+        },
+        "9": {
+          "numFound": 65,
+          "totalAmount": 7488.199999999999
+        },
+        "10": {
+          "numFound": 40,
+          "totalAmount": 4466.3
+        },
+        "11": {
+          "numFound": 36,
+          "totalAmount": 1820.8999999999999
+        },
+        "12": {
+          "numFound": 17,
+          "totalAmount": 803.5999999999999
+        },
+        "13": {
+          "numFound": 11,
+          "totalAmount": 552
+        },
+        "14": {
+          "numFound": 11,
+          "totalAmount": 807.3
+        },
+        "15": {
+          "numFound": 6,
+          "totalAmount": 175
+        },
+        "16": {
+          "numFound": 6,
+          "totalAmount": 123.3
+        },
+        "17": {
+          "numFound": 4,
+          "totalAmount": 44
+        },
+        "18": {
+          "numFound": 1,
+          "totalAmount": 46.7
+        },
+        "19": {
+          "numFound": 2,
+          "totalAmount": 34
+        },
+        "20": {
+          "numFound": 1,
+          "totalAmount": 24
+        }
+      },
+      "residualIsAcyclic": false,
+      "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+      "validatedLoops": 1221,
+      "cleared": 1202951.2,
+      "initial": 7434585.295,
+      "percent": 16.18047479809027,
+      "conservedNetPositions": true,
+      "remaining": 6231634.095,
+      "run": "jaribu-50k-s1-i1000",
+      "nodeVersion": "24.19.0"
+    }
+  ]
+}

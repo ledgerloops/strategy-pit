@@ -1,0 +1,95 @@
+{
+  "code": 0,
+  "interval": 1000,
+  "seed": 1,
+  "inputWeight": 7434585.294999998,
+  "wallSeconds": 90.012626648,
+  "loops": 1221,
+  "linksPruned": 2820,
+  "stats": {
+    "2": {
+      "numFound": 7060,
+      "totalAmount": 1202951.1999999993
+    },
+    "3": {
+      "numFound": 328,
+      "totalAmount": 98071.5
+    },
+    "4": {
+      "numFound": 207,
+      "totalAmount": 76027.89999999998
+    },
+    "5": {
+      "numFound": 155,
+      "totalAmount": 24206.7
+    },
+    "6": {
+      "numFound": 141,
+      "totalAmount": 25149.899999999998
+    },
+    "7": {
+      "numFound": 105,
+      "totalAmount": 12349.100000000002
+    },
+    "8": {
+      "numFound": 85,
+      "totalAmount": 9841
+    },
+    "9": {
+      "numFound": 65,
+      "totalAmount": 7488.199999999999
+    },
+    "10": {
+      "numFound": 40,
+      "totalAmount": 4466.3
+    },
+    "11": {
+      "numFound": 36,
+      "totalAmount": 1820.8999999999999
+    },
+    "12": {
+      "numFound": 17,
+      "totalAmount": 803.5999999999999
+    },
+    "13": {
+      "numFound": 11,
+      "totalAmount": 552
+    },
+    "14": {
+      "numFound": 11,
+      "totalAmount": 807.3
+    },
+    "15": {
+      "numFound": 6,
+      "totalAmount": 175
+    },
+    "16": {
+      "numFound": 6,
+      "totalAmount": 123.3
+    },
+    "17": {
+      "numFound": 4,
+      "totalAmount": 44
+    },
+    "18": {
+      "numFound": 1,
+      "totalAmount": 46.7
+    },
+    "19": {
+      "numFound": 2,
+      "totalAmount": 34
+    },
+    "20": {
+      "numFound": 1,
+      "totalAmount": 24
+    }
+  },
+  "residualIsAcyclic": false,
+  "inputSHA256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+  "validatedLoops": 1221,
+  "cleared": 1202951.2,
+  "initial": 7434585.295,
+  "percent": 16.18047479809027,
+  "conservedNetPositions": true,
+  "remaining": 6231634.095
+}

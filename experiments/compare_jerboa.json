@@ -1,0 +1,114 @@
+{
+  "description": "Unmodified native Jerboa reproductions; valid-subset scores exclude invalid cycles. No equal resource budget claim.",
+  "node_version": "20.10.0",
+  "workers": 20,
+  "dataset_sha256": "785b8f57d3e7e485a678772727bf593aaa90594c833afb7abc3c4d5fb366eebb",
+  "debt_sha256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+  "amount_units_per_sarafu": 1000,
+  "runs": [
+    {
+      "path": "results/animal-comparison/jerboa/oct-saved.solution",
+      "sha256": "465cac5b3c6e1abc6504d846e5dc7a00d92c400de6a8079f4ef25160153c97e9",
+      "cycles": 1171,
+      "valid_cycles": 1166,
+      "invalid_cycles": 5,
+      "whole_solution_valid": false,
+      "valid_subset_cleared_pct": 15.34445372181314,
+      "initial_debt_units": 7434585295,
+      "valid_subset_cleared_units": 1140796500,
+      "errors": [
+        {
+          "line": 19,
+          "error": "[{'edge': ('820', '821'), 'available': 500, 'requested': 800}]"
+        },
+        {
+          "line": 833,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        },
+        {
+          "line": 891,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        },
+        {
+          "line": 925,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        },
+        {
+          "line": 948,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        }
+      ],
+      "name": "oct-saved",
+      "commit": "69c7b2cb3cf6946742e676b4c50ff17bebfec059",
+      "elapsed_seconds": null,
+      "exit_status": null
+    },
+    {
+      "path": "results/animal-comparison/jerboa/oct-fresh.solution",
+      "sha256": "8e7fdbdc1f1d1630fd34bf2824f025c6c60c3a16f67fe5e6dcb2ed5daf019b7c",
+      "cycles": 1176,
+      "valid_cycles": 1171,
+      "invalid_cycles": 5,
+      "whole_solution_valid": false,
+      "valid_subset_cleared_pct": 15.373238111460795,
+      "initial_debt_units": 7434585295,
+      "valid_subset_cleared_units": 1142936500,
+      "errors": [
+        {
+          "line": 19,
+          "error": "[{'edge': ('820', '821'), 'available': 500, 'requested': 800}]"
+        },
+        {
+          "line": 833,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        },
+        {
+          "line": 891,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        },
+        {
+          "line": 925,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        },
+        {
+          "line": 948,
+          "error": "[{'edge': ('11542', '6'), 'available': 3599700, 'requested': 3600000}]"
+        }
+      ],
+      "name": "oct-fresh",
+      "commit": "69c7b2cb3cf6946742e676b4c50ff17bebfec059",
+      "elapsed_seconds": 188.12,
+      "exit_status": 0,
+      "probes": 614,
+      "messages_sent": 345215,
+      "messages_received": 345214,
+      "transfer_messages": 30726,
+      "nontransfer_messages_sent": 314489,
+      "stopping_rule": "12 seconds without newly reported cycle"
+    },
+    {
+      "path": "results/animal-comparison/jerboa/june-fresh.solution",
+      "sha256": "03d87672a1871a3cfe40c55c7facadd5cd7ed5de140b76c7d99b1fc393edbedf",
+      "cycles": 297,
+      "valid_cycles": 296,
+      "invalid_cycles": 1,
+      "whole_solution_valid": false,
+      "valid_subset_cleared_pct": 2.842135662121017,
+      "initial_debt_units": 7434585295,
+      "valid_subset_cleared_units": 211301000,
+      "errors": [
+        {
+          "line": 6,
+          "error": "[{'edge': ('820', '821'), 'available': 500, 'requested': 800}]"
+        }
+      ],
+      "name": "june-fresh",
+      "commit": "c09ef8f7cb7ce0485cddb55d801a8ebe9ef0a4d1",
+      "elapsed_seconds": 180.15,
+      "exit_status": 124,
+      "stopping_rule": "External 180 second timeout; algorithm not exhausted",
+      "messages_sent": null,
+      "messages_received": null
+    }
+  ]
+}

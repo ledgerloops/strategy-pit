@@ -37,7 +37,7 @@ The [historical README](https://github.com/ledgerloops/strategy-pit/blob/e36c0ed
 
 [Numbat](experiments/numbat.py) is a new node-local experiment: sample outgoing links with a bias towards available capacity, carry observed bottlenecks along the search path, then recheck and reserve capacity before clearing a loop. Local retries let it revisit a changing network. It inherits the [distributed simulator’s assumptions and limits](experiments/README.md#assumptions-and-limits), including reliable delivery and no crashes.
 
-[Held-out results and reproduction instructions](experiments/NUMBAT.md) show gains over our earlier node-local DFS variants in the larger synthetic cases, while largest-first remains stronger on average in the small cases. Numbat is provisional: it has not been shown to beat Jerboa or reach optimal clearing.
+[Held-out results and reproduction instructions](experiments/NUMBAT.md) show gains over our earlier node-local DFS variants in the larger synthetic cases, while largest-first remains stronger on average in the small cases. On the [shared 50k Sarafu comparison](experiments/ANIMAL-COMPARISON.md), it trails historical Jerboa and Jaribu in achieved clearing. Numbat remains provisional and does not guarantee optimal clearing.
 
 ## Try the experiments
 

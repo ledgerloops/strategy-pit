@@ -1,0 +1,710 @@
+{
+  "complete": true,
+  "input_sha256": "607f49c8b22993c95ff60bf22e05ffe3196b614658a980d4bd0e70aeb538a53c",
+  "input_edges": 13831,
+  "input_nodes": 6908,
+  "input_total_scaled": 7434585295,
+  "scale": 1000,
+  "python_version": "3.12.14",
+  "numbat_config": {
+    "capacity_power": 4,
+    "snapshot_capacity": true,
+    "close_first": false
+  },
+  "scheduler_config": {
+    "max_delay": 5,
+    "retry_interval": 50,
+    "max_hops": 100,
+    "search_budget": 256,
+    "message_cutoff": 1000000
+  },
+  "search_horizon": 2000,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "source_sha256": {
+    "compare_numbat.py": "078d1db2e1214546932172cbd6874b05b578b1e15134c414fab4093a3462b4e9",
+    "numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "numbat_benchmark.py": "372134eddf9fc3a8d82774fedd5aba425938570bdf86c8a9775c72a32ec0cd11",
+    "dfs_benchmark.py": "8bac24151c079f8a7594abd7ba00ea1dfe52b5599b393b69d5c2d9c73bd0a637"
+  },
+  "references": {
+    "dfs": {
+      "cleared_scaled": 1235222200,
+      "cleared_percent": 16.61454070384702,
+      "cycles": 1312,
+      "cycle_hops": 7392,
+      "max_cycle_length": 20,
+      "residual_is_acyclic": true,
+      "by_length": {
+        "3": {
+          "cycles": 385,
+          "cleared_scaled": 313990500
+        },
+        "4": {
+          "cycles": 225,
+          "cleared_scaled": 310403600
+        },
+        "5": {
+          "cycles": 166,
+          "cleared_scaled": 125928500
+        },
+        "6": {
+          "cycles": 145,
+          "cleared_scaled": 151577400
+        },
+        "7": {
+          "cycles": 105,
+          "cleared_scaled": 86443700
+        },
+        "8": {
+          "cycles": 85,
+          "cleared_scaled": 78728000
+        },
+        "9": {
+          "cycles": 65,
+          "cleared_scaled": 67393800
+        },
+        "10": {
+          "cycles": 41,
+          "cleared_scaled": 45293000
+        },
+        "11": {
+          "cycles": 36,
+          "cleared_scaled": 20029900
+        },
+        "12": {
+          "cycles": 17,
+          "cleared_scaled": 9643200
+        },
+        "13": {
+          "cycles": 11,
+          "cleared_scaled": 7176000
+        },
+        "14": {
+          "cycles": 11,
+          "cleared_scaled": 11302200
+        },
+        "15": {
+          "cycles": 6,
+          "cleared_scaled": 2625000
+        },
+        "16": {
+          "cycles": 6,
+          "cleared_scaled": 1972800
+        },
+        "17": {
+          "cycles": 4,
+          "cleared_scaled": 748000
+        },
+        "18": {
+          "cycles": 1,
+          "cleared_scaled": 840600
+        },
+        "19": {
+          "cycles": 2,
+          "cleared_scaled": 646000
+        },
+        "20": {
+          "cycles": 1,
+          "cleared_scaled": 480000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.2541975848555831,
+        "5": 0.607439374065654,
+        "10": 0.9550982001456904,
+        "20": 1.0,
+        "50": 1.0
+      }
+    },
+    "largest_dfs": {
+      "cleared_scaled": 1225453100,
+      "cleared_percent": 16.48313996510548,
+      "cycles": 926,
+      "cycle_hops": 4685,
+      "max_cycle_length": 22,
+      "residual_is_acyclic": true,
+      "by_length": {
+        "3": {
+          "cycles": 365,
+          "cleared_scaled": 381711000
+        },
+        "4": {
+          "cycles": 173,
+          "cleared_scaled": 269404000
+        },
+        "5": {
+          "cycles": 105,
+          "cleared_scaled": 154319000
+        },
+        "6": {
+          "cycles": 87,
+          "cleared_scaled": 134994000
+        },
+        "7": {
+          "cycles": 53,
+          "cleared_scaled": 77590100
+        },
+        "8": {
+          "cycles": 31,
+          "cleared_scaled": 33264000
+        },
+        "9": {
+          "cycles": 40,
+          "cleared_scaled": 61146000
+        },
+        "10": {
+          "cycles": 22,
+          "cleared_scaled": 35820000
+        },
+        "11": {
+          "cycles": 19,
+          "cleared_scaled": 33561000
+        },
+        "12": {
+          "cycles": 7,
+          "cleared_scaled": 8784000
+        },
+        "13": {
+          "cycles": 6,
+          "cleared_scaled": 5525000
+        },
+        "14": {
+          "cycles": 9,
+          "cleared_scaled": 14770000
+        },
+        "15": {
+          "cycles": 3,
+          "cleared_scaled": 2205000
+        },
+        "16": {
+          "cycles": 2,
+          "cleared_scaled": 4080000
+        },
+        "17": {
+          "cycles": 1,
+          "cleared_scaled": 2890000
+        },
+        "18": {
+          "cycles": 1,
+          "cleared_scaled": 90000
+        },
+        "21": {
+          "cycles": 1,
+          "cleared_scaled": 4200000
+        },
+        "22": {
+          "cycles": 1,
+          "cleared_scaled": 1100000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.31148560479385135,
+        "5": 0.6572540393426726,
+        "10": 0.9369988129288669,
+        "20": 0.9956750690826112,
+        "50": 1.0
+      }
+    },
+    "mcf": {
+      "cleared_scaled": 1406711900,
+      "cleared_percent": 18.921188528781283,
+      "cycles": 1772,
+      "cycle_hops": 14377,
+      "max_cycle_length": 38,
+      "residual_is_acyclic": true,
+      "by_length": {
+        "3": {
+          "cycles": 300,
+          "cleared_scaled": 272711100
+        },
+        "4": {
+          "cycles": 249,
+          "cleared_scaled": 250381200
+        },
+        "5": {
+          "cycles": 194,
+          "cleared_scaled": 164069500
+        },
+        "6": {
+          "cycles": 159,
+          "cleared_scaled": 119305800
+        },
+        "7": {
+          "cycles": 132,
+          "cleared_scaled": 132765500
+        },
+        "8": {
+          "cycles": 123,
+          "cleared_scaled": 86419200
+        },
+        "9": {
+          "cycles": 86,
+          "cleared_scaled": 75445200
+        },
+        "10": {
+          "cycles": 92,
+          "cleared_scaled": 51490000
+        },
+        "11": {
+          "cycles": 68,
+          "cleared_scaled": 41342400
+        },
+        "12": {
+          "cycles": 56,
+          "cleared_scaled": 36864000
+        },
+        "13": {
+          "cycles": 48,
+          "cleared_scaled": 24709100
+        },
+        "14": {
+          "cycles": 43,
+          "cleared_scaled": 32551400
+        },
+        "15": {
+          "cycles": 35,
+          "cleared_scaled": 33411000
+        },
+        "16": {
+          "cycles": 27,
+          "cleared_scaled": 10457600
+        },
+        "17": {
+          "cycles": 27,
+          "cleared_scaled": 25935200
+        },
+        "18": {
+          "cycles": 37,
+          "cleared_scaled": 18552600
+        },
+        "19": {
+          "cycles": 15,
+          "cleared_scaled": 8717200
+        },
+        "20": {
+          "cycles": 13,
+          "cleared_scaled": 2136000
+        },
+        "21": {
+          "cycles": 17,
+          "cleared_scaled": 4445700
+        },
+        "22": {
+          "cycles": 8,
+          "cleared_scaled": 1925000
+        },
+        "23": {
+          "cycles": 8,
+          "cleared_scaled": 2481700
+        },
+        "24": {
+          "cycles": 7,
+          "cleared_scaled": 2781600
+        },
+        "25": {
+          "cycles": 8,
+          "cleared_scaled": 2495000
+        },
+        "26": {
+          "cycles": 5,
+          "cleared_scaled": 1526200
+        },
+        "27": {
+          "cycles": 4,
+          "cleared_scaled": 772200
+        },
+        "29": {
+          "cycles": 1,
+          "cleared_scaled": 49300
+        },
+        "30": {
+          "cycles": 1,
+          "cleared_scaled": 150000
+        },
+        "31": {
+          "cycles": 3,
+          "cleared_scaled": 846300
+        },
+        "32": {
+          "cycles": 1,
+          "cleared_scaled": 537600
+        },
+        "33": {
+          "cycles": 1,
+          "cleared_scaled": 6600
+        },
+        "34": {
+          "cycles": 1,
+          "cleared_scaled": 646000
+        },
+        "35": {
+          "cycles": 2,
+          "cleared_scaled": 465500
+        },
+        "38": {
+          "cycles": 1,
+          "cleared_scaled": 319200
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.19386421626205053,
+        "5": 0.4884879412763907,
+        "10": 0.8193486526985376,
+        "20": 0.986174923237658,
+        "50": 1.0
+      }
+    }
+  },
+  "runs": [
+    {
+      "cleared_scaled": 1017649000,
+      "cleared_percent": 13.68803987875964,
+      "cycles": 795,
+      "cycle_hops": 3437,
+      "max_cycle_length": 13,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 309,
+          "cleared_scaled": 409170000
+        },
+        "4": {
+          "cycles": 212,
+          "cleared_scaled": 322104000
+        },
+        "5": {
+          "cycles": 131,
+          "cleared_scaled": 124145000
+        },
+        "6": {
+          "cycles": 74,
+          "cleared_scaled": 102612000
+        },
+        "7": {
+          "cycles": 32,
+          "cleared_scaled": 28651000
+        },
+        "8": {
+          "cycles": 16,
+          "cleared_scaled": 11000000
+        },
+        "9": {
+          "cycles": 9,
+          "cleared_scaled": 9333000
+        },
+        "10": {
+          "cycles": 6,
+          "cleared_scaled": 3400000
+        },
+        "11": {
+          "cycles": 3,
+          "cleared_scaled": 3630000
+        },
+        "12": {
+          "cycles": 2,
+          "cleared_scaled": 744000
+        },
+        "13": {
+          "cycles": 1,
+          "cleared_scaled": 2860000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.40207379951240557,
+        "5": 0.8405835410834187,
+        "10": 0.9928914586463505,
+        "20": 1.0,
+        "50": 1.0
+      },
+      "seed": 0,
+      "protocol": {
+        "added": 7434585295,
+        "searches": 29580,
+        "message_capacity_values": 11543160,
+        "messages": 1575032,
+        "messages_step": 1389143,
+        "message_node_ids": 91428144,
+        "max_message_node_ids": 169,
+        "events": 1644244,
+        "exhausted_searches": 15190,
+        "proposals": 12062,
+        "messages_prepare": 21990,
+        "live_reservations": 0,
+        "max_reservations": 476,
+        "aborted": 11267,
+        "messages_finish": 153176,
+        "messages_commit": 3437,
+        "messages_abort": 7286,
+        "cycles": 795,
+        "cleared": 1017649000
+      },
+      "checkpoints": [
+        {
+          "messages": 100000,
+          "tick": 79,
+          "completed_cleared_scaled": 534990000,
+          "completed_cycles": 206
+        },
+        {
+          "messages": 250000,
+          "tick": 193,
+          "completed_cleared_scaled": 783031000,
+          "completed_cycles": 413
+        },
+        {
+          "messages": 500000,
+          "tick": 360,
+          "completed_cleared_scaled": 944429000,
+          "completed_cycles": 595
+        },
+        {
+          "messages": 1000000,
+          "tick": 657,
+          "completed_cleared_scaled": 1004764000,
+          "completed_cycles": 728
+        }
+      ],
+      "drain_tick": 2000,
+      "cutoff_tick": 657,
+      "elapsed_seconds": 22.325381223003205,
+      "replay_ok": true,
+      "pending_events": 0,
+      "pending_reservations": 0
+    },
+    {
+      "cleared_scaled": 1003669000,
+      "cleared_percent": 13.499999800594123,
+      "cycles": 813,
+      "cycle_hops": 3544,
+      "max_cycle_length": 13,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 328,
+          "cleared_scaled": 447552000
+        },
+        "4": {
+          "cycles": 186,
+          "cleared_scaled": 239936000
+        },
+        "5": {
+          "cycles": 136,
+          "cleared_scaled": 139155000
+        },
+        "6": {
+          "cycles": 83,
+          "cleared_scaled": 93336000
+        },
+        "7": {
+          "cycles": 42,
+          "cleared_scaled": 37240000
+        },
+        "8": {
+          "cycles": 19,
+          "cleared_scaled": 19728000
+        },
+        "9": {
+          "cycles": 9,
+          "cleared_scaled": 19719000
+        },
+        "10": {
+          "cycles": 5,
+          "cleared_scaled": 2290000
+        },
+        "11": {
+          "cycles": 2,
+          "cleared_scaled": 1320000
+        },
+        "13": {
+          "cycles": 3,
+          "cleared_scaled": 3393000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.4459159344365523,
+        "5": 0.8236211340591371,
+        "10": 0.9953042287845894,
+        "20": 1.0,
+        "50": 1.0
+      },
+      "seed": 1,
+      "protocol": {
+        "added": 7434585295,
+        "searches": 30205,
+        "message_capacity_values": 11645421,
+        "messages": 1607512,
+        "messages_step": 1417254,
+        "message_node_ids": 92548141,
+        "max_message_node_ids": 169,
+        "events": 1677073,
+        "exhausted_searches": 15445,
+        "proposals": 12141,
+        "messages_prepare": 22289,
+        "live_reservations": 0,
+        "max_reservations": 528,
+        "aborted": 11328,
+        "messages_finish": 157008,
+        "messages_commit": 3544,
+        "messages_abort": 7417,
+        "cycles": 813,
+        "cleared": 1003669000
+      },
+      "checkpoints": [
+        {
+          "messages": 100000,
+          "tick": 78,
+          "completed_cleared_scaled": 510967000,
+          "completed_cycles": 183
+        },
+        {
+          "messages": 250000,
+          "tick": 192,
+          "completed_cleared_scaled": 808764000,
+          "completed_cycles": 451
+        },
+        {
+          "messages": 500000,
+          "tick": 362,
+          "completed_cleared_scaled": 940746000,
+          "completed_cycles": 635
+        },
+        {
+          "messages": 1000000,
+          "tick": 660,
+          "completed_cleared_scaled": 985444000,
+          "completed_cycles": 742
+        }
+      ],
+      "drain_tick": 2000,
+      "cutoff_tick": 660,
+      "elapsed_seconds": 23.29128703099559,
+      "replay_ok": true,
+      "pending_events": 0,
+      "pending_reservations": 0
+    },
+    {
+      "cleared_scaled": 1001743000,
+      "cleared_percent": 13.474093849911235,
+      "cycles": 865,
+      "cycle_hops": 3733,
+      "max_cycle_length": 14,
+      "residual_is_acyclic": false,
+      "by_length": {
+        "3": {
+          "cycles": 327,
+          "cleared_scaled": 459939000
+        },
+        "4": {
+          "cycles": 231,
+          "cleared_scaled": 287676000
+        },
+        "5": {
+          "cycles": 167,
+          "cleared_scaled": 122325000
+        },
+        "6": {
+          "cycles": 67,
+          "cleared_scaled": 61644000
+        },
+        "7": {
+          "cycles": 40,
+          "cleared_scaled": 29736000
+        },
+        "8": {
+          "cycles": 10,
+          "cleared_scaled": 12872000
+        },
+        "9": {
+          "cycles": 10,
+          "cleared_scaled": 10359000
+        },
+        "10": {
+          "cycles": 8,
+          "cleared_scaled": 4520000
+        },
+        "11": {
+          "cycles": 2,
+          "cleared_scaled": 11220000
+        },
+        "12": {
+          "cycles": 1,
+          "cleared_scaled": 180000
+        },
+        "13": {
+          "cycles": 1,
+          "cleared_scaled": 572000
+        },
+        "14": {
+          "cycles": 1,
+          "cleared_scaled": 700000
+        }
+      },
+      "cleared_share_in_loops_up_to": {
+        "3": 0.45913872120893284,
+        "5": 0.8684263329017522,
+        "10": 0.9873500488648286,
+        "20": 1.0,
+        "50": 1.0
+      },
+      "seed": 2,
+      "protocol": {
+        "added": 7434585295,
+        "searches": 32165,
+        "message_capacity_values": 11994655,
+        "messages": 1652676,
+        "messages_step": 1440086,
+        "message_node_ids": 93959127,
+        "max_message_node_ids": 170,
+        "events": 1723352,
+        "exhausted_searches": 15595,
+        "proposals": 13903,
+        "messages_prepare": 24549,
+        "live_reservations": 0,
+        "max_reservations": 535,
+        "aborted": 13038,
+        "messages_finish": 176530,
+        "messages_commit": 3733,
+        "messages_abort": 7778,
+        "cycles": 865,
+        "cleared": 1001743000
+      },
+      "checkpoints": [
+        {
+          "messages": 100000,
+          "tick": 79,
+          "completed_cleared_scaled": 502693000,
+          "completed_cycles": 197
+        },
+        {
+          "messages": 250000,
+          "tick": 195,
+          "completed_cleared_scaled": 798160000,
+          "completed_cycles": 407
+        },
+        {
+          "messages": 500000,
+          "tick": 373,
+          "completed_cleared_scaled": 937077000,
+          "completed_cycles": 677
+        },
+        {
+          "messages": 1000000,
+          "tick": 673,
+          "completed_cleared_scaled": 987840000,
+          "completed_cycles": 804
+        }
+      ],
+      "drain_tick": 2000,
+      "cutoff_tick": 673,
+      "elapsed_seconds": 24.7613575830037,
+      "replay_ok": true,
+      "pending_events": 0,
+      "pending_reservations": 0
+    }
+  ]
+}
