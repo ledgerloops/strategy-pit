@@ -1,0 +1,1516 @@
+Running single thread with 20 workers
+reading sarafu file
+0 loops found
+sarafu file read
+0 loops found
+7350 starts probe 7350-0
+0 loops found
+3723 starts probe 3723-0
+2020 starts probe 2020-0
+0 loops found
+discarding link 3723 184
+discarding link 1737 3605
+discarding link 661 1737
+discarding link 759 3393
+discarding link 4037 3079
+discarding link 4037 3474
+discarding link 514 184
+discarding link 4037 3585
+discarding link 759 4037
+discarding link 722 759
+discarding link 3084 4037
+discarding link 722 3084
+discarding link 3292 1737
+discarding link 1742 1737
+discarding link 8 11769
+discarding link 1742 3605
+discarding link 6 8
+discarding link 3292 1742
+discarding link 1768 3605
+discarding link 3292 1768
+discarding link 5 8
+discarding link 3292 3605
+discarding link 722 3292
+discarding link 722 3393
+discarding link 722 4037
+discarding link 820 6072
+discarding link 770 4032
+discarding link 644 770
+discarding link 36 77
+discarding link 7163 6817
+discarding link 39 7163
+discarding link 9915 39
+discarding link 663 3292
+discarding link 6 36
+discarding link 37 36
+discarding link 663 3585
+discarding link 37 6817
+discarding link 37 7163
+discarding link 3602 184
+discarding link 7586 36
+discarding link 7586 10376
+discarding link 37 7586
+discarding link 661 3930
+discarding link 8494 36
+discarding link 4033 754
+discarding link 8494 6817
+discarding link 8494 7163
+discarding link 8494 7586
+discarding link 663 4037
+discarding link 8130 7586
+discarding link 8223 36
+discarding link 663 4500
+discarding link 6064 6861
+discarding link 6059 6064
+discarding link 6059 6861
+discarding link 8223 7163
+discarding link 663 6059
+discarding link 8223 7586
+discarding link 8494 10376
+discarding link 37 8494
+discarding link 7090 4038
+discarding link 707 663
+discarding link 5705 36
+discarding link 9915 5705
+discarding link 9915 7163
+discarding link 37 9915
+discarding link 6 37
+discarding link 1187 4038
+discarding link 1254 1187
+discarding link 1191 663
+discarding link 2003 4442
+discarding link 67 2003
+discarding link 67 4442
+discarding link 6 67
+discarding link 5036 5071
+discarding link 661 5036
+discarding link 5902 4036
+discarding link 661 5902
+discarding link 6744 184
+discarding link 6 1452
+discarding link 6735 7485
+discarding link 1724 67
+discarding link 6 1724
+discarding link 6744 6735
+discarding link 6743 6735
+discarding link 6743 7485
+discarding link 8487 7485
+discarding link 6743 8487
+discarding link 6744 6743
+discarding link 6754 7485
+discarding link 6744 6754
+discarding link 6805 6735
+discarding link 7147 7485
+discarding link 6805 7147
+discarding link 6805 7485
+discarding link 6805 8487
+discarding link 8917 7485
+discarding link 6805 8917
+discarding link 6744 6805
+discarding link 7271 7485
+discarding link 7271 8487
+discarding link 6744 7271
+discarding link 6744 7485
+discarding link 6744 8487
+discarding link 7720 6744
+discarding link 6 2003
+discarding link 795 4032
+discarding link 644 795
+discarding link 8870 6744
+discarding link 8870 7988
+discarding link 661 8870
+discarding link 661 10742
+discarding link 3113 661
+discarding link 1017 3599
+discarding link 3113 1017
+discarding link 3113 3599
+discarding link 7629 663
+discarding link 707 4036
+discarding link 4194 661
+discarding link 6772 184
+discarding link 4194 4036
+discarding link 707 4194
+discarding link 7629 707
+discarding link 6994 1766
+discarding link 659 722
+discarding link 5524 663
+discarding link 5585 1766
+discarding link 791 796
+discarding link 7869 663
+discarding link 791 4038
+discarding link 2155 661
+discarding link 752 661
+discarding link 752 4036
+discarding link 2155 752
+discarding link 774 4036
+discarding link 791 5524
+discarding link 7629 791
+discarding link 1032 663
+discarding link 1032 4038
+discarding link 7629 1032
+discarding link 1191 1032
+discarding link 4942 1766
+discarding link 1283 661
+discarding link 7980 1918
+discarding link 1283 663
+discarding link 4533 184
+discarding link 7658 184
+discarding link 4937 1766
+discarding link 5334 1766
+discarding link 1935 3603
+discarding link 1861 1935
+discarding link 2329 3603
+discarding link 4598 4599
+discarding link 1871 1894
+discarding link 6504 184
+discarding link 6 4442
+discarding link 6 4549
+discarding link 8357 184
+discarding link 8357 1828
+discarding link 1863 1828
+discarding link 7658 11542
+discarding link 3191 4034
+discarding link 11706 1766
+discarding link 3360 6769
+discarding link 7891 3706
+discarding link 7891 4034
+discarding link 7980 7658
+discarding link 3384 4034
+discarding link 7989 1766
+discarding link 1794 3384
+discarding link 1794 4034
+discarding link 9549 1766
+discarding link 3360 11192
+discarding link 3144 3360
+discarding link 7989 1918
+discarding link 3381 1794
+discarding link 3381 3360
+discarding link 3382 4034
+discarding link 3305 11542
+discarding link 3382 4035
+discarding link 3390 3382
+discarding link 3441 4034
+discarding link 3390 3441
+discarding link 3390 4034
+discarding link 6900 184
+discarding link 3305 12476
+discarding link 2353 661
+discarding link 13071 4598
+discarding link 2353 770
+discarding link 6394 4599
+discarding link 10219 4032
+discarding link 799 10219
+discarding link 2353 799
+discarding link 830 4032
+discarding link 2353 830
+discarding link 1257 1254
+discarding link 1257 4038
+discarding link 1257 5524
+discarding link 7932 661
+discarding link 7932 796
+discarding link 7932 1254
+discarding link 6394 7674
+discarding link 4720 6394
+discarding link 7932 4038
+discarding link 4720 7674
+discarding link 5391 663
+discarding link 5391 1254
+discarding link 2353 1257
+discarding link 7289 7658
+discarding link 1593 4036
+discarding link 7289 7674
+discarding link 1593 4038
+discarding link 6772 7674
+discarding link 6793 663
+discarding link 12943 1918
+discarding link 6793 1254
+discarding link 6793 5524
+discarding link 1593 6793
+discarding link 7629 1254
+discarding link 4558 11542
+discarding link 4558 12476
+discarding link 7810 663
+discarding link 7810 4038
+discarding link 7810 5524
+discarding link 7989 4598
+discarding link 1593 7810
+discarding link 4703 1593
+discarding link 1899 7674
+discarding link 10748 1766
+discarding link 5334 7658
+discarding link 5334 7674
+discarding link 4756 7674
+discarding link 12912 1766
+discarding link 10748 1918
+discarding link 12508 7658
+discarding link 13477 1766
+discarding link 4755 5582
+discarding link 4755 7674
+discarding link 5759 3305
+discarding link 5759 4442
+discarding link 5759 7674
+discarding link 9797 4442
+discarding link 5759 9797
+discarding link 10660 4442
+discarding link 5759 10660
+discarding link 6281 7674
+discarding link 12943 7674
+discarding link 7980 12508
+discarding link 4761 12476
+discarding link 8364 4761
+discarding link 8364 5582
+discarding link 12911 1766
+discarding link 12911 1918
+discarding link 7989 4756
+discarding link 13233 5334
+discarding link 13233 5582
+discarding link 13233 7658
+discarding link 13458 4761
+discarding link 5585 13458
+discarding link 7989 5585
+discarding link 7989 7674
+discarding link 8364 7674
+discarding link 7451 4761
+discarding link 13245 1918
+discarding link 13083 4761
+discarding link 13083 4763
+discarding link 6986 12476
+discarding link 13530 4756
+discarding link 13530 4761
+discarding link 9970 11437
+discarding link 5038 5028
+discarding link 5038 5033
+discarding link 8090 5037
+discarding link 5038 8090
+discarding link 8362 5028
+discarding link 8362 5037
+discarding link 5038 8362
+discarding link 10938 10961
+discarding link 5038 10938
+discarding link 5038 10950
+discarding link 5038 10961
+discarding link 11071 10571
+discarding link 11071 10961
+discarding link 5038 11071
+discarding link 6 5038
+discarding link 4725 6394
+discarding link 4725 7674
+discarding link 1899 10881
+discarding link 11381 7980
+129 loops found
+discarding link 11346 1766
+discarding link 9434 7658
+discarding link 4937 9434
+discarding link 11556 7658
+discarding link 10721 1766
+discarding link 11346 7658
+discarding link 10721 7658
+discarding link 11706 10721
+discarding link 11346 11706
+discarding link 12757 11346
+discarding link 12757 12508
+discarding link 12759 12757
+discarding link 9970 12759
+discarding link 10390 2115
+discarding link 10390 7980
+discarding link 12912 10881
+discarding link 10390 10881
+discarding link 10390 11437
+discarding link 10748 10390
+discarding link 10675 7980
+discarding link 10675 10390
+discarding link 10400 10390
+discarding link 11378 10390
+discarding link 10396 10881
+discarding link 10396 11437
+discarding link 11381 10750
+discarding link 11381 10881
+discarding link 11381 11437
+discarding link 12912 11381
+discarding link 12911 12912
+discarding link 1899 12911
+discarding link 1899 12912
+discarding link 13110 12911
+discarding link 13110 12912
+discarding link 13111 12812
+discarding link 13110 13111
+discarding link 1899 13110
+discarding link 6994 1899
+discarding link 6994 1918
+discarding link 499 518
+discarding link 545 5448
+discarding link 499 545
+discarding link 5199 1998
+discarding link 6 5199
+discarding link 6 5582
+discarding link 6 5585
+discarding link 13112 1899
+discarding link 4522 13463
+discarding link 13112 4522
+discarding link 5759 13112
+discarding link 6 5759
+discarding link 6491 4442
+discarding link 6491 11542
+discarding link 6 6491
+discarding link 1913 7674
+discarding link 1913 10403
+discarding link 13432 1913
+discarding link 13432 7674
+discarding link 6772 13432
+discarding link 7989 10881
+discarding link 7989 11381
+discarding link 7989 12912
+discarding link 7989 12943
+discarding link 7989 13110
+discarding link 13346 4522
+discarding link 6 6772
+discarding link 6 7289
+discarding link 6 7674
+discarding link 7756 10850
+discarding link 6 7756
+discarding link 7914 1452
+discarding link 6 7914
+discarding link 6 7980
+discarding link 6 7989
+discarding link 5457 1998
+discarding link 2290 5457
+discarding link 831 2290
+discarding link 499 831
+discarding link 499 834
+discarding link 499 1998
+discarding link 499 4244
+discarding link 499 5199
+discarding link 499 5448
+discarding link 8676 831
+discarding link 8676 1452
+discarding link 499 8676
+discarding link 5357 6799
+discarding link 2117 5357
+discarding link 3574 2117
+discarding link 8836 3574
+discarding link 499 8836
+discarding link 8303 499
+discarding link 6 8303
+discarding link 6 8392
+discarding link 6 8676
+discarding link 514 11769
+discarding link 1254 7869
+discarding link 659 1254
+discarding link 2044 5634
+discarding link 659 2044
+discarding link 3438 3441
+discarding link 3637 4034
+discarding link 3438 3637
+discarding link 3438 4034
+discarding link 659 3438
+discarding link 5956 7470
+discarding link 5898 5956
+discarding link 5898 7470
+discarding link 3502 5898
+discarding link 3502 7470
+discarding link 10342 7470
+discarding link 3502 10342
+discarding link 659 3502
+discarding link 659 3605
+discarding link 3710 3605
+discarding link 4037 1815
+discarding link 3710 4037
+discarding link 659 3710
+discarding link 659 4037
+discarding link 5036 5147
+discarding link 4604 5036
+discarding link 4604 10645
+discarding link 4588 4604
+discarding link 4588 5036
+discarding link 659 4588
+discarding link 659 5405
+discarding link 5876 7470
+discarding link 5610 5876
+discarding link 5610 5898
+discarding link 5610 7470
+discarding link 10339 7470
+discarding link 5610 10339
+discarding link 659 5610
+discarding link 659 5634
+discarding link 659 5898
+discarding link 6061 6861
+discarding link 659 6061
+discarding link 10150 10749
+discarding link 659 10150
+discarding link 10553 10749
+discarding link 659 10553
+discarding link 796 659
+discarding link 796 1254
+discarding link 644 796
+discarding link 1133 3600
+discarding link 644 1133
+discarding link 2449 3707
+discarding link 2353 2449
+discarding link 1880 3723
+discarding link 2421 1880
+discarding link 2421 3706
+discarding link 2421 3723
+discarding link 2421 5756
+discarding link 1791 3723
+discarding link 2735 1791
+discarding link 2348 184
+discarding link 2348 3706
+discarding link 2672 3706
+discarding link 12407 2672
+discarding link 2730 2348
+discarding link 2433 3706
+discarding link 2730 2433
+discarding link 2690 3706
+discarding link 2730 2690
+discarding link 2730 3706
+discarding link 2735 2730
+discarding link 3035 2421
+discarding link 644 1191
+discarding link 1484 4194
+discarding link 1217 707
+discarding link 1217 4036
+discarding link 1217 4194
+discarding link 5453 1217
+discarding link 5453 4194
+discarding link 1484 5453
+discarding link 644 1484
+discarding link 1568 7062
+discarding link 644 1568
+discarding link 2353 4032
+discarding link 4033 2353
+discarding link 644 1963
+discarding link 644 2353
+discarding link 3235 3438
+discarding link 3235 3717
+discarding link 3235 4034
+discarding link 3098 3235
+discarding link 3437 4034
+discarding link 3381 3437
+discarding link 3381 3438
+discarding link 3381 3441
+discarding link 3381 3637
+discarding link 3381 4034
+discarding link 6105 3706
+discarding link 4334 3382
+discarding link 4334 3706
+discarding link 6766 3191
+discarding link 6766 3382
+discarding link 6766 3706
+discarding link 6766 6769
+discarding link 4334 6766
+discarding link 6105 4334
+discarding link 6333 3382
+discarding link 8568 6333
+discarding link 6105 8568
+discarding link 1796 4034
+discarding link 9690 1796
+discarding link 6105 9690
+discarding link 3381 6105
+discarding link 7015 1794
+discarding link 3371 4034
+discarding link 3098 3371
+discarding link 3098 4034
+discarding link 644 3098
+discarding link 644 4032
+discarding link 4033 3419
+discarding link 4033 4032
+discarding link 644 4033
+discarding link 644 4036
+discarding link 644 5036
+discarding link 644 6678
+discarding link 3362 2621
+discarding link 1883 2329
+discarding link 1883 3603
+discarding link 1933 3603
+discarding link 2343 4916
+discarding link 1889 2329
+discarding link 4533 2621
+discarding link 6776 1883
+discarding link 4533 5707
+discarding link 7020 2329
+discarding link 7020 2621
+discarding link 7727 1904
+discarding link 2343 7783
+discarding link 1863 2329
+discarding link 8357 1896
+discarding link 9247 5707
+discarding link 7727 2343
+discarding link 7876 1883
+discarding link 7876 2329
+discarding link 3783 1935
+discarding link 3783 3603
+discarding link 6467 1883
+discarding link 6467 2343
+discarding link 8106 2343
+discarding link 7007 1883
+discarding link 8234 1883
+discarding link 8357 2515
+discarding link 3026 13390
+discarding link 8357 3026
+discarding link 3526 2621
+discarding link 8875 2343
+discarding link 11692 2343
+discarding link 11692 7783
+discarding link 8875 11692
+discarding link 6504 8875
+discarding link 8921 2343
+discarding link 8921 6700
+discarding link 2610 2329
+discarding link 2610 3603
+discarding link 1897 3603
+discarding link 7233 3603
+discarding link 1897 7233
+discarding link 9171 1897
+discarding link 8363 3603
+discarding link 3940 2343
+discarding link 8363 3940
+discarding link 9171 8363
+discarding link 2610 9171
+discarding link 1861 2610
+discarding link 1861 3603
+discarding link 9402 1861
+discarding link 9402 2343
+discarding link 6642 2343
+discarding link 10047 1883
+discarding link 9247 7020
+discarding link 9247 13390
+discarding link 4533 9247
+discarding link 10161 2343
+discarding link 7047 2621
+discarding link 8357 4764
+discarding link 5341 13390
+discarding link 8357 5341
+discarding link 8357 5707
+discarding link 10657 2621
+discarding link 6651 13390
+discarding link 8357 6651
+discarding link 1881 3603
+discarding link 3783 9171
+discarding link 1881 3783
+discarding link 8246 1861
+discarding link 8246 1883
+discarding link 8246 3603
+discarding link 6806 1881
+discarding link 6806 1883
+discarding link 6806 2329
+discarding link 8357 6806
+discarding link 7017 13390
+discarding link 8357 7017
+discarding link 8357 7020
+discarding link 1889 4764
+discarding link 6467 7020
+discarding link 8123 1883
+discarding link 8123 2329
+discarding link 8123 3706
+discarding link 8123 3783
+discarding link 9741 2343
+discarding link 8123 4764
+discarding link 10883 2621
+discarding link 11465 7020
+discarding link 8357 8234
+discarding link 8752 6700
+discarding link 8357 8752
+discarding link 8357 9247
+discarding link 6642 6504
+discarding link 6642 7020
+discarding link 10065 1861
+discarding link 1875 1861
+discarding link 3362 9741
+discarding link 10883 7020
+discarding link 10047 6504
+discarding link 7029 6504
+discarding link 10423 6504
+discarding link 8357 10423
+discarding link 11495 1883
+discarding link 1927 10883
+discarding link 11495 1927
+discarding link 11495 6504
+discarding link 7735 6504
+discarding link 7735 7020
+discarding link 1933 6504
+discarding link 7654 1933
+discarding link 7654 2343
+discarding link 3396 1796
+discarding link 3396 2730
+discarding link 3396 3438
+discarding link 3396 3706
+discarding link 3396 4334
+discarding link 3396 6105
+discarding link 3396 6504
+discarding link 7015 3384
+discarding link 7015 4034
+discarding link 7015 6105
+discarding link 9267 3706
+discarding link 3381 9267
+discarding link 9561 2598
+discarding link 9561 4034
+discarding link 3396 7015
+discarding link 8445 4034
+discarding link 8445 7015
+discarding link 3396 8445
+discarding link 10966 3706
+discarding link 3396 10966
+discarding link 11193 1794
+discarding link 3396 11193
+discarding link 7654 3396
+188 loops found
+discarding link 8360 1883
+discarding link 1889 7020
+discarding link 7596 1883
+discarding link 1851 3603
+discarding link 1888 1851
+discarding link 1888 1883
+discarding link 8123 6504
+discarding link 8123 7017
+discarding link 6467 13390
+discarding link 8002 6467
+discarding link 7727 8002
+discarding link 8106 8357
+discarding link 7727 8106
+discarding link 7727 8752
+discarding link 7727 9247
+discarding link 10008 1861
+discarding link 1925 3603
+discarding link 4292 1861
+discarding link 8333 1861
+discarding link 8333 1925
+discarding link 8333 2610
+discarding link 8333 2730
+discarding link 13532 13390
+discarding link 3362 13532
+discarding link 8333 3362
+discarding link 8333 7020
+discarding link 10065 3362
+discarding link 9402 10008
+discarding link 10657 7020
+discarding link 10657 8357
+discarding link 10657 13390
+discarding link 9402 10657
+discarding link 9402 13390
+discarding link 7727 9402
+discarding link 7727 9741
+discarding link 10161 7020
+discarding link 10161 8357
+discarding link 10161 10883
+discarding link 10161 13390
+discarding link 7727 10161
+discarding link 7727 10657
+discarding link 7727 10883
+discarding link 11465 10883
+discarding link 7727 11465
+discarding link 7727 11692
+discarding link 12150 8357
+discarding link 7727 12150
+discarding link 6776 7727
+discarding link 644 6776
+discarding link 644 6806
+discarding link 10464 830
+discarding link 10464 2353
+discarding link 10464 4032
+discarding link 644 10464
+discarding link 2197 644
+discarding link 2197 11329
+discarding link 11569 13333
+discarding link 2197 11569
+discarding link 13296 13333
+discarding link 2197 13296
+discarding link 2197 13333
+discarding link 13411 13296
+discarding link 13411 13333
+discarding link 12300 2197
+discarding link 6900 644
+discarding link 6900 6770
+discarding link 8322 184
+discarding link 8322 644
+discarding link 10158 5936
+discarding link 10158 7017
+discarding link 7876 10158
+discarding link 1889 7876
+discarding link 10096 8357
+discarding link 9788 2343
+discarding link 9788 4764
+discarding link 4027 3706
+discarding link 4027 5036
+discarding link 1518 644
+discarding link 2075 644
+discarding link 2075 3706
+discarding link 6778 644
+discarding link 6946 2078
+discarding link 6946 6286
+discarding link 6728 6946
+discarding link 6778 6728
+discarding link 1518 3706
+discarding link 1518 6778
+discarding link 11369 6778
+discarding link 10668 11369
+discarding link 1518 10668
+discarding link 11702 6778
+discarding link 10504 644
+discarding link 10653 1518
+discarding link 6201 3191
+discarding link 6201 3706
+discarding link 6201 5036
+discarding link 4027 6201
+discarding link 11300 6900
+discarding link 11300 13296
+discarding link 11300 13333
+discarding link 11300 13411
+discarding link 13479 13296
+discarding link 11300 13479
+discarding link 12300 11300
+discarding link 12300 11542
+discarding link 12300 13333
+discarding link 514 12300
+discarding link 8729 514
+discarding link 8729 8731
+discarding link 486 514
+discarding link 10456 6228
+discarding link 6994 4522
+discarding link 6994 4598
+discarding link 12515 1899
+discarding link 12515 1913
+discarding link 13096 4761
+discarding link 11342 7989
+discarding link 11342 9970
+discarding link 11342 11542
+discarding link 12246 5582
+discarding link 12250 5582
+discarding link 12250 13463
+discarding link 11342 12250
+discarding link 12309 4761
+discarding link 5805 3305
+discarding link 5483 3305
+discarding link 5483 4522
+discarding link 5483 10396
+discarding link 11385 9970
+discarding link 10392 10403
+discarding link 10392 11437
+discarding link 11385 10392
+discarding link 10675 10403
+discarding link 10748 11437
+discarding link 10748 12508
+discarding link 13245 4725
+discarding link 10748 13245
+discarding link 5483 10748
+discarding link 5483 11381
+discarding link 5483 11437
+discarding link 5805 5483
+discarding link 12313 12476
+discarding link 12313 13750
+discarding link 11342 12313
+discarding link 11342 12476
+discarding link 12769 4522
+discarding link 11342 12769
+discarding link 11342 13233
+discarding link 4755 12943
+discarding link 13088 12943
+discarding link 6281 13088
+discarding link 6281 13233
+discarding link 13464 12943
+discarding link 11492 12943
+discarding link 12309 6772
+discarding link 12309 6986
+discarding link 12309 12476
+discarding link 13071 12309
+discarding link 13071 12943
+discarding link 13464 13071
+discarding link 6281 13464
+discarding link 6281 13530
+discarding link 13065 6281
+discarding link 13065 12943
+discarding link 4755 13065
+discarding link 4755 13071
+discarding link 13116 13123
+discarding link 13096 13126
+discarding link 13218 13123
+discarding link 13419 13218
+discarding link 13419 13492
+discarding link 13096 13419
+discarding link 4755 13096
+discarding link 13299 4756
+discarding link 4755 13299
+discarding link 4755 13458
+discarding link 4755 13464
+discarding link 6994 4755
+discarding link 6994 4756
+discarding link 6994 5334
+discarding link 5740 1899
+discarding link 5740 4755
+discarding link 5740 5759
+discarding link 5740 6772
+discarding link 6994 5759
+discarding link 6994 6394
+discarding link 6424 1766
+discarding link 6424 1899
+discarding link 2040 1766
+discarding link 2040 1899
+discarding link 2040 4725
+discarding link 2040 5759
+discarding link 6424 2040
+discarding link 6424 4755
+discarding link 8025 2040
+discarding link 6424 5759
+discarding link 6424 6772
+discarding link 6505 1899
+discarding link 8071 1899
+discarding link 6526 8025
+discarding link 6994 6526
+discarding link 6994 6772
+discarding link 7451 9970
+discarding link 6994 7451
+discarding link 6994 7980
+discarding link 6994 8025
+discarding link 6424 7980
+discarding link 6424 8025
+discarding link 8071 8025
+discarding link 6424 8071
+discarding link 8072 1899
+discarding link 11342 13454
+discarding link 5740 11342
+discarding link 8191 5740
+discarding link 9666 4725
+discarding link 8159 5740
+discarding link 8159 5759
+discarding link 6424 11342
+discarding link 9666 6424
+discarding link 9669 4720
+discarding link 6505 8025
+discarding link 8070 1899
+discarding link 6505 8071
+discarding link 9408 5740
+discarding link 9879 6424
+discarding link 9882 5740
+discarding link 8072 5759
+discarding link 9438 6424
+discarding link 9710 5740
+discarding link 9450 6424
+discarding link 9876 5740
+discarding link 9876 6424
+discarding link 9898 8071
+discarding link 9869 6424
+discarding link 9901 6424
+discarding link 7857 8025
+discarding link 9901 7857
+discarding link 9913 5740
+discarding link 9711 5740
+discarding link 9930 7674
+discarding link 9930 8071
+discarding link 9932 5740
+discarding link 9938 7674
+discarding link 9396 2040
+discarding link 6994 9970
+discarding link 6994 11342
+discarding link 13178 4755
+discarding link 13178 5759
+discarding link 9891 5740
+discarding link 9891 6424
+discarding link 10147 6994
+discarding link 10181 10442
+discarding link 10147 10442
+discarding link 12465 12466
+discarding link 10456 10181
+discarding link 10252 10442
+discarding link 10147 12466
+discarding link 11133 10147
+discarding link 10180 10442
+discarding link 10456 10442
+discarding link 10452 10442
+discarding link 11133 10442
+discarding link 13316 12466
+discarding link 13128 10147
+discarding link 10456 12466
+discarding link 820 10456
+discarding link 820 11542
+discarding link 12459 10456
+discarding link 12459 12466
+discarding link 12968 10456
+discarding link 12968 12465
+discarding link 12968 12466
+discarding link 13137 12378
+discarding link 13137 12466
+discarding link 12462 10147
+discarding link 12462 10456
+discarding link 13132 12466
+discarding link 12462 12465
+discarding link 12462 12466
+discarding link 13136 10442
+discarding link 13136 10456
+discarding link 13135 12466
+discarding link 13132 12968
+discarding link 13132 13316
+discarding link 12459 13132
+discarding link 12459 13316
+discarding link 13317 12465
+discarding link 13317 12466
+discarding link 13137 13136
+discarding link 12462 13137
+discarding link 13317 13316
+discarding link 13364 10456
+discarding link 13364 12968
+discarding link 13317 13364
+discarding link 12462 13317
+discarding link 820 12462
+discarding link 820 12465
+discarding link 820 13136
+discarding link 820 13137
+discarding link 821 820
+discarding link 5202 5205
+discarding link 821 5202
+discarding link 5203 5205
+discarding link 5204 5203
+discarding link 5204 5205
+discarding link 821 5204
+discarding link 821 11542
+discarding link 821 11646
+discarding link 12238 12378
+discarding link 821 12238
+discarding link 12239 11646
+discarding link 12239 12378
+discarding link 821 12239
+discarding link 11037 821
+251 loops found
+251 loops found
+251 loops found
+251 loops found
+251 loops found
+4027 starts probe 4027-0
+251 loops found
+251 loops found
+251 loops found
+251 loops found
+251 loops found
+7674 starts probe 7674-0
+251 loops found
+251 loops found
+251 loops found
+251 loops found
+251 loops found
+5218 starts probe 5218-0
+discarding link 3035 3191
+discarding link 3035 3706
+discarding link 3035 3723
+discarding link 3687 3035
+discarding link 3687 3723
+discarding link 9597 9803
+discarding link 7104 9597
+discarding link 3687 7104
+discarding link 2576 3706
+discarding link 2576 3723
+discarding link 2576 4034
+discarding link 4764 3526
+discarding link 2576 4764
+discarding link 2576 9803
+discarding link 9332 2576
+discarding link 9332 3723
+discarding link 3687 9332
+discarding link 3687 10667
+discarding link 5218 3687
+discarding link 5218 3723
+discarding link 5218 7104
+discarding link 10544 3706
+discarding link 10542 3706
+253 loops found
+253 loops found
+253 loops found
+6424 starts probe 6424-0
+1871 starts probe 1871-0
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+1910 starts probe 1910-0
+discarding link 6467 4764
+discarding link 1910 6467
+253 loops found
+6 starts probe 6-0
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+1593 starts probe 1593-0
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+7350 starts probe 7350-1
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+7629 starts probe 7629-0
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+5036 starts probe 5036-0
+6596 starts probe 6596-0
+discarding link 2612 6991
+discarding link 6596 2612
+discarding link 6596 6467
+discarding link 6596 7020
+discarding link 7654 4764
+discarding link 7654 7020
+discarding link 7029 8875
+discarding link 7654 7029
+discarding link 7760 184
+discarding link 7760 10883
+discarding link 7654 7760
+discarding link 7654 7783
+discarding link 7654 10883
+discarding link 7654 11692
+discarding link 7654 11735
+discarding link 6596 7654
+discarding link 6596 7783
+discarding link 6596 8875
+discarding link 3362 7020
+discarding link 3362 7047
+discarding link 3362 10883
+discarding link 10657 3362
+discarding link 6596 10657
+discarding link 6596 10883
+253 loops found
+253 loops found
+253 loops found
+9506 starts probe 9506-0
+discarding link 1757 4032
+discarding link 9506 1757
+253 loops found
+253 loops found
+1899 starts probe 1899-0
+253 loops found
+253 loops found
+253 loops found
+253 loops found
+2916 starts probe 2916-0
+discarding link 3601 184
+discarding link 1829 3601
+discarding link 2916 1829
+discarding link 7266 3724
+discarding link 3019 7266
+discarding link 2916 3019
+discarding link 2916 3601
+discarding link 2916 3724
+discarding link 3863 3601
+discarding link 2916 3863
+discarding link 4542 3601
+discarding link 4542 3724
+discarding link 2916 4542
+discarding link 2942 3601
+discarding link 5838 2942
+discarding link 5838 3601
+discarding link 3941 2942
+discarding link 5942 2942
+discarding link 5942 3601
+discarding link 2916 5838
+discarding link 8595 3601
+discarding link 2916 8595
+discarding link 9785 3601
+discarding link 9785 4542
+discarding link 2916 9785
+254 loops found
+254 loops found
+254 loops found
+733 starts probe 733-0
+discarding link 4033 1090
+discarding link 733 4033
+4027 starts probe 4027-1
+256 loops found
+256 loops found
+7626 starts probe 7626-0
+discarding link 1507 659
+discarding link 1515 1519
+discarding link 2735 3035
+discarding link 3448 3382
+discarding link 2735 3448
+discarding link 2735 3706
+discarding link 2735 3723
+discarding link 2735 6286
+discarding link 2052 6946
+discarding link 5999 2052
+discarding link 5999 3706
+discarding link 6297 6286
+discarding link 6290 6946
+discarding link 6297 6290
+discarding link 6297 6946
+discarding link 10275 659
+discarding link 10275 3448
+discarding link 10275 4193
+discarding link 5999 6946
+discarding link 1878 3723
+discarding link 6996 3723
+discarding link 1878 6996
+discarding link 5090 1878
+discarding link 5090 3035
+discarding link 12570 3035
+discarding link 12570 3723
+discarding link 5090 12570
+discarding link 12585 12570
+discarding link 5090 12585
+discarding link 1805 5090
+discarding link 8879 1805
+discarding link 2735 6297
+discarding link 6428 6946
+discarding link 2735 6428
+discarding link 2735 6766
+discarding link 2735 6946
+discarding link 2735 11003
+discarding link 1515 2735
+discarding link 9280 3706
+discarding link 10676 9280
+discarding link 10676 10677
+discarding link 3126 10676
+discarding link 1515 3126
+discarding link 1515 3706
+discarding link 1515 4034
+discarding link 1515 4604
+discarding link 1515 5036
+259 loops found
+259 loops found
+259 loops found
+259 loops found
+259 loops found
+259 loops found
+4533 starts probe 4533-0
+259 loops found
+4533 starts probe 4533-1
+259 loops found
+3150 starts probe 3150-0
+discarding link 3604 2280
+discarding link 1700 3604
+discarding link 1698 1700
+discarding link 1759 1700
+discarding link 1718 3604
+discarding link 1698 1718
+discarding link 1698 2280
+discarding link 3583 3604
+discarding link 1698 3583
+discarding link 1698 3604
+discarding link 1698 3649
+discarding link 1698 6395
+discarding link 6443 3604
+discarding link 1698 6443
+discarding link 12369 3583
+discarding link 12369 3604
+discarding link 1698 12369
+discarding link 3150 1698
+discarding link 3150 3604
+discarding link 4020 1698
+discarding link 4020 3604
+discarding link 3150 4020
+11325 starts probe 11325-0
+discarding link 7849 8070
+discarding link 7849 8542
+discarding link 7863 7970
+discarding link 7863 8025
+discarding link 7950 8070
+discarding link 8072 8071
+discarding link 7975 7976
+discarding link 7975 8025
+discarding link 8073 7975
+discarding link 8073 8025
+discarding link 8073 8071
+discarding link 8159 7857
+discarding link 8159 8071
+discarding link 8073 8159
+discarding link 9450 8159
+discarding link 7973 8159
+discarding link 9839 8159
+discarding link 7973 9839
+discarding link 9912 7857
+discarding link 7938 2040
+264 loops found
+discarding link 7938 8025
+discarding link 7938 10076
+discarding link 9912 7938
+discarding link 9858 7938
+discarding link 9813 7857
+discarding link 9905 2040
+discarding link 9905 7857
+discarding link 9884 7938
+discarding link 9813 13346
+discarding link 9858 9813
+discarding link 9912 9858
+discarding link 9875 7857
+discarding link 9875 9813
+discarding link 9910 8159
+discarding link 8073 9839
+discarding link 9911 8071
+discarding link 9449 7857
+discarding link 8072 8159
+discarding link 8072 9839
+discarding link 9449 8072
+discarding link 7916 8025
+discarding link 9892 7857
+discarding link 7950 8525
+discarding link 9155 8072
+discarding link 9453 7857
+discarding link 7814 8072
+discarding link 7814 8542
+discarding link 9407 8072
+discarding link 9421 7857
+discarding link 9421 7975
+discarding link 9421 8071
+discarding link 9421 8072
+discarding link 9919 9417
+discarding link 9832 2040
+discarding link 9832 7857
+discarding link 9806 7938
+discarding link 9852 7857
+discarding link 9852 9813
+discarding link 9847 7938
+discarding link 10024 8159
+discarding link 10024 9813
+discarding link 10024 9884
+discarding link 9847 10024
+discarding link 10038 7857
+discarding link 9824 7938
+discarding link 10038 9824
+discarding link 7898 8025
+discarding link 7947 7857
+discarding link 7947 7976
+discarding link 7947 8025
+discarding link 11249 8072
+discarding link 9880 8072
+discarding link 9710 8072
+discarding link 9346 8025
+discarding link 11313 7820
+discarding link 9804 7938
+discarding link 9811 7857
+discarding link 9811 7938
+discarding link 9811 9839
+discarding link 9914 8159
+discarding link 8134 8025
+discarding link 8191 8025
+discarding link 7808 8071
+discarding link 9374 8073
+discarding link 9446 9374
+discarding link 11482 8159
+discarding link 9869 8072
+discarding link 11619 7950
+discarding link 9163 7916
+discarding link 9702 9446
+discarding link 11325 7863
+discarding link 8045 7916
+discarding link 8045 7976
+discarding link 8045 8025
+discarding link 9713 8073
+discarding link 11257 7820
+4533 starts probe 4533-2
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+6504 starts probe 6504-0
+283 loops found
+283 loops found
+283 loops found
+283 loops found
+7455 starts probe 7455-0
+discarding link 4768 3706
+discarding link 7455 4768
+discarding link 7455 5634
+discarding link 8823 4768
+discarding link 8823 5634
+284 loops found
+284 loops found
+8637 starts probe 8637-0
+discarding link 10640 9999
+discarding link 2075 6778
+5037 starts probe 5037-0
+285 loops found
+7774 starts probe 7774-0
+discarding link 7774 7750
+285 loops found
+5529 starts probe 5529-0
+285 loops found
+285 loops found
+1821 starts probe 1821-0
+285 loops found
+285 loops found
+285 loops found
+285 loops found
+285 loops found
+285 loops found
+285 loops found
+2343 starts probe 2343-0
+285 loops found
+2343 starts probe 2343-1
+1871 starts probe 1871-1
+285 loops found
+7664 starts probe 7664-0
+discarding link 8822 1994
+discarding link 8822 4463
+discarding link 7956 6217
+discarding link 7512 7521
+discarding link 7956 7512
+discarding link 7489 7956
+discarding link 7511 7489
+discarding link 7511 7956
+discarding link 6189 7511
+discarding link 8792 8822
+discarding link 7664 8792
+discarding link 7664 8822
+287 loops found
+287 loops found
+287 loops found
+287 loops found
+3360 starts probe 3360-0
+287 loops found
+287 loops found
+287 loops found
+4604 starts probe 4604-0
+8589 starts probe 8589-0
+discarding link 8589 5036
+287 loops found
+8819 starts probe 8819-0
+discarding link 8322 8270
+discarding link 7899 8213
+discarding link 8322 8796
+discarding link 8326 7906
+discarding link 8288 8218
+discarding link 8322 8799
+discarding link 10281 8798
+discarding link 10281 10283
+discarding link 11351 10281
+discarding link 8322 11351
+discarding link 8273 8322
+discarding link 8808 172
+discarding link 11088 5634
+5036 starts probe 5036-1
+293 loops found
+293 loops found
+3016 starts probe 3016-0
+discarding link 3016 6491
+discarding link 6594 4549
+discarding link 3016 6594
+6994 starts probe 6994-0
+293 loops found
+293 loops found
+293 loops found
+293 loops found
+8946 starts probe 8946-0
+discarding link 2225 7485
+discarding link 7619 2225
+discarding link 7619 6671
+discarding link 6676 7619
+discarding link 6758 6676
+discarding link 6757 7619
+discarding link 6758 6757
+discarding link 6842 2225
+discarding link 6842 6757
+discarding link 6758 7619
+discarding link 8946 6758
+discarding link 7430 6671
+discarding link 7430 7619
+discarding link 8946 7430
+discarding link 8946 7619
+1889 starts probe 1889-0
+294 loops found
+294 loops found
+294 loops found
+294 loops found
+11133 starts probe 11133-0
+294 loops found
+294 loops found
+6900 starts probe 6900-0
+9703 starts probe 9703-0
+discarding link 9703 9417
+294 loops found
+294 loops found
+294 loops found
+4764 starts probe 4764-0
+294 loops found
+294 loops found
+294 loops found
+294 loops found
+6491 starts probe 6491-0
+294 loops found
+294 loops found
+11542 starts probe 11542-0
+4761 starts probe 4761-0
+294 loops found
+294 loops found
+294 loops found
+294 loops found
+294 loops found
+4632 starts probe 4632-0
+discarding link 5207 4636
+discarding link 4648 4636
+discarding link 5207 4641
+discarding link 5207 4647
+discarding link 5207 4665
+discarding link 5207 4713
+discarding link 5207 5252
+discarding link 4632 5207
+9831 starts probe 9831-0
+296 loops found
+296 loops found
+661 starts probe 661-0
+296 loops found
+11342 starts probe 11342-0
+296 loops found
+4027 starts probe 4027-2
+296 loops found
+296 loops found
+296 loops found
+8822 starts probe 8822-0
+296 loops found
+296 loops found
+296 loops found
+296 loops found
+663 starts probe 663-0
+296 loops found
+296 loops found
+4755 starts probe 4755-0
+296 loops found
+296 loops found
+296 loops found
+296 loops found
+296 loops found
+6200 starts probe 6200-0
+discarding link 4590 5036
+discarding link 6200 4590
+discarding link 6200 5036
+discarding link 6200 6946
+discarding link 3791 5036
+discarding link 3791 6201
+discarding link 7657 3791
+discarding link 7409 3791
+discarding link 6200 7352
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+3362 starts probe 3362-0
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+297 loops found
+297 loops found
