@@ -42,10 +42,54 @@ cases are not silently promoted or spliced together.
 
 ## Results
 
-Launched after independent review at 2026-10-11T09:33:36.324545+00:00, coordinator PID
-102617, execution session84912. Inspect
-`results/research-campaign-episode-replication-state.json` and each child state
-for actual progress. No completed seed-1 or seed-2 result is claimed at launch. Evaluate final debt, posted-debt
-area, delayed-input U, staged-commit K, messages and pending work separately.
-The same real fixture with extra seeds tests stochastic robustness, not broad
-external validity across independent datasets.
+All 12 cases completed and passed source/input/output certification and independent
+ledger audits. The coordinator ran from 2026-10-11 09:33:36 to 09:47:39 UTC.
+All 30,726 transfers posted by the horizon in every case; all messages,
+reservations and transfers drained. All cases had some partially committed cycle
+work at the horizon, so final drain results do not imply atomic settlement.
+The largest total event count was 7,385,667; no case reached a budget limit.
+
+Final debt reduction relative to the same no-clearing final ledger:
+
+| Seed | Condition | Random local DFS | Numbat |
+|---|---|---:|---:|
+| 1 | Clean | 15.18653% | 13.20969% |
+| 1 | 10% loss + sleep | 14.22635% | 12.12354% |
+| 1 | 30% loss + sleep | 11.46285% | 10.48629% |
+| 2 | Clean | 14.96794% | 12.77166% |
+| 2 | 10% loss + sleep | 13.91508% | 12.35067% |
+| 2 | 30% loss + sleep | 11.90184% | 11.11919% |
+
+Random clears more in all six new pairs, and in all nine pairs including the
+[prior seed-0 comparison](TEMPORAL-EPISODES-RESULTS.md). It remains the stronger
+final-debt baseline for this temporal Sarafu exercise. This does not overturn
+Numbat's small synthetic advantage or establish a universal best algorithm.
+
+Costs differ. The table below sums each metric over seeds 1 and 2 within a
+condition, then reports Numbat's percentage change relative to random; negative
+means less. Posted-debt area, U and K run to the common horizon; wire attempts
+include drain. U measures requested money awaiting posting; K measures committed
+edge amounts awaiting the rest of their cycle, not financial loss or risk.
+
+| Condition | Final debt | Posted-debt area | U | K | Wire attempts |
+|---|---:|---:|---:|---:|---:|
+| Clean | +2.457% | +0.534% | -28.995% | -4.911% | -1.157% |
+| 10% loss + sleep | +2.134% | +0.395% | +19.554% | -2.012% | -2.422% |
+| 30% loss + sleep | +0.996% | +0.324% | +61.374% | +4.935% | -10.868% |
+
+Numbat uses fewer wire attempts here, but clears less debt. Its posting and staged
+commit exposures vary with the fault condition. These are separate tradeoffs;
+there is no combined score. Concurrent wall timings are not a speed comparison.
+The same real fixture with extra seeds tests stochastic robustness, not external
+validity across independent datasets. Strict admission checks both channel
+episodes and balance revisions; the result is not an isolated zero-closure test.
+
+Evidence: [certified summary](results/temporal-episode-replication-summary.json),
+[coordinator state](results/research-campaign-episode-replication-state.json).
+The summary retains every raw case's source and artifact hashes and requires a
+completed coordinator job, completed child certification, matching output digest,
+valid audit and empty final pending work before scoring a pair. Regenerate with:
+
+```sh
+python3 experiments/temporal_episode_replication_summary.py
+```

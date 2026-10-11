@@ -1,0 +1,74 @@
+{
+  "complete": true,
+  "status": "completed",
+  "worker_pid": 102617,
+  "manifest_sha256": "6c370a862fca3e1fd77d89420a5b22eb59fb26089a4894559fc02b7bd3d2c1b1",
+  "driver_sha256": "55501960e3f9ba2ca122c7d66121dfb91d9a270902dc9b5cb8a7a55712a255a6",
+  "max_workers": 3,
+  "max_seconds": 7200.0,
+  "started_at": "2026-10-11T09:33:36.324545+00:00",
+  "jobs": {
+    "seed1-random-clean": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed1-random-clean-state.json"
+    },
+    "seed1-numbat-clean": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed1-numbat-clean-state.json"
+    },
+    "seed1-random-loss10": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed1-random-loss10-state.json"
+    },
+    "seed1-numbat-loss10": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed1-numbat-loss10-state.json"
+    },
+    "seed1-random-loss30": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed1-random-loss30-state.json"
+    },
+    "seed1-numbat-loss30": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed1-numbat-loss30-state.json"
+    },
+    "seed2-random-clean": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-random-clean-state.json"
+    },
+    "seed2-numbat-clean": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-numbat-clean-state.json"
+    },
+    "seed2-random-loss10": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-random-loss10-state.json"
+    },
+    "seed2-numbat-loss10": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-numbat-loss10-state.json"
+    },
+    "seed2-random-loss30": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-random-loss30-state.json"
+    },
+    "seed2-numbat-loss30": {
+      "status": "completed",
+      "returncode": 0,
+      "state": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-numbat-loss30-state.json"
+    }
+  },
+  "last_progress_at": "2026-10-11T09:47:39.296208+00:00",
+  "finished_at": "2026-10-11T09:47:39.297155+00:00"
+}

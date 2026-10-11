@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "manifest_sha256": "579333f37491b2676d73be5bd8acf95b114bf48b799c26d07c370920653688d4",
+  "created_at": "2026-10-11T09:40:46.081223+00:00",
+  "jobs": {
+    "seed2-numbat-clean": {
+      "status": "completed",
+      "attempts": 1,
+      "started_at": "2026-10-11T09:40:46.089773+00:00",
+      "source_input_sha256": {
+        "/workspace/strategy-pit/experiments/distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+        "/workspace/strategy-pit/experiments/numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+        "/workspace/strategy-pit/experiments/temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+        "/workspace/strategy-pit/experiments/temporal_episodes.py": "ef945e0c3d14c7457af499fb47e4a5cba2dff8d21114018f8254421bd316478b",
+        "/workspace/strategy-pit/experiments/temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+        "/workspace/strategy-pit/experiments/temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+        "/workspace/strategy-pit/experiments/temporal_metrics.py": "69147dc82dbbb06f9cfdb9a45aeeb0d5b6a025e0ee169bb8ad45f49c55f999b6",
+        "/workspace/strategy-pit/experiments/temporal_episode_benchmark.py": "692f129af859c974433f7916c75c121c85b91dc671fb9fd0e7dc05d6e78eda92",
+        "/workspace/strategy-pit/experiments/concurrent_headroom.py": "0f3f2d7b2a476c3b16c986b4cc1a0ac5c3edc8b38a6e3121aa04ea2d41ba6f49",
+        "/workspace/strategy-pit/experiments/fast_temporal_transport.py": "d794f084807c11f6738b2d036330c1ebfd3e4c8791838a21045a439b6fb4e9a0",
+        "/workspace/strategy-pit/experiments/temporal_episode_fast_case.py": "20d0649d0b3342cb5c8caccb49ec06eefa33ac761c831443ebf7cf103dafab81",
+        "/workspace/strategy-pit/experiments/research_campaign_parallel.py": "55501960e3f9ba2ca122c7d66121dfb91d9a270902dc9b5cb8a7a55712a255a6",
+        "/workspace/strategy-pit/experiments/research_campaign_episode_replication.json": "fe8652f12e9d205f45eda2d6ad639e4823789b1867af8cabc184a3ada86222b7",
+        "/workspace/jerboa-review/__tests__/fixtures/sarafu-50k.csv": "785b8f57d3e7e485a678772727bf593aaa90594c833afb7abc3c4d5fb366eebb",
+        "/workspace/strategy-pit/experiments/results/temporal-episode-replication-gate.json": "47711719fa76b78e059f3a8ec771fc16fe1195d48f605bed6e269f02fc6c906b",
+        "/workspace/strategy-pit/experiments/research_campaign.py": "559a89b90324940841f91ca911799c760555c3d12c483301243b0dda5f7fdaa1"
+      },
+      "log": "/workspace/strategy-pit/experiments/results/research-campaign-episode-replication-state-seed2-numbat-clean-state-seed2-numbat-clean.log",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-numbat-clean.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000"
+      ],
+      "process_pid": 103318,
+      "returncode": 0,
+      "output_sha256": {
+        "/workspace/strategy-pit/experiments/results/temporal-episode-replication-seed2-numbat-clean.json": "79b06d48996a271f3bf5870c01613d41191f862bec3624a335d5e26381196d22"
+      },
+      "finished_at": "2026-10-11T09:46:13.698704+00:00"
+    }
+  },
+  "worker_pid": 102617,
+  "status": "completed",
+  "started_at": "2026-10-11T09:40:46.081231+00:00",
+  "heartbeat_at": "2026-10-11T09:46:13.699691+00:00",
+  "last_progress_at": "2026-10-11T09:46:13.699691+00:00",
+  "finished_at": "2026-10-11T09:46:13.699685+00:00"
+}

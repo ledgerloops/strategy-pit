@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "purpose": "Prospective seeds1/2 replication of fixed strict-episode random/Numbat cancellation policies; no retuning. Three workers maximum,7200-second campaign bound,1200seconds percase. Smallseed0 equality gate pinned.",
+  "jobs": [
+    {
+      "id": "seed2-numbat-loss10",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-numbat-loss10.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0.1",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-numbat-loss10.json"
+      ],
+      "require_json_complete": true
+    }
+  ]
+}

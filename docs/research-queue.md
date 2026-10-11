@@ -8,16 +8,25 @@ Find practical node-local clearing algorithms that perform well across static an
 
 ## Verified status — 2026-10-11
 
-The finite replay campaign completed on 2026-10-10 at 07:34:43 UTC. All three jobs and nine follow-up runs completed; together with the original full-prefix run, all twelve runs pass their ledger audits. No benchmark worker was running when checked on October 11. The historical process identifiers below are not live-status claims.
-
-Random local DFS has the lowest final debt in all four full-prefix clock/seed comparisons: 15.21–15.81% improvement from the no-clearing final debt, versus Numbat 13.75–14.21% and largest-first 12.35–13.09%. These are temporal results, not a comparison with static Jerboa/Jaribu. The fixed 50/50 exploration mixture failed its training gate. The exposure observer and gross-arrival reference are complete locally. All 134 tests pass. Completed artifacts were independently reviewed and published at `d8c7e0b`.
+The fixed strict-episode seed replication completed at 2026-10-11 09:47:39 UTC:
+12/12 cases certified, audited and drained, with no budget-limited cases. Random
+local DFS clears more than Numbat in all six seed-1/2 pairs and all nine matched
+full-prefix pairs including seed 0. Numbat uses fewer wire attempts in the new
+replication, with mixed posting and partial-commit exposure. See the
+[replication report](../experiments/TEMPORAL-EPISODE-REPLICATION.md).
+This is stochastic robustness on one fixture, not universal superiority.
+Historical launch identifiers and snapshots below are not current worker claims.
 
 ### Chosen next steps
 
-1. Finish independent hash/report review and publish the completed campaign, negative exploration result, exposure measurements and temporal reference. Preserve the intentionally incomplete two-million-event run.
-2. First implement and independently audit episode-aware admission after zero-channel closure across all baselines. Current in-flight search can continue after a traversed pair closes; distinguish this from already-admitted settlement control grace. Then use concurrent random local DFS as the temporal Sarafu baseline, retain Numbat as a synthetic competitor, and run matched loss/sleep comparisons with amount-weighted posting and partial-commit measurements. Start with a bounded prefix before full-scale runs.
-3. Implement temporal Headroom in a separate prototype using issue 003's explicit pair episodes and strict zero-channel closure. Test local admission, cap updates, reversal and stale-message rejection before performance comparisons.
-4. Investigate a locally observable contention/backoff policy only after measuring reservation failures and traffic costs. Do not promote the failed fixed mixture or default to turn waiting.
+1. Retain concurrent random local DFS as the temporal Sarafu final-debt baseline;
+   preserve Numbat's synthetic advantages and separate exposure/traffic tradeoffs.
+2. Evaluate a separately specified smallest-unit channel-retention preference
+   before implementing it: net-position coupling means its cost is not bounded
+   by simply counting retained edges. Do not change the completed strict protocol.
+3. Any next candidate needs prospective training and held-out conditions, the
+   same source/input certification, exact ledger audit and finite work budgets.
+   Keep the failed backoff, exploration, admission and Headroom variants visible.
 
 ## Completed checkpoints
 
@@ -155,3 +164,15 @@ Methods, admission, timing, fault conditions and budgets match the seed-0 full
 comparison; only fixed seeds change. No retuning. The [replication report](../experiments/TEMPORAL-EPISODE-REPLICATION.md)
 records the prospective scope and will report all completed or censored cases.
 This finite benchmark worker does not wake an inactive assistant session.
+
+## Seed replication completed October 11
+
+The campaign above finished at 09:47:39 UTC with all 12 jobs certified complete.
+The completed summary is `experiments/results/temporal-episode-replication-summary.json`;
+all raw cases and child states are retained. No case was censored or retuned.
+Random beats Numbat in every seed-1/2 final-debt pair. Aggregate across these
+12 cases, Numbat has 1.852% more final debt, 0.416% more posted-debt area,
+37.705% more unposted-transfer exposure U, 0.722% more staged-commit exposure K,
+and 4.193% fewer wire attempts. Keep these costs separate.
+The launch and resume commands above are historical/reproducibility instructions,
+not a pending campaign.
