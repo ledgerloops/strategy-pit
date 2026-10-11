@@ -1,0 +1,97 @@
+{
+  "completed": true,
+  "recorded_at_utc": "2026-10-11T14:49:39.695857+00:00",
+  "command": "python -m unittest discover -s app -p 'test_*.py' -v",
+  "python": "3.12.14",
+  "tests_run": 50,
+  "failures": 0,
+  "errors": 0,
+  "elapsed_seconds": 35.385,
+  "source_sha256": {
+    "app/node.py": "b6532fd97eff73b03a031f8dfb1ea378904c5ba3ea4425b55e95d2f3bf1b8ecd",
+    "app/private_node.py": "ff1b8150bbe1dd313ac7916b5279e1504c4f949fd048886a0ce7aaaf1d9f6a28",
+    "app/run_demo.py": "bf339fe8b65ee1857284c55ca85065055a52ca59c53d1892bd4e4291190d1e87",
+    "app/run_private_demo.py": "da1b12c89f81e9715c5a45719faeb3d0f49bba667f20f643fa25b1aadef9fef4",
+    "app/test_network.py": "fcf50d01bf4efa7db590fb6d94ff1f2e05b1ef8b21d025378539b4eaec432b53",
+    "app/test_adversarial.py": "3b6dcd5c8bd322c0241c5509adefcea736a4a854cdfe6cd89064092948bd5fa6",
+    "app/test_private_network.py": "8dbec52bcb7fb6de28e4d8af958f992f53e94d06f5b60e3a04b69ef7bf458196",
+    "app/test_private_adversarial.py": "c78fd5ebc909ae2cb97beea2fe5faf665c81d7da20a27a039334783098805203",
+    "app/test_private_receipt.py": "0089983254259014e533482505ddf6e82525b0e6140d6443cc5d4a071a48fde0",
+    "app/verify_private_receipt.py": "2fe2004bb06f77f9902347071dd57136a4d5d90da23e5abaad99389cb8551304"
+  },
+  "coverage_counts": {
+    "legacy_tests": 24,
+    "private_adversarial_tests": 16,
+    "private_http_tests": 7,
+    "private_receipt_verifier_tests": 3
+  },
+  "private_network_scope": {
+    "transport": "Real loopback HTTP, isolated child processes and SQLite stores",
+    "ring_sizes": [
+      3,
+      4,
+      7
+    ],
+    "fixed_clearing_amount": 3,
+    "unit": "fabricated integer TEST",
+    "ring3_initial_debts": [
+      7,
+      3,
+      5
+    ],
+    "ring3_final_debts": [
+      4,
+      0,
+      2
+    ],
+    "ring4_and7_initial_debt_per_ring_edge": 7,
+    "ring4_and7_final_debt_per_ring_edge": 4,
+    "extra_neighbours_per_node": [
+      {
+        "type": "zero-balance dormant",
+        "balance": 0,
+        "endpoint": "offline"
+      },
+      {
+        "type": "creditor-side extra neighbour",
+        "balance": 2,
+        "endpoint": "offline"
+      }
+    ],
+    "every_local_signed_position_preserved": true,
+    "bilateral_ring_balances_match_after_fulfillment": true
+  },
+  "faults_exercised": [
+    "Fulfillment delivered then HTTP ACK dropped; observed same message retransmitted, applied once",
+    "Prepared origin SIGKILL/restart; approval and reserved capacity persisted",
+    "All consent collected; fulfillment held at proxy before delivery; origin and next recipient SIGKILL; origin restarted with durable released decision and outbox; offline recipient restart completes while origin paused",
+    "Missing or wrong preimage rejected over authenticated HTTP without economic state change",
+    "Decline propagates abort and releases reservations without balance changes",
+    "O -> A -> B -> C -> A repeated nonorigin visit rejects; all outboxes drain and reservations clear"
+  ],
+  "privacy_audit": {
+    "observations": [
+      "Every SQLite logical dump",
+      "Every node API state response",
+      "Every incoming and outgoing protocol body captured by harness-only HTTP proxies"
+    ],
+    "assertions": [
+      "No non-neighbour participant identity or non-neighbour extra-peer identity present",
+      "No path, route, participants, length or hop_count wire field present"
+    ],
+    "limits": [
+      "Harness centrally knows the fixture; participants do not",
+      "Opaque operation IDs, conditions, amounts, timing and transport endpoints remain visible",
+      "Three-member loop has no non-neighbour ring member; four- and seven-member cases exercise that distinction",
+      "No traffic-analysis, colluding-peer or hosting-operator anonymity claim"
+    ]
+  },
+  "limits": [
+    "Engineering loopback TEST network, not public WAN deployment or real obligations",
+    "Trusted non-equivocating peers, retained durable local state, eventual recovery",
+    "Selected crash and delivery boundaries, not exhaustive model checking",
+    "Private receipt verifier proves local evidence/accounting consistency, not whole-cycle completion",
+    "No stale-backup rollback, disk-full, Byzantine, key-compromise or production-security tolerance established"
+  ],
+  "historical_evidence": "app/network-test-results.json remains unchanged historical v1 evidence; current suite also covers the minimal legacy loader version guard"
+}

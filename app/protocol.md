@@ -1,10 +1,12 @@
-# Neighbour clearing testnet protocol
+# Legacy neighbour clearing infrastructure protocol (v1)
 
 This app exchanges real HTTP messages between separate processes, with each node owning its own SQLite database. It is an **honest-peer, crash-and-restart testnet using integer TEST units only**. It cannot manage money. No account registration, real assets, external transfers, interest, or new credit are implemented.
 
 ## Architectural gap
 
 This is an honest-peer infrastructure prototype, **not a validation of the original LedgerLoops hashlock protocol**. Its enumerated paths and origin-collected named approvals reveal remote loop membership and exact length. That violates the intended neighbour-only knowledge boundary despite neighbour-only transport. [Issue 004](../docs/issues/004-neighbour-private-hashlock-settlement.md) tracks replacement discovery, conditional bilateral consent, hashlock fulfillment and recovery without a roster or exact loop-length requirement. Adding a preimage to the existing commit would not resolve this gap. The current running protocol is unchanged.
+
+The separate [private hashlock v2 implementation](private_protocol.md) now addresses this boundary for an explicitly scoped honest-peer testnet. This document continues to describe v1; its pending databases are not migrated.
 
 ## Local ledger and discovery
 

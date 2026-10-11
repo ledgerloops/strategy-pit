@@ -8,6 +8,7 @@ const {chromium} = require('playwright');
   const dir = process.env.APP_DEMO_DIR;
   if (!dir) throw new Error('Set APP_DEMO_DIR to a fresh local test-network directory');
   const basePort = Number(process.env.APP_BASE_PORT || 8761);
+  const privateProtocol = process.env.APP_PROTOCOL === 'private-hashlock-v2';
   const browser = await chromium.launch({headless:true, ...(process.env.CHROMIUM_PATH ? {executablePath:process.env.CHROMIUM_PATH} : {})});
   try {
     const pages = {}, errors = [];
@@ -23,7 +24,7 @@ const {chromium} = require('playwright');
     }
     const alice=pages.alice;
     await alice.getByRole('link',{name:'03 / Clearing'}).click();
-    await alice.getByLabel('Maximum amount').fill('3');
+    await alice.getByLabel(privateProtocol ? 'Exact amount' : 'Maximum amount').fill('3');
     await alice.getByRole('button',{name:'Discover a loop',exact:true}).click();
     for (const node of ['alice','bob','doris']) {
       const page=pages[node];
@@ -34,13 +35,24 @@ const {chromium} = require('playwright');
     }
     for (const page of Object.values(pages)) {
       await page.getByRole('link',{name:'04 / Activity'}).click();
-      await page.waitForFunction(()=>document.querySelector('#screen').textContent.includes('Confirmed by all participants'),{},{timeout:20000});
+      await page.waitForFunction(text=>document.querySelector('#screen').textContent.includes(text), privateProtocol ? 'Applied locally · fulfillment verified' : 'Confirmed by all participants', {timeout:20000});
     }
     const downloadPromise=alice.waitForEvent('download');
     await alice.getByRole('button',{name:'Download receipt JSON'}).click();
     const download=await downloadPromise;
     const receipt=JSON.parse(fs.readFileSync(await download.path(),'utf8'));
-    assert.equal(receipt.mode,'testnet');assert.equal(receipt.receipt.cycle_complete,true);
+    assert.equal(receipt.mode,'testnet');
+    if (privateProtocol) {
+      assert.equal(receipt.receipt.local_fulfilled,true);
+      assert.equal(receipt.receipt.protocol,'private-hashlock-v2');
+      const r=receipt.receipt;
+      const crypto=require('node:crypto');
+      assert.equal(crypto.createHash('sha256').update(JSON.stringify({amount:r.amount,id:r.id,preimage:r.preimage,protocol:r.protocol,unit:r.unit})).digest('hex'),r.condition);
+      await alice.route('**/api/state',async route=>{const response=await route.fetch();const body=await response.json();for(const r of body.receipts)if(r.status==='committed')r.preimage='00'.repeat(32);await route.fulfill({response,json:body});});
+      await alice.waitForFunction(()=>document.querySelector('#screen').textContent.includes('Verification failed'),{},{timeout:15000});
+      await alice.unroute('**/api/state');
+      await alice.waitForFunction(()=>document.querySelector('#screen').textContent.includes('fulfillment verified'),{},{timeout:15000});
+    } else assert.equal(receipt.receipt.cycle_complete,true);
     for (const width of [320,390,1280]) {
       await alice.setViewportSize({width,height:900});
       for (const screen of ['overview','peers','clearing','activity','settings']) {

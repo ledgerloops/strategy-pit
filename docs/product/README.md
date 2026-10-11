@@ -6,7 +6,7 @@ An installable, mobile-friendly web app with optional hosted nodes and self-host
 
 ## First implementation
 
-The [network testnet app](../../app/README.md) now implements a vertical slice: authenticated node connection, fixture balances, neighbour discovery, digest-bound approvals/declines, receipts and durable restart recovery. [Validation](../../app/TESTING.md) covers actual three-process HTTP tests. Enrollment/imports, production identity, dynamic transfers and live deployment remain unimplemented; the PRDs describe the wider target.
+The [private hashlock app](../../app/README.md) implements authenticated node connection, fixture balances, neighbour-only discovery/consent without a roster, context-bound fulfillment, locally verified receipts and durable recovery. [Validation](../../app/PRIVATE_TESTING.md) covers differently sized real HTTP networks and adversarial state checks. Enrollment/imports, production identity, dynamic transfers and live deployment remain unimplemented; the PRDs describe the wider target.
 
 ## Component PRDs
 
@@ -37,7 +37,7 @@ The common scenario is Alice owing Bob 7 CU and being owed 5 CU by Doris. A canc
 
 ## Shared design and engineering decisions
 
-[Issue 004](../issues/004-neighbour-private-hashlock-settlement.md) constrains all components: discovery, approvals, receipts and recovery must not require remote identities or exact total loop length in node state/messages. The current path-based app does not meet this target. Minimum-three enforcement, hashlock consent and safe expiry require a reviewed design before replacement; the current PRD/API sketches are subject to that gate.
+[Issue 004](../issues/004-neighbour-private-hashlock-settlement.md) constrains all components: discovery, approvals, receipts and recovery must not require remote identities or exact total loop length in node state/messages. The legacy path-based app does not meet this target. Private v2 implements a reviewed honest-peer candidate with minimum-three enforcement and local hashlock consent; it deliberately has no timeout-based expiry and no claim of whole-loop completion. Production and adversarial-security gates remain open.
 
 - Alpha actions record draft/demo responses only. Live settlement requires the roadmap's protocol and pilot gates. Server capability checks enforce this separation; hiding a button is insufficient.
 - Mobile and desktop share the same product and API. Native apps are deferred until secure signing, notifications or offline requirements justify them. Browser sleep is normal; a node handles durable delivery independently.

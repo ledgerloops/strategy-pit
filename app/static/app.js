@@ -7,6 +7,7 @@
   let token = "";
   try { token = sessionStorage.getItem("ledgerloops.testnet.token") || ""; } catch (_) { /* Storage can be disabled. */ }
   let state = null, online = false, busy = false, lastSeen = null, refreshing = false;
+  let fulfillmentChecks = new Map();
   let sessionGeneration = 0;
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const amount = value => `${BigInt(value).toLocaleString()} TEST`;
@@ -15,7 +16,41 @@
   const intro = (title, description) => `<h1 id="title">${esc(title)}</h1><p class="muted">${esc(description)}</p>`;
   const disabled = () => !online || busy || state?.paused;
   const approvalReady = p => !p.approved && p.status === "pending";
-  const statusText = p => p.status === "committed" ? ((p.cycle_complete || state?.receipts?.some(r => r.id === p.id && r.cycle_complete)) ? "Confirmed by all participants" : "Applied here · waiting for all participants") : p.approved ? `Your approval recorded · ${p.status}` : String(p.status).replaceAll("_", " ");
+  const privateProtocol = () => state?.protocol === "private-hashlock-v2";
+  const protocolLabel = () => privateProtocol() ? "Private hashlock v2 · experimental" : "Legacy infrastructure test · route-visible";
+  function statusText(p) {
+    if (privateProtocol()) {
+      const receipt = state?.receipts?.find(r => r.id === p.id) || p;
+      if (p.status === "committed") return fulfillmentChecks.get(receipt.id) === "verified" ? "Applied locally · fulfillment verified" : fulfillmentChecks.get(receipt.id) === "invalid" ? "Verification failed · needs investigation" : "Applied locally · browser verification unavailable";
+      return p.approved ? `Your conditional approval recorded · ${String(p.status).replaceAll("_", " ")}` : String(p.status).replaceAll("_", " ");
+    }
+    return p.status === "committed" ? ((p.cycle_complete || state?.receipts?.some(r => r.id === p.id && r.cycle_complete)) ? "Confirmed by all participants" : "Applied here · waiting for all participants") : p.approved ? `Your approval recorded · ${p.status}` : String(p.status).replaceAll("_", " ");
+  }
+
+  function hashlockDetails(p) {
+    if (!privateProtocol()) return "";
+    const receipt = state.receipts?.find(r => r.id === p.id) || p;
+    const verified = fulfillmentChecks.get(receipt.id) === "verified";
+    const released = receipt.status === "committed" && receipt.local_fulfilled === true;
+    const explanation = verified ? "This browser verified that the released fulfillment matches the condition. Your node reports applying your local changes. This does not prove that every other node has applied theirs." : released ? "Your node reports applying the changes. This browser has not verified matching fulfillment evidence; investigate a verification failure before relying on the receipt." : p.status === "aborted" ? "Your node recorded an abort. No fulfillment was released in this receipt." : "Your approval is conditional on a matching fulfillment. The node retains reservations while it waits for a valid outcome.";
+    return `<div class="card"><h3>Conditional clearing</h3><p>${explanation}</p><details><summary>Local verification details</summary><p>Condition (SHA-256)<br><code>${esc(p.condition || "Not supplied")}</code></p>${released && typeof receipt.preimage === "string" ? `<p>Released fulfillment<br><code>${esc(receipt.preimage)}</code></p><p>Browser check: ${esc(fulfillmentChecks.get(receipt.id) || "unavailable")}</p>` : "<p>No released fulfillment is displayed.</p>"}<p class="subtle">These details concern your local obligation changes. They do not list a complete route or other participants.</p></details></div>`;
+  }
+
+  async function verifyFulfillments(next) {
+    const checks = new Map();
+    if (next.protocol !== "private-hashlock-v2") return checks;
+    for (const receipt of next.receipts || []) {
+      if (receipt.status !== "committed") continue;
+      if (receipt.hashlock_scheme !== "sha256-context-v2") { checks.set(receipt.id, "unavailable — unsupported verification scheme"); continue; }
+      if (!receipt.local_fulfilled || !/^[a-f0-9]{64}$/.test(receipt.preimage || "") || !/^[a-f0-9]{64}$/.test(receipt.condition || "") || !/^[a-f0-9]{64}$/.test(receipt.id || "") || !Number.isSafeInteger(receipt.amount) || receipt.amount <= 0 || receipt.protocol !== "private-hashlock-v2" || receipt.unit !== "TEST") { checks.set(receipt.id, "invalid"); continue; }
+      if (!globalThis.crypto?.subtle) { checks.set(receipt.id, "unavailable — a secure browser context is required"); continue; }
+      const bytes = new TextEncoder().encode(JSON.stringify({amount:receipt.amount,id:receipt.id,preimage:receipt.preimage,protocol:receipt.protocol,unit:receipt.unit}));
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
+      checks.set(receipt.id, hash === receipt.condition ? "verified" : "invalid");
+    }
+    return checks;
+  }
 
   function announce(text, error = false) {
     notice.textContent = text;
@@ -45,7 +80,7 @@
   function updateConnection() {
     connection.classList.toggle("stale", !online);
     connection.textContent = !state ? (token ? "Connecting to this node…" : "Not connected") :
-      `${online ? "Connected" : "OFFLINE / STALE — actions disabled"} · ${state.node} · last observed ${lastSeen.toLocaleTimeString()}${state.paused ? " · new clearing paused" : ""}`;
+      `${online ? "Connected" : "OFFLINE / STALE — actions disabled"} · ${state.node} · ${protocolLabel()} · last observed ${lastSeen.toLocaleTimeString()}${state.paused ? " · new clearing paused" : ""}`;
   }
 
   async function refresh(manual = false) {
@@ -58,9 +93,11 @@
       if (next.balances?.some(b => !Number.isSafeInteger(b.balance)) || next.mode !== "testnet" || next.unit !== "TEST" || typeof next.node !== "string" || !Array.isArray(next.balances) || !Array.isArray(next.proposals)) {
         throw new Error("Unsupported node response. This client only supports TEST testnets.");
       }
+      const checks = await verifyFulfillments(next);
+      if (generation !== sessionGeneration) return;
       const changed = JSON.stringify(next) !== JSON.stringify(state);
       const wasOffline = !online;
-      state = next; online = true; lastSeen = new Date();
+      state = next; fulfillmentChecks = checks; online = true; lastSeen = new Date();
       if (changed || wasOffline || manual) render(); else updateConnection();
       if (wasOffline && !manual) announce("Connected. Displayed state has been refreshed from your node.");
       if (manual) announce("Refreshed from your node. Pending work stays pending until settlement evidence arrives.");
@@ -83,7 +120,7 @@
 
   function proposalCard(p) {
     const approve = approvalReady(p);
-    return `<article class="card ${["committed","completed"].includes(p.status) ? "completed" : "pending"}"><h2>Clear ${esc(amount(p.amount))}</h2><span class="tag">${esc(statusText(p))}</span><p class="subtle">Proposal <code>${esc(p.id)}</code></p>${changesTable(p.changes)}${approve ? `<form data-approve="${esc(p.id)}" data-digest="${esc(p.digest)}"><label class="consent"><input type="checkbox" name="consent" required ${disabled() ? "disabled" : ""}> I approve these exact changes to my test balances.</label><button type="submit" ${disabled() ? "disabled" : ""}>Approve test clearing</button><button type="button" class="secondary" data-decline="${esc(p.id)}" data-digest="${esc(p.digest)}" ${!online || busy ? "disabled" : ""}>Decline proposal</button><p class="subtle">Approval permits these changes. Reserved amounts remain unavailable while a settlement outcome is pending.</p></form>` : !["committed","completed","aborted","rejected","expired"].includes(p.status) ? "<p>Waiting for participants and settlement evidence. Closing this app does not cancel the operation.</p>" : ""}</article>`;
+    return `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(p.id) === "verified" : ["committed","completed"].includes(p.status)) ? "completed" : "pending"}"><h2>Clear ${esc(amount(p.amount))}</h2><span class="tag">${esc(statusText(p))}</span><p class="subtle">Proposal <code>${esc(p.id)}</code></p>${changesTable(p.changes)}${hashlockDetails(p)}${approve ? `<form data-approve="${esc(p.id)}" data-digest="${esc(p.digest)}"><label class="consent"><input type="checkbox" name="consent" required ${disabled() ? "disabled" : ""}> I approve these exact changes to my test balances.</label><button type="submit" ${disabled() ? "disabled" : ""}>Approve test clearing</button><button type="button" class="secondary" data-decline="${esc(p.id)}" data-digest="${esc(p.digest)}" ${!online || busy ? "disabled" : ""}>Decline proposal</button><p class="subtle">Approval permits these changes. Reserved amounts remain unavailable while a settlement outcome is pending.</p></form>` : !["committed","completed","aborted","rejected","expired"].includes(p.status) ? "<p>Waiting for participants and settlement evidence. Closing this app does not cancel the operation.</p>" : ""}</article>`;
   }
 
   function render() {
@@ -107,11 +144,11 @@
       peers: () => intro("People you trade with", "Only balances held by your node appear here. New search stops across a zero balance.") +
         `<div class="card">${balances.length ? balances.map(b => `<div class="row"><strong>${esc(b.peer)}</strong><span>${esc(balanceText(b.balance))}${b.reserved_by ? `<br><small>Reserved for pending clearing</small>` : ""}</span></div>`).join("") : "<p>No configured test peers yet.</p>"}</div><aside>Peer identities and starting test balances are configured by the network operator for this first release. Invitations and ledger imports are not available yet.</aside>`,
       clearing: () => intro("Find a loop. Agree the changes.", "Discovery uses neighbour messages. Finding a loop does not approve or settle it.") +
-        `<form id="discover" class="card"><h2>Search for test clearing</h2><label for="amount">Maximum amount (whole TEST units)</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
+        `<form id="discover" class="card"><h2>Search for test clearing</h2><label for="amount">${privateProtocol() ? "Exact amount (whole TEST units)" : "Maximum amount (whole TEST units)"}</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${privateProtocol() ? "<p class=\"subtle\">Search uses this exact amount. If no loop is found, a smaller amount may still clear.</p>" : ""}${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
       activity: () => intro("Activity and receipts", "A recorded local completion is distinct from approval or an unanswered request.") +
-        (receipts.length ? receipts.slice().reverse().map(r => `<article class="card ${r.cycle_complete ? "completed" : "pending"}"><h2>Test receipt</h2><span class="tag">${esc(statusText(r))}</span><p><code>${esc(r.id)}</code></p>${changesTable(r.changes)}<button data-export="${esc(r.id)}" ${!online || busy ? "disabled" : ""}>Download receipt JSON</button><p class="subtle">Local testnet journal evidence. Not a bank payment or production settlement certificate.</p></article>`).join("") : "<p class=\"empty\">No receipts returned by your node.</p>") + `<h2>Proposal history</h2>${proposals.length ? proposals.slice().reverse().map(p => `<div class="card"><code>${esc(p.id)}</code><p>${esc(statusText(p))}</p></div>`).join("") : "<p>No proposals recorded.</p>"}`,
+        (receipts.length ? receipts.slice().reverse().map(r => `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(r.id) === "verified" : r.cycle_complete) ? "completed" : "pending"}"><h2>Test receipt</h2><span class="tag">${esc(statusText(r))}</span><p><code>${esc(r.id)}</code></p>${changesTable(r.changes)}${hashlockDetails(r)}<button data-export="${esc(r.id)}" ${!online || busy ? "disabled" : ""}>Download receipt JSON</button><p class="subtle">Local testnet journal evidence. Not a bank payment or production settlement certificate.</p></article>`).join("") : "<p class=\"empty\">No receipts returned by your node.</p>") + `<h2>Proposal history</h2>${proposals.length ? proposals.slice().reverse().map(p => `<div class="card"><code>${esc(p.id)}</code><p>${esc(statusText(p))}</p></div>`).join("") : "<p>No proposals recorded.</p>"}`,
       settings: () => intro("Your node. Your permissions.", "The node exchanges messages while your browser is closed.") +
-        `<div class="card"><div class="row"><strong>Node identity</strong><span class="node-id">${esc(state.node)}</span></div><div class="row"><strong>Mode / unit</strong><span>TESTNET / TEST</span></div><div class="row"><strong>Approval policy</strong><span>Ask each participant</span></div><button data-action="pause" ${!online || busy ? "disabled" : ""}>${state.paused ? "Resume new clearing" : "Pause new clearing"}</button><p>Pausing stops new work. Already admitted settlement messages still need recovery.</p></div><div class="card"><h2>Connection</h2><p><code>${esc(location.origin)}</code></p><button class="secondary" data-action="refresh" ${busy ? "disabled" : ""}>Refresh node state</button><button class="secondary" data-action="disconnect">Disconnect this browser</button><p class="subtle">Disconnect clears this tab’s token and displayed state. It does not revoke the operator token, stop the node, or cancel pending clearing.</p></div><aside>Test-only shared-secret authentication. The node operator holds the credentials and database. Backups, identity rotation and production key custody require further implementation and review.</aside>`
+        `<div class="card"><div class="row"><strong>Node identity</strong><span class="node-id">${esc(state.node)}</span></div><div class="row"><strong>Mode / unit</strong><span>TESTNET / TEST</span></div><div class="row"><strong>Protocol</strong><span>${esc(protocolLabel())}</span></div><div class="row"><strong>Approval policy</strong><span>Ask each participant</span></div><button data-action="pause" ${!online || busy ? "disabled" : ""}>${state.paused ? "Resume new clearing" : "Pause new clearing"}</button><p>Pausing stops new work. Already admitted settlement messages still need recovery.</p></div><div class="card"><h2>Connection</h2><p><code>${esc(location.origin)}</code></p><button class="secondary" data-action="refresh" ${busy ? "disabled" : ""}>Refresh node state</button><button class="secondary" data-action="disconnect">Disconnect this browser</button><p class="subtle">Disconnect clears this tab’s token and displayed state. It does not revoke the operator token, stop the node, or cancel pending clearing.</p></div><aside>Test-only shared-secret authentication. The node operator holds the credentials and database. Backups, identity rotation and production key custody require further implementation and review.</aside>`
     };
     screen.innerHTML = (views[page()] || views.overview)();
   }
@@ -168,7 +205,7 @@
     } else if (button.dataset.export) {
       try {
         const receipt = await api(`/api/receipts/${encodeURIComponent(button.dataset.export)}`);
-        const url = URL.createObjectURL(new Blob([JSON.stringify({mode:"testnet", unit:"TEST", node:state.node, receipt}, null, 2)], {type:"application/json"}));
+        const url = URL.createObjectURL(new Blob([JSON.stringify({mode:"testnet", unit:"TEST", protocol:state.protocol || "legacy-infrastructure", node:state.node, receipt}, null, 2)], {type:"application/json"}));
         const link = document.createElement("a"); link.href = url;
         link.download = `ledgerloops-test-receipt-${String(button.dataset.export).replace(/[^a-zA-Z0-9_-]/g, "_")}.json`;
         link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);

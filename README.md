@@ -18,7 +18,7 @@ The [component PRDs and interactive wireframes](docs/product/README.md) turn tha
 
 ## Run the network app
 
-The [runnable testnet app](app/README.md) connects a responsive web client to three independent SQLite-backed peer nodes. Try manual clearing approvals, receipts and restart recovery using fabricated TEST units. See [network validation](app/TESTING.md) and the [phone screenshot](app/screenshots/mobile.png).
+The [runnable hashlock app](app/README.md) connects a responsive client to independent SQLite-backed peer nodes without enumerated routes or loop lengths. Try conditional approvals, locally verified fulfillment receipts and restart recovery using TEST units. See [private network validation](app/PRIVATE_TESTING.md) and the [phone screenshot](app/screenshots/private/mobile.png).
 
 ## Meet the animals
 

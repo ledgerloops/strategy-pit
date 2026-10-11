@@ -1,6 +1,6 @@
 # 004 — Restore neighbour-private hashlock settlement
 
-**Status:** Open — protocol investigation required · **Opened:** 2026-10-11
+**Status:** In progress — v2 honest-peer implementation; broader security work remains · **Opened:** 2026-10-11
 
 [Issue tracker](README.md) · [Product roadmap](../product-roadmap.md) · [Current app protocol](../../app/protocol.md)
 
@@ -8,7 +8,7 @@
 
 Restore the original LedgerLoops requirement: a participant needs to know only its direct neighbours. It must not need the identities of other loop participants or the exact total loop length. The protocol must enforce a minimum of three participants without providing a global participant list or total-hop count.
 
-The current `app/node.py` sends an enumerated `path`, indexes into it for forwarding, and collects votes from every named participant at the origin. `app/protocol.md` explicitly describes this mechanism. Even though messages travel over neighbour links, it exposes remote membership and changes the trust model. The app is an **honest-peer infrastructure prototype**, useful for testing HTTP delivery, storage and UI integration; its tests do not validate the original LedgerLoops hashlock protocol or its privacy requirement.
+The legacy v1 `app/node.py` sends an enumerated `path`, indexes into it for forwarding, and collects votes from every named participant at the origin. `app/protocol.md` explicitly describes this mechanism. Even though messages travel over neighbour links, it exposes remote membership and changes the trust model. That v1 app is an **honest-peer infrastructure prototype**, useful for testing HTTP delivery, storage and UI integration; its tests do not validate the original LedgerLoops hashlock protocol or its privacy requirement.
 
 Replacing COMMIT with a preimage check alone does not fix this. Discovery, conditional bilateral approval, fulfillment, abort and recovery evidence must all respect the same knowledge boundary. Hiding a route in the browser while retaining it in node state, logs or messages also fails the requirement.
 
@@ -53,3 +53,11 @@ This is a blocking architecture gate for claiming the product restores neighbour
 ## Progress
 
 - 2026-10-11: gap recorded from the owner's clarification; current app and roadmap labelled accordingly. No claim that the combined requirements are solved. Immediate work is specification and investigation, not an in-place protocol swap.
+
+## Implemented v2 checkpoint
+
+The owner's subsequent instruction authorized implementation. [Private v2](../../app/private_protocol.md) now replaces enumerated paths with durable local predecessor/successor bindings and opaque condition references. Fixed-amount discovery excludes reflection and rejects revisits; local conditional approvals gate readiness propagation. SHA-256 conditions bind protocol, identifier, amount, unit and a fresh 32-byte secret. Nodes verify fulfillment locally; no roster or exact hop count is required. Receipts deliberately claim local fulfillment only.
+
+[Network and adversarial validation](../../app/PRIVATE_TESTING.md) covers differently sized rings, local-view/wire audits, minimum-three/reflection, failed subcycles, decline, invalid evidence, duplicates and selected crash/restart boundaries. A failed-subcycle cleanup defect and a semantic replay hazard were found and corrected during independent review. The client and standalone receipt verifier check released evidence; tampering fails verification.
+
+This is an implemented candidate within honest-peer, stable-identity, durable-storage assumptions, not a proof against Byzantine behaviour, Sybils, traffic analysis or all possible failures. There is no deadline-based unlock or permanent-node-loss recovery. Legacy and v2 databases are mutually rejected rather than migrated. Remaining work includes broader crash exploration, explicit production identity/transport and rollback recovery, operational limits and adversarial privacy/security analysis. Keep this issue open for those release gates; do not equate implementation with full production readiness.

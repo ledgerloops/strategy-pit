@@ -31,6 +31,12 @@ class Node:
         self.lock = threading.RLock()
         self.db = sqlite3.connect(database, check_same_thread=False)
         self.db.row_factory = sqlite3.Row
+        has_meta = self.db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='meta'").fetchone()
+        if has_meta:
+            protocol = self.db.execute("SELECT v FROM meta WHERE k='protocol'").fetchone()
+            if protocol and protocol[0] != 'ring-coordinator-v1':
+                self.db.close()
+                raise ValueError('Incompatible database protocol: legacy server requires a fresh or v1 testnet database')
         self.db.executescript('''PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;
         CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY,v TEXT);
         CREATE TABLE IF NOT EXISTS balances(peer TEXT PRIMARY KEY,balance INTEGER NOT NULL);
