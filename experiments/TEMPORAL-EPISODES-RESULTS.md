@@ -51,7 +51,7 @@ The following are ratios of summed quantities, not average per-case percentages.
 | Wire attempts, data plus ACK | 227,371 | 226,080 | −0.57% |
 
 Numbat lowers aggregate final debt in each of the six loss/sleep strata, by
-1.94–4.55%. Its larger staged-commit exposure is a material tradeoff, rather
+1.94–4.56%. Its larger staged-commit exposure is a material tradeoff, rather
 than evidence that it dominates random DFS. At the common horizon every
 synthetic input has posted, but unfinished-cycle committed amounts sum to
 217,000 scaled units for random DFS versus 504,000 for Numbat; these all
@@ -60,4 +60,78 @@ occurred 2,521 times for random DFS and 2,634 times for Numbat.
 
 Artifact: [temporal-episode-synthetic.json](results/temporal-episode-synthetic.json).
 
-Sarafu 5,000-transfer matrix remains in progress; no real-fixture winner claimed.
+For context, matching the same arrival hashes and concurrent-transport cases
+in [the earlier permissive-channel matrix](results/temporal-synthetic.json),
+strict admission raises aggregate final debt by 4.29% for random DFS and 2.56%
+for Numbat. Wire attempts fall from 237,084 to 227,371 for random DFS and from
+232,849 to 226,080 for Numbat. This comparison changes both episode closure and
+within-episode revision admission, and consequent packet timing/random draws;
+it does not isolate a single cause or justify reverting the user's channel rule.
+
+The Sarafu 5,000-transfer matrix completed **24/24 runs**, all audited and fully
+drained. The input file and frozen source hashes were rechecked at completion.
+Random DFS wins 9 of 12 final-debt pairs; Numbat wins 3. Aggregate final debt
+improvement against no clearing is **0.76351% for random DFS versus 0.73526%
+for Numbat**. These small-prefix outcomes do not establish a full-prefix winner.
+
+| Prefix measure | Random DFS | Numbat | Numbat change |
+| --- | ---: | ---: | ---: |
+| Final debt, scaled units | 13,920,812,000 | 13,924,774,000 | +0.02846% |
+| Posted-debt area, scaled amount-ticks | 10,231,631,692,000 | 10,229,473,993,000 | −0.02109% |
+| Unposted-request U(H), scaled amount-ticks | 34,748,645,000 | 35,377,790,000 | +1.81056% |
+| Staged-commit K(H), scaled amount-ticks | 1,328,095,000 | 1,145,074,000 | −13.78072% |
+| Wire attempts, data plus ACK | 4,627,837 | 4,664,856 | +0.79992% |
+
+All requested transfers have posted by the common horizon in every case.
+Unfinished-cycle committed amounts at that horizon sum to 60,000 scaled units
+for random DFS and 170,000 for Numbat; all finish during drain. Thus neither
+method dominates across final debt, time-integrated exposure and endpoint
+exposure. Every run remains below 950,000 total events.
+
+Artifact: [temporal-episode-sarafu5000.json](results/temporal-episode-sarafu5000.json).
+
+| Seed | Loss | Sleep | Random final improvement | Numbat final improvement |
+| --- | --- | --- | ---: | ---: |
+| 0 | 0% | No | 0.8190% | 0.7271% |
+| 0 | 0% | Yes | 0.7682% | 0.7467% |
+| 0 | 10% | No | 0.7547% | 0.7858% |
+| 0 | 10% | Yes | 0.7432% | 0.7116% |
+| 0 | 30% | No | 0.7417% | 0.7167% |
+| 0 | 30% | Yes | 0.7252% | 0.7037% |
+| 1 | 0% | No | 0.7648% | 0.7840% |
+| 1 | 0% | Yes | 0.7483% | 0.7417% |
+| 1 | 10% | No | 0.8631% | 0.7501% |
+| 1 | 10% | Yes | 0.8196% | 0.7219% |
+| 1 | 30% | No | 0.7068% | 0.7284% |
+| 1 | 30% | Yes | 0.7076% | 0.7053% |
+
+This prefix offers little aggregate reduction: no-clearing final debt is
+1,168,993 units, and the offline gross-arrival MCF relaxation gives a minimum
+of 1,154,841, an optimistic maximum improvement of **1.21061%**. Its static
+final-net MCF reference is **0.85715%**. The relaxation ignores chronology and
+channel restrictions; it is not an attainable node-local optimum. Both verified
+primal ledgers and solver/source/input versions are saved in
+[the prefix reference](results/temporal-episode-sarafu5000-reference.json).
+The calculation uses `min_residual(gross_graph(fixture.events[:5000]))` and
+`min_residual(net_graph(fixture.events[:5000]))` from the frozen existing modules.
+
+## Full-prefix follow-up
+
+The prospective six-case follow-up uses all 30,726 STANDARD transfers, 2,000
+arrival ticks, seed 0, and both methods under clean/no-sleep, 10% loss/sleep, and
+30% loss/sleep. Each phase has a 10-million-event cap. The campaign manifest
+limits the whole six-case job to one hour. It launched after all twelve seed-0 prefix cases completed successfully,
+covering every loss/sleep combination, while seed-1 replication continued. This is a diagnostic seed, not broad statistical
+validation. Its clean controls also use strict admission, unlike earlier full
+Sarafu baselines.
+
+```sh
+python3 experiments/research_campaign.py experiments/research_campaign_episodes.json \
+  --state experiments/results/research-campaign-episodes-state.json --max-seconds 3600
+```
+
+`temporal_episode_scale.py` checkpoints individual cases and can resume a
+matching output when invoked directly. The campaign runner resumes completed
+jobs by hash, but backs up a failed job's output before rerunning that job; it
+does not automatically resume individual cases within a failed job. Check the
+saved job status and live processes before any restart.

@@ -111,3 +111,9 @@ Published strict episode admission and the serial temporal Headroom milestone at
 Two 96-run training experiments completed: reservation-triggered backoff and cancellation-only episode admission. Both failed their declared promotion gates. Episode-only admission improves final debt but increases posting exposure; retain it as a measured tradeoff, not a default replacement.
 
 Concurrent signed Headroom source is frozen at SHA256 `0f3f2d7b2a476c3b16c986b4cc1a0ac5c3edc8b38a6e3121aa04ea2d41ba6f49`; ten focused/independent tests cover restoration, zero closure, loss/sleep/reordering and locality. A bounded comparative matrix is being prepared; no concurrent performance claim yet. The latest whole-repository test run passed 182 tests.
+
+## Completed prefix and concurrent evaluations
+
+All 24 strict Sarafu5000 fault runs completed and audited; random wins 9/12 final-debt pairs, aggregate improvement 0.76351% versus Numbat 0.73526%. The prefix gross-arrival reference permits at most 1.21061% improvement, ignoring chronology. The full strict six-case fault campaign is now running through the finite campaign runner (state `results/research-campaign-episodes-state.json`, total limit 3600 seconds); inspect completion before restarting.
+
+Concurrent Headroom is published at `72298e5`. All 24 matched runs audit, but restoration leaves 0.94% more final debt and uses 30.69% more wire attempts. The separate decrease-first variant passed training then failed held-out evaluation: 1.92% more debt and 26.88% more attempts. Retain both negative outcomes; no promotion. Latest full suite: 185 passing tests.

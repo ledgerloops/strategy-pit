@@ -6,7 +6,7 @@
 
 ## Scope and constraint
 
-Specify Headroom Clearing when new transfers arrive, balances reverse and channels disappear. This is a design proposal, not an implemented or benchmarked temporal Headroom protocol. Existing Headroom results retain original relationships at zero; they cannot establish performance under the rule below.
+Specify Headroom Clearing when new transfers arrive, balances reverse and channels disappear. This specification now has separately tested serial and concurrent research implementations linked below. Earlier fixed-cap Headroom results retain original relationships at zero; they cannot establish performance under this rule.
 
 **A zero bilateral balance closes the economic channel.** Old headroom does not authorize reopening it. Only an accepted external transfer that leaves a nonzero balance can open a new episode. Completion and acknowledgement of already-started work may use control grace restricted to those admitted operations; that grace cannot carry fresh searches or restoration proposals across a closed relationship. Restricting its purpose does not guarantee finite cleanup under unbounded loss.
 
@@ -104,7 +104,7 @@ Keep an ordered ledger-event log. With interleaved transfers and staged commits,
 
 Use the same timestamped transfers, unit scale, message timing, loss/sleep schedules, posting-order policy and event-budget rules. Episode boundaries follow each run's actual zero crossings; they cannot be forced to match across algorithms without changing the model. Report those differences rather than silently retaining channels for one algorithm.
 
-The current temporal prototype allows some already-started search steps to continue after their traversed pair closes. Apply the stricter episode-aware admission check above to every comparison baseline before treating it as this specification; existing transport-grace results are not yet evidence for that stronger rule.
+The legacy temporal prototype allows some already-started search steps to continue after their traversed pair closes. Apply the stricter episode-aware admission check above to every comparison baseline before treating it as this specification; existing transport-grace results are not yet evidence for that stronger rule.
 
 Run at least these declared treatments:
 
@@ -125,9 +125,9 @@ Offline MCF may be an explicitly optimistic reference on a frozen snapshot with 
 - [ ] Verify same-direction transfer shifts preserve headroom; reversals and zero crossings expire it.
 - [ ] Reject the original Alice restoration after closure; accept the nonzero variant above.
 - [ ] Show that reopening starts a fresh ceiling and rejects stale economic authority from old prepares, advertisements and commits; duplicate applied commits only receive their existing receipt.
-- [ ] Test transfer/prepare races, duplicates, reordered receipts, sleep and dropped acknowledgements without double posting or double settlement.
-- [ ] Independently replay per-pair caps and episodes, current debt, external posting and all settled cycle actions.
-- [ ] Compare temporal Headroom and cancellation-only under the same strict channel rule and declared budgets.
+- [x] Test transfer/prepare races, duplicates, reordered receipts, sleep and dropped acknowledgements without double posting or double settlement.
+- [x] Independently replay per-pair caps and episodes, current debt, external posting and all settled cycle actions.
+- [x] Compare temporal Headroom and cancellation-only under the same strict channel rule and declared budgets.
 - [ ] Publish incomplete runs and regressions; do not transfer static Headroom performance claims to this model.
 
 Open choice: a fully concurrent reservation protocol must avoid pair-order deadlocks and starvation. The fixed-cap prototype's global serialization does not solve that requirement in a node-local deployment.
@@ -136,4 +136,4 @@ Open choice: a fully concurrent reservation protocol must avoid pair-order deadl
 
 - [Episode admission](../../experiments/TEMPORAL-EPISODES.md) implements strict episode and revision checks for cancellation-only random DFS/Numbat. Independent tests cover closure/reopening, stale prepares, local actor access, loss, sleep and transfer/reservation races. Bilateral state installation remains simulator-provided.
 - [Serial temporal Headroom](../../experiments/TEMPORAL-HEADROOM.md) validates cap updates and useful nonzero restoration across 12 audited exploratory runs. It is not a concurrent fault-tolerant protocol.
-- Concurrent signed residual settlement is in development and requires its own replay and fault tests before comparative claims.
+- [Concurrent Headroom](../../experiments/CONCURRENT-HEADROOM.md) now has endpoint-local pair locks, signed-ledger replay and loss/sleep/reordering tests. Its 24-run exploratory comparison regresses in aggregate against the coordination-matched cancellation control. No crash-recovery or starvation guarantee is established.
