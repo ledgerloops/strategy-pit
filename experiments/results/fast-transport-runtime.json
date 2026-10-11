@@ -1,0 +1,732 @@
+{
+  "complete": true,
+  "source_sha256": {
+    "fast_temporal_transport.py": "d794f084807c11f6738b2d036330c1ebfd3e4c8791838a21045a439b6fb4e9a0",
+    "temporal_episodes.py": "ef945e0c3d14c7457af499fb47e4a5cba2dff8d21114018f8254421bd316478b",
+    "concurrent_headroom.py": "0f3f2d7b2a476c3b16c986b4cc1a0ac5c3edc8b38a6e3121aa04ea2d41ba6f49",
+    "temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+    "temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+    "temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+    "test_fast_temporal_transport.py": "aa46c1df2eeb14a79e3b784bef393436c63397398f4c6494faacd5720e07ff3c",
+    "fast_transport_benchmark.py": "43a12b6897a1d12c97c7c6111454904522f06a0f3db60f528694953d2663b84b"
+  },
+  "rows": [
+    {
+      "nodes": 24,
+      "loss": 0.0,
+      "sleep": false,
+      "seed": 31,
+      "method": "random",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.5003368220059201,
+          0.4413757820148021,
+          0.4624097060004715
+        ],
+        "fast": [
+          0.3568850829906296,
+          0.29865742902620696,
+          0.29789449798408896
+        ]
+      },
+      "median_seconds": {
+        "original": 0.4624097060004715,
+        "fast": 0.29865742902620696
+      },
+      "metrics": {
+        "events": 14771,
+        "added": 3078000,
+        "bilateral_netting": 518000,
+        "transfers": 192,
+        "transfer_delay": 100,
+        "episode_openings": 153,
+        "episode_reopenings": 16,
+        "searches": 185,
+        "messages": 3524,
+        "messages_step": 1722,
+        "data_attempts": 3524,
+        "retransmissions": 0,
+        "payload_repr_bytes": 602786,
+        "application_deliveries": 3524,
+        "ack_attempts": 3524,
+        "proposals": 132,
+        "messages_prepare": 451,
+        "exhausted_searches": 29,
+        "live_reservations": 0,
+        "max_reservations": 20,
+        "aborted": 82,
+        "messages_abort": 138,
+        "messages_finish": 982,
+        "messages_commit": 231,
+        "episode_closures": 67,
+        "stale_episode_rejections": 75,
+        "cycles": 50,
+        "cleared": 982000,
+        "transfer_deferrals": 5
+      },
+      "speedup": 1.548294671618215
+    },
+    {
+      "nodes": 24,
+      "loss": 0.0,
+      "sleep": false,
+      "seed": 31,
+      "method": "numbat",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.45842324002296664,
+          0.45572452098713256,
+          0.5534066490072291
+        ],
+        "fast": [
+          0.3537890570005402,
+          0.3509018929908052,
+          0.44365641800686717
+        ]
+      },
+      "median_seconds": {
+        "original": 0.45842324002296664,
+        "fast": 0.3537890570005402
+      },
+      "metrics": {
+        "events": 15150,
+        "added": 3078000,
+        "bilateral_netting": 542000,
+        "transfers": 192,
+        "transfer_delay": 20,
+        "episode_openings": 154,
+        "episode_reopenings": 17,
+        "searches": 180,
+        "messages": 3620,
+        "messages_step": 2059,
+        "data_attempts": 3620,
+        "retransmissions": 0,
+        "payload_repr_bytes": 601022,
+        "application_deliveries": 3620,
+        "ack_attempts": 3620,
+        "exhausted_searches": 36,
+        "proposals": 125,
+        "messages_prepare": 373,
+        "live_reservations": 0,
+        "max_reservations": 25,
+        "aborted": 86,
+        "messages_finish": 901,
+        "messages_abort": 108,
+        "messages_commit": 179,
+        "stale_episode_rejections": 66,
+        "episode_closures": 54,
+        "cycles": 39,
+        "cleared": 984000,
+        "transfer_deferrals": 1
+      },
+      "speedup": 1.2957530227461689
+    },
+    {
+      "nodes": 24,
+      "loss": 0.0,
+      "sleep": false,
+      "seed": 31,
+      "method": "headroom",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          1.0074161149968859,
+          0.9061287499789614,
+          0.9045308140048292
+        ],
+        "fast": [
+          0.7415156519855373,
+          0.6881643919914495,
+          0.6482106499897782
+        ]
+      },
+      "median_seconds": {
+        "original": 0.9061287499789614,
+        "fast": 0.6881643919914495
+      },
+      "metrics": {
+        "events": 16867,
+        "added": 3078000,
+        "bilateral_netting": 548000,
+        "transfers": 192,
+        "transfer_delay": 100,
+        "episode_openings": 153,
+        "episode_reopenings": 16,
+        "searches": 182,
+        "messages": 4048,
+        "messages_hstep": 1633,
+        "data_attempts": 4048,
+        "retransmissions": 0,
+        "payload_repr_bytes": 2086662,
+        "application_deliveries": 4048,
+        "ack_attempts": 4048,
+        "proposals": 161,
+        "messages_hprepare": 551,
+        "exhausted_searches": 11,
+        "live_reservations": 0,
+        "max_reservations": 36,
+        "prepare_conflicts": 93,
+        "aborted": 94,
+        "messages_habort": 148,
+        "messages_hfinish": 1407,
+        "messages_hcommit": 309,
+        "episode_closures": 52,
+        "cleared": 780000,
+        "cycles": 67,
+        "restored_volume": 227000,
+        "mixed_cycles": 48,
+        "transfer_deferrals": 5,
+        "stale_episode_rejections": 11
+      },
+      "speedup": 1.3167329791022087
+    },
+    {
+      "nodes": 24,
+      "loss": 0.3,
+      "sleep": true,
+      "seed": 32,
+      "method": "random",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.13158171699615195,
+          0.1536767490033526,
+          0.15545151999685913
+        ],
+        "fast": [
+          0.10148567400756292,
+          0.11479152800166048,
+          0.11330911400727928
+        ]
+      },
+      "median_seconds": {
+        "original": 0.1536767490033526,
+        "fast": 0.11330911400727928
+      },
+      "metrics": {
+        "events": 7632,
+        "added": 2852000,
+        "bilateral_netting": 406000,
+        "transfers": 192,
+        "transfer_delay": 1015,
+        "episode_openings": 157,
+        "episode_reopenings": 18,
+        "episode_closures": 36,
+        "searches": 72,
+        "messages": 1204,
+        "messages_step": 470,
+        "data_attempts": 2632,
+        "retransmissions": 1428,
+        "payload_repr_bytes": 447756,
+        "data_dropped": 792,
+        "application_deliveries": 1204,
+        "ack_attempts": 1703,
+        "ack_dropped": 492,
+        "stale_episode_rejections": 40,
+        "duplicates_suppressed": 499,
+        "proposals": 53,
+        "messages_prepare": 166,
+        "live_reservations": 0,
+        "max_reservations": 21,
+        "exhausted_searches": 4,
+        "messages_commit": 90,
+        "ack_sleep_dropped": 7,
+        "cycles": 22,
+        "cleared": 626000,
+        "messages_finish": 433,
+        "sleep_dropped": 137,
+        "aborted": 31,
+        "messages_abort": 45,
+        "transfer_deferrals": 8
+      },
+      "speedup": 1.356261147655607
+    },
+    {
+      "nodes": 24,
+      "loss": 0.3,
+      "sleep": true,
+      "seed": 32,
+      "method": "numbat",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.17082206899067387,
+          0.18697556600091048,
+          0.17616546401404776
+        ],
+        "fast": [
+          0.13105349798570387,
+          0.12460474600084126,
+          0.1232009299856145
+        ]
+      },
+      "median_seconds": {
+        "original": 0.17616546401404776,
+        "fast": 0.12460474600084126
+      },
+      "metrics": {
+        "events": 7777,
+        "added": 2852000,
+        "bilateral_netting": 428000,
+        "transfers": 192,
+        "transfer_delay": 895,
+        "episode_openings": 158,
+        "episode_reopenings": 19,
+        "episode_closures": 33,
+        "searches": 69,
+        "messages": 1236,
+        "messages_step": 497,
+        "data_attempts": 2674,
+        "retransmissions": 1438,
+        "payload_repr_bytes": 456443,
+        "data_dropped": 774,
+        "application_deliveries": 1236,
+        "ack_attempts": 1743,
+        "ack_dropped": 503,
+        "proposals": 54,
+        "messages_prepare": 159,
+        "exhausted_searches": 6,
+        "duplicates_suppressed": 507,
+        "sleep_dropped": 157,
+        "ack_sleep_dropped": 4,
+        "live_reservations": 0,
+        "max_reservations": 23,
+        "messages_commit": 84,
+        "cycles": 17,
+        "cleared": 934000,
+        "messages_finish": 458,
+        "stale_episode_rejections": 38,
+        "transfer_deferrals": 2,
+        "aborted": 37,
+        "messages_abort": 38
+      },
+      "speedup": 1.413794174524126
+    },
+    {
+      "nodes": 24,
+      "loss": 0.3,
+      "sleep": true,
+      "seed": 32,
+      "method": "headroom",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.2975996099994518,
+          0.2791321930126287,
+          0.2798616910004057
+        ],
+        "fast": [
+          0.20526875500218011,
+          0.18886406999081373,
+          0.18901662400458008
+        ]
+      },
+      "median_seconds": {
+        "original": 0.2798616910004057,
+        "fast": 0.18901662400458008
+      },
+      "metrics": {
+        "events": 7858,
+        "added": 2852000,
+        "bilateral_netting": 416000,
+        "transfers": 192,
+        "transfer_delay": 935,
+        "episode_openings": 158,
+        "episode_reopenings": 19,
+        "episode_closures": 36,
+        "searches": 67,
+        "messages": 1260,
+        "messages_hstep": 498,
+        "data_attempts": 2691,
+        "retransmissions": 1431,
+        "payload_repr_bytes": 1224756,
+        "data_dropped": 799,
+        "application_deliveries": 1260,
+        "ack_attempts": 1726,
+        "ack_dropped": 457,
+        "stale_episode_rejections": 4,
+        "duplicates_suppressed": 466,
+        "proposals": 60,
+        "messages_hprepare": 178,
+        "live_reservations": 0,
+        "max_reservations": 42,
+        "exhausted_searches": 3,
+        "messages_hcommit": 89,
+        "ack_sleep_dropped": 9,
+        "cleared": 452000,
+        "cycles": 22,
+        "restored_volume": 37000,
+        "mixed_cycles": 8,
+        "messages_hfinish": 444,
+        "sleep_dropped": 166,
+        "prepare_conflicts": 38,
+        "aborted": 38,
+        "messages_habort": 51,
+        "transfer_deferrals": 6
+      },
+      "speedup": 1.480619455956553
+    },
+    {
+      "nodes": 72,
+      "loss": 0.0,
+      "sleep": false,
+      "seed": 31,
+      "method": "random",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          2.112890692980727,
+          1.9367202329740394,
+          1.8696246960025746
+        ],
+        "fast": [
+          1.6197874780045822,
+          1.319561614014674,
+          1.3340355189866386
+        ]
+      },
+      "median_seconds": {
+        "original": 1.9367202329740394,
+        "fast": 1.3340355189866386
+      },
+      "metrics": {
+        "events": 54097,
+        "added": 9336000,
+        "bilateral_netting": 534000,
+        "transfers": 576,
+        "transfer_delay": 40,
+        "episode_openings": 533,
+        "episode_reopenings": 17,
+        "searches": 451,
+        "messages": 13022,
+        "messages_step": 5957,
+        "data_attempts": 13022,
+        "retransmissions": 0,
+        "payload_repr_bytes": 2650161,
+        "application_deliveries": 13022,
+        "ack_attempts": 13022,
+        "exhausted_searches": 28,
+        "proposals": 374,
+        "messages_prepare": 1458,
+        "live_reservations": 0,
+        "max_reservations": 66,
+        "messages_commit": 802,
+        "episode_closures": 175,
+        "cycles": 154,
+        "cleared": 3783000,
+        "messages_finish": 4369,
+        "stale_episode_rejections": 212,
+        "aborted": 220,
+        "messages_abort": 436,
+        "transfer_deferrals": 2
+      },
+      "speedup": 1.451775612725224
+    },
+    {
+      "nodes": 72,
+      "loss": 0.0,
+      "sleep": false,
+      "seed": 31,
+      "method": "numbat",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          2.2642936350021046,
+          2.0308796470053494,
+          1.9862002909940202
+        ],
+        "fast": [
+          1.5256784439843614,
+          1.552230753004551,
+          1.6578514889988583
+        ]
+      },
+      "median_seconds": {
+        "original": 2.0308796470053494,
+        "fast": 1.552230753004551
+      },
+      "metrics": {
+        "events": 55503,
+        "added": 9336000,
+        "bilateral_netting": 562000,
+        "transfers": 576,
+        "transfer_delay": 160,
+        "episode_openings": 535,
+        "episode_reopenings": 19,
+        "searches": 432,
+        "messages": 13370,
+        "messages_step": 6550,
+        "data_attempts": 13370,
+        "retransmissions": 0,
+        "payload_repr_bytes": 2703148,
+        "application_deliveries": 13370,
+        "ack_attempts": 13370,
+        "exhausted_searches": 23,
+        "proposals": 359,
+        "messages_prepare": 1299,
+        "live_reservations": 0,
+        "max_reservations": 52,
+        "messages_commit": 590,
+        "aborted": 250,
+        "messages_finish": 4472,
+        "messages_abort": 459,
+        "stale_episode_rejections": 219,
+        "episode_closures": 107,
+        "cycles": 109,
+        "cleared": 3857000,
+        "transfer_deferrals": 8
+      },
+      "speedup": 1.3083619449455626
+    },
+    {
+      "nodes": 72,
+      "loss": 0.0,
+      "sleep": false,
+      "seed": 31,
+      "method": "headroom",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          4.402063651999924,
+          4.215369757002918,
+          4.1859530430228915
+        ],
+        "fast": [
+          2.963199361023726,
+          2.8888499650056474,
+          3.0314389539998956
+        ]
+      },
+      "median_seconds": {
+        "original": 4.215369757002918,
+        "fast": 2.963199361023726
+      },
+      "metrics": {
+        "events": 57026,
+        "added": 9336000,
+        "bilateral_netting": 564000,
+        "transfers": 576,
+        "transfer_delay": 299,
+        "episode_openings": 534,
+        "episode_reopenings": 18,
+        "searches": 425,
+        "messages": 13754,
+        "messages_hstep": 5727,
+        "data_attempts": 13754,
+        "retransmissions": 0,
+        "payload_repr_bytes": 9545698,
+        "application_deliveries": 13754,
+        "ack_attempts": 13754,
+        "exhausted_searches": 16,
+        "proposals": 396,
+        "messages_hprepare": 1608,
+        "live_reservations": 0,
+        "max_reservations": 152,
+        "messages_hcommit": 801,
+        "episode_closures": 90,
+        "prepare_conflicts": 245,
+        "aborted": 246,
+        "messages_hfinish": 5057,
+        "cleared": 2065000,
+        "cycles": 150,
+        "restored_volume": 443000,
+        "mixed_cycles": 105,
+        "messages_habort": 561,
+        "transfer_deferrals": 14,
+        "stale_episode_rejections": 14
+      },
+      "speedup": 1.4225737938694047
+    },
+    {
+      "nodes": 72,
+      "loss": 0.3,
+      "sleep": true,
+      "seed": 32,
+      "method": "random",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.6598832219897304,
+          0.5919627780094743,
+          0.5924503249989357
+        ],
+        "fast": [
+          0.42849031699006446,
+          0.42736100999172777,
+          0.41509523199056275
+        ]
+      },
+      "median_seconds": {
+        "original": 0.5924503249989357,
+        "fast": 0.42736100999172777
+      },
+      "metrics": {
+        "events": 26721,
+        "added": 8887000,
+        "bilateral_netting": 532000,
+        "transfers": 576,
+        "transfer_delay": 4345,
+        "episode_openings": 531,
+        "episode_reopenings": 20,
+        "searches": 157,
+        "messages": 4210,
+        "messages_step": 1712,
+        "data_attempts": 9359,
+        "retransmissions": 5149,
+        "payload_repr_bytes": 1888011,
+        "data_dropped": 2711,
+        "application_deliveries": 4210,
+        "ack_attempts": 6038,
+        "ack_dropped": 1803,
+        "proposals": 126,
+        "messages_prepare": 510,
+        "live_reservations": 0,
+        "max_reservations": 58,
+        "exhausted_searches": 7,
+        "duplicates_suppressed": 1828,
+        "sleep_dropped": 610,
+        "messages_commit": 303,
+        "ack_sleep_dropped": 25,
+        "episode_closures": 80,
+        "cycles": 57,
+        "cleared": 1754000,
+        "messages_finish": 1547,
+        "stale_episode_rejections": 81,
+        "aborted": 69,
+        "messages_abort": 138,
+        "transfer_deferrals": 11
+      },
+      "speedup": 1.3862994310370136
+    },
+    {
+      "nodes": 72,
+      "loss": 0.3,
+      "sleep": true,
+      "seed": 32,
+      "method": "numbat",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          0.6093105239851866,
+          0.6062416209897492,
+          0.5998279239865951
+        ],
+        "fast": [
+          0.4380882990080863,
+          0.43390942801488563,
+          0.442075664002914
+        ]
+      },
+      "median_seconds": {
+        "original": 0.6062416209897492,
+        "fast": 0.4380882990080863
+      },
+      "metrics": {
+        "events": 26169,
+        "added": 8887000,
+        "bilateral_netting": 570000,
+        "transfers": 576,
+        "transfer_delay": 4477,
+        "episode_openings": 530,
+        "episode_reopenings": 19,
+        "searches": 163,
+        "messages": 4100,
+        "messages_step": 1769,
+        "data_attempts": 9200,
+        "retransmissions": 5100,
+        "payload_repr_bytes": 1830520,
+        "application_deliveries": 4100,
+        "ack_attempts": 5862,
+        "ack_dropped": 1740,
+        "data_dropped": 2745,
+        "proposals": 122,
+        "messages_prepare": 411,
+        "live_reservations": 0,
+        "max_reservations": 57,
+        "duplicates_suppressed": 1762,
+        "messages_commit": 201,
+        "exhausted_searches": 12,
+        "sleep_dropped": 593,
+        "episode_closures": 56,
+        "stale_episode_rejections": 90,
+        "messages_finish": 1589,
+        "cycles": 42,
+        "cleared": 2095000,
+        "aborted": 80,
+        "messages_abort": 130,
+        "ack_sleep_dropped": 22,
+        "transfer_deferrals": 17
+      },
+      "speedup": 1.3838343145945542
+    },
+    {
+      "nodes": 72,
+      "loss": 0.3,
+      "sleep": true,
+      "seed": 32,
+      "method": "headroom",
+      "equal": true,
+      "samples_seconds": {
+        "original": [
+          1.2193627739907242,
+          1.2557583639863878,
+          1.2353276530047879
+        ],
+        "fast": [
+          0.8832594270061236,
+          0.8373453879903536,
+          0.8411121290118899
+        ]
+      },
+      "median_seconds": {
+        "original": 1.2353276530047879,
+        "fast": 0.8411121290118899
+      },
+      "metrics": {
+        "events": 26472,
+        "added": 8887000,
+        "bilateral_netting": 552000,
+        "transfers": 576,
+        "transfer_delay": 4626,
+        "episode_openings": 530,
+        "episode_reopenings": 19,
+        "searches": 159,
+        "messages": 4168,
+        "messages_hstep": 1726,
+        "data_attempts": 9300,
+        "retransmissions": 5132,
+        "payload_repr_bytes": 5856784,
+        "data_dropped": 2805,
+        "application_deliveries": 4168,
+        "ack_attempts": 5954,
+        "ack_dropped": 1753,
+        "proposals": 128,
+        "messages_hprepare": 475,
+        "live_reservations": 0,
+        "max_reservations": 104,
+        "exhausted_searches": 9,
+        "messages_hcommit": 249,
+        "duplicates_suppressed": 1786,
+        "episode_closures": 69,
+        "cleared": 1264000,
+        "cycles": 46,
+        "restored_volume": 52000,
+        "mixed_cycles": 12,
+        "messages_hfinish": 1574,
+        "sleep_dropped": 541,
+        "ack_sleep_dropped": 33,
+        "stale_episode_rejections": 23,
+        "transfer_deferrals": 30,
+        "prepare_conflicts": 81,
+        "aborted": 82,
+        "messages_habort": 144
+      },
+      "speedup": 1.4686836753335242
+    }
+  ],
+  "note": "Sequential alternating runtime samples on shared worker; wall-clock speed only, no protocol or message reduction. Timings exclude setup and equality assertions."
+}
