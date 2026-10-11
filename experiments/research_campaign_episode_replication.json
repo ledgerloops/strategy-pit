@@ -1,0 +1,582 @@
+{
+  "version": 1,
+  "purpose": "Prospective seeds1/2 replication of fixed strict-episode random/Numbat cancellation policies; no retuning. Three workers maximum,7200-second campaign bound,1200seconds percase. Smallseed0 equality gate pinned.",
+  "parameters": {
+    "seeds": [
+      1,
+      2
+    ],
+    "algorithms": [
+      "random",
+      "numbat"
+    ],
+    "faults": [
+      [
+        0,
+        false
+      ],
+      [
+        0.1,
+        true
+      ],
+      [
+        0.3,
+        true
+      ]
+    ],
+    "arrival_ticks": 2000,
+    "event_budget_per_phase": 10000000,
+    "max_workers": 3,
+    "max_seconds": 7200
+  },
+  "jobs": [
+    {
+      "id": "seed1-random-clean",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed1-random-clean.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0",
+        "--seed",
+        "1",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed1-random-clean.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed1-numbat-clean",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed1-numbat-clean.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0",
+        "--seed",
+        "1",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed1-numbat-clean.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed1-random-loss10",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed1-random-loss10.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0.1",
+        "--seed",
+        "1",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed1-random-loss10.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed1-numbat-loss10",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed1-numbat-loss10.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0.1",
+        "--seed",
+        "1",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed1-numbat-loss10.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed1-random-loss30",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed1-random-loss30.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0.3",
+        "--seed",
+        "1",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed1-random-loss30.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed1-numbat-loss30",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed1-numbat-loss30.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0.3",
+        "--seed",
+        "1",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed1-numbat-loss30.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed2-random-clean",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-random-clean.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-random-clean.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed2-numbat-clean",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-numbat-clean.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-numbat-clean.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed2-random-loss10",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-random-loss10.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0.1",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-random-loss10.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed2-numbat-loss10",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-numbat-loss10.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0.1",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-numbat-loss10.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed2-random-loss30",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-random-loss30.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0.3",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-random-loss30.json"
+      ],
+      "require_json_complete": true
+    },
+    {
+      "id": "seed2-numbat-loss30",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-replication-seed2-numbat-loss30.json",
+        "--algorithm",
+        "numbat",
+        "--loss",
+        "0.3",
+        "--seed",
+        "2",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--sleep"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py",
+        "experiments/research_campaign_parallel.py",
+        "experiments/research_campaign_episode_replication.json"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "experiments/results/temporal-episode-replication-gate.json"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-replication-seed2-numbat-loss30.json"
+      ],
+      "require_json_complete": true
+    }
+  ]
+}

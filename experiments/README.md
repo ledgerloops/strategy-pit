@@ -18,6 +18,8 @@ The [Numbat study](NUMBAT.md) tests capacity-weighted node-local search and obse
 
 [Episode admission](TEMPORAL-EPISODES.md) rejects search and preparation messages from closed or revised relationships while allowing admitted settlement cleanup. The [matched fault study](TEMPORAL-EPISODES-RESULTS.md) includes delayed-input and staged-commit exposure. [Temporal Headroom](TEMPORAL-HEADROOM.md) first tests cap updates and zero closure under explicitly serialized scheduling; [Concurrent Headroom](CONCURRENT-HEADROOM.md) now implements signed residual discovery with endpoint-local pair locks, but its first matched comparison regresses in aggregate.
 
+[Full-prefix seed replication](TEMPORAL-EPISODE-REPLICATION.md) repeats the fixed strict random DFS/Numbat comparison on seeds 1 and 2, using a bounded three-worker campaign and unchanged policies. Inspect the linked state before interpreting its progress.
+
 The [backoff trial](TEMPORAL-BACKOFF-RESULTS.md) and [episode-only admission trial](TEMPORAL-EPISODE-ONLY-RESULTS.md) retain failed promotion decisions alongside their clearing gains and posting-delay costs. The latter is cancellation-only; it does not establish consent rules for restoration. [Rank-weighted Numbat](TEMPORAL-RANK-RESULTS.md) also failed its training gate, trading slightly more remaining debt for fewer messages.
 
 ## Signed trustline extension

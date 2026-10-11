@@ -127,3 +127,31 @@ Original clean controls use the frozen episode implementation; four fault cases 
 A separate safe prefix resume entrypoint, `temporal_episode_benchmark_v2.py`, now rejects changed CSV contents at the same path before delegating to the frozen harness. Use it for future prefix resumptions. Rank-weighted Numbat also failed its fixed training gate; no held-out runs followed.
 
 Next authorized followup: replicate the full strict comparison on fixed seeds 1 and 2 with the same algorithms, clocks, faults and budgets, using at most three workers and a two-hour campaign limit. No parameters will be retuned. The `fault_matrix` agent is preparing the separate driver and checkpoints; verify actual launch state before calling it running.
+
+
+## Seed replication launched October 11
+
+After independent runner/manifest review and the six-case small seed-0 equivalence
+gate, the fixed 12-case seed-1/2 replication launched at 2026-10-11T09:33:36.324545+00:00.
+Coordinator PID **102617**, execution session **84912**. The new
+parallel wrapper permits at most three case workers, 1,200 seconds per case and
+7,200 seconds for the campaign. Source and input files are frozen for this job.
+
+State: `experiments/results/research-campaign-episode-replication-state.json`.
+Each child has a separate state/log and result file beside it. The coordinator
+state updates on case completion; child states provide frequent heartbeats.
+Inspect these and live processes before calling the campaign active or resuming.
+
+Exact resume command (only after confirming the previous coordinator stopped):
+
+```sh
+python3 experiments/research_campaign_parallel.py \
+  experiments/research_campaign_episode_replication.json \
+  --state experiments/results/research-campaign-episode-replication-state.json \
+  --max-workers 3 --max-seconds 7200 --resume
+```
+
+Methods, admission, timing, fault conditions and budgets match the seed-0 full
+comparison; only fixed seeds change. No retuning. The [replication report](../experiments/TEMPORAL-EPISODE-REPLICATION.md)
+records the prospective scope and will report all completed or censored cases.
+This finite benchmark worker does not wake an inactive assistant session.

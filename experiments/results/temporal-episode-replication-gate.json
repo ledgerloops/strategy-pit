@@ -1,0 +1,75 @@
+{
+  "complete": true,
+  "source_sha256": {
+    "distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+    "numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+    "temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+    "temporal_episodes.py": "ef945e0c3d14c7457af499fb47e4a5cba2dff8d21114018f8254421bd316478b",
+    "temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+    "temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+    "temporal_metrics.py": "69147dc82dbbb06f9cfdb9a45aeeb0d5b6a025e0ee169bb8ad45f49c55f999b6",
+    "temporal_episode_benchmark.py": "692f129af859c974433f7916c75c121c85b91dc671fb9fd0e7dc05d6e78eda92",
+    "concurrent_headroom.py": "0f3f2d7b2a476c3b16c986b4cc1a0ac5c3edc8b38a6e3121aa04ea2d41ba6f49",
+    "fast_temporal_transport.py": "d794f084807c11f6738b2d036330c1ebfd3e4c8791838a21045a439b6fb4e9a0",
+    "temporal_episode_fast_case.py": "20d0649d0b3342cb5c8caccb49ec06eefa33ac761c831443ebf7cf103dafab81",
+    "temporal_episode_replication_check.py": "61f1a0e803172bcb97367172678bbc5dfadc1d57062526305544104cec9530f7",
+    "temporal_episode_gold.py": "7db781532b5f02b69440e9627033b206ca220747ec3a80ee35002688f6bf1d35"
+  },
+  "rows": [
+    {
+      "algorithm": "random",
+      "loss": 0,
+      "sleep": false,
+      "equivalent": true,
+      "non_timing_row_sha256": "e225aa10400695b2d12e13aa7f61f5e356a7bd7de5f313bc973c54ec83f15dae",
+      "cycles": 26,
+      "arrival_sha256": "98e1e99bc1303fbc59cfb7f8af5813cbccb3c6fac2fd50376c5d054e2173c842"
+    },
+    {
+      "algorithm": "random",
+      "loss": 0.1,
+      "sleep": true,
+      "equivalent": true,
+      "non_timing_row_sha256": "828d77a2349213e9c521cd2389ea1b4aaf2c1e18551a7753017098d72e7b145b",
+      "cycles": 21,
+      "arrival_sha256": "98e1e99bc1303fbc59cfb7f8af5813cbccb3c6fac2fd50376c5d054e2173c842"
+    },
+    {
+      "algorithm": "random",
+      "loss": 0.3,
+      "sleep": true,
+      "equivalent": true,
+      "non_timing_row_sha256": "3f7d68f1eb7c4be771cdf65cde5eecd091df8ea05f895ab80d12820cef267fbc",
+      "cycles": 16,
+      "arrival_sha256": "98e1e99bc1303fbc59cfb7f8af5813cbccb3c6fac2fd50376c5d054e2173c842"
+    },
+    {
+      "algorithm": "numbat",
+      "loss": 0,
+      "sleep": false,
+      "equivalent": true,
+      "non_timing_row_sha256": "df45f74c4da2e1ac995fa1d4157954af9551f968eb7c43754452a0ff98e128ec",
+      "cycles": 29,
+      "arrival_sha256": "98e1e99bc1303fbc59cfb7f8af5813cbccb3c6fac2fd50376c5d054e2173c842"
+    },
+    {
+      "algorithm": "numbat",
+      "loss": 0.1,
+      "sleep": true,
+      "equivalent": true,
+      "non_timing_row_sha256": "599f92b5d7ba03c6b92c6f217406fd0876cddc95f6a035df39d1af3f0f2957c3",
+      "cycles": 19,
+      "arrival_sha256": "98e1e99bc1303fbc59cfb7f8af5813cbccb3c6fac2fd50376c5d054e2173c842"
+    },
+    {
+      "algorithm": "numbat",
+      "loss": 0.3,
+      "sleep": true,
+      "equivalent": true,
+      "non_timing_row_sha256": "fe30ad65b38336d526c7b1701b7f2576e1b166bd73c2cd3c48bd76f97b84265d",
+      "cycles": 14,
+      "arrival_sha256": "98e1e99bc1303fbc59cfb7f8af5813cbccb3c6fac2fd50376c5d054e2173c842"
+    }
+  ],
+  "fixture": "24-node community synthetic, seed0, continuous arrivals; no policy retuning"
+}
