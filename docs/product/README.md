@@ -37,6 +37,8 @@ The common scenario is Alice owing Bob 7 CU and being owed 5 CU by Doris. A canc
 
 ## Shared design and engineering decisions
 
+[Issue 004](../issues/004-neighbour-private-hashlock-settlement.md) constrains all components: discovery, approvals, receipts and recovery must not require remote identities or exact total loop length in node state/messages. The current path-based app does not meet this target. Minimum-three enforcement, hashlock consent and safe expiry require a reviewed design before replacement; the current PRD/API sketches are subject to that gate.
+
 - Alpha actions record draft/demo responses only. Live settlement requires the roadmap's protocol and pilot gates. Server capability checks enforce this separation; hiding a button is insufficient.
 - Mobile and desktop share the same product and API. Native apps are deferred until secure signing, notifications or offline requirements justify them. Browser sleep is normal; a node handles durable delivery independently.
 - Amounts in product screens name their unit. Production contracts use integer minor-unit strings plus unit/scale, never floating-point money. Signed balances are positive when owed to the current participant.

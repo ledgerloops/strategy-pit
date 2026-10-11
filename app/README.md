@@ -2,6 +2,8 @@
 
 A first runnable testnet implementation of the [product PRDs](../docs/product/README.md): a mobile-friendly web client, independent persistent nodes and neighbour HTTP messages. Uses **TEST units only**. This is an engineering testnet, not a service for real obligations.
 
+**Architecture status:** this is an honest-peer infrastructure prototype. Its route lists and named approvals do not meet the original LedgerLoops neighbour-only knowledge requirement. [Issue 004](../docs/issues/004-neighbour-private-hashlock-settlement.md) tracks restoration of hashlock settlement without revealing remote participants or exact loop length; the current tests do not validate that protocol.
+
 ## What this milestone proves
 
 The goal is to run the same flow against actual processes and separate databases: connect to your node, inspect your own peer balances, discover a clearing loop, review local changes, approve, and retrieve a durable receipt. Dropped connections and process restarts exercise recovery rather than an in-memory simulation.

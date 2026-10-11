@@ -31,9 +31,15 @@ Headroom is a later, explicit opt-in experiment. Original balances are not perpe
 
 Defer multiple currencies, exchange rates, open anonymous membership, lending, bank payment initiation and token issuance. Each changes the accounting or threat model substantially.
 
+## Neighbour-private hashlock architecture gate
+
+[Issue 004](issues/004-neighbour-private-hashlock-settlement.md) is a required protocol workstream: participants know only direct neighbours, without an enumerated loop or exact total length beyond the minimum of three. The current HTTP/SQLite app is an honest-peer infrastructure prototype with path lists and origin-collected votes; it does not validate the original LedgerLoops protocol. A preimage check added to that design is insufficient.
+
+Before claiming the original protocol is restored, investigate and independently review discovery, conditional bilateral consent, locally verifiable hashlock fulfillment, completion evidence and durable recovery under this knowledge boundary. Resolve minimum-three enforcement and safe cancellation/expiry without a membership-enumerating coordinator. Document timing/transport/collusion leakage and safety/liveness assumptions; do not promise absolute anonymity. Build a separate versioned candidate and define pending-work migration before integration. This is a gate within stage 2, preceding any live-pilot claim for the neighbour-private product.
+
 ## Architecture and the missing engineering
 
-Each node stores only its own peer balances, permissions, reservations and journal. Discovery and acceptance use direct-neighbour messages. A relay can deliver encrypted envelopes; it must not choose routes or approve clearing from a global graph. Relays and hosting providers still see metadata, and a host controlling signing keys is trusted: document these facts instead of claiming graph privacy from locality alone. Search tokens can also disclose traversed relationships; specify and minimize that leakage.
+Each node stores only its own peer balances, permissions, reservations and journal. Discovery and acceptance use direct-neighbour messages. A relay can deliver encrypted envelopes; it must not choose routes or approve clearing from a global graph. Relays and hosting providers still see metadata, and a host controlling signing keys is trusted: document these facts instead of claiming graph privacy from locality alone. The current prototype discloses traversed relationships; eliminating its explicit route/membership disclosure is required by issue 004, while residual metadata leakage must be scoped separately.
 
 Build a protocol core with a deterministic state machine and versioned wire format; a durable local database with transactional journal/outbox/inbox; an authenticated neighbour transport; an HTTP API and accessible mobile-friendly web interface. Keep the current Python simulations as executable references and conformance fixtures. Choose the production language after a small persistence/transport spike and maintainer review; reuse older repositories only after reviewing their current code and licences.
 
@@ -78,4 +84,4 @@ Proposed work streams (roles, not assigned people):
 - **Client/integration:** agree a versioned balance/receipt/import schema, build read-only flows, then add approved writes after conformance passes.
 - **Operations/review:** plan keys, backup/restore, upgrades, privacy, accounting treatment, incident response and a costed pilot budget.
 
-The next concrete engineering milestone is a **three-node, crash-recoverable testnet with a readable receipt**, alongside a read-only user demo. Continue algorithm benchmarks in parallel; improvements should enter through the tested discovery interface without weakening settlement guarantees.
+The three-node infrastructure testnet and client now exist. The next protocol milestone is a **reviewed neighbour-private hashlock specification and isolated experimental implementation** under issue 004; persistence tests alone do not satisfy this gate. Continue algorithm benchmarks in parallel; improvements should enter through the tested discovery interface without weakening settlement guarantees.

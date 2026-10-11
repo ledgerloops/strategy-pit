@@ -180,3 +180,7 @@ not a pending campaign.
 ## Runnable app checkpoint
 
 Implemented `app/` as a TEST-only three-node HTTP/SQLite network with a responsive client. Twenty-four app tests pass, including loss of commit acknowledgement, durable prepare/restart, duplicate delivery, decline, and recovery while paused. Three-browser end-to-end clearing and receipt export pass. See `app/README.md`, `app/TESTING.md` and `app/network-test-results.json`. Discovery is a deliberately limited single-path neighbour walk, not the benchmark DFS implementation. Next product work: versioned bilateral transactions and onboarding, stronger identity/transport, broader crash exploration and replaceable discovery. Never infer production readiness from the testnet.
+
+## Neighbour-private hashlock architecture gap
+
+Recorded [issue 004](issues/004-neighbour-private-hashlock-settlement.md). The owner requires direct-neighbour knowledge only, with no remote identities or exact loop length, and a minimum of three participants. The app currently violates this through explicit paths and origin vote lists; label it an honest-peer infrastructure prototype. Hashlock patching alone is insufficient. Investigate discovery, conditional bilateral consent, fulfillment, evidence and durable safe cancellation together. Implementation was paused before changes; current app state/protocol remains untouched. No in-place migration is authorized by this issue-recording task.

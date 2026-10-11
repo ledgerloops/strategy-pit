@@ -12,6 +12,8 @@ Read [the research queue](docs/research-queue.md) when resuming. Check the actua
 
 Each participant decides using its own balances, limits, reservations, protocol state, and direct-neighbour messages. No routing or acceptance decision may inspect a global credit graph, another node's object, a simulator-wide counter, or an MCF answer. Global access is permitted for test generation, event delivery, audits and offline scoring. Label simulator-provided serialization and centrally generated starting ledgers explicitly; they do not establish a concurrent decentralized protocol.
 
+The product additionally targets neighbour-only knowledge: no requirement to learn remote loop identities or exact total loop length, while enforcing a minimum of three participants. Neighbour-only transport alone does not satisfy this stronger boundary. See [issue 004](docs/issues/004-neighbour-private-hashlock-settlement.md). Existing path-carrying simulations/app remain labelled research or infrastructure prototypes, not validation of the original private hashlock protocol.
+
 Keep discovery, economic preferences, and settlement coordination distinct. Turn-taking on a neighbour channel is not by itself atomic settlement or optimal clearing. Distinguish message attempts, delivered application messages, duplicates, ACKs, retries and payload sizes.
 
 ## Current modeling priorities

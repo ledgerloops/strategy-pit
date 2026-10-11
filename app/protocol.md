@@ -2,6 +2,10 @@
 
 This app exchanges real HTTP messages between separate processes, with each node owning its own SQLite database. It is an **honest-peer, crash-and-restart testnet using integer TEST units only**. It cannot manage money. No account registration, real assets, external transfers, interest, or new credit are implemented.
 
+## Architectural gap
+
+This is an honest-peer infrastructure prototype, **not a validation of the original LedgerLoops hashlock protocol**. Its enumerated paths and origin-collected named approvals reveal remote loop membership and exact length. That violates the intended neighbour-only knowledge boundary despite neighbour-only transport. [Issue 004](../docs/issues/004-neighbour-private-hashlock-settlement.md) tracks replacement discovery, conditional bilateral consent, hashlock fulfillment and recovery without a roster or exact loop-length requirement. Adding a preimage to the existing commit would not resolve this gap. The current running protocol is unchanged.
+
 ## Local ledger and discovery
 
 A positive local balance means that peer owes this node; a negative balance means this node owes its peer. The launcher installs mutually consistent bilateral fixtures. A node stores only its own peer balances and neighbour URLs/credentials; startup does not independently prove the fixture matches its peers. Each completed cycle preserves every node's signed net position and decreases all involved absolute balances without creating new debt.
