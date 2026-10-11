@@ -14,6 +14,8 @@ The [issue tracker in `docs/issues/`](docs/issues/README.md) records proposals, 
 
 The [product roadmap](docs/product-roadmap.md) proposes a community clearing assistant, a durable peer protocol, and staged pilots with explicit release gates. The next milestone is a three-node crash-recovery testnet alongside a read-only user demo.
 
+The [component PRDs and interactive wireframes](docs/product/README.md) turn that roadmap into draft requirements and phone/desktop flows.
+
 ## Meet the animals
 
 These are research prototypes from several generations. Early animals explored loop discovery and message ordering; later ones attempted negotiation and settlement. Their descriptions explain what we learned, rather than establish a performance ranking. The historical source links point to the last snapshot before the older implementations were removed.
