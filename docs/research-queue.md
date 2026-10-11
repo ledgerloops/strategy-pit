@@ -176,3 +176,7 @@ Random beats Numbat in every seed-1/2 final-debt pair. Aggregate across these
 and 4.193% fewer wire attempts. Keep these costs separate.
 The launch and resume commands above are historical/reproducibility instructions,
 not a pending campaign.
+
+## Runnable app checkpoint
+
+Implemented `app/` as a TEST-only three-node HTTP/SQLite network with a responsive client. Twenty-four app tests pass, including loss of commit acknowledgement, durable prepare/restart, duplicate delivery, decline, and recovery while paused. Three-browser end-to-end clearing and receipt export pass. See `app/README.md`, `app/TESTING.md` and `app/network-test-results.json`. Discovery is a deliberately limited single-path neighbour walk, not the benchmark DFS implementation. Next product work: versioned bilateral transactions and onboarding, stronger identity/transport, broader crash exploration and replaceable discovery. Never infer production readiness from the testnet.

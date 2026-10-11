@@ -1,0 +1,57 @@
+{
+  "completed": true,
+  "recorded_at_utc": "2026-10-11T13:13:22.101391+00:00",
+  "command": "python -m unittest discover -s app -p 'test_*.py' -v",
+  "python": "3.12.14",
+  "tests_run": 24,
+  "failures": 0,
+  "errors": 0,
+  "elapsed_seconds": 10.742,
+  "source_sha256": {
+    "app/node.py": "1cc029bd6fa76303a3f5435ec19bb01c32bc8e8b1186de1a3a1a032e9355d48f",
+    "app/run_demo.py": "bf339fe8b65ee1857284c55ca85065055a52ca59c53d1892bd4e4291190d1e87",
+    "app/test_network.py": "fcf50d01bf4efa7db590fb6d94ff1f2e05b1ef8b21d025378539b4eaec432b53",
+    "app/test_adversarial.py": "3b6dcd5c8bd322c0241c5509adefcea736a4a854cdfe6cd89064092948bd5fa6"
+  },
+  "network_scope": {
+    "transport": "HTTP on loopback TCP",
+    "participants": 3,
+    "processes": 3,
+    "separate_sqlite_databases": true,
+    "accounting_unit": "fabricated integer TEST",
+    "fixture_directed_debts": {
+      "alice->bob": 7,
+      "bob->doris": 3,
+      "doris->alice": 5
+    },
+    "clearing_amount": 3,
+    "final_directed_debts": {
+      "alice->bob": 4,
+      "bob->doris": 0,
+      "doris->alice": 2
+    },
+    "conserved_signed_positions": {
+      "alice": -2,
+      "bob": 4,
+      "doris": -2
+    }
+  },
+  "faults_exercised": [
+    "Deliver commit then close HTTP connection without ACK; duplicate retry applies once",
+    "SIGKILL participant after prepare; approval and reserved capacity survive restart",
+    "Offline participant after local approvals and SIGKILL intermediary after local commit; incomplete receipts and outbox persist",
+    "Resume irrevocable recovery while new admissions paused"
+  ],
+  "coverage_counts": {
+    "network_process_tests": 6,
+    "launcher_config_tests": 3,
+    "independent_adversarial_state_tests": 15
+  },
+  "limits": [
+    "Local development network, not a public WAN or real community deployment",
+    "Trusted non-equivocating peers and retained local SQLite state",
+    "Selected crash points, not exhaustive crash-boundary exploration",
+    "No stale-backup rollback, Byzantine peer, disk-full or key compromise tolerance established",
+    "No throughput or long-duration load benchmark in this suite"
+  ]
+}

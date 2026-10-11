@@ -16,6 +16,10 @@ The [product roadmap](docs/product-roadmap.md) proposes a community clearing ass
 
 The [component PRDs and interactive wireframes](docs/product/README.md) turn that roadmap into draft requirements and phone/desktop flows.
 
+## Run the network app
+
+The [runnable testnet app](app/README.md) connects a responsive web client to three independent SQLite-backed peer nodes. Try manual clearing approvals, receipts and restart recovery using fabricated TEST units. See [network validation](app/TESTING.md) and the [phone screenshot](app/screenshots/mobile.png).
+
 ## Meet the animals
 
 These are research prototypes from several generations. Early animals explored loop discovery and message ordering; later ones attempted negotiation and settlement. Their descriptions explain what we learned, rather than establish a performance ranking. The historical source links point to the last snapshot before the older implementations were removed.

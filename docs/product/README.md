@@ -4,6 +4,10 @@ Draft v0.1 · 11 October 2026 · [Roadmap](../product-roadmap.md)
 
 An installable, mobile-friendly web app with optional hosted nodes and self-hosting. The first alpha is a read-only clearing assistant. Durable node operation and live settlement are separate release gates. These specifications are proposed contracts for implementation and review, not descriptions of existing services.
 
+## First implementation
+
+The [network testnet app](../../app/README.md) now implements a vertical slice: authenticated node connection, fixture balances, neighbour discovery, digest-bound approvals/declines, receipts and durable restart recovery. [Validation](../../app/TESTING.md) covers actual three-process HTTP tests. Enrollment/imports, production identity, dynamic transfers and live deployment remain unimplemented; the PRDs describe the wider target.
+
 ## Component PRDs
 
 | Component | Responsibility | Prototype screens |
