@@ -10,6 +10,10 @@ The rule for a **node-local algorithm** is simple: each node makes decisions fro
 
 The [issue tracker in `docs/issues/`](docs/issues/README.md) records proposals, experiments and open questions. Start with [Headroom Clearing](docs/issues/001-headroom-clearing.md): reusing cleared capacity without exceeding the original debt on any link.
 
+## From research to real use
+
+The [product roadmap](docs/product-roadmap.md) proposes a community clearing assistant, a durable peer protocol, and staged pilots with explicit release gates. The next milestone is a three-node crash-recovery testnet alongside a read-only user demo.
+
 ## Meet the animals
 
 These are research prototypes from several generations. Early animals explored loop discovery and message ordering; later ones attempted negotiation and settlement. Their descriptions explain what we learned, rather than establish a performance ranking. The historical source links point to the last snapshot before the older implementations were removed.
