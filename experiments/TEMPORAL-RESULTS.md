@@ -120,6 +120,21 @@ historical batch Jerboa: arrivals, interim balance reversals, search deadlines,
 and applicable balance bounds differ. The static cancellation-only MCF bound
 is not automatically a bound for this temporal model.
 
+## Completed clock and seed followups
+
+The finite campaign finished October 10 at 07:34 UTC. All nine follow-up rows and the original three rows completed, passed ledger audits and applied every transfer. Each processes the same 30,726 STANDARD transfers under clean concurrent transport. Values are final debt improvement relative to the no-clearing final debt, after drain:
+
+| Arrival ticks / seed | Random local DFS | Numbat | Largest-first |
+| --- | ---: | ---: | ---: |
+| 500 / 0 | 15.2056% | 13.7526% | 12.3450% |
+| 2,000 / 0 | 15.3393% | 14.0126% | 12.8083% |
+| 4,000 / 0 | 15.6564% | 14.2134% | 13.0912% |
+| 2,000 / 1 | 15.8089% | 14.0600% | 12.9184% |
+
+Random local DFS leads all four settings, while Numbat remains stronger on some synthetic workloads. This is evidence for using random DFS as a temporal Sarafu baseline, not a universal ranking or a full-prefix loss/sleep result. Clock changes alter search opportunity and traffic budgets. Source/input/output hashes in `results/temporal-followup-campaign-state.json` match the saved artifacts.
+
+These runs use the original control-grace model: a delayed search can continue after a traversed relationship closes. A separate episode-aware protocol is being developed to reject that case. Do not relabel these saved results as strict episode-admission benchmarks.
+
 ## What the audit proves and what the metrics mean
 
 The independent auditor replays **each actual edge commit**, not just complete

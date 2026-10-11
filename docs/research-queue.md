@@ -10,7 +10,7 @@ Find practical node-local clearing algorithms that perform well across static an
 
 The finite replay campaign completed on 2026-10-10 at 07:34:43 UTC. All three jobs and nine follow-up runs completed; together with the original full-prefix run, all twelve runs pass their ledger audits. No benchmark worker was running when checked on October 11. The historical process identifiers below are not live-status claims.
 
-Random local DFS has the lowest final debt in all four full-prefix clock/seed comparisons: 15.21–15.81% improvement from the no-clearing final debt, versus Numbat 13.75–14.21% and largest-first 12.35–13.09%. These are temporal results, not a comparison with static Jerboa/Jaribu. The fixed 50/50 exploration mixture failed its training gate. The exposure observer and gross-arrival reference are complete locally. All 134 tests pass. Latest confirmed published checkpoint is `38e9d1b`; newer completed artifacts remain uncommitted pending final review.
+Random local DFS has the lowest final debt in all four full-prefix clock/seed comparisons: 15.21–15.81% improvement from the no-clearing final debt, versus Numbat 13.75–14.21% and largest-first 12.35–13.09%. These are temporal results, not a comparison with static Jerboa/Jaribu. The fixed 50/50 exploration mixture failed its training gate. The exposure observer and gross-arrival reference are complete locally. All 134 tests pass. Completed artifacts were independently reviewed and published at `d8c7e0b`.
 
 ### Chosen next steps
 
@@ -93,3 +93,13 @@ complete and audited for all three algorithms. Random DFS again has the lowest
 final debt (6,304,111.295), ahead of Numbat (6,412,139.295) and largest-first
 (6,516,782.295). The 4,000-tick job is running; the second-seed job is pending.
 This status is a checkpoint, not a replacement for inspecting the live state JSON.
+
+## Work activated October 11
+
+- `episode_protocol`: separate strict channel-episode protocol and targeted tests; preserve frozen baseline sources.
+- `episode_review`: independent stale-message, zero/reopen and settlement-grace review.
+- `fault_matrix`: matched random/Numbat comparisons after the episode API freezes; include exposure metrics.
+- `temporal_headroom`: small prototype and comparisons under issue 003; label serialization explicitly.
+- `contention_study`: measure abort costs and test one preregistered local backoff policy if justified.
+
+These are assignments, not a guarantee that agents remain active after session interruption. Inspect actual status and artifacts when resuming.
