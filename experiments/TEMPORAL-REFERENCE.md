@@ -56,6 +56,12 @@ message delivery, reservations, sleeping nodes, and computational budgets. It ca
 choose clearing opportunities that were never simultaneously available. No claim
 of attaining this bound follows from the solver returning `OPTIMAL`.
 
+## Extension to canonical temporal Headroom
+
+The bound also applies to the canonical episode-based Headroom policy in [issue 003](../docs/issues/003-temporal-headroom-semantics.md), starting from an empty ledger and measuring fully drained settlements. A live episode's ceiling cannot exceed cumulative external arrivals in its direction: same-direction transfers increase both, opposite transfers reduce the ceiling, and zero crossings or reversals discard prior authority. A reversal's new ceiling is at most the new reverse transfer. Clearing keeps the ceiling unchanged, restoration stays within it, and revoking unused headroom only lowers it.
+
+Thus every final directed balance still satisfies `0 <= R_ab <= G_ab`. Completed signed residual cycles preserve node net positions, so `G - R` is a nonnegative circulation. This direct capacity-and-conservation proof applies even though net cycle removal on an individual arc can now be negative; the earlier nonnegative `Q + C` decomposition must not be reused unchanged. The extension does not establish chronological attainability. Independent credit grants beyond the canonical ceilings require a different reference.
+
 ## A triangle separating the two references
 
 Suppose all amounts are one:

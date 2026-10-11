@@ -103,3 +103,11 @@ This status is a checkpoint, not a replacement for inspecting the live state JSO
 - `contention_study`: measure abort costs and test one preregistered local backoff policy if justified.
 
 These are assignments, not a guarantee that agents remain active after session interruption. Inspect actual status and artifacts when resuming.
+
+## October 11 next-stage checkpoint
+
+Published strict episode admission and the serial temporal Headroom milestone at `fd59e59`; synthetic fault/backoff evidence at `f55ef75`. The 144 strict synthetic fault runs completed and audited: Numbat final debt -3.29% relative to random, but staged-commit exposure +18.23%. The 24-case Sarafu5000 batch remains in progress; inspect `results/temporal-episode-sarafu5000.json` before any resume. No full-prefix strict fault run was launched at this checkpoint.
+
+Two 96-run training experiments completed: reservation-triggered backoff and cancellation-only episode admission. Both failed their declared promotion gates. Episode-only admission improves final debt but increases posting exposure; retain it as a measured tradeoff, not a default replacement.
+
+Concurrent signed Headroom source is frozen at SHA256 `0f3f2d7b2a476c3b16c986b4cc1a0ac5c3edc8b38a6e3121aa04ea2d41ba6f49`; ten focused/independent tests cover restoration, zero closure, loss/sleep/reordering and locality. A bounded comparative matrix is being prepared; no concurrent performance claim yet. The latest whole-repository test run passed 182 tests.

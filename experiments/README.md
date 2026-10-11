@@ -18,6 +18,8 @@ The [Numbat study](NUMBAT.md) tests capacity-weighted node-local search and obse
 
 [Episode admission](TEMPORAL-EPISODES.md) rejects search and preparation messages from closed or revised relationships while allowing admitted settlement cleanup. The [matched fault study](TEMPORAL-EPISODES-RESULTS.md) includes delayed-input and staged-commit exposure. [Temporal Headroom](TEMPORAL-HEADROOM.md) first tests cap updates and zero closure under explicitly serialized scheduling; concurrent integration is a separate milestone.
 
+The [backoff trial](TEMPORAL-BACKOFF-RESULTS.md) and [episode-only admission trial](TEMPORAL-EPISODE-ONLY-RESULTS.md) retain failed promotion decisions alongside their clearing gains and posting-delay costs. The latter is cancellation-only; it does not establish consent rules for restoration.
+
 ## Signed trustline extension
 
 The [trustline study](TRUSTLINES.md) adds bilateral balance limits, exact cycle moves that may increase some debts, an alternating-credit ratchet, and comparison with a global convex-flow optimum. This model is separate from the asynchronous distributed prototype below.
