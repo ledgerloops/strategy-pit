@@ -6,6 +6,10 @@ import json
 from pathlib import Path
 
 
+REQUIRED_BASE=('distributed.py','numbat.py','temporal_protocol.py','temporal_episodes.py',
+               'temporal_benchmark.py','temporal_sarafu.py','temporal_metrics.py',
+               'temporal_episode_benchmark.py')
+
 def canonical(row):
     row=deepcopy(row)
     row.pop('elapsed_seconds',None)
@@ -24,6 +28,8 @@ def verify(legacy,fast):
         raise ValueError('Fixture hash differs')
     if legacy['selection']!=fast['selection']:
         raise ValueError('Input selection differs')
+    if any(p not in report['source_sha256'] for report in (legacy,fast) for p in REQUIRED_BASE):
+        raise ValueError('Required base source pin missing')
     common=set(legacy['source_sha256'])&set(fast['source_sha256'])
     if not common or any(legacy['source_sha256'][p]!=fast['source_sha256'][p] for p in common):
         raise ValueError('Common protocol source hash differs')

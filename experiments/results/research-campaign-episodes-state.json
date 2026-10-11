@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "manifest_sha256": "9a0ee6b1fc2d850258cf9c2988889fb3008cf82e71ac0400c3c570747c8ec39f",
+  "created_at": "2026-10-11T09:04:24.109565+00:00",
+  "jobs": {
+    "strict-episode-full-prefix-faults": {
+      "status": "failed",
+      "attempts": 1,
+      "started_at": "2026-10-11T09:04:24.118791+00:00",
+      "source_input_sha256": {
+        "/workspace/strategy-pit/experiments/distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+        "/workspace/strategy-pit/experiments/numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+        "/workspace/strategy-pit/experiments/temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+        "/workspace/strategy-pit/experiments/temporal_episodes.py": "ef945e0c3d14c7457af499fb47e4a5cba2dff8d21114018f8254421bd316478b",
+        "/workspace/strategy-pit/experiments/temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+        "/workspace/strategy-pit/experiments/temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+        "/workspace/strategy-pit/experiments/temporal_metrics.py": "69147dc82dbbb06f9cfdb9a45aeeb0d5b6a025e0ee169bb8ad45f49c55f999b6",
+        "/workspace/strategy-pit/experiments/temporal_episode_benchmark.py": "692f129af859c974433f7916c75c121c85b91dc671fb9fd0e7dc05d6e78eda92",
+        "/workspace/strategy-pit/experiments/temporal_episode_scale.py": "b01c42a3ee9265363f11d0128b8dd2abcfb97509d8082e4429787920d92f7715",
+        "/workspace/jerboa-review/__tests__/fixtures/sarafu-50k.csv": "785b8f57d3e7e485a678772727bf593aaa90594c833afb7abc3c4d5fb366eebb",
+        "/workspace/strategy-pit/experiments/research_campaign.py": "559a89b90324940841f91ca911799c760555c3d12c483301243b0dda5f7fdaa1"
+      },
+      "log": "/workspace/strategy-pit/experiments/results/research-campaign-episodes-state-strict-episode-full-prefix-faults.log",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_scale.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-full.json",
+        "--event-budget",
+        "10000000"
+      ],
+      "process_pid": 99587,
+      "error": "Worker interrupted",
+      "finished_at": "2026-10-11T09:20:57.030230+00:00"
+    }
+  },
+  "worker_pid": 99584,
+  "status": "superseded",
+  "started_at": "2026-10-11T09:04:24.109581+00:00",
+  "heartbeat_at": "2026-10-11T09:20:57.030253+00:00",
+  "last_progress_at": "2026-10-11T09:20:57.030253+00:00",
+  "intentional_supersession": {
+    "at": "2026-10-11T09:21:11.631645+00:00",
+    "reason": "Intentionally superseded remaining fault cases with separate bounded fast-adapter cases after exact full random-clean non-timing equivalence and both original clean controls completed. Not an event-budget or wall-time failure.",
+    "equivalence_file": "temporal-episode-gold-equivalence.json",
+    "replacement_outputs": [
+      "temporal-episode-fast-random-loss10.json",
+      "temporal-episode-fast-numbat-loss10.json",
+      "temporal-episode-fast-random-loss30.json",
+      "temporal-episode-fast-numbat-loss30.json"
+    ]
+  },
+  "runner_status_before_supersession": "paused"
+}

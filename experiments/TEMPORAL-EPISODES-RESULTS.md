@@ -135,3 +135,88 @@ matching output when invoked directly. The campaign runner resumes completed
 jobs by hash, but backs up a failed job's output before rerunning that job; it
 does not automatically resume individual cases within a failed job. Check the
 saved job status and live processes before any restart.
+
+## Fast transport validation
+
+A separately source-pinned fast adapter removes redundant simulator copies and
+caches private envelope representation sizes. It changes no search policy. The
+full random/clean case passed exact equality against the original for every
+saved field except wall time, including all horizon metrics, ledger audit and
+exposure. Fixture, selection and shared base source pins also match. Evidence:
+[full clean equivalence](results/temporal-episode-gold-equivalence.json).
+This complements the smaller full-trace/RNG/state equivalence tests; the original
+full rows did not retain complete event traces or RNG states.
+
+After both original clean controls finished, the original campaign was
+intentionally stopped and its remaining fault cases replaced with separately
+bounded fast cases. The original result remains `complete: false` with 2 of 6
+rows and an explicit supersession reason, not a claimed budget failure. Its
+runner state preserves the interruption evidence and marks `superseded`. During
+validation, at most three fast workers ran beside the original worker. Each
+fast case has a 1,200-second subprocess timeout and a unique output.
+The four fault cases are 10%/30% loss with sleep for both methods; seed 0 and
+2,000 arrival ticks match the original planned campaign. Concurrent wall times
+are not suitable for throughput comparisons. All five fast case jobs completed
+successfully, including the extra clean equivalence case. The joined report
+requires all six intended cases and identical fast adapter/driver source pins
+to the validated gold case.
+
+## Full timestamped Sarafu results
+
+The completed [six-case comparison](results/temporal-episode-full-comparison.json)
+contains two original clean controls and four validated fast fault cases, with
+explicit per-row source and result hashes. All six pass independent ledger
+audits and finish every transfer and settlement during drain. Every requested
+transfer has already posted by the common horizon. The largest run uses
+7,415,769 total events, below the 10-million-event per-phase cap.
+
+| Conditions, seed 0 | Random DFS final debt improvement | Numbat final debt improvement |
+| --- | ---: | ---: |
+| No loss, no sleep | 14.76991% | 13.13047% |
+| 10% data/ACK loss, random sleep | 13.78407% | 12.75147% |
+| 30% data/ACK loss, random sleep | 11.42300% | 10.97882% |
+
+Random DFS has lower final debt in all three full-prefix conditions. This
+supports keeping it as the full-Sarafu cancellation baseline. Numbat remains
+stronger on aggregate small synthetic final debt, and can use fewer messages
+under loss. These are one-seed full-prefix diagnostics, not a universal ranking.
+The fault rows also introduce sleep; their difference from the clean row does
+not isolate packet loss alone.
+
+| Conditions | Numbat posted-debt area change | Wire attempts change | U(H) change | K(H) change |
+| --- | ---: | ---: | ---: | ---: |
+| Clean | +0.517% | +0.015% | −30.164% | −6.722% |
+| 10% loss and sleep | +0.012% | −2.438% | +14.011% | −13.339% |
+| 30% loss and sleep | −0.744% | −9.577% | −0.653% | +20.361% |
+
+Each change compares Numbat with random DFS in the same condition. Lower is
+better for these individual measures, but they are not a combined score. In
+particular, Numbat's lower traffic at 30% loss accompanies higher staged-commit
+exposure. At the common horizon some cycles remain partly committed despite
+all external input having posted; draining to eventual completion does not
+make settlement atomic. Raw endpoint exposures are retained in every row.
+
+Rebuild the gold certificate and completed join without rerunning simulations:
+
+```sh
+python3 experiments/temporal_episode_gold.py \
+  --legacy experiments/results/temporal-episode-full.json \
+  --fast experiments/results/temporal-episode-fast-gold.json \
+  --output experiments/results/temporal-episode-gold-equivalence.json
+python3 experiments/temporal_episode_full_summary.py
+```
+
+For prefix runs or resuming their checkpoints, use the input-guarded wrapper:
+
+```sh
+python3 experiments/temporal_episode_benchmark_v2.py --suite sarafu \
+  --csv ../jerboa-review/__tests__/fixtures/sarafu-50k.csv --limit 5000 \
+  --arrival-ticks 1000 --event-budget 2000000 \
+  --output experiments/results/temporal-episode-sarafu5000.json
+```
+
+It rejects a CSV changed at the same path before delegating to the frozen
+original harness's source/configuration checks. The published prefix ran once
+without resume and its fixture hash was independently rechecked at completion;
+the original harness's weaker input-resume check did not affect those results.
+The full-case drivers already verify fixture hashes before reusing outputs.

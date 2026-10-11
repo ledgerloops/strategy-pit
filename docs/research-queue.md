@@ -117,3 +117,13 @@ Concurrent signed Headroom source is frozen at SHA256 `0f3f2d7b2a476c3b16c986b4c
 All 24 strict Sarafu5000 fault runs completed and audited; random wins 9/12 final-debt pairs, aggregate improvement 0.76351% versus Numbat 0.73526%. The prefix gross-arrival reference permits at most 1.21061% improvement, ignoring chronology. The full strict six-case fault campaign is now running through the finite campaign runner (state `results/research-campaign-episodes-state.json`, total limit 3600 seconds); inspect completion before restarting.
 
 Concurrent Headroom is published at `72298e5`. All 24 matched runs audit, but restoration leaves 0.94% more final debt and uses 30.69% more wire attempts. The separate decrease-first variant passed training then failed held-out evaluation: 1.92% more debt and 26.88% more attempts. Retain both negative outcomes; no promotion. Latest full suite: 185 passing tests.
+
+## Full strict fault comparison completed
+
+`results/temporal-episode-full-comparison.json` joins six complete independently audited full-prefix cases. Final debt improvements random/Numbat: clean 14.76991%/13.13047%; 10% loss plus sleep 13.78407%/12.75147%; 30% loss plus sleep 11.42300%/10.97882%. All inputs posted by the horizon; all settlements drain. This is one seed. Random clears more in each tested condition; Numbat uses fewer messages under faults and has mixed exposure tradeoffs.
+
+Original clean controls use the frozen episode implementation; four fault cases use a trace-tested optimized adapter. Full random-clean saved observations match exactly except wall time (`temporal-episode-gold-equivalence.json`). The join verifies full fast-source pins against that evidence. The original sequential campaign was intentionally superseded after its two clean controls, not failed on a budget. Do not resume that superseded campaign. All five fast case campaigns finished successfully.
+
+A separate safe prefix resume entrypoint, `temporal_episode_benchmark_v2.py`, now rejects changed CSV contents at the same path before delegating to the frozen harness. Use it for future prefix resumptions. Rank-weighted Numbat also failed its fixed training gate; no held-out runs followed.
+
+Next authorized followup: replicate the full strict comparison on fixed seeds 1 and 2 with the same algorithms, clocks, faults and budgets, using at most three workers and a two-hour campaign limit. No parameters will be retuned. The `fault_matrix` agent is preparing the separate driver and checkpoints; verify actual launch state before calling it running.
