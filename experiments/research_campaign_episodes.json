@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "purpose": "Finite six-case strict episode full-prefix clean/fault diagnostic, seed0; launch only after completed prefix validation. Worker checkpoints each case and never wakes assistant.",
+  "jobs": [
+    {
+      "id": "strict-episode-full-prefix-faults",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_scale.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-full.json",
+        "--event-budget",
+        "10000000"
+      ],
+      "timeout_seconds": 3600,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/temporal_episode_scale.py"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-full.json"
+      ],
+      "require_json_complete": true
+    }
+  ]
+}

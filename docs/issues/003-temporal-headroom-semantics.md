@@ -1,6 +1,6 @@
 # 003 — Temporal Headroom: consent ends when a channel closes
 
-**Status:** Proposed · **Opened:** 2026-10-10
+**Status:** In progress · **Opened:** 2026-10-10
 
 [Issue tracker](README.md) · [Fixed-cap Headroom](001-headroom-clearing.md) · [Temporal protocol work](002-temporal-faults-and-turns.md)
 
@@ -131,3 +131,9 @@ Offline MCF may be an explicitly optimistic reference on a frozen snapshot with 
 - [ ] Publish incomplete runs and regressions; do not transfer static Headroom performance claims to this model.
 
 Open choice: a fully concurrent reservation protocol must avoid pair-order deadlocks and starvation. The fixed-cap prototype's global serialization does not solve that requirement in a node-local deployment.
+
+## October 11 implementation checkpoints
+
+- [Episode admission](../../experiments/TEMPORAL-EPISODES.md) implements strict episode and revision checks for cancellation-only random DFS/Numbat. Independent tests cover closure/reopening, stale prepares, local actor access, loss, sleep and transfer/reservation races. Bilateral state installation remains simulator-provided.
+- [Serial temporal Headroom](../../experiments/TEMPORAL-HEADROOM.md) validates cap updates and useful nonzero restoration across 12 audited exploratory runs. It is not a concurrent fault-tolerant protocol.
+- Concurrent signed residual settlement is in development and requires its own replay and fault tests before comparative claims.

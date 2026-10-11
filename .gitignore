@@ -27,3 +27,6 @@ build/
 
 # Misc
 .DS_Store
+
+# Runtime locks for resumable research campaigns
+experiments/results/*-state.json.lock

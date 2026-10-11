@@ -14,6 +14,10 @@ The [Numbat study](NUMBAT.md) tests capacity-weighted node-local search and obse
 
 [Temporal results](TEMPORAL-RESULTS.md) compare continuous transfers with unreliable messages and state-retaining sleep, including actual [Sarafu timestamps](TEMPORAL-SARAFU.md). [Neighbour-turn experiments](TEMPORAL-TURNS.md) test genuine endpoint-local turn ownership separately from a centralized transport reference. These experiments use stricter zero-balance channel closure than the earlier streaming simulations below.
 
+## Strict channel episodes and temporal Headroom
+
+[Episode admission](TEMPORAL-EPISODES.md) rejects search and preparation messages from closed or revised relationships while allowing admitted settlement cleanup. The [matched fault study](TEMPORAL-EPISODES-RESULTS.md) includes delayed-input and staged-commit exposure. [Temporal Headroom](TEMPORAL-HEADROOM.md) first tests cap updates and zero closure under explicitly serialized scheduling; concurrent integration is a separate milestone.
+
 ## Signed trustline extension
 
 The [trustline study](TRUSTLINES.md) adds bilateral balance limits, exact cycle moves that may increase some debts, an alternating-credit ratchet, and comparison with a global convex-flow optimum. This model is separate from the asynchronous distributed prototype below.
