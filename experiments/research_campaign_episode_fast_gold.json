@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "purpose": "Finite single fast case; maximum three concurrent workers beside original campaign. Do not promote fault cases before random clean gold equivalence passes.",
+  "jobs": [
+    {
+      "id": "gold",
+      "argv": [
+        "python3",
+        "experiments/temporal_episode_fast_case.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--output",
+        "experiments/results/temporal-episode-fast-gold.json",
+        "--algorithm",
+        "random",
+        "--loss",
+        "0"
+      ],
+      "timeout_seconds": 1200,
+      "sources": [
+        "experiments/distributed.py",
+        "experiments/numbat.py",
+        "experiments/temporal_protocol.py",
+        "experiments/temporal_episodes.py",
+        "experiments/temporal_benchmark.py",
+        "experiments/temporal_sarafu.py",
+        "experiments/temporal_metrics.py",
+        "experiments/temporal_episode_benchmark.py",
+        "experiments/concurrent_headroom.py",
+        "experiments/fast_temporal_transport.py",
+        "experiments/temporal_episode_fast_case.py"
+      ],
+      "inputs": [
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv"
+      ],
+      "outputs": [
+        "experiments/results/temporal-episode-fast-gold.json"
+      ],
+      "require_json_complete": true
+    }
+  ]
+}

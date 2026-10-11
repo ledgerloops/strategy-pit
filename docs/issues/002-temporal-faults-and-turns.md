@@ -27,7 +27,7 @@ Compare node-local clearing under continuously arriving transactions, dropped me
 - [ ] Complete larger full-prefix followups within declared event budgets.
 - [x] Integrate and benchmark the local turn gate (504 audited runs across synthetic, 1,000-transfer and 5,000-transfer comparisons).
 - [x] Compare outstanding-debt area, posting delay, clearing and all message attempts.
-- [ ] Integrate Headroom with explicit changing-cap and reopening semantics.
+- [x] Integrate Headroom with explicit changing-cap and reopening semantics (concurrent small-fixture prototype; performance does not yet justify promotion).
 - [ ] Bound long-running protocol memory without allowing old packets to revive stale transactions.
 
 ## Evidence
