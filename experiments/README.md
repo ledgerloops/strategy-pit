@@ -184,3 +184,7 @@ experiments/.venv/bin/python experiments/simulate.py --mcf --nodes 300 --seeds 0
 - `results/*.json`: full configurations, source/input hashes and measured outputs. Timings are single-machine observations and not comparable between the Python and TypeScript implementations.
 
 The static tests also include a small graph where greedy cycle cancellation gets stuck below the exhaustive optimum. Safety, termination of a finite run, maximality, optimum clearing, privacy and fault tolerance are separate properties; passing one check does not establish the others.
+
+[Temporal metric definitions](TEMPORAL-METRICS.md) explain gross cycle clearing
+versus final debt improvement, deadline versus drained results, and proposed
+amount-weighted posting and partial-settlement exposure measurements.

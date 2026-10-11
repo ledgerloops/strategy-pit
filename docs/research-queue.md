@@ -6,6 +6,19 @@
 
 Find practical node-local clearing algorithms that perform well across static and changing credit graphs, with explicit costs and delivery/failure assumptions. Continue useful authorized work while the session is active; checkpoint before interruption. This document is not an external wake-up scheduler.
 
+## Verified status — 2026-10-11
+
+The finite replay campaign completed on 2026-10-10 at 07:34:43 UTC. All three jobs and nine follow-up runs completed; together with the original full-prefix run, all twelve runs pass their ledger audits. No benchmark worker was running when checked on October 11. The historical process identifiers below are not live-status claims.
+
+Random local DFS has the lowest final debt in all four full-prefix clock/seed comparisons: 15.21–15.81% improvement from the no-clearing final debt, versus Numbat 13.75–14.21% and largest-first 12.35–13.09%. These are temporal results, not a comparison with static Jerboa/Jaribu. The fixed 50/50 exploration mixture failed its training gate. The exposure observer and gross-arrival reference are complete locally. All 134 tests pass. Latest confirmed published checkpoint is `38e9d1b`; newer completed artifacts remain uncommitted pending final review.
+
+### Chosen next steps
+
+1. Finish independent hash/report review and publish the completed campaign, negative exploration result, exposure measurements and temporal reference. Preserve the intentionally incomplete two-million-event run.
+2. First implement and independently audit episode-aware admission after zero-channel closure across all baselines. Current in-flight search can continue after a traversed pair closes; distinguish this from already-admitted settlement control grace. Then use concurrent random local DFS as the temporal Sarafu baseline, retain Numbat as a synthetic competitor, and run matched loss/sleep comparisons with amount-weighted posting and partial-commit measurements. Start with a bounded prefix before full-scale runs.
+3. Implement temporal Headroom in a separate prototype using issue 003's explicit pair episodes and strict zero-channel closure. Test local admission, cap updates, reversal and stale-message rejection before performance comparisons.
+4. Investigate a locally observable contention/backoff policy only after measuring reservation failures and traffic costs. Do not promote the failed fixed mixture or default to turn waiting.
+
 ## Completed checkpoints
 
 - Published the Numbat/Jerboa/Jaribu 50k comparison at `5602b07`; Numbat did not beat the earlier achieved-clearing scores. See [comparison](../experiments/ANIMAL-COMPARISON.md).
@@ -22,7 +35,7 @@ Find practical node-local clearing algorithms that perform well across static an
 
 ## Active work — verify files and completion before resuming
 
-1. **Full temporal scale:** `temporal_scale_benchmark.py`, `results/temporal-sarafu-full-10m.json`; 30,726 transfers, three clean methods, ten-million-event budget. Owner: `temporal_sarafu`.
+1. **Full temporal scale completed:** `results/temporal-sarafu-full-10m.json`; all three clean seed-0 methods pass audit for 30,726 transfers. Random DFS wins this clock (15.3393% final-debt improvement versus Numbat 14.0126%, largest-first 12.8083%). The separate finite clock/seed campaign below has completed. Owner: `temporal_sarafu`.
 2. **Turns on 5,000 transfers completed:** all 36 runs audited; turns generally cost more. See `TEMPORAL-TURNS.md`.
 3. **Headroom search ordering completed:** decrease-first reaches 12.20–12.35% cold clearing; see `HEADROOM-SEARCH.md`. Next: strict-zero-channel temporal semantics, owners `headroom_math` / `headroom_impl`.
 4. **Local settlement priority completed:** 72 audited runs modestly improve FIFO turns but lose to concurrent Numbat; see `TEMPORAL-PRIORITY.md`. Next: versioned unposted-transfer and staged-commit exposure metrics, owners `temporal_protocol` / `jerboa_compare`.
@@ -44,9 +57,9 @@ From the repository root:
 
 These benchmark commands overwrite their default result files. Inspect existing JSON and processes first. The temporary debt fixture can be regenerated using the pinned Jerboa 50k input and the command in [the comparison report](../experiments/ANIMAL-COMPARISON.md#reproduce). Live processes may not survive a cloud snapshot; saved files and commands are the checkpoint.
 
-## Live finite replay campaign (2026-10-10 07:09 UTC)
+## Historical campaign launch (2026-10-10 07:09 UTC)
 
-The reviewed follow-up manifest is running with worker PID **43253**, execution
+The reviewed follow-up manifest was launched with worker PID **43253**, execution
 session **48953**, a 5,400-second total wall-clock bound and 1,800 seconds per job.
 It tests full-prefix clean transport at 500 ticks (10M events), 4,000 ticks (20M),
 and 2,000 ticks with seed 1 (10M), each with all three algorithms. It does not
@@ -63,8 +76,8 @@ python experiments/research_campaign.py experiments/research_campaign_followups.
   --resume --max-seconds 5400
 ```
 
-The separate full-prefix seed-0 job checkpoints each algorithm and can be resumed
-with the identical command after verifying its original process has stopped:
+The separate full-prefix seed-0 job is complete (all three algorithms). Its
+identical resume command verifies and reuses those rows without rerunning:
 
 ```sh
 python experiments/temporal_scale_benchmark.py \
@@ -74,3 +87,9 @@ python experiments/temporal_scale_benchmark.py \
 
 A running process is not a guarantee of survival after environment removal.
 Completed result rows and explicit incomplete markers are the durable evidence.
+
+Campaign progress at 2026-10-10 07:14 UTC: the 500-tick full-prefix job is
+complete and audited for all three algorithms. Random DFS again has the lowest
+final debt (6,304,111.295), ahead of Numbat (6,412,139.295) and largest-first
+(6,516,782.295). The 4,000-tick job is running; the second-seed job is pending.
+This status is a checkpoint, not a replacement for inspecting the live state JSON.

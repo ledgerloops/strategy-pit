@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "manifest_sha256": "7f7f42704e2be9c2688c206e0673a7e980830f5d913b016106f6ca82c9124488",
+  "created_at": "2026-10-10T07:09:37.469829+00:00",
+  "jobs": {
+    "sarafu-clock-500": {
+      "status": "completed",
+      "attempts": 1,
+      "started_at": "2026-10-10T07:09:37.479794+00:00",
+      "source_input_sha256": {
+        "/workspace/strategy-pit/experiments/distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+        "/workspace/strategy-pit/experiments/numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+        "/workspace/strategy-pit/experiments/temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+        "/workspace/strategy-pit/experiments/temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+        "/workspace/strategy-pit/experiments/temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+        "/workspace/strategy-pit/experiments/temporal_scale_benchmark.py": "622b6e20816466812d87692544657be27b181c1c4caccba7daaed82a67c07e34",
+        "/workspace/jerboa-review/__tests__/fixtures/sarafu-50k.csv": "785b8f57d3e7e485a678772727bf593aaa90594c833afb7abc3c4d5fb366eebb",
+        "/workspace/strategy-pit/experiments/research_campaign.py": "559a89b90324940841f91ca911799c760555c3d12c483301243b0dda5f7fdaa1"
+      },
+      "log": "/workspace/strategy-pit/experiments/results/temporal-followup-campaign-state-sarafu-clock-500.log",
+      "argv": [
+        "python3",
+        "experiments/temporal_scale_benchmark.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--arrival-ticks",
+        "500",
+        "--event-budget",
+        "10000000",
+        "--seed",
+        "0",
+        "--output",
+        "experiments/results/temporal-sarafu-clock-500.json"
+      ],
+      "process_pid": 43254,
+      "returncode": 0,
+      "output_sha256": {
+        "/workspace/strategy-pit/experiments/results/temporal-sarafu-clock-500.json": "7e22f48258f53a1f8464ffe40c39b3769ab628f40168601568c69b35afc5a01c"
+      },
+      "finished_at": "2026-10-10T07:13:36.995619+00:00"
+    },
+    "sarafu-clock-4000": {
+      "status": "completed",
+      "attempts": 1,
+      "started_at": "2026-10-10T07:13:37.003821+00:00",
+      "source_input_sha256": {
+        "/workspace/strategy-pit/experiments/distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+        "/workspace/strategy-pit/experiments/numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+        "/workspace/strategy-pit/experiments/temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+        "/workspace/strategy-pit/experiments/temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+        "/workspace/strategy-pit/experiments/temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+        "/workspace/strategy-pit/experiments/temporal_scale_benchmark.py": "622b6e20816466812d87692544657be27b181c1c4caccba7daaed82a67c07e34",
+        "/workspace/jerboa-review/__tests__/fixtures/sarafu-50k.csv": "785b8f57d3e7e485a678772727bf593aaa90594c833afb7abc3c4d5fb366eebb",
+        "/workspace/strategy-pit/experiments/research_campaign.py": "559a89b90324940841f91ca911799c760555c3d12c483301243b0dda5f7fdaa1"
+      },
+      "log": "/workspace/strategy-pit/experiments/results/temporal-followup-campaign-state-sarafu-clock-4000.log",
+      "argv": [
+        "python3",
+        "experiments/temporal_scale_benchmark.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--arrival-ticks",
+        "4000",
+        "--event-budget",
+        "20000000",
+        "--seed",
+        "0",
+        "--output",
+        "experiments/results/temporal-sarafu-clock-4000.json"
+      ],
+      "process_pid": 43905,
+      "returncode": 0,
+      "output_sha256": {
+        "/workspace/strategy-pit/experiments/results/temporal-sarafu-clock-4000.json": "7007b65716ae40a97e13aa395c068e415d54982b3a54db7eede8c78b856434c2"
+      },
+      "finished_at": "2026-10-10T07:26:51.532543+00:00"
+    },
+    "sarafu-clock-2000-seed1": {
+      "status": "completed",
+      "attempts": 1,
+      "started_at": "2026-10-10T07:26:51.541947+00:00",
+      "source_input_sha256": {
+        "/workspace/strategy-pit/experiments/distributed.py": "65a66eb0686d852e6274d5ec5feef3ffa03099722a979422d9d71224df76880b",
+        "/workspace/strategy-pit/experiments/numbat.py": "888764eccbdae340385c71b4a0df64b228090da7d8400b257fad1bac40c54ba7",
+        "/workspace/strategy-pit/experiments/temporal_protocol.py": "ae2b89d6cbdb73ca2172033ed814f06bc7c3d989da6bfd8c3dc75d21714c40f5",
+        "/workspace/strategy-pit/experiments/temporal_sarafu.py": "525d35070e0f65cca51b281fd65713c085c0ea9c2c032e30a51014bb68abede2",
+        "/workspace/strategy-pit/experiments/temporal_benchmark.py": "4798cb912fac8a85a75ca69a894d0d72dbd78879b9ad7d3b7954a3c7fac9f3dd",
+        "/workspace/strategy-pit/experiments/temporal_scale_benchmark.py": "622b6e20816466812d87692544657be27b181c1c4caccba7daaed82a67c07e34",
+        "/workspace/jerboa-review/__tests__/fixtures/sarafu-50k.csv": "785b8f57d3e7e485a678772727bf593aaa90594c833afb7abc3c4d5fb366eebb",
+        "/workspace/strategy-pit/experiments/research_campaign.py": "559a89b90324940841f91ca911799c760555c3d12c483301243b0dda5f7fdaa1"
+      },
+      "log": "/workspace/strategy-pit/experiments/results/temporal-followup-campaign-state-sarafu-clock-2000-seed1.log",
+      "argv": [
+        "python3",
+        "experiments/temporal_scale_benchmark.py",
+        "--csv",
+        "../jerboa-review/__tests__/fixtures/sarafu-50k.csv",
+        "--arrival-ticks",
+        "2000",
+        "--event-budget",
+        "10000000",
+        "--seed",
+        "1",
+        "--output",
+        "experiments/results/temporal-sarafu-clock-2000-seed1.json"
+      ],
+      "process_pid": 44613,
+      "returncode": 0,
+      "output_sha256": {
+        "/workspace/strategy-pit/experiments/results/temporal-sarafu-clock-2000-seed1.json": "4efbd0ae82cc11dc4187ab15c9c5a07c4ebd4536273d4b2aa70cf577c76780cf"
+      },
+      "finished_at": "2026-10-10T07:34:43.531571+00:00"
+    }
+  },
+  "worker_pid": 43253,
+  "status": "completed",
+  "started_at": "2026-10-10T07:09:37.469848+00:00",
+  "heartbeat_at": "2026-10-10T07:34:43.532579+00:00",
+  "last_progress_at": "2026-10-10T07:34:43.532579+00:00",
+  "finished_at": "2026-10-10T07:34:43.532574+00:00"
+}

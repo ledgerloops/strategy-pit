@@ -68,10 +68,57 @@ The first full-prefix attempt,
 [temporal-sarafu-full.json](results/temporal-sarafu-full.json), exhausted its
 2-million-event budget on all four recorded cases before completing the common
 horizon. It is explicitly censored; its partial figures are not a ranking.
-`temporal_scale_benchmark.py` provides a resumable follow-up with 10 million
-events per phase, three clean seed-0 algorithms and all 30,726 STANDARD transfers
-compressed into 2,000 ticks. Its output records completion per algorithm; consult
-that status before interpreting any score.
+The [10-million-event follow-up](results/temporal-sarafu-full-10m.json) now
+**completes all three algorithms**, with all 30,726 STANDARD transfers and every
+independent audit passing. It uses clean transport, seed 0, all actual timestamp
+gaps uniformly compressed into 2,000 ticks (one tick = 3,421,023,871 microseconds),
+and stops new searches at tick 2,300.
+
+| Algorithm | Final debt after drain | Reduction versus no-clearing final debt | Posted debt area (billion units × ticks) | Logical messages |
+| --- | ---: | ---: | ---: | ---: |
+| Random local DFS | 6,294,172.695 | **15.3393%** | **6.8224** | 1,924,484 |
+| Numbat | 6,392,808.295 | 14.0126% | 6.8538 | 1,896,824 |
+| Largest-first local DFS | 6,482,338.295 | 12.8083% | 6.9276 | 1,925,104 |
+
+**Random DFS wins this full-prefix temporal run**, reversing Numbat's modest
+advantage on the smaller matrices. These are one-seed, one-clock results, not a
+universal ranking. Numbat has one external transfer still waiting at tick 2,300;
+the other two have none. All have in-flight settlements and finish draining at
+ticks 2,673, 2,685 and 2,675 respectively. Total event counts are 7.79–7.90 million.
+With no losses or sleep, wire attempts equal twice the logical message counts
+(one data attempt and one ACK attempt per message). A finite follow-up campaign
+is checking alternative arrival clocks and a second seed; incomplete files from
+that campaign are not included in this table.
+
+The [500-tick full-prefix follow-up](results/temporal-sarafu-clock-500.json)
+also completes all three clean seed-0 methods and audits. With the same timestamp
+ordering compressed four times faster and searches ending at tick 800, final debts
+are **6,304,111.295 for random DFS**, 6,412,139.295 for Numbat, and 6,516,782.295 for
+largest-first. Random again wins final debt. These two clocks strengthen that
+specific finding, while the second-seed and slower-clock jobs remain separate
+checks. Do not compare raw debt-area totals across different clock scales and
+horizons without rescaling time.
+
+### Comparing a stream with the historical static benchmark
+
+Gross cycle clearing is not the same as the improvement in final debt: clearing
+now can replace bilateral netting that would otherwise occur on a later transfer.
+Write `D0` for the final debt with no loop clearing, `D` for the cleared run,
+`C` for its accumulated cycle clearing, and `B0`/`B` for bilateral netting without/
+with clearing. The exact accounting identity is:
+
+```text
+D0 - D = C - (B0 - B)
+```
+
+In the completed full-prefix seed-0 Numbat run, `C = 1,427,025` units, but
+`B0 - B = 385,248`. The final debt therefore improves by **1,041,777 units
+(14.0126%)**, not 19.1944%. That latter number divides gross cycle clearing by the
+static aggregate debt and would give a misleading comparison with static MCF's
+18.92%. Even the 14.0126% final-debt improvement is a different experiment from
+historical batch Jerboa: arrivals, interim balance reversals, search deadlines,
+and applicable balance bounds differ. The static cancellation-only MCF bound
+is not automatically a bound for this temporal model.
 
 ## What the audit proves and what the metrics mean
 
@@ -94,6 +141,13 @@ matrix has respectively 25, 5, and 3 total transfers still queued at the horizon
 all are subsequently posted during drain. Final debt is measured after drain,
 which can extend beyond the common search deadline, and therefore is not a
 fixed-time throughput score.
+
+The independent audit establishes ledger consistency and completed-cycle
+conservation. It does not prove fault-tolerant atomicity or fresh participant
+consent. Posted-debt area can also reward early individual commits before a cycle
+finishes. Amount-weighted posting backlog and unfinished-settlement exposure are
+useful follow-up metrics; the current results report delay totals, counts and
+individual ledger validation, not those exposure measures.
 
 Data attempts include retransmissions; logical messages do not. ACK attempts and
 losses are separately reported in each row. Sleep preserves node state; this

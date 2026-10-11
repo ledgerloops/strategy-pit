@@ -68,3 +68,5 @@ python3 -m unittest discover -s experiments -p 'test_temporal_priority.py' -v
 
 Frozen source hashes, full parameters, input hashes, metrics and audits are in
 [`results/temporal-priority-training.json`](results/temporal-priority-training.json).
+
+Independent review reproduced all aggregate metrics and paired outcomes, matched all nine source hashes and regenerated input hashes, and verified local queue decisions preserve the wire-sequence and grant barriers.
