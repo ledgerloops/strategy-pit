@@ -53,6 +53,19 @@ const {chromium} = require('playwright');
       await alice.unroute('**/api/state');
       await alice.waitForFunction(()=>document.querySelector('#screen').textContent.includes('fulfillment verified'),{},{timeout:15000});
     } else assert.equal(receipt.receipt.cycle_complete,true);
+    if (privateProtocol) {
+    await alice.goto(`http://127.0.0.1:${basePort}/#peers`);
+    await alice.getByRole('link',{name:'View history with bob',exact:true}).click();
+    await alice.getByRole('heading',{name:privateProtocol ? 'Applied locally · fulfillment verified' : 'Confirmed by all participants',exact:true}).waitFor();
+    assert.deepEqual(await alice.locator('#screen tbody tr td:first-child').allTextContents(),['bob']);
+    const historyDownload=alice.waitForEvent('download');
+    await alice.getByRole('button',{name:'Download local receipt',exact:true}).click();
+    const historyReceipt=JSON.parse(fs.readFileSync(await(await historyDownload).path(),'utf8'));
+    assert.equal(historyReceipt.receipt.id,receipt.receipt.id);
+    await alice.setViewportSize({width:390,height:900});
+    assert.equal(await alice.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+    if(process.env.APP_HISTORY_SCREENSHOT)await alice.screenshot({path:process.env.APP_HISTORY_SCREENSHOT,fullPage:true});
+    }
     for (const width of [320,390,1280]) {
       await alice.setViewportSize({width,height:900});
       for (const screen of ['overview','peers','clearing','activity','settings']) {

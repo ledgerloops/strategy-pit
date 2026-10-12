@@ -4,6 +4,12 @@ Open **Peers / address book** on a private hashlock node. Each contact shows you
 
 Positive means **the peer owes you**. Negative means **you owe the peer**. For example, your range −5…15 and your peer's own range −10…8 produce a shared −5…10, subject to both credit limits. Unknown peer preferences are shown as unknown. Disjoint ranges produce “No shared comfort zone”; they do not imply a zero target or a negotiated compromise.
 
+## Dots and contact history
+
+Drag the credit-limit and comfort-bound dots along their aligned balance lines. Separate tracks keep coincident dots reachable. Arrow keys adjust by one TEST; the labels and shared-zone preview update immediately. Zoom controls change only the scale, including the full supported range. Select **Save preferences** to persist an edit, or discard it.
+
+Select **View history** on a contact to see that relationship's clearing proposals and local receipts, with dates and before/after balances. This filters the latest 100 proposals and latest 100 receipts returned by your node; it is not a complete historical archive or a preference-change journal. Downloaded receipts contain both of your local edges for the operation, as disclosed on the screen.
+
 ## Save and synchronize
 
 Preferences are persisted in the node's SQLite database and sent only over the authenticated direct relationship. Revision checks reject stale edits and conflicting peer updates. The displayed shared zone uses the latest preferences received by that node; updates are eventually delivered, not a new bilateral settlement agreement. During an outage the two screens can temporarily differ.
@@ -22,7 +28,7 @@ Try the [interactive synthetic example](../experiments/comfort-demo.html): total
 
 ## Validation
 
-[App test evidence](comfort-test-results.json) covers mirrored ranges, clipping, empty intersections, stale/conflicting updates, direct-peer authorization, reservation races, persistence and existing hashlock regressions. The browser flow saves both peers' preferences, verifies the two mirrored shared intervals, exercises disjoint ranges and a lowered credit cap, and checks phone/desktop layout and offline controls.
+[App test evidence](comfort-test-results.json) covers mirrored ranges, clipping, empty intersections, stale/conflicting updates, direct-peer authorization, reservation races, persistence and existing hashlock regressions. The browser flow saves both peers' preferences, verifies the two mirrored shared intervals, exercises disjoint ranges and a lowered credit cap, and checks pointer/keyboard dot editing, unsaved draft preservation through history navigation, phone/desktop layout and offline controls. The three-node browser settlement test also verifies contact-filtered history and downloads its actual local receipt.
 
 ```sh
 python3 app/run_private_demo.py --data-dir /tmp/ledgerloops-comfort-demo --base-port 8961
@@ -30,4 +36,4 @@ python3 app/run_private_demo.py --data-dir /tmp/ledgerloops-comfort-demo --base-
 APP_DEMO_DIR=/tmp/ledgerloops-comfort-demo APP_BASE_PORT=8961 node app/test_comfort_browser.cjs
 ```
 
-The browser test changes fabricated contact settings; use a fresh demo directory for reproduction. [Phone](screenshots/comfort/mobile.png) · [Desktop](screenshots/comfort/desktop.png).
+The browser test changes fabricated contact settings; use a fresh demo directory for reproduction. [Phone](screenshots/comfort/mobile.png) · [Desktop](screenshots/comfort/desktop.png) · [Contact history](screenshots/comfort/history-mobile.png).

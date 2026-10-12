@@ -192,3 +192,7 @@ The owner subsequently authorized implementation. `app/private_node.py` and `run
 ## Comfort-zone address book and simulation
 
 Implemented per-contact credit grants, own preferred min/max, received peer preferences, mirrored/clipped shared zones and explicit empty overlap. Settings persist and synchronize to direct peers with revisions; reserved edges defer edits. The saved assistance checkbox is not active authority in manual cancellation-only v2. Sixty-three app tests and browser contact flows pass. The separate 32-run comfort simulation passes 10 tests and preserves hard limits and net positions; discomfort improves 10.4% static / 11.3% with arriving transfers versus cancellation, with 51.2% more static discovery messages. Illustrative debt 2→4 / discomfort 2→0. See app/COMFORT.md, experiments/COMFORT-SIMULATION.md and issue 005. Next work: versioned bilateral admission for actual comfort-assisted hashlocks, asymmetric/partial-opt-in tighter-limit fixtures, then faults/concurrency.
+
+## Contact controls and history
+
+Replaced numeric preference inputs with aligned draggable dots, keyboard steps, scale controls and a live shared-zone preview. Each contact links to its filtered recent clearing history and local receipt export; exports disclose that both local edges are included. Browser tests cover pointer/keyboard editing, preserved drafts, mirrored preference synchronization, mobile layouts, offline guards and a real three-node hashlock receipt. See app/COMFORT.md and updated screenshots. Settlement and automatic-adjustment policy are unchanged.
