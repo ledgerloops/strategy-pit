@@ -1,0 +1,47 @@
+{
+  "completed": true,
+  "recorded_at_utc": "2026-10-12T12:11:32.447335+00:00",
+  "command": "python -m unittest discover -s app -p 'test_*.py' -v",
+  "python": "3.12.14",
+  "tests_run": 63,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "elapsed_seconds": 45.929,
+  "source_sha256": {
+    "app/comfort.py": "978c1785c2db5cdec6cc13961cb0ffa266b9adedaaaed8a49c539c9cb29326fe",
+    "app/node.py": "cbba918d78b46fa19c5955a11bd4585ac872467123b2c6f899731f7b5ac49666",
+    "app/private_node.py": "d3ad8343167a4594182a6cee95f9911a9aa7742963cce8fdea88831ad87de286",
+    "app/run_demo.py": "bf339fe8b65ee1857284c55ca85065055a52ca59c53d1892bd4e4291190d1e87",
+    "app/run_private_demo.py": "da1b12c89f81e9715c5a45719faeb3d0f49bba667f20f643fa25b1aadef9fef4",
+    "app/test_adversarial.py": "3b6dcd5c8bd322c0241c5509adefcea736a4a854cdfe6cd89064092948bd5fa6",
+    "app/test_comfort.py": "b675e2388d3d59c7cd0168d9cee5fd821c6b46ef4a07e2a1635323b196feaf1b",
+    "app/test_comfort_network.py": "6a51a699f4f18eb3f5e10d2c12cc8d130b8d56cca1247a919d44258daafe7d28",
+    "app/test_network.py": "fcf50d01bf4efa7db590fb6d94ff1f2e05b1ef8b21d025378539b4eaec432b53",
+    "app/test_private_adversarial.py": "86f500928a21035e61b3bb3169db32b9b93385d14dd7845ac9e0f496d0ce982a",
+    "app/test_private_network.py": "cbcfd80bfa93eac9b607c3d54de286367cf649470f7b75fdbeb7fbb2144d2b7f",
+    "app/test_private_receipt.py": "0089983254259014e533482505ddf6e82525b0e6140d6443cc5d4a071a48fde0",
+    "app/verify_private_receipt.py": "2fe2004bb06f77f9902347071dd57136a4d5d90da23e5abaad99389cb8551304"
+  },
+  "coverage_counts": {
+    "legacy_tests": 24,
+    "private_adversarial_tests": 16,
+    "private_http_tests": 7,
+    "private_receipt_verifier_tests": 3,
+    "comfort_model_and_node_tests": 8,
+    "comfort_http_tests": 5
+  },
+  "scope": [
+    "Three separate HTTP node processes for comfort preferences",
+    "Signed reflected intersection and disjoint ranges",
+    "Credit reductions preserve existing debt; cancellation still reduces debt",
+    "Stale/conflicting preference revisions and peer credentials",
+    "Reservation race defers peer update until settlement",
+    "Existing private hashlock and legacy regression suites"
+  ],
+  "limitations": [
+    "Auto-adjust preference is stored; private hashlock settlement remains manual cancellation only",
+    "Offline leaf preference messages remain explicitly pending; settlement outboxes must drain",
+    "No live balances, public network security, or concurrent comfort-assisted settlement certification"
+  ]
+}

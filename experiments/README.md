@@ -196,3 +196,7 @@ The static tests also include a small graph where greedy cycle cancellation gets
 [Temporal metric definitions](TEMPORAL-METRICS.md) explain gross cycle clearing
 versus final debt improvement, deadline versus drained results, and proposed
 amount-weighted posting and partial-settlement exposure measurements.
+
+## Shared comfort zones
+
+[Model and simulation results](COMFORT-SIMULATION.md) compare cancellation-only clearing with permitted balance changes toward shared preference ranges. [Interactive synthetic example](comfort-demo.html) shows why discomfort and total debt are different metrics. These simulations use serialized settlement; app settings alone do not activate comfort-assisted hashlock settlement.

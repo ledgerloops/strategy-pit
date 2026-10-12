@@ -25,6 +25,10 @@ The example clears Alice→Bob 7, Bob→Doris 3, Doris→Alice 5 to **4 / 0 / 2*
 
 Ctrl-C stops the launcher and its nodes. Restart with the same directory to retain state. A fresh directory creates an entirely separate test network. Never delete pending state or restore an old database to free reserved balances.
 
+## Contacts and comfort zones
+
+The [address book](COMFORT.md) now supports your own credit grant, personal comfort minimum/maximum and a saved assistance preference. Peer settings synchronize directly; the shared range reflects both perspectives. [The simulation](../experiments/COMFORT-SIMULATION.md) evaluates comfort-assisted moves separately. The app still uses manual cancellation-only settlement; the checkbox does not silently enable automatic debt redistribution.
+
 ## What hashlocks establish here
 
 Each approval binds a locally stored quote and condition. The origin releases a fresh cryptographically random secret only after readiness has traversed consenting nodes. Every node checks its own consent, reservations and the context-bound secret before applying its own changes. Decisions and forwarding work persist atomically, so retries and crashes do not apply a fulfillment twice.

@@ -19,6 +19,7 @@ class PrivateAdversarialTests(unittest.TestCase):
                       for name, config in self.configs.items()}
         for node in self.nodes.values():
             self.addCleanup(node.db.close)
+        self.drain()  # Complete bilateral preferences bootstrap before phase fault injection.
 
     def entries(self):
         return [(name, dict(row)) for name, node in self.nodes.items()
@@ -161,6 +162,7 @@ class PrivateAdversarialTests(unittest.TestCase):
                                  for peer, balance in peers.items()})
             self.nodes[name] = Node(config, str(Path(self.tmp.name) / ('collision-' + name + '.sqlite')))
             self.addCleanup(self.nodes[name].db.close)
+        self.drain()
         ident = self.nodes['o'].discover(3)['id']
         self.drain()
         for name, node in self.nodes.items():

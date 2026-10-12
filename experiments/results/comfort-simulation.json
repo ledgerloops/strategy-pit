@@ -1,0 +1,939 @@
+{
+  "schema": 1,
+  "complete": true,
+  "source_sha256": "8f6b5cfa557e69441c22ff1bf36d57bbf046344d51a02d21aeaf202331e6d8c0",
+  "model_sha256": "978c1785c2db5cdec6cc13961cb0ffa266b9adedaaaed8a49c539c9cb29326fe",
+  "config": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "nodes": 12,
+    "static_budget": 10250,
+    "temporal_arrivals": 40,
+    "per_arrival_budget": 250,
+    "unit_move": 1,
+    "faults": "none; serialized reliable simulator"
+  },
+  "illustrative": {
+    "cancellation": {
+      "initial": {
+        "debt": 2,
+        "discomfort": 2,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 2,
+        "discomfort": 2,
+        "empty_zones": 0,
+        "messages": 2,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "receipts": []
+    },
+    "comfort": {
+      "initial": {
+        "debt": 2,
+        "discomfort": 2,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 4,
+        "discomfort": 0,
+        "empty_zones": 0,
+        "messages": 6,
+        "moves": 2,
+        "assisted_moves": 2
+      },
+      "receipts": [
+        [
+          [
+            0,
+            1,
+            -2,
+            -1
+          ],
+          [
+            1,
+            2,
+            0,
+            1
+          ],
+          [
+            2,
+            0,
+            0,
+            1
+          ]
+        ],
+        [
+          [
+            0,
+            1,
+            -1,
+            0
+          ],
+          [
+            1,
+            2,
+            1,
+            2
+          ],
+          [
+            2,
+            0,
+            1,
+            2
+          ]
+        ]
+      ]
+    }
+  },
+  "rows": [
+    {
+      "seed": 0,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 56,
+        "discomfort": 36,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 56,
+        "discomfort": 36,
+        "empty_zones": 0,
+        "messages": 50,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "73c138dbb4657d87bb97b5681cd64ef9d1b94869c74b5655ad93bfcc29a65a9f",
+      "receipt_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "seed": 0,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 56,
+        "discomfort": 36,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 56,
+        "discomfort": 34,
+        "empty_zones": 0,
+        "messages": 210,
+        "moves": 2,
+        "assisted_moves": 2
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "73c138dbb4657d87bb97b5681cd64ef9d1b94869c74b5655ad93bfcc29a65a9f",
+      "receipt_sha256": "dbbd9b0618730a0ae51edc34df14b66cfb9943d36e0d72d9f857884e8d459cbf"
+    },
+    {
+      "seed": 0,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 56,
+        "discomfort": 36,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 58,
+        "discomfort": 39,
+        "empty_zones": 0,
+        "messages": 3170,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "73c138dbb4657d87bb97b5681cd64ef9d1b94869c74b5655ad93bfcc29a65a9f",
+      "receipt_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "seed": 0,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 56,
+        "discomfort": 36,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 60,
+        "discomfort": 38,
+        "empty_zones": 0,
+        "messages": 4592,
+        "moves": 5,
+        "assisted_moves": 4
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "73c138dbb4657d87bb97b5681cd64ef9d1b94869c74b5655ad93bfcc29a65a9f",
+      "receipt_sha256": "0fe3eee4f148cefead54bd522bb4cc42a131615ec5ec3ef60a296ba56d1d7acc"
+    },
+    {
+      "seed": 1,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 49,
+        "discomfort": 33,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 37,
+        "discomfort": 26,
+        "empty_zones": 0,
+        "messages": 346,
+        "moves": 3,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "9fa21d63bf867f333b6c029d80c8b223e82965101f1ea7fe9737f5c132b45b46",
+      "receipt_sha256": "9571242cd73839d869c265b10e0e53bd5d6a0376f7e0d64b6dacb1a7801ab790"
+    },
+    {
+      "seed": 1,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 49,
+        "discomfort": 33,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 29,
+        "discomfort": 12,
+        "empty_zones": 0,
+        "messages": 248,
+        "moves": 10,
+        "assisted_moves": 8
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "9fa21d63bf867f333b6c029d80c8b223e82965101f1ea7fe9737f5c132b45b46",
+      "receipt_sha256": "29818e4d5221fd1dbf2aa3fa01aa776755a537902b2ba482d77c191a7bdc4bbb"
+    },
+    {
+      "seed": 1,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 49,
+        "discomfort": 33,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 48,
+        "discomfort": 35,
+        "empty_zones": 0,
+        "messages": 5535,
+        "moves": 5,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "9fa21d63bf867f333b6c029d80c8b223e82965101f1ea7fe9737f5c132b45b46",
+      "receipt_sha256": "3d910b1c1f44e1be1b6f620390164ddb46ad3535c347613f05bbafa4d1c9faa6"
+    },
+    {
+      "seed": 1,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 49,
+        "discomfort": 33,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 48,
+        "discomfort": 29,
+        "empty_zones": 0,
+        "messages": 3711,
+        "moves": 17,
+        "assisted_moves": 15
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "9fa21d63bf867f333b6c029d80c8b223e82965101f1ea7fe9737f5c132b45b46",
+      "receipt_sha256": "fb57cded6bac04d7e73e4eab97178e80eec3d2351fcc046e5586a7a3c3b7cdb8"
+    },
+    {
+      "seed": 2,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 57,
+        "discomfort": 45,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 49,
+        "discomfort": 43,
+        "empty_zones": 0,
+        "messages": 142,
+        "moves": 2,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "f3e8dcd6a08b639dc934d0d652870b64b4809869e9d727d7127ec763f9208022",
+      "receipt_sha256": "c86bc943d222962ce0d22e1522a72414291e203be16823d3dd77e8f4683bbabf"
+    },
+    {
+      "seed": 2,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 57,
+        "discomfort": 45,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 49,
+        "discomfort": 38,
+        "empty_zones": 0,
+        "messages": 236,
+        "moves": 5,
+        "assisted_moves": 4
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "f3e8dcd6a08b639dc934d0d652870b64b4809869e9d727d7127ec763f9208022",
+      "receipt_sha256": "9db44f32d0d5ca2ca3d6a2915e51015c90eac3f96a8cf074384fa01eed1ae3f1"
+    },
+    {
+      "seed": 2,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 57,
+        "discomfort": 45,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 64,
+        "discomfort": 52,
+        "empty_zones": 0,
+        "messages": 5104,
+        "moves": 2,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "f3e8dcd6a08b639dc934d0d652870b64b4809869e9d727d7127ec763f9208022",
+      "receipt_sha256": "c86bc943d222962ce0d22e1522a72414291e203be16823d3dd77e8f4683bbabf"
+    },
+    {
+      "seed": 2,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 57,
+        "discomfort": 45,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 58,
+        "discomfort": 46,
+        "empty_zones": 0,
+        "messages": 4366,
+        "moves": 11,
+        "assisted_moves": 10
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "f3e8dcd6a08b639dc934d0d652870b64b4809869e9d727d7127ec763f9208022",
+      "receipt_sha256": "6f4680a62333538cbe459ff7031d7d9a87cac6f05bd9930290717b9b35fb022e"
+    },
+    {
+      "seed": 3,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 57,
+        "discomfort": 42,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 42,
+        "discomfort": 27,
+        "empty_zones": 0,
+        "messages": 113,
+        "moves": 4,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "d5114b4f06f9a45ca5a13084d590c6f5d053ce88023b51202686ed0767a250a9",
+      "receipt_sha256": "39dff72b66a57c72b3983aa6ff67c1df889cfeed8af8b10dd723062054e06602"
+    },
+    {
+      "seed": 3,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 57,
+        "discomfort": 42,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 42,
+        "discomfort": 27,
+        "empty_zones": 0,
+        "messages": 109,
+        "moves": 4,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "d5114b4f06f9a45ca5a13084d590c6f5d053ce88023b51202686ed0767a250a9",
+      "receipt_sha256": "39dff72b66a57c72b3983aa6ff67c1df889cfeed8af8b10dd723062054e06602"
+    },
+    {
+      "seed": 3,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 57,
+        "discomfort": 42,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 39,
+        "discomfort": 22,
+        "empty_zones": 0,
+        "messages": 3910,
+        "moves": 5,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "d5114b4f06f9a45ca5a13084d590c6f5d053ce88023b51202686ed0767a250a9",
+      "receipt_sha256": "649726be1af54061bd897f2b4a687ade0d2852192ffd88c522203a4d37b887c0"
+    },
+    {
+      "seed": 3,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 57,
+        "discomfort": 42,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 39,
+        "discomfort": 22,
+        "empty_zones": 0,
+        "messages": 3274,
+        "moves": 5,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "d5114b4f06f9a45ca5a13084d590c6f5d053ce88023b51202686ed0767a250a9",
+      "receipt_sha256": "649726be1af54061bd897f2b4a687ade0d2852192ffd88c522203a4d37b887c0"
+    },
+    {
+      "seed": 4,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 88,
+        "discomfort": 73,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 76,
+        "discomfort": 61,
+        "empty_zones": 0,
+        "messages": 288,
+        "moves": 3,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "18d365244cdb68bcb42180977d97b008acf3e8ac07660a62a2075de2662e0604",
+      "receipt_sha256": "34afaaf5eaa6a2b34c67c4b06bd67ec1b979141d1f7b69f5a5677925e921879e"
+    },
+    {
+      "seed": 4,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 88,
+        "discomfort": 73,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 78,
+        "discomfort": 59,
+        "empty_zones": 0,
+        "messages": 244,
+        "moves": 4,
+        "assisted_moves": 2
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "18d365244cdb68bcb42180977d97b008acf3e8ac07660a62a2075de2662e0604",
+      "receipt_sha256": "4cdf3a50d9dc375f9bca68c58870b5d6c6c1ae1eaa2a79fbe080a40bdbdf636e"
+    },
+    {
+      "seed": 4,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 88,
+        "discomfort": 73,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 73,
+        "discomfort": 59,
+        "empty_zones": 0,
+        "messages": 5350,
+        "moves": 4,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "18d365244cdb68bcb42180977d97b008acf3e8ac07660a62a2075de2662e0604",
+      "receipt_sha256": "bf8ef69cec7e3aa52777127c4911aac7ff4bdd1c2d535c89982e628947d66176"
+    },
+    {
+      "seed": 4,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 88,
+        "discomfort": 73,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 75,
+        "discomfort": 55,
+        "empty_zones": 0,
+        "messages": 4425,
+        "moves": 7,
+        "assisted_moves": 5
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "18d365244cdb68bcb42180977d97b008acf3e8ac07660a62a2075de2662e0604",
+      "receipt_sha256": "140c7aa4c86ff09e356961f015375a013d29b699662254957c5b2837c527f603"
+    },
+    {
+      "seed": 5,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 76,
+        "discomfort": 56,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 48,
+        "discomfort": 35,
+        "empty_zones": 0,
+        "messages": 194,
+        "moves": 4,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "f6f101c6ead6adbb59f3b72d436ef78e9fd71b8217bb64db3a7611bdaadc9e11",
+      "receipt_sha256": "d1fc053eb11d98184a3a847236ed79d5c81be4ef1f4d94e080f9c47b3b12de46"
+    },
+    {
+      "seed": 5,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 76,
+        "discomfort": 56,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 49,
+        "discomfort": 31,
+        "empty_zones": 0,
+        "messages": 241,
+        "moves": 6,
+        "assisted_moves": 4
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "f6f101c6ead6adbb59f3b72d436ef78e9fd71b8217bb64db3a7611bdaadc9e11",
+      "receipt_sha256": "256294e9b6ee1234a20f5bb9bd7c309a69170e9d0d7c3018ad6f5036a8127f5a"
+    },
+    {
+      "seed": 5,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 76,
+        "discomfort": 56,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 66,
+        "discomfort": 45,
+        "empty_zones": 0,
+        "messages": 4331,
+        "moves": 7,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "f6f101c6ead6adbb59f3b72d436ef78e9fd71b8217bb64db3a7611bdaadc9e11",
+      "receipt_sha256": "88daa67ee87fb6655d2e1efd264efc23c9ddd79ae5ffd93e97a94194613213d6"
+    },
+    {
+      "seed": 5,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 76,
+        "discomfort": 56,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 61,
+        "discomfort": 42,
+        "empty_zones": 0,
+        "messages": 4352,
+        "moves": 9,
+        "assisted_moves": 7
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "f6f101c6ead6adbb59f3b72d436ef78e9fd71b8217bb64db3a7611bdaadc9e11",
+      "receipt_sha256": "2688755d55fc4df212205c569fde58134e50f4a8b651b23b43c702e01a41524c"
+    },
+    {
+      "seed": 6,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 59,
+        "discomfort": 39,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 59,
+        "discomfort": 39,
+        "empty_zones": 0,
+        "messages": 198,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "67169f9c686267ba20a0f30205ccff82d33d274b4f47585a57723c816624baee",
+      "receipt_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "seed": 6,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 59,
+        "discomfort": 39,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 56,
+        "discomfort": 34,
+        "empty_zones": 0,
+        "messages": 447,
+        "moves": 2,
+        "assisted_moves": 2
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "67169f9c686267ba20a0f30205ccff82d33d274b4f47585a57723c816624baee",
+      "receipt_sha256": "617a8e7a30fc6be3eff9f197c07b331acb1d927016bbe040e8354bd3e6cc1dbc"
+    },
+    {
+      "seed": 6,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 59,
+        "discomfort": 39,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 56,
+        "discomfort": 41,
+        "empty_zones": 0,
+        "messages": 7551,
+        "moves": 6,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "67169f9c686267ba20a0f30205ccff82d33d274b4f47585a57723c816624baee",
+      "receipt_sha256": "266aadb4e3f6b2548ff501b3deff7b0af81625947d51ad0b6409a6c849e88262"
+    },
+    {
+      "seed": 6,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 59,
+        "discomfort": 39,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 47,
+        "discomfort": 25,
+        "empty_zones": 0,
+        "messages": 6130,
+        "moves": 15,
+        "assisted_moves": 12
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "67169f9c686267ba20a0f30205ccff82d33d274b4f47585a57723c816624baee",
+      "receipt_sha256": "417cd15a3509070f796d10f0e0867f86cec24a627612694d77d322c0c39b0e4b"
+    },
+    {
+      "seed": 7,
+      "temporal": false,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 73,
+        "discomfort": 57,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 55,
+        "discomfort": 41,
+        "empty_zones": 0,
+        "messages": 182,
+        "moves": 6,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "47ee0950e2bce9075fa7ca1a1ee4a3feb2904735b87b236b74a4b5e49ccfac5f",
+      "receipt_sha256": "35de6bf6312a6a87c411ef639b6661a8927dd664057330de027defc14b99cbfb"
+    },
+    {
+      "seed": 7,
+      "temporal": false,
+      "policy": "comfort",
+      "initial": {
+        "debt": 73,
+        "discomfort": 57,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 55,
+        "discomfort": 41,
+        "empty_zones": 0,
+        "messages": 552,
+        "moves": 6,
+        "assisted_moves": 1
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 0,
+      "accepted_transfers": 0,
+      "fixture_sha256": "47ee0950e2bce9075fa7ca1a1ee4a3feb2904735b87b236b74a4b5e49ccfac5f",
+      "receipt_sha256": "207cb5069b45b6362acd4637cffbe6a431c5d1a0a91312c3de55be71f8f7f86e"
+    },
+    {
+      "seed": 7,
+      "temporal": true,
+      "policy": "cancellation",
+      "initial": {
+        "debt": 73,
+        "discomfort": 57,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 61,
+        "discomfort": 44,
+        "empty_zones": 0,
+        "messages": 4710,
+        "moves": 6,
+        "assisted_moves": 0
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "47ee0950e2bce9075fa7ca1a1ee4a3feb2904735b87b236b74a4b5e49ccfac5f",
+      "receipt_sha256": "35de6bf6312a6a87c411ef639b6661a8927dd664057330de027defc14b99cbfb"
+    },
+    {
+      "seed": 7,
+      "temporal": true,
+      "policy": "comfort",
+      "initial": {
+        "debt": 73,
+        "discomfort": 57,
+        "empty_zones": 0,
+        "messages": 0,
+        "moves": 0,
+        "assisted_moves": 0
+      },
+      "final": {
+        "debt": 61,
+        "discomfort": 42,
+        "empty_zones": 0,
+        "messages": 7210,
+        "moves": 7,
+        "assisted_moves": 2
+      },
+      "rejected_transfers": 0,
+      "offered_transfers": 40,
+      "accepted_transfers": 40,
+      "fixture_sha256": "47ee0950e2bce9075fa7ca1a1ee4a3feb2904735b87b236b74a4b5e49ccfac5f",
+      "receipt_sha256": "2164362776c73882b1fc1f85cc6e591a0284687c7ffaf286b65404faaa0e694e"
+    }
+  ]
+}

@@ -410,6 +410,9 @@ def make_handler(node):
                 if peer:
                     node.receive(self.headers.get('X-Peer-ID',''),data)
                     result=dict(ok=True)
+                elif self.path.startswith('/api/contacts/') and self.path.endswith('/preferences') and hasattr(node,'set_preferences'):
+                    from urllib.parse import unquote
+                    result=node.set_preferences(unquote(self.path.split('/')[-2]),data)
                 elif self.path == '/api/discover':
                     result=node.discover(data.get('amount'))
                 elif self.path.startswith('/api/proposals/') and self.path.endswith('/approve'):

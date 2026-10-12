@@ -8,6 +8,7 @@
   try { token = sessionStorage.getItem("ledgerloops.testnet.token") || ""; } catch (_) { /* Storage can be disabled. */ }
   let state = null, online = false, busy = false, lastSeen = null, refreshing = false;
   let fulfillmentChecks = new Map();
+  const contactDrafts = new Map();
   let sessionGeneration = 0;
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const amount = value => `${BigInt(value).toLocaleString()} TEST`;
@@ -105,7 +106,7 @@
       if (generation !== sessionGeneration) return;
       online = false;
       if (error.status === 401 || error.status === 403) {
-        token = ""; state = null;
+        token = ""; state = null; contactDrafts.clear();
         try { sessionStorage.removeItem("ledgerloops.testnet.token"); } catch (_) {}
       }
       render();
@@ -123,7 +124,26 @@
     return `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(p.id) === "verified" : ["committed","completed"].includes(p.status)) ? "completed" : "pending"}"><h2>Clear ${esc(amount(p.amount))}</h2><span class="tag">${esc(statusText(p))}</span><p class="subtle">Proposal <code>${esc(p.id)}</code></p>${changesTable(p.changes)}${hashlockDetails(p)}${approve ? `<form data-approve="${esc(p.id)}" data-digest="${esc(p.digest)}"><label class="consent"><input type="checkbox" name="consent" required ${disabled() ? "disabled" : ""}> I approve these exact changes to my test balances.</label><button type="submit" ${disabled() ? "disabled" : ""}>Approve test clearing</button><button type="button" class="secondary" data-decline="${esc(p.id)}" data-digest="${esc(p.digest)}" ${!online || busy ? "disabled" : ""}>Decline proposal</button><p class="subtle">Approval permits these changes. Reserved amounts remain unavailable while a settlement outcome is pending.</p></form>` : !["committed","completed","aborted","rejected","expired"].includes(p.status) ? "<p>Waiting for participants and settlement evidence. Closing this app does not cancel the operation.</p>" : ""}</article>`;
   }
 
+  function contactCard(contact, index) {
+    const own = contact.own;
+    const draft = contactDrafts.get(contact.peer);
+    const values = draft || own;
+    const stale = draft && Number(draft.expected_revision) !== own.revision;
+    const locked = !online || busy || Boolean(contact.reserved_by) || stale;
+    const peer = contact.peer_preferences;
+    const shared = contact.shared_comfort;
+    const outside = contact.balance > contact.hard_max || (contact.hard_min !== null && contact.balance < contact.hard_min);
+    const control = locked ? "disabled" : "";
+    const prefix = `contact-${index}`;
+    const endpoint = value => value === 0 ? "Neither owes (0 TEST)" : balanceText(value);
+    const signedRange = (min, max) => `${endpoint(min)} → ${endpoint(max)}`;
+    return `<article class="card contact"><h2>${esc(contact.peer)}</h2><p class="big">${esc(balanceText(contact.balance))}</p>${contact.reserved_by ? "<p class=\"tag\">Pending clearing · preferences locked until outcome</p>" : ""}<p class="subtle">Negative: you owe this peer. Positive: this peer owes you. Zero: neither owes the other.</p><dl class="contact-summary"><dt>Your credit limit for this peer</dt><dd>${esc(amount(own.credit_limit))}</dd><dt>Peer’s credit limit for you</dt><dd>${peer ? esc(amount(peer.credit_limit)) : "Not received yet"}</dd><dt>Current permitted balance range</dt><dd>${contact.hard_min === null ? "Waiting for peer preferences" : esc(signedRange(contact.hard_min, contact.hard_max))}</dd><dt>Peer’s comfort range, from your viewpoint</dt><dd>${peer ? esc(signedRange(-peer.comfort_max, -peer.comfort_min)) : "Not received yet"}</dd><dt>Shared comfort zone · latest received preferences</dt><dd>${!shared ? "Waiting for peer preferences" : shared.empty ? "No shared comfort zone — your ranges do not overlap within the limits." : esc(signedRange(shared.min, shared.max))}</dd></dl>${outside ? "<aside>The current balance is outside the newly configured credit limits. Existing debt remains; saving a lower limit does not erase it.</aside>" : ""}<form data-contact="${esc(contact.peer)}" data-revision="${esc(draft?.expected_revision ?? own.revision)}"><h3>Your preferences</h3><label for="${prefix}-credit">Maximum this peer may owe you (TEST)</label><input id="${prefix}-credit" name="credit_limit" type="number" min="0" max="1000000000000" step="1" required value="${esc(values.credit_limit)}" ${control}><div class="contact-fields"><div><label for="${prefix}-min">Comfort minimum (signed TEST)</label><input id="${prefix}-min" name="comfort_min" type="number" min="-1000000000000" max="1000000000000" step="1" required value="${esc(values.comfort_min)}" ${control}></div><div><label for="${prefix}-max">Comfort maximum (signed TEST)</label><input id="${prefix}-max" name="comfort_max" type="number" min="-1000000000000" max="1000000000000" step="1" required value="${esc(values.comfort_max)}" ${control}></div></div><p class="subtle">For example, −5 to 2 means you are comfortable owing up to 5, or being owed up to 2. Your peer independently sets their own limit and comfort range.</p><label class="consent"><input name="auto_adjust" type="checkbox" ${values.auto_adjust ? "checked" : ""} ${control}> Prefer automatic adjustments toward shared comfort</label><p class="subtle">This saves your preference for the experimental simulation policy. Automatic adjustments are not active in this testnet; clearing still requires manual approval.</p>${stale ? "<p role=\"alert\">Preferences changed since you began editing. Reload this contact before saving.</p>" : ""}<button type="submit" ${control}>Save preferences for ${esc(contact.peer)}</button>${draft ? `<button type="button" class="secondary" data-reset-contact="${esc(contact.peer)}">Discard unsaved edits</button>` : ""}<p class="subtle">Revision ${esc(own.revision)}. Saving shares your preferences with this direct peer; it does not change balances.</p></form></article>`;
+  }
+
   function render() {
+    const focused = document.activeElement;
+    const editingContact = focused?.closest("form[data-contact]")?.dataset.contact;
+    const editingField = focused?.name;
     updateConnection();
     document.querySelectorAll("nav a").forEach(a => {
       if (a.hash === `#${page()}`) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
@@ -141,8 +161,8 @@
     const views = {
       overview: () => intro(`Hello, ${state.node}.`, "Your direct relationships. Your approval. Test clearing with no bank transfer.") +
         `<div class="card"><div class="row"><span>You owe</span><strong class="big">${esc(amount(owes))}</strong></div><div class="row"><span>You are owed</span><strong class="big">${esc(amount(owed))}</strong></div><p>Net position <strong>${esc(amount(owed - owes))}</strong></p><small>Recorded local balances. In-flight clearing can temporarily leave counterparties out of sync.</small></div><div class="card"><h2>${proposals.filter(approvalReady).length} proposals need your approval</h2><p>Review your before and after balances before permitting any test clearing.</p><a class="button" href="#clearing">Review clearing</a></div><p>${esc(state.outbox_pending ?? 0)} outgoing messages awaiting delivery.</p>`,
-      peers: () => intro("People you trade with", "Only balances held by your node appear here. New search stops across a zero balance.") +
-        `<div class="card">${balances.length ? balances.map(b => `<div class="row"><strong>${esc(b.peer)}</strong><span>${esc(balanceText(b.balance))}${b.reserved_by ? `<br><small>Reserved for pending clearing</small>` : ""}</span></div>`).join("") : "<p>No configured test peers yet.</p>"}</div><aside>Peer identities and starting test balances are configured by the network operator for this first release. Invitations and ledger imports are not available yet.</aside>`,
+      peers: () => intro("Your address book", "Set your own credit and comfort preferences for each direct peer. No global graph is shared.") +
+        (Array.isArray(state.contacts) ? (state.contacts.length ? state.contacts.map(contactCard).join("") : "<p>No configured contacts yet.</p>") : `<div class="card">${balances.length ? balances.map(b => `<div class="row"><strong>${esc(b.peer)}</strong><span>${esc(balanceText(b.balance))}${b.reserved_by ? `<br><small>Reserved for pending clearing</small>` : ""}</span></div>`).join("") : "<p>No configured test peers yet.</p>"}</div><p>Contact preference editing is unavailable on this node version.</p>`) + "<aside>Peer identities and starting test balances are configured by the network operator. Invitations and ledger imports are not available yet.</aside>",
       clearing: () => intro("Find a loop. Agree the changes.", "Discovery uses neighbour messages. Finding a loop does not approve or settle it.") +
         `<form id="discover" class="card"><h2>Search for test clearing</h2><label for="amount">${privateProtocol() ? "Exact amount (whole TEST units)" : "Maximum amount (whole TEST units)"}</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${privateProtocol() ? "<p class=\"subtle\">Search uses this exact amount. If no loop is found, a smaller amount may still clear.</p>" : ""}${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
       activity: () => intro("Activity and receipts", "A recorded local completion is distinct from approval or an unanswered request.") +
@@ -151,6 +171,11 @@
         `<div class="card"><div class="row"><strong>Node identity</strong><span class="node-id">${esc(state.node)}</span></div><div class="row"><strong>Mode / unit</strong><span>TESTNET / TEST</span></div><div class="row"><strong>Protocol</strong><span>${esc(protocolLabel())}</span></div><div class="row"><strong>Approval policy</strong><span>Ask each participant</span></div><button data-action="pause" ${!online || busy ? "disabled" : ""}>${state.paused ? "Resume new clearing" : "Pause new clearing"}</button><p>Pausing stops new work. Already admitted settlement messages still need recovery.</p></div><div class="card"><h2>Connection</h2><p><code>${esc(location.origin)}</code></p><button class="secondary" data-action="refresh" ${busy ? "disabled" : ""}>Refresh node state</button><button class="secondary" data-action="disconnect">Disconnect this browser</button><p class="subtle">Disconnect clears this tab’s token and displayed state. It does not revoke the operator token, stop the node, or cancel pending clearing.</p></div><aside>Test-only shared-secret authentication. The node operator holds the credentials and database. Backups, identity rotation and production key custody require further implementation and review.</aside>`
     };
     screen.innerHTML = (views[page()] || views.overview)();
+    if (editingContact && editingField) {
+      const form = Array.from(screen.querySelectorAll("form[data-contact]")).find(item => item.dataset.contact === editingContact);
+      const field = form?.elements.namedItem(editingField);
+      if (field && !field.disabled) field.focus({preventScroll:true});
+    }
   }
 
   async function mutate(path, body, success) {
@@ -160,9 +185,11 @@
       const result = await api(path, body);
       announce(success(result));
       await refresh();
+      return true;
     } catch (error) {
       online = false;
       announce(`Request outcome not confirmed: ${error.message} Reconnect and refresh before taking another action.`, true);
+      return false;
     } finally { busy = false; render(); }
   }
 
@@ -178,6 +205,17 @@
       await refresh();
       return;
     }
+    if (form.dataset.contact) {
+      const values = new FormData(form);
+      const body = {expected_revision:Number(form.dataset.revision), credit_limit:Number(values.get("credit_limit")), comfort_min:Number(values.get("comfort_min")), comfort_max:Number(values.get("comfort_max")), auto_adjust:values.has("auto_adjust")};
+      if (![body.credit_limit,body.comfort_min,body.comfort_max].every(value => Number.isSafeInteger(value) && Math.abs(value) <= 1000000000000) || body.credit_limit < 0 || body.comfort_min > body.comfort_max) {
+        announce("Use whole TEST units within ±1,000,000,000,000, a nonnegative credit limit, and a minimum no greater than the maximum.", true); return;
+      }
+      const peer = form.dataset.contact;
+      const saved = await mutate(`/api/contacts/${encodeURIComponent(peer)}/preferences`, body, () => "Preferences saved locally and queued for this peer. Balances are unchanged; automatic adjustments remain inactive in this testnet.");
+      if (saved) { contactDrafts.delete(peer); render(); }
+      return;
+    }
     if (form.id === "discover") {
       const value = Number(new FormData(form).get("amount"));
       if (!Number.isSafeInteger(value) || value <= 0 || value > 1000000000) {
@@ -190,11 +228,20 @@
     }
   });
 
+  document.addEventListener("input", event => {
+    const form = event.target.closest("form[data-contact]");
+    if (!form) return;
+    const values = new FormData(form);
+    contactDrafts.set(form.dataset.contact, {expected_revision: Number(form.dataset.revision), credit_limit: values.get("credit_limit"), comfort_min: values.get("comfort_min"), comfort_max: values.get("comfort_max"), auto_adjust: values.has("auto_adjust")});
+  });
+
   document.addEventListener("click", async event => {
     const button = event.target.closest("button");
     if (!button || button.disabled) return;
-    if (button.dataset.action === "disconnect") {
-      sessionGeneration++; token = ""; state = null; online = false; lastSeen = null;
+    if (button.dataset.resetContact) {
+      contactDrafts.delete(button.dataset.resetContact); render(); announce("Unsaved edits discarded; showing the latest preferences received from your node.");
+    } else if (button.dataset.action === "disconnect") {
+      contactDrafts.clear(); sessionGeneration++; token = ""; state = null; online = false; lastSeen = null;
       try { sessionStorage.removeItem("ledgerloops.testnet.token"); } catch (_) {}
       render(); announce("Browser disconnected. The node continues any pending settlement work.");
     } else if (button.dataset.action === "refresh") await refresh(true);

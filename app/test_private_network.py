@@ -287,7 +287,17 @@ class PrivateNetworkTests(unittest.TestCase):
         ident = net.discover()['id']
         net.wait(lambda: any(s['id'] == ident and s['status'] == 'no_cycle_on_path'
                             for s in net.state(origin)['searches']), 'repeated-visit rejection at origin')
-        net.wait(lambda: all(net.state(n)['outbox_pending'] == 0 for n in net.nodes), 'rejection outboxes drained')
+        def pending_messages(node):
+            with sqlite3.connect(net.directory / f'{node}.sqlite') as database:
+                return [json.loads(row[0]) for row in database.execute('SELECT data FROM outbox')]
+        net.wait(lambda: all(all(message['kind'] == 'preferences' for message in pending_messages(node))
+                             for node in net.nodes), 'settlement rejection outboxes drained')
+        # Offline leaf contacts deliberately retain their preference synchronization
+        # messages. They must not mask a stuck ABORT or other settlement phase.
+        for node in net.nodes:
+            pending = pending_messages(node)
+            self.assertGreaterEqual(len(pending), 2)
+            self.assertTrue(all(message['kind'] == 'preferences' for message in pending))
         for node in net.nodes:
             self.assertEqual(net.balances(node), net.initial[node])
             self.assertTrue(all(b['reserved_by'] is None for b in net.state(node)['balances']))

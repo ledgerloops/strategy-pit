@@ -87,3 +87,7 @@ Proposed work streams (roles, not assigned people):
 - **Operations/review:** plan keys, backup/restore, upgrades, privacy, accounting treatment, incident response and a costed pilot budget.
 
 The three-node infrastructure testnet and client now exist. A reviewed neighbour-private hashlock candidate now runs separately under issue 004. The next milestone is **broader failure/security validation and versioned bilateral transaction onboarding**, retaining the private protocol boundary; persistence tests alone do not close the production gate. Continue algorithm benchmarks in parallel; improvements should enter through the tested discovery interface without weakening settlement guarantees.
+
+## Shared comfort-zone workstream
+
+[Issue 005](issues/005-shared-comfort-zones.md) adds per-contact credit grants and personal balance ranges, mirrored/intersected into a shared zone. The [address book](../app/COMFORT.md) stores and synchronizes preferences; [serialized simulations](../experiments/COMFORT-SIMULATION.md) measure discomfort separately from debt. Integrating assisted adjustments into hashlock settlement requires versioned bilateral permissions, explicit zero-balance routing policy and recovery tests. Keep automatic execution disabled until that protocol work is validated.

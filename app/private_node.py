@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 from http.server import ThreadingHTTPServer
 from node import Node as TransportNode, make_handler, MAX_AMOUNT
+from comfort import validate_preferences, shared_comfort, allows_balance
 
 PROTOCOL = 'private-hashlock-v2'
 HASHLOCK_SCHEME = 'sha256-context-v2'
@@ -53,6 +54,7 @@ class Node:
         CREATE TABLE IF NOT EXISTS outbox(id TEXT PRIMARY KEY,peer TEXT NOT NULL,data TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS inbox(id TEXT PRIMARY KEY);
         CREATE TABLE IF NOT EXISTS searches(id TEXT PRIMARY KEY,status TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS contacts(peer TEXT PRIMARY KEY, own TEXT NOT NULL, peer_preferences TEXT);
         CREATE TABLE IF NOT EXISTS receipts(id TEXT PRIMARY KEY,data TEXT NOT NULL);
         ''')
         with self.db:
@@ -68,6 +70,12 @@ class Node:
                 if not config['url'].startswith(('http://', 'https://')):
                     raise ValueError('HTTP(S) neighbour URL required')
                 self.db.execute('INSERT OR IGNORE INTO balances VALUES(?,?)', (peer, config['balance']))
+            for peer in self.peers:
+                existing = self.db.execute('SELECT 1 FROM contacts WHERE peer=?',(peer,)).fetchone()
+                if not existing:
+                    own = dict(revision=1,credit_limit=max(0,self.balance(peer)),comfort_min=0,comfort_max=0,auto_adjust=False)
+                    self.db.execute('INSERT INTO contacts VALUES(?,?,NULL)',(peer,json.dumps(own)))
+                    self.enqueue(peer,dict(kind='preferences',protocol=PROTOCOL,preferences=own))
             if {r[0] for r in self.db.execute('SELECT peer FROM balances')} != set(self.peers):
                 raise ValueError('Peer configuration changed: use a fresh testnet')
         self.stopped = threading.Event()
@@ -86,11 +94,67 @@ class Node:
                 data = json.loads(row['data'])
                 if row['prepared'] or row['status'] in ('committed', 'aborted', 'declining'):
                     proposals.append(dict(data, status=row['status'], approved=bool(row['approved'])))
-            return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),
+            return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),contacts=self.contacts(),
                         balances=[dict(r) for r in self.db.execute('SELECT b.*,r.proposal AS reserved_by FROM balances b LEFT JOIN reservations r USING(peer) ORDER BY peer')],
                         proposals=proposals, receipts=self.receipts(),
                         searches=[dict(r) for r in self.db.execute('SELECT * FROM searches ORDER BY rowid DESC LIMIT 100')],
                         outbox_pending=self.db.execute('SELECT count(*) FROM outbox').fetchone()[0])
+
+    def contacts(self):
+        result=[]
+        for row in self.db.execute('SELECT * FROM contacts ORDER BY peer'):
+            own=json.loads(row['own']); peer=json.loads(row['peer_preferences']) if row['peer_preferences'] else None
+            overlap=shared_comfort(own,peer) if peer else None
+            lock=self.db.execute('SELECT proposal FROM reservations WHERE peer=?',(row['peer'],)).fetchone()
+            result.append(dict(peer=row['peer'],balance=self.balance(row['peer']),own=own,peer_preferences=peer,
+                               hard_min=-peer['credit_limit'] if peer else None,hard_max=own['credit_limit'],
+                               shared_comfort=overlap,reserved_by=lock[0] if lock else None,auto_adjust_active=False))
+        return result
+
+    def set_preferences(self,peer,values):
+        if peer not in self.peers:
+            raise ValueError('Unknown direct neighbour')
+        preferences=validate_preferences(values)
+        if type(values.get('expected_revision')) is not int or not 1 <= values['expected_revision'] < 10**12:
+            raise ValueError('Expected revision required')
+        with self.lock,self.db:
+            row=self.db.execute('SELECT own FROM contacts WHERE peer=?',(peer,)).fetchone()
+            own=json.loads(row[0])
+            if own['revision'] != values['expected_revision']:
+                raise ValueError('Preferences changed; refresh before saving')
+            if self.db.execute('SELECT 1 FROM reservations WHERE peer=?',(peer,)).fetchone():
+                raise ValueError('Cannot change preferences while this edge is reserved')
+            preferences['revision']=own['revision']+1
+            self.db.execute('UPDATE contacts SET own=? WHERE peer=?',(json.dumps(preferences),peer))
+            self.enqueue(peer,dict(kind='preferences',protocol=PROTOCOL,preferences=preferences))
+            return dict(ok=True,contact=next(c for c in self.contacts() if c['peer']==peer))
+
+    def receive_preferences(self,sender,data):
+        if set(data) != {'kind','protocol','preferences','message_id'} or data['protocol'] != PROTOCOL:
+            raise ValueError('Invalid neighbour preferences envelope')
+        preferences=validate_preferences(data['preferences'])
+        revision=data['preferences'].get('revision')
+        if type(revision) is not int or not 1 <= revision <= 10**12:
+            raise ValueError('Invalid preferences revision')
+        if set(data['preferences']) != set(preferences)|{'revision'}:
+            raise ValueError('Unexpected preferences fields')
+        if not isinstance(data['message_id'],str) or not 1 <= len(data['message_id']) <= 128:
+            raise ValueError('Invalid message identifier')
+        preferences['revision']=revision
+        with self.lock,self.db:
+            row=self.db.execute('SELECT peer_preferences FROM contacts WHERE peer=?',(sender,)).fetchone()
+            previous=json.loads(row[0]) if row[0] else None
+            if previous and previous['revision'] == revision and previous != preferences:
+                raise ValueError('Conflicting preferences at same revision')
+            if previous and previous['revision'] >= revision:
+                return
+            if self.db.execute('SELECT 1 FROM reservations WHERE peer=?',(sender,)).fetchone():
+                raise ValueError('Preferences update deferred until reservation finishes')
+            self.db.execute('UPDATE contacts SET peer_preferences=? WHERE peer=?',(json.dumps(preferences),sender))
+
+    def permits(self,peer,before,after):
+        row=self.db.execute('SELECT * FROM contacts WHERE peer=?',(peer,)).fetchone()
+        return allows_balance(before,after,json.loads(row['own']),json.loads(row['peer_preferences']) if row['peer_preferences'] else None)
 
     def envelope(self, data, kind, **extra):
         return dict(kind=kind,id=data['id'],condition=data['condition'],amount=data['amount'],protocol=PROTOCOL,**extra)
@@ -101,7 +165,7 @@ class Node:
 
     def candidate(self, amount, exclude=None):
         for row in self.db.execute('SELECT peer FROM balances WHERE balance<=? ORDER BY peer', (-amount,)):
-            if row['peer'] != exclude and not self.db.execute('SELECT 1 FROM reservations WHERE peer=?', (row['peer'],)).fetchone():
+            if row['peer'] != exclude and self.permits(row['peer'],self.balance(row['peer']),self.balance(row['peer'])+amount) and not self.db.execute('SELECT 1 FROM reservations WHERE peer=?', (row['peer'],)).fetchone():
                 return row['peer']
         return None
 
@@ -141,6 +205,8 @@ class Node:
             return False
         incoming, outgoing = self.balance(prev), self.balance(following)
         if self.paused() or incoming < data['amount'] or outgoing > -data['amount']:
+            return False
+        if not self.permits(prev,incoming,incoming-data['amount']) or not self.permits(following,outgoing,outgoing+data['amount']):
             return False
         if self.db.execute('SELECT 1 FROM reservations WHERE peer IN (?,?)',(prev,following)).fetchone():
             return False
@@ -228,6 +294,8 @@ class Node:
     def receive(self,sender,data):
         if sender not in self.peers:
             raise ValueError('Unknown sender')
+        if data.get('kind') == 'preferences':
+            return self.receive_preferences(sender,data)
         allowed={'kind','id','condition','amount','protocol','message_id','preimage'}
         if set(data)-allowed:
             raise ValueError('Unexpected wire fields')
