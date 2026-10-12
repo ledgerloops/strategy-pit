@@ -326,6 +326,16 @@ class NetworkTests(unittest.TestCase):
         new_ident = self.net.prepared_cycle()
         self.assertNotEqual(new_ident, ident)
 
+    def test_legacy_rejects_unsupported_discovery_modes_without_mutation(self):
+        before = self.net.state('alice')
+        for mode in ('comfort', 'unknown', None):
+            status, value = self.net.request('alice', '/api/discover', {'amount': 3, 'mode': mode})
+            self.assertEqual(status, 400)
+            self.assertIn('cancellation mode only', value['error'])
+            self.assertEqual(self.net.state('alice'), before)
+        status, _ = self.net.request('alice', '/api/discover', {'amount': 3, 'mode': 'cancellation'})
+        self.assertEqual(status, 200)
+
     def test_authentication(self):
         for node in NODES:
             self.assertIn(self.net.request(node, '/api/state', token=False)[0], (401, 403))

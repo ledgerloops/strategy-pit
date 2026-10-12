@@ -414,7 +414,13 @@ def make_handler(node):
                     from urllib.parse import unquote
                     result=node.set_preferences(unquote(self.path.split('/')[-2]),data)
                 elif self.path == '/api/discover':
-                    result=node.discover(data.get('amount'))
+                    mode=data.get('mode','cancellation')
+                    if hasattr(node,'comfort_candidate'):
+                        result=node.discover(data.get('amount'),mode=mode)
+                    else:
+                        if mode != 'cancellation':
+                            raise ValueError('This legacy node supports cancellation mode only')
+                        result=node.discover(data.get('amount'))
                 elif self.path.startswith('/api/proposals/') and self.path.endswith('/approve'):
                     result=node.approve(self.path.split('/')[-2],data.get('digest'))
                 elif self.path.startswith('/api/proposals/') and self.path.endswith('/decline'):

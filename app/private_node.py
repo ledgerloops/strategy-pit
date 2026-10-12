@@ -10,10 +10,12 @@ import time
 from pathlib import Path
 from http.server import ThreadingHTTPServer
 from node import Node as TransportNode, make_handler, MAX_AMOUNT
-from comfort import validate_preferences, shared_comfort, allows_balance
+from comfort import validate_preferences, shared_comfort, allows_balance, discomfort, comfort_move
 
 PROTOCOL = 'private-hashlock-v2'
 HASHLOCK_SCHEME = 'sha256-context-v2'
+COMFORT_SCHEME = 'sha256-comfort-v1'
+COMFORT_POLICY = 'bilateral-comfort-v1'
 
 
 def canonical_hex(value):
@@ -24,6 +26,15 @@ def hash_condition(ident, amount, preimage):
     if not canonical_hex(ident) or not canonical_hex(preimage) or type(amount) is not int or not 0 < amount <= MAX_AMOUNT:
         raise ValueError('Invalid hashlock context')
     context = dict(protocol=PROTOCOL, unit='TEST', id=ident, amount=amount, preimage=preimage)
+    return hashlib.sha256(json.dumps(context,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode('ascii')).hexdigest()
+
+
+def hash_comfort_condition(ident, amount, preimage, direction):
+    hash_condition(ident,amount,preimage)  # Validate canonical primitive inputs.
+    if type(direction) is not int or direction not in (-1,1):
+        raise ValueError('Invalid comfort direction')
+    context=dict(protocol=PROTOCOL,unit='TEST',id=ident,amount=amount,preimage=preimage,
+                 clearing_mode='comfort',policy=COMFORT_POLICY,direction=direction)
     return hashlib.sha256(json.dumps(context,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode('ascii')).hexdigest()
 
 
@@ -94,7 +105,7 @@ class Node:
                 data = json.loads(row['data'])
                 if row['prepared'] or row['status'] in ('committed', 'aborted', 'declining'):
                     proposals.append(dict(data, status=row['status'], approved=bool(row['approved'])))
-            return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),contacts=self.contacts(),
+            return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),contacts=self.contacts(),discovery_modes=['cancellation','comfort'],
                         balances=[dict(r) for r in self.db.execute('SELECT b.*,r.proposal AS reserved_by FROM balances b LEFT JOIN reservations r USING(peer) ORDER BY peer')],
                         proposals=proposals, receipts=self.receipts(),
                         searches=[dict(r) for r in self.db.execute('SELECT * FROM searches ORDER BY rowid DESC LIMIT 100')],
@@ -157,11 +168,54 @@ class Node:
         return allows_balance(before,after,json.loads(row['own']),json.loads(row['peer_preferences']) if row['peer_preferences'] else None)
 
     def envelope(self, data, kind, **extra):
-        return dict(kind=kind,id=data['id'],condition=data['condition'],amount=data['amount'],protocol=PROTOCOL,**extra)
+        context={key:data[key] for key in ('clearing_mode','policy','direction') if key in data}
+        return dict(kind=kind,id=data['id'],condition=data['condition'],amount=data['amount'],protocol=PROTOCOL,**context,**extra)
 
     def send(self, peer, data, kind, **extra):
         if peer is not None:
+            if data.get('clearing_mode') == 'comfort' and kind in ('probe','prepare'):
+                extra['edge_quote']=self.quote_wire(self.edge_terms(peer,self.balance(peer),self.balance(peer)+data['direction']*data['amount']))
             self.enqueue(peer, self.envelope(data, kind, **extra))
+
+    def edge_terms(self,peer,before,after):
+        row=self.db.execute('SELECT * FROM contacts WHERE peer=?',(peer,)).fetchone()
+        own=json.loads(row['own']); remote=json.loads(row['peer_preferences']) if row['peer_preferences'] else None
+        if remote is None:
+            raise ValueError('Peer preferences not synchronized')
+        zone=shared_comfort(own,remote)
+        return dict(peer=peer,before=before,after=after,own_revision=own['revision'],peer_revision=remote['revision'],
+                    own_preferences=own,peer_preferences=remote,shared_comfort=zone,
+                    discomfort_before=discomfort(before,zone),discomfort_after=discomfort(after,zone))
+
+    def quote_wire(self,term):
+        return {key:term[key] for key in ('before','after','own_revision','peer_revision')}
+
+    def quote_matches(self,peer,data):
+        quote=data.get('edge_quote')
+        if not isinstance(quote,dict) or set(quote) != {'before','after','own_revision','peer_revision'}:
+            return False
+        if any(type(value) is not int for value in quote.values()):
+            return False
+        try:
+            before=self.balance(peer); after=before-data['direction']*data['amount']
+            local=self.edge_terms(peer,before,after)
+        except ValueError:
+            return False
+        return (quote == dict(before=-before,after=-after,own_revision=local['peer_revision'],peer_revision=local['own_revision'])
+                and comfort_move(before,after,local['own_preferences'],local['peer_preferences']))
+
+    def comfort_candidate(self,amount,direction,exclude=None,strict=False):
+        for peer in sorted(self.peers):
+            if peer == exclude or self.db.execute('SELECT 1 FROM reservations WHERE peer=?',(peer,)).fetchone():
+                continue
+            before=self.balance(peer); after=before+direction*amount
+            try:
+                term=self.edge_terms(peer,before,after)
+            except ValueError:
+                continue
+            if comfort_move(before,after,term['own_preferences'],term['peer_preferences'],strict):
+                return peer
+        return None
 
     def candidate(self, amount, exclude=None):
         for row in self.db.execute('SELECT peer FROM balances WHERE balance<=? ORDER BY peer', (-amount,)):
@@ -169,19 +223,30 @@ class Node:
                 return row['peer']
         return None
 
-    def discover(self, amount):
+    def discover(self, amount, mode="cancellation"):
         if type(amount) is not int or not 0 < amount <= MAX_AMOUNT:
             raise ValueError('amount must be a positive bounded integer')
+        if mode not in ('cancellation','comfort'):
+            raise ValueError('Unknown clearing mode')
         with self.lock, self.db:
             if self.paused():
                 raise ValueError('Discovery paused')
-            following = self.candidate(amount)
+            direction=1
+            following=self.candidate(amount) if mode == 'cancellation' else None
+            if mode == 'comfort':
+                for direction in (1,-1):
+                    following=self.comfort_candidate(amount,direction,strict=True)
+                    if following is not None:
+                        break
             if following is None:
                 raise ValueError('No unreserved outgoing debt channel with requested capacity')
             preimage = secrets.token_bytes(32).hex()
             ident = secrets.token_bytes(32).hex()
-            condition = hash_condition(ident,amount,preimage)
+            condition = hash_condition(ident,amount,preimage) if mode == 'cancellation' else hash_comfort_condition(ident,amount,preimage,direction)
             data = dict(id=ident,condition=condition,amount=amount,protocol=PROTOCOL,hashlock_scheme=HASHLOCK_SCHEME,changes=[],created_at=time.time())
+            if mode == 'comfort':
+                data.update(clearing_mode='comfort',policy=COMFORT_POLICY,direction=direction,hashlock_scheme=COMFORT_SCHEME,
+                            outgoing_quote=self.edge_terms(following,self.balance(following),self.balance(following)+direction*amount))
             self.db.execute('INSERT INTO proposals(id,data,status,next,origin) VALUES(?,?,?,?,1)', (ident,json.dumps(data),'searching',following))
             self.db.execute('INSERT INTO private_secrets VALUES(?,?)', (ident,preimage))
             self.db.execute('INSERT INTO searches VALUES(?,?)', (ident,'searching'))
@@ -192,6 +257,9 @@ class Node:
         stored = json.loads(row['data'])
         if any(stored[key] != data[key] for key in ('id','condition','amount','protocol')):
             raise ValueError('Immutable proposal mismatch')
+        for key in ('clearing_mode','policy','direction'):
+            if stored.get(key) != data.get(key):
+                raise ValueError('Immutable clearing policy mismatch')
         return stored
 
     def prepare_local(self, row):
@@ -204,14 +272,30 @@ class Node:
         if not prev or not following or prev == following:
             return False
         incoming, outgoing = self.balance(prev), self.balance(following)
-        if self.paused() or incoming < data['amount'] or outgoing > -data['amount']:
+        if self.paused():
             return False
-        if not self.permits(prev,incoming,incoming-data['amount']) or not self.permits(following,outgoing,outgoing+data['amount']):
-            return False
+        comfort=data.get('clearing_mode') == 'comfort'
+        delta=data.get('direction',1)*data['amount']
+        if comfort:
+            try:
+                changes=[self.edge_terms(prev,incoming,incoming-delta),self.edge_terms(following,outgoing,outgoing+delta)]
+            except ValueError:
+                return False
+            if any(not comfort_move(c['before'],c['after'],c['own_preferences'],c['peer_preferences']) for c in changes):
+                return False
+            if row['origin'] and not comfort_move(outgoing,outgoing+delta,changes[1]['own_preferences'],changes[1]['peer_preferences'],strict=True):
+                return False
+            if data.get('incoming_quote') != changes[0] or data.get('outgoing_quote') != changes[1]:
+                return False
+        else:
+            if incoming < data['amount'] or outgoing > -data['amount']:
+                return False
+            if not self.permits(prev,incoming,incoming-delta) or not self.permits(following,outgoing,outgoing+delta):
+                return False
+            changes=[dict(peer=prev,before=incoming,after=incoming-delta),dict(peer=following,before=outgoing,after=outgoing+delta)]
         if self.db.execute('SELECT 1 FROM reservations WHERE peer IN (?,?)',(prev,following)).fetchone():
             return False
-        data['changes'] = [dict(peer=prev,before=incoming,after=incoming-data['amount']),
-                           dict(peer=following,before=outgoing,after=outgoing+data['amount'])]
+        data['changes'] = changes
         data['digest'] = hashlib.sha256(json.dumps(data,sort_keys=True,separators=(',',':')).encode()).hexdigest()
         for peer in (prev,following):
             self.db.execute('INSERT INTO reservations VALUES(?,?)',(peer,row['id']))
@@ -264,7 +348,10 @@ class Node:
 
     def check_preimage(self,data):
         preimage=data.get('preimage')
-        if not canonical_hex(preimage) or hash_condition(data['id'],data['amount'],preimage) != data['condition']:
+        if not canonical_hex(preimage):
+            raise ValueError('Invalid hashlock fulfillment')
+        condition=hash_comfort_condition(data['id'],data['amount'],preimage,data['direction']) if data.get('clearing_mode') == 'comfort' else hash_condition(data['id'],data['amount'],preimage)
+        if condition != data['condition']:
             raise ValueError('Invalid hashlock fulfillment')
 
     def apply(self,row,decision,preimage=None):
@@ -296,7 +383,7 @@ class Node:
             raise ValueError('Unknown sender')
         if data.get('kind') == 'preferences':
             return self.receive_preferences(sender,data)
-        allowed={'kind','id','condition','amount','protocol','message_id','preimage'}
+        allowed={'kind','id','condition','amount','protocol','message_id','preimage','clearing_mode','policy','direction','edge_quote'}
         if set(data)-allowed:
             raise ValueError('Unexpected wire fields')
         if data.get('protocol') != PROTOCOL or not canonical_hex(data.get('condition')) or not canonical_hex(data.get('id')):
@@ -308,6 +395,14 @@ class Node:
         kind=data.get('kind')
         if kind not in ('probe','probe_rejected','prepare','ready','reject','abort','fulfill'):
             raise ValueError('Unknown message kind')
+        comfort=data.get('clearing_mode') == 'comfort'
+        if comfort:
+            if data.get('policy') != COMFORT_POLICY or type(data.get('direction')) is not int or data['direction'] not in (-1,1):
+                raise ValueError('Invalid comfort policy')
+            if ('edge_quote' in data) != (kind in ('probe','prepare')):
+                raise ValueError('Edge quote only required on comfort admission')
+        elif any(key in data for key in ('clearing_mode','policy','direction','edge_quote')):
+            raise ValueError('Unexpected cancellation policy fields')
         if kind == 'fulfill':
             self.check_preimage(data)
         elif 'preimage' in data:
@@ -322,7 +417,14 @@ class Node:
             if kind == 'probe':
                 if row:
                     if row['origin'] and row['status'] == 'searching' and sender != row['next']:
-                        self.db.execute('UPDATE proposals SET prev=? WHERE id=?',(sender,row['id']))
+                        if comfort and not self.quote_matches(sender,data):
+                            self.send(sender,data,'probe_rejected')
+                            self.db.execute('INSERT INTO inbox VALUES(?)',(data['message_id'],))
+                            return
+                        local=json.loads(row['data'])
+                        if comfort:
+                            local['incoming_quote']=self.edge_terms(sender,self.balance(sender),self.balance(sender)-data['direction']*data['amount'])
+                        self.db.execute('UPDATE proposals SET prev=?,data=? WHERE id=?',(sender,json.dumps(local),row['id']))
                         row=self.proposal(row['id'])
                         if self.prepare_local(row):
                             self.db.execute("UPDATE searches SET status='cycle_found' WHERE id=?",(row['id'],))
@@ -334,8 +436,20 @@ class Node:
                     else:
                         self.send(sender,data,'probe_rejected')
                 else:
-                    following=None if self.paused() or self.balance(sender) < data['amount'] else self.candidate(data['amount'],sender)
+                    if comfort and not self.quote_matches(sender,data):
+                        self.send(sender,data,'probe_rejected')
+                        self.db.execute('INSERT INTO inbox VALUES(?)',(data['message_id'],))
+                        return
+                    if comfort:
+                        following=None if self.paused() else self.comfort_candidate(data['amount'],data['direction'],sender)
+                    else:
+                        following=None if self.paused() or self.balance(sender) < data['amount'] else self.candidate(data['amount'],sender)
                     local=dict(id=data['id'],condition=data['condition'],amount=data['amount'],protocol=PROTOCOL,hashlock_scheme=HASHLOCK_SCHEME,changes=[],created_at=time.time())
+                    if comfort:
+                        local.update(clearing_mode='comfort',policy=COMFORT_POLICY,direction=data['direction'],hashlock_scheme=COMFORT_SCHEME,
+                                     incoming_quote=self.edge_terms(sender,self.balance(sender),self.balance(sender)-data['direction']*data['amount']))
+                        if following:
+                            local['outgoing_quote']=self.edge_terms(following,self.balance(following),self.balance(following)+data['direction']*data['amount'])
                     self.db.execute('INSERT INTO proposals(id,data,status,prev,next) VALUES(?,?,?,?,?)',(data['id'],json.dumps(local),'searching',sender,following))
                     if following:
                         self.send(following,data,'probe')
@@ -354,6 +468,10 @@ class Node:
                 elif kind == 'reject':
                     self.reject(row)
                 elif kind == 'prepare':
+                    if comfort and not self.quote_matches(sender,data):
+                        self.reject(row)
+                        self.db.execute('INSERT INTO inbox VALUES(?)',(data['message_id'],))
+                        return
                     if row['origin']:
                         if row['status'] == 'pending':
                             self.db.execute('UPDATE proposals SET ready_seen=1 WHERE id=?',(row['id'],))

@@ -8,6 +8,8 @@ A node stores its own direct neighbours, local bilateral balances, and—for eac
 
 This is **message-content privacy**, not anonymity against traffic analysis. Nodes see adjacent transport endpoints, timing, amounts and a shared opaque identifier/condition. Colluding peers can correlate observations; graph knowledge and timing may allow inferences about route length. The protocol does not promise resistance to those inferences.
 
+The following wire description is the original cancellation mode. The [comfort extension](comfort_protocol.md) adds explicitly selected, bilateral preference-bound settlement without changing the route-knowledge boundary.
+
 ## Condition and messages
 
 The origin draws independent 32-byte identifier and 32-byte secret with `secrets.token_bytes(32)`. Both use canonical lowercase hexadecimal. `hashlock_scheme` is `sha256-context-v2`; the helper `hash_condition(id, amount, preimage)` computes SHA-256 over the ASCII bytes of this compact JSON, with alphabetically sorted keys and no whitespace:
@@ -36,4 +38,4 @@ Local updates, inbox deduplication and forwarded outbox messages share one SQLit
 
 This is an honest-peer crash/restart protocol, **not a full HTLC system or Byzantine-safe network**. There are no timelocks, public signatures, elected coordinators, automatic release deadlines or permanent-origin-loss recovery. A malicious participant can lie about readiness; the origin can disclose its secret improperly; a valid preimage alone does not prove all participants consented. Local approval and reservations remain mandatory. No claims of simultaneous balance visibility are made.
 
-Balances initially come from mutually consistent test fixtures. There is no external transfer, live asset, changing trustline, headroom, currency conversion or account enrollment API. Plain HTTP is appropriate only for loopback or isolated trusted tests; public use requires a different deployment and security design. Durable databases must not be rolled back or shared by concurrent logical-node processes. Tables and secrets are retained indefinitely, with no production retention or operational recovery policy.
+Balances initially come from mutually consistent test fixtures. Credit and comfort preferences can be edited and synchronized; there is no external transfer, live asset, headroom epoch, currency conversion or account enrollment API. Plain HTTP is appropriate only for loopback or isolated trusted tests; public use requires a different deployment and security design. Durable databases must not be rolled back or shared by concurrent logical-node processes. Tables and secrets are retained indefinitely, with no production retention or operational recovery policy.

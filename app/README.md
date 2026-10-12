@@ -27,7 +27,9 @@ Ctrl-C stops the launcher and its nodes. Restart with the same directory to reta
 
 ## Contacts and comfort zones
 
-The [address book](COMFORT.md) now supports your own credit grant, personal comfort minimum/maximum and a saved assistance preference. Peer settings synchronize directly; the shared range reflects both perspectives. [The simulation](../experiments/COMFORT-SIMULATION.md) evaluates comfort-assisted moves separately. The app still uses manual cancellation-only settlement; the checkbox does not silently enable automatic debt redistribution.
+The [address book](COMFORT.md) now supports your own credit grant, personal comfort minimum/maximum and a saved assistance preference. Peer settings synchronize directly; the shared range reflects both perspectives. [The simulation](../experiments/COMFORT-SIMULATION.md) evaluates comfort-assisted moves separately. The app now supports explicit, manually approved [comfort-assisted hashlock settlement](comfort_protocol.md), including helping through zero-balance links. The checkbox grants assistance eligibility; it does not enable unattended execution.
+
+Try the dedicated example with `python3 app/run_comfort_demo.py --data-dir /tmp/ledgerloops-comfort-settlement`. At Alice select **Move toward shared comfort**, request **2 TEST**, and review/approve at each of the three nodes. This clears Alice–Bob while creating two comfortable helper balances: gross debt rises from 2 to 4 while discomfort falls to zero. See [browser instructions](COMFORT.md#network-comfort-browser-exercise).
 
 ## What hashlocks establish here
 

@@ -18,17 +18,23 @@ Prepared settlements pin their existing terms. Editing a reserved contact is rej
 
 Default personal ranges are zero, automatic adjustment is off, and initial credit grants cover the existing positive fixture balance. New contacts remain a separate onboarding feature; this release edits already configured neighbours.
 
-## What automatic adjustment means in this release
+## Comfort clearing on the test network
 
-The checkbox saves a **preference for the experimental comfort policy**. Actual hashlock v2 settlement remains manually approved cancellation-only. It does not yet restore debt, route through zero-balance credit or act automatically based on these settings. Those operations need versioned bilateral admission and recovery rules before the preference can authorize live testnet adjustments. The interface states this explicitly.
+The clearing screen offers **Reduce existing debt** (the default) and, on nodes advertising the capability, **Move toward shared comfort**. Comfort discovery uses an exact requested amount. It can traverse configured relationships with zero balances and move a balance in either direction, within the bilateral credit and comfort rules. A search can miss a smaller feasible adjustment; no result is an optimality claim.
 
-The [simulation](../experiments/COMFORT-SIMULATION.md) does execute the comfort policy with the same interval model. An edge outside its shared range seeks improvement; an edge inside it can help without becoming uncomfortable. Neutral helping moves and increased exposure require both peers' assistance permissions. Strict improvement at the initiating edge ensures useful movement without a node needing a global objective or roster. Settlement is serialized by the simulator; this does not extend the app's hashlock guarantees.
+The diagram checkbox means **Allow this relationship to help comfort clearing**. The API retains the historical name `auto_adjust`, but this is assistance permission, not automatic execution. Neutral helping moves and increased exposure require the permissions required by the bilateral policy. **Every participating person still explicitly approves the exact proposal.** Saving a preference or starting discovery alone does not settle anything.
+
+Proposal review shows your local before/after balances, each edge’s distance from shared comfort, and the exact pinned local and peer preference revisions. A helping balance can move away from zero without becoming uncomfortable. Total debt can therefore increase while shared discomfort decreases; these are different objectives. Completed operations conserve each participant’s signed net position.
+
+Comfort proposals use a distinct `sha256-comfort-v1` condition. It binds the amount, clearing mode, signed direction, policy, operation ID, protocol, unit and fulfillment. The browser independently verifies this context on released local receipts. A verified local fulfillment is not a claim that all other nodes have completed their writes. Existing hashlock recovery, reservation and honest-peer limitations still apply; this remains a TEST-only prototype.
+
+The [simulation](../experiments/COMFORT-SIMULATION.md) explores the same interval model with automatically selected moves. Its settlement scheduler is separate from the manually approved network implementation. Use it to compare policies, not as proof of network recovery or automatic execution support.
 
 Try the [interactive synthetic example](../experiments/comfort-demo.html): total debt can increase from 2 to 4 while discomfort falls from 2 to zero. Download/open the HTML in a browser, or serve the repository locally to explore it. No real node data is loaded.
 
 ## Validation
 
-[App test evidence](comfort-test-results.json) covers mirrored ranges, clipping, empty intersections, stale/conflicting updates, direct-peer authorization, reservation races, persistence and existing hashlock regressions. The browser flow saves both peers' preferences, verifies the two mirrored shared intervals, exercises disjoint ranges and a lowered credit cap, and checks pointer/keyboard dot editing, unsaved draft preservation through history navigation, phone/desktop layout and offline controls. The three-node browser settlement test also verifies contact-filtered history and downloads its actual local receipt.
+[Preference-only historical evidence](comfort-test-results.json) covers mirrored ranges, clipping, empty intersections, stale/conflicting updates, direct-peer authorization, reservation races, persistence and existing hashlock regressions. The browser flow saves both peers' preferences, verifies the two mirrored shared intervals, exercises disjoint ranges and a lowered credit cap, and checks pointer/keyboard dot editing, unsaved draft preservation through history navigation, phone/desktop layout and offline controls. The three-node browser settlement test also verifies contact-filtered history and downloads its actual local receipt.
 
 ```sh
 python3 app/run_private_demo.py --data-dir /tmp/ledgerloops-comfort-demo --base-port 8961
@@ -39,3 +45,14 @@ APP_DEMO_DIR=/tmp/ledgerloops-comfort-demo APP_BASE_PORT=8961 node app/test_comf
 The integrated-diagram checks also cover independent keyboard access to coincident comfort endpoints and preserving ±1 trillion TEST preferences through reload.
 
 The browser test changes fabricated contact settings; use a fresh demo directory for reproduction. [Contact diagram](screenshots/comfort/contact-diagram.png) · [Phone](screenshots/comfort/mobile.png) · [Desktop](screenshots/comfort/desktop.png) · [Contact history](screenshots/comfort/history-mobile.png).
+
+## Network comfort browser exercise
+
+The dedicated comfort fixture starts with Alice owing Bob 2 TEST and two zero-balance helping relationships. Its configured shared zones allow a manually approved comfort cycle to clear Alice–Bob while creating 2 TEST on each helping relationship. Gross debt rises from 2 to 4; shared discomfort falls from 2 to zero.
+
+```sh
+python3 app/run_comfort_demo.py --data-dir /tmp/ledgerloops-comfort-settlement --base-port 8991
+APP_DEMO_DIR=/tmp/ledgerloops-comfort-settlement APP_BASE_PORT=8991 node app/test_comfort_settlement_browser.cjs
+```
+
+Use a fresh directory. The browser exercise checks the default cancellation selection, explicit comfort discovery, no execution before all three manual approvals, conserved net positions, independently verified context-bound receipts, rejection of a changed direction in receipt data, receipt download and contact-scoped history. See [final integration evidence](comfort-settlement-test-results.json), the [independent protocol review](COMFORT_REVIEW.md), and [network coverage](COMFORT_NETWORK_TESTING.md). [Completed settlement screenshot](screenshots/comfort/settlement.png).

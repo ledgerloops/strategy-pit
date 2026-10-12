@@ -33,3 +33,24 @@ def allows_balance(before, after, own, peer=None):
         return True
     lower = -validate_preferences(peer)['credit_limit'] if peer is not None else 0
     return lower <= after <= own['credit_limit']
+
+
+def discomfort(balance, zone):
+    if zone['empty']:
+        raise ValueError('Empty shared comfort interval')
+    return max(zone['min']-balance, balance-zone['max'], 0)
+
+
+def comfort_move(before, after, own, peer, strict=False):
+    """Explicit bilateral assistance eligibility; never substitutes manual approval."""
+    if peer is None or not allows_balance(before,after,own,peer):
+        return False
+    zone=shared_comfort(own,peer)
+    if zone['empty']:
+        return False
+    old,new=discomfort(before,zone),discomfort(after,zone)
+    if new > old or (strict and new >= old):
+        return False
+    if new == old or abs(after) > abs(before):
+        return own['auto_adjust'] and peer['auto_adjust']
+    return True
