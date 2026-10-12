@@ -6,7 +6,7 @@ Positive means **the peer owes you**. Negative means **you owe the peer**. For e
 
 ## Dots and contact history
 
-Drag the credit-limit and comfort-bound dots along their aligned balance lines. Separate tracks keep coincident dots reachable. Arrow keys adjust by one TEST; the labels and shared-zone preview update immediately. Zoom controls change only the scale, including the full supported range. Select **Save preferences** to persist an edit, or discard it.
+One signed balance diagram combines your editable comfort zone above the axis, the shared zone on the axis, and your peer’s mirrored comfort zone below it. Your credit limit points down from above; your peer’s limit points up from below. The current balance is a dot on the axis. Drag your comfort endpoints or credit-limit arrow; arrow keys adjust by one TEST. Labels and the shared-zone preview update immediately. Your peer’s settings are read-only. Zoom controls change only the scale, including the full supported range. Select **Save preferences** to persist an edit, or discard it.
 
 Select **View history** on a contact to see that relationship's clearing proposals and local receipts, with dates and before/after balances. This filters the latest 100 proposals and latest 100 receipts returned by your node; it is not a complete historical archive or a preference-change journal. Downloaded receipts contain both of your local edges for the operation, as disclosed on the screen.
 
@@ -36,4 +36,6 @@ python3 app/run_private_demo.py --data-dir /tmp/ledgerloops-comfort-demo --base-
 APP_DEMO_DIR=/tmp/ledgerloops-comfort-demo APP_BASE_PORT=8961 node app/test_comfort_browser.cjs
 ```
 
-The browser test changes fabricated contact settings; use a fresh demo directory for reproduction. [Phone](screenshots/comfort/mobile.png) · [Desktop](screenshots/comfort/desktop.png) · [Contact history](screenshots/comfort/history-mobile.png).
+The integrated-diagram checks also cover independent keyboard access to coincident comfort endpoints and preserving ±1 trillion TEST preferences through reload.
+
+The browser test changes fabricated contact settings; use a fresh demo directory for reproduction. [Contact diagram](screenshots/comfort/contact-diagram.png) · [Phone](screenshots/comfort/mobile.png) · [Desktop](screenshots/comfort/desktop.png) · [Contact history](screenshots/comfort/history-mobile.png).
