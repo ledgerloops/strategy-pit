@@ -72,3 +72,7 @@ The first prototype serializes search initiators and settlements in the simulato
 ## Measured outcome
 
 [Headroom results](../../experiments/HEADROOM.md): the idea repairs both tiny greedy traps and improves the tested Numbat postpass from 13.50–13.69% to 14.12–14.68%. Cold-start Headroom performs worse. The postpass still assumes serialized initiators and retained channels at zero; it has not established superiority under the newer temporal channel rule.
+
+## Retained research baseline
+
+[One-unit retention](../../experiments/HEADROOM-ONE-UNIT-RETENTION.md) documents a possible channel-retention preference, its amplified-debt counterexample, and a reproducible static Sarafu MCF reference. It is not implemented in the app. Current product work uses [shared comfort zones](005-shared-comfort-zones.md); the two models optimize different objectives, so the historical Headroom results remain useful comparisons rather than a superseded performance claim.
