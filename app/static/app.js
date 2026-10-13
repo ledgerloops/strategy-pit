@@ -9,6 +9,15 @@
   let state = null, online = false, busy = false, lastSeen = null, refreshing = false;
   let fulfillmentChecks = new Map();
   const contactDrafts = new Map();
+  const contactSaves = new Map();
+  let preferenceGeneration = 0, draggingControl = null, renderPending = false;
+  const preferenceKeys = ["credit_limit","comfort_min","comfort_max","auto_adjust"];
+  const preferenceBody = draft => ({expected_revision:Number(draft.expected_revision), credit_limit:Number(draft.credit_limit), comfort_min:Number(draft.comfort_min), comfort_max:Number(draft.comfort_max), auto_adjust:Boolean(draft.auto_adjust)});
+  const samePreferences = (a,b) => preferenceKeys.every(key => key === "auto_adjust" ? Boolean(a[key]) === Boolean(b[key]) : Number(a[key]) === Number(b[key]));
+  function clearContactSaves() {
+    for (const save of contactSaves.values()) clearTimeout(save.timer);
+    contactSaves.clear(); preferenceGeneration++;
+  }
   let sessionGeneration = 0;
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
   const amount = value => `${BigInt(value).toLocaleString()} TEST`;
@@ -94,6 +103,7 @@
     if (!token || refreshing) return;
     refreshing = true;
     const generation = sessionGeneration;
+    const preferencesAtStart = preferenceGeneration;
     try {
       const next = await api("/api/state");
       if (generation !== sessionGeneration) return;
@@ -102,6 +112,15 @@
       }
       const checks = await verifyFulfillments(next);
       if (generation !== sessionGeneration) return;
+      // A GET started before a preference write must not restore its old revision.
+      if (preferencesAtStart !== preferenceGeneration || Array.from(contactSaves.values()).some(save => save.saving)) return;
+      for (const contact of next.contacts || []) {
+        const draft = contactDrafts.get(contact.peer), save = contactSaves.get(contact.peer);
+        if (draft && save?.uncertain && contact.own.revision > Number(draft.expected_revision) && samePreferences(contact.own,draft)) {
+          contactDrafts.delete(contact.peer);
+          contactSaves.set(contact.peer,{status:"Saved locally; preferences queued for your peer."});
+        }
+      }
       const changed = JSON.stringify(next) !== JSON.stringify(state);
       const wasOffline = !online;
       state = next; fulfillmentChecks = checks; online = true; lastSeen = new Date();
@@ -112,7 +131,8 @@
       if (generation !== sessionGeneration) return;
       online = false;
       if (error.status === 401 || error.status === 403) {
-        token = ""; state = null; contactDrafts.clear();
+        sessionGeneration++; draggingControl = null;
+        token = ""; state = null; contactDrafts.clear(); clearContactSaves();
         try { sessionStorage.removeItem("ledgerloops.testnet.token"); } catch (_) {}
       }
       render();
@@ -150,13 +170,13 @@
     const x = value => 500 + Number(value) / radius * 500;
     const overlap = peer && lower <= upper;
     const ownMin = x(values.comfort_min), ownMax = x(values.comfort_max), limit = x(values.credit_limit);
-    return `<div class="diagram-drawing" aria-hidden="true"><svg viewBox="0 0 1000 300" preserveAspectRatio="none"><line class="zero-guide" x1="500" y1="5" x2="500" y2="292"/><line class="balance-line" x1="0" y1="160" x2="1000" y2="160"/><rect class="own-comfort-band" x="${ownMin}" y="65" width="${Math.max(2,ownMax-ownMin)}" height="14"/><line class="own-connector" x1="${ownMin}" y1="48" x2="${ownMin}" y2="72"/><line class="own-connector" x1="${ownMax}" y1="72" x2="${ownMax}" y2="96"/><line class="own-limit-line" x1="${limit}" y1="20" x2="${limit}" y2="148"/><path class="own-limit-arrow" d="M ${limit-10} 138 L ${limit} 151 L ${limit+10} 138 Z"/>${overlap ? `<rect class="shared-comfort-band" x="${x(lower)}" y="150" width="${Math.max(2,x(upper)-x(lower))}" height="20"/>` : ""}${peer ? `<rect class="peer-comfort-band" x="${x(-peer.comfort_max)}" y="221" width="${Math.max(2,x(-peer.comfort_min)-x(-peer.comfort_max))}" height="14"/><line class="peer-limit-line" x1="${x(-peer.credit_limit)}" y1="280" x2="${x(-peer.credit_limit)}" y2="176"/><path class="peer-limit-arrow" d="M ${x(-peer.credit_limit)-10} 185 L ${x(-peer.credit_limit)} 172 L ${x(-peer.credit_limit)+10} 185 Z"/>` : ""}</svg><span class="diagram-current" style="left:${x(contact.balance)/10}%" title="Current balance"></span></div><div class="axis-labels"><span>−${esc(amount(radius))}</span><span>0</span><span>+${esc(amount(radius))}</span></div><p class="comfort-preview">Shared comfort preview: ${!peer ? "waiting for peer preferences" : !overlap ? "No shared comfort zone" : `${esc(balanceText(lower))} → ${esc(balanceText(upper))}`}. Unsaved until you select Save.</p>`;
+    return `<div class="diagram-drawing" aria-hidden="true"><svg viewBox="0 0 1000 300" preserveAspectRatio="none"><line class="zero-guide" x1="500" y1="5" x2="500" y2="292"/><line class="balance-line" x1="0" y1="160" x2="1000" y2="160"/><rect class="own-comfort-band" x="${ownMin}" y="65" width="${Math.max(2,ownMax-ownMin)}" height="14"/><line class="own-connector" x1="${ownMin}" y1="48" x2="${ownMin}" y2="72"/><line class="own-connector" x1="${ownMax}" y1="72" x2="${ownMax}" y2="96"/><line class="own-limit-line" x1="${limit}" y1="20" x2="${limit}" y2="148"/><path class="own-limit-arrow" d="M ${limit-10} 138 L ${limit} 151 L ${limit+10} 138 Z"/>${overlap ? `<rect class="shared-comfort-band" x="${x(lower)}" y="150" width="${Math.max(2,x(upper)-x(lower))}" height="20"/>` : ""}${peer ? `<rect class="peer-comfort-band" x="${x(-peer.comfort_max)}" y="221" width="${Math.max(2,x(-peer.comfort_min)-x(-peer.comfort_max))}" height="14"/><line class="peer-limit-line" x1="${x(-peer.credit_limit)}" y1="280" x2="${x(-peer.credit_limit)}" y2="176"/><path class="peer-limit-arrow" d="M ${x(-peer.credit_limit)-10} 185 L ${x(-peer.credit_limit)} 172 L ${x(-peer.credit_limit)+10} 185 Z"/>` : ""}</svg><span class="diagram-current" style="left:${x(contact.balance)/10}%" title="Current balance"></span></div><div class="axis-labels"><span>−${esc(amount(radius))}</span><span>0</span><span>+${esc(amount(radius))}</span></div><p class="comfort-preview">Shared comfort preview: ${!peer ? "waiting for peer preferences" : !overlap ? "No shared comfort zone" : `${esc(balanceText(lower))} → ${esc(balanceText(upper))}`}. Changes save when you release a control.</p>`;
   }
   function contactSliders(contact, values, index, locked) {
     const radius = contactRadius(contact,values);
     const control = locked ? "disabled" : "";
     const labels = {credit_limit:"Your maximum",comfort_min:"Your comfort minimum",comfort_max:"Your comfort maximum"};
-    return `<div class="preference-axis integrated" data-radius="${radius}"><div class="diagram-key"><span class="own-key">Your comfort · drag the two upper dots</span><span class="shared-key">Shared zone · middle axis</span><span class="peer-key">Peer comfort · read-only below</span></div><div class="integrated-diagram"><div data-comfort-preview>${comfortPreview(contact,values,radius)}</div>${Object.entries(labels).map(([key,label]) => `<input class="diagram-control ${key}" id="contact-${index}-${key}" name="${key}" type="range" min="${key === "credit_limit" ? 0 : -radius}" max="${radius}" step="1" value="${esc(values[key])}" aria-label="${label}" aria-valuetext="${esc(key === "credit_limit" ? amount(values[key]) : balanceText(values[key]))}" ${control}>`).join("")}</div><div class="diagram-values">${Object.entries(labels).map(([key,label]) => `<label for="contact-${index}-${key}">${label}: <output data-value="${key}">${esc(key === "credit_limit" ? amount(values[key]) : balanceText(values[key]))}</output></label>`).join("")}<p>● Current: ${esc(balanceText(contact.balance))}</p><p>↑ Peer’s maximum: ${contact.peer_preferences ? esc(amount(contact.peer_preferences.credit_limit)) : "not received"}</p></div><div class="axis-actions"><button type="button" class="secondary" data-scale="wider" ${radius >= preferenceBound ? "disabled" : ""}>Zoom out ×10</button><button type="button" class="secondary" data-scale="fit">Fit balances and preferences</button><button type="button" class="secondary" data-scale="full">Show full range</button></div><p class="subtle">Upper dots edit your comfort band; the downward arrow edits how much your peer may owe you. The upward arrow is your peer’s limit for you. All use the same signed scale. Tab between controls and use arrow keys for 1 TEST steps. Your comfort handles are offset vertically so coincident endpoints remain reachable.</p></div>`;
+    return `<div class="preference-axis integrated" data-radius="${radius}"><div class="diagram-key"><span class="own-key">Your comfort · drag the two upper dots</span><span class="shared-key">Shared zone · middle axis</span><span class="peer-key">Peer comfort · read-only below</span></div><div class="integrated-diagram"><div data-comfort-preview>${comfortPreview(contact,values,radius)}</div>${Object.entries(labels).map(([key,label]) => `<input class="diagram-control ${key}" id="contact-${index}-${key}" name="${key}" type="range" min="${key === "credit_limit" ? 0 : -radius}" max="${radius}" step="1" value="${esc(values[key])}" aria-label="${label}" aria-valuetext="${esc(key === "credit_limit" ? amount(values[key]) : balanceText(values[key]))}" ${control}>`).join("")}</div><div class="diagram-values">${Object.entries(labels).map(([key,label]) => `<label for="contact-${index}-${key}">${label}: <output data-value="${key}">${esc(key === "credit_limit" ? amount(values[key]) : balanceText(values[key]))}</output></label>`).join("")}<p>● Current: ${esc(balanceText(contact.balance))}</p><p>↑ Peer’s maximum: ${contact.peer_preferences ? esc(amount(contact.peer_preferences.credit_limit)) : "not received"}</p></div><div class="axis-actions"><button type="button" class="secondary" data-scale="wider" ${radius >= preferenceBound ? "disabled" : ""}>Zoom out ×10</button><button type="button" class="secondary" data-scale="fit">Fit balances and preferences</button><button type="button" class="secondary" data-scale="full">Show full range</button></div><p class="subtle">Upper dots edit your comfort band; the downward arrow edits how much your peer may owe you. The upward arrow is your peer’s limit for you. All use the same signed scale. Tab between controls and use arrow keys for 1 TEST steps. Extending comfort past your maximum moves the maximum with it; lowering your maximum pulls the comfort band back. Changes save when you release a control. Your comfort handles are offset vertically so coincident endpoints remain reachable.</p></div>`;
   }
   function contactHistory(peer) {
     const contact = state.contacts?.find(c => c.peer === peer) || state.balances.find(c => c.peer === peer);
@@ -173,20 +193,30 @@
 
   function contactCard(contact, index) {
     const own = contact.own;
-    const draft = contactDrafts.get(contact.peer);
+    let draft = contactDrafts.get(contact.peer);
+    // Older clients/API users could store a personal zone beyond their own grant.
+    // Fit only the editable draft; viewing a contact must not change its credit.
+    if (!draft && own.comfort_max > own.credit_limit) {
+      draft = {...own,expected_revision:own.revision,comfort_max:own.credit_limit,comfort_min:Math.min(own.comfort_min,own.credit_limit)};
+      contactDrafts.set(contact.peer,draft);
+      contactSaves.set(contact.peer,{status:"Your saved zone exceeds your maximum. The editable band is fitted to it; adjust a control to save it."});
+    }
     const values = draft || own;
+    const save = contactSaves.get(contact.peer);
     const stale = draft && Number(draft.expected_revision) !== own.revision;
-    const locked = !online || busy || Boolean(contact.reserved_by) || stale;
+    const locked = !online || busy || Boolean(contact.reserved_by) || stale || Boolean(save?.saving);
     const peer = contact.peer_preferences;
     const shared = contact.shared_comfort;
     const outside = contact.balance > contact.hard_max || (contact.hard_min !== null && contact.balance < contact.hard_min);
     const control = locked ? "disabled" : "";
     const endpoint = value => value === 0 ? "Neither owes (0 TEST)" : balanceText(value);
     const signedRange = (min, max) => `${endpoint(min)} → ${endpoint(max)}`;
-    return `<article class="card contact"><h2>${esc(contact.peer)}</h2><a href="#history/${encodeURIComponent(contact.peer)}">View history with ${esc(contact.peer)}</a><p class="big">${esc(balanceText(contact.balance))}</p>${contact.reserved_by ? "<p class=\"tag\">Pending clearing · preferences locked until outcome</p>" : ""}<p class="subtle">Negative: you owe this peer. Positive: this peer owes you. Zero: neither owes the other.</p><details class="contact-detail-summary"><summary>Saved limits and comfort details</summary><dl class="contact-summary"><dt>Your credit limit for this peer</dt><dd>${esc(amount(own.credit_limit))}</dd><dt>Peer’s credit limit for you</dt><dd>${peer ? esc(amount(peer.credit_limit)) : "Not received yet"}</dd><dt>Current permitted balance range</dt><dd>${contact.hard_min === null ? "Waiting for peer preferences" : esc(signedRange(contact.hard_min, contact.hard_max))}</dd><dt>Peer’s comfort range, from your viewpoint</dt><dd>${peer ? esc(signedRange(-peer.comfort_max, -peer.comfort_min)) : "Not received yet"}</dd><dt>Shared comfort zone · latest received preferences</dt><dd>${!shared ? "Waiting for peer preferences" : shared.empty ? "No shared comfort zone — your ranges do not overlap within the limits." : esc(signedRange(shared.min, shared.max))}</dd></dl></details>${outside ? "<aside>The current balance is outside the newly configured credit limits. Existing debt remains; saving a lower limit does not erase it.</aside>" : ""}<form data-contact="${esc(contact.peer)}" data-revision="${esc(draft?.expected_revision ?? own.revision)}"><h3>Your preferences</h3>${contactSliders(contact,values,index,locked)}<p class="subtle">For example, −5 to 2 means you are comfortable owing up to 5, or being owed up to 2. Your peer independently sets their own limit and comfort range.</p><label class="consent"><input name="auto_adjust" type="checkbox" ${values.auto_adjust ? "checked" : ""} ${control}> Allow this relationship to help comfort clearing</label><p class="subtle">This records your permission for neutral helping moves or increased exposure allowed by the comfort policy. Both peers must allow assistance, and each testnet proposal still requires your manual approval. It does not enable automatic execution.</p>${stale ? "<p role=\"alert\">Preferences changed since you began editing. Reload this contact before saving.</p>" : ""}<button type="submit" ${control}>Save preferences for ${esc(contact.peer)}</button>${draft ? `<button type="button" class="secondary" data-reset-contact="${esc(contact.peer)}">Discard unsaved edits</button>` : ""}<p class="subtle">Revision ${esc(own.revision)}. Saving shares your preferences with this direct peer; it does not change balances.</p></form></article>`;
+    return `<article class="card contact"><h2>${esc(contact.peer)}</h2><a href="#history/${encodeURIComponent(contact.peer)}">View history with ${esc(contact.peer)}</a><p class="big">${esc(balanceText(contact.balance))}</p>${contact.reserved_by ? "<p class=\"tag\">Pending clearing · preferences locked until outcome</p>" : ""}<p class="subtle">Negative: you owe this peer. Positive: this peer owes you. Zero: neither owes the other.</p><details class="contact-detail-summary"><summary>Saved limits and comfort details</summary><dl class="contact-summary"><dt>Your credit limit for this peer</dt><dd>${esc(amount(own.credit_limit))}</dd><dt>Peer’s credit limit for you</dt><dd>${peer ? esc(amount(peer.credit_limit)) : "Not received yet"}</dd><dt>Current permitted balance range</dt><dd>${contact.hard_min === null ? "Waiting for peer preferences" : esc(signedRange(contact.hard_min, contact.hard_max))}</dd><dt>Peer’s comfort range, from your viewpoint</dt><dd>${peer ? esc(signedRange(-peer.comfort_max, -peer.comfort_min)) : "Not received yet"}</dd><dt>Shared comfort zone · latest received preferences</dt><dd>${!shared ? "Waiting for peer preferences" : shared.empty ? "No shared comfort zone — your ranges do not overlap within the limits." : esc(signedRange(shared.min, shared.max))}</dd></dl></details>${outside ? "<aside>The current balance is outside the newly configured credit limits. Existing debt remains; saving a lower limit does not erase it.</aside>" : ""}<form data-contact="${esc(contact.peer)}" data-revision="${esc(draft?.expected_revision ?? own.revision)}"><h3>Your preferences</h3>${contactSliders(contact,values,index,locked)}<p class="subtle">For example, −5 to 2 means you are comfortable owing up to 5, or being owed up to 2. Your peer independently sets their own limit and comfort range.</p><label class="consent"><input name="auto_adjust" type="checkbox" ${values.auto_adjust ? "checked" : ""} ${control}> Allow this relationship to help comfort clearing</label><p class="subtle">This records your permission for neutral helping moves or increased exposure allowed by the comfort policy. Both peers must allow assistance, and each testnet proposal still requires your manual approval. It does not enable automatic execution.</p>${stale ? "<p role=\"alert\">Preferences changed since you began editing. Reload this contact before saving.</p>" : ""}<p class="subtle" data-contact-save role="status">${esc(save?.status || "Preferences save automatically when you release a control.")}</p>${save?.error && !stale ? `<button type="button" class="secondary" data-retry-contact="${esc(contact.peer)}" ${control}>Retry automatic save</button>` : ""}${draft && !save?.saving ? `<button type="button" class="secondary" data-reset-contact="${esc(contact.peer)}">Discard unsaved edits</button>` : ""}<p class="subtle">Revision ${esc(own.revision)}. Automatic saving shares your preferences with this direct peer; it does not change balances.</p></form></article>`;
   }
 
   function render() {
+    if (draggingControl && online && state) { renderPending = true; updateConnection(); return; }
+    renderPending = false;
     const focused = document.activeElement;
     const editingContact = focused?.closest("form[data-contact]")?.dataset.contact;
     const editingField = focused?.name;
@@ -241,6 +271,76 @@
     } finally { busy = false; render(); }
   }
 
+  function scheduleContactSave(peer) {
+    const previous = contactSaves.get(peer);
+    clearTimeout(previous?.timer);
+    if (previous?.saving || !contactDrafts.has(peer)) return;
+    const save = {status:"Waiting to save…"};
+    save.timer = setTimeout(() => saveContact(peer),300);
+    contactSaves.set(peer,save);
+  }
+
+  async function saveContact(peer) {
+    const draft = contactDrafts.get(peer), contact = state?.contacts?.find(c => c.peer === peer);
+    if (!draft || !contact || contactSaves.get(peer)?.saving) return;
+    const body = preferenceBody(draft);
+    if (!online || busy || contact.reserved_by || body.expected_revision !== contact.own.revision) {
+      contactSaves.set(peer,{error:true,status:!online ? "Not saved: reconnect to your node, then retry." : "Not saved: this contact changed or is locked. Refresh or discard these edits before retrying."});
+      render(); return;
+    }
+    if (![body.credit_limit,body.comfort_min,body.comfort_max].every(value => Number.isSafeInteger(value) && Math.abs(value) <= preferenceBound) || body.credit_limit < 0 || body.comfort_min > body.comfort_max || body.comfort_max > body.credit_limit) {
+      contactSaves.set(peer,{error:true,status:"Not saved: keep whole TEST values within the maximum and the supported range."});
+      render(); return;
+    }
+    if (samePreferences(body,contact.own)) {
+      contactDrafts.delete(peer); contactSaves.set(peer,{status:"Saved locally; preferences queued for your peer."}); render(); return;
+    }
+    const generation = sessionGeneration;
+    const focused = document.activeElement;
+    const editingField = focused?.closest("form[data-contact]")?.dataset.contact === peer ? focused.name : null;
+    const save = {saving:true,status:"Saving preferences…"};
+    contactSaves.set(peer,save); preferenceGeneration++; render();
+    try {
+      const result = await api(`/api/contacts/${encodeURIComponent(peer)}/preferences`,body);
+      if (generation !== sessionGeneration) return;
+      const index = state.contacts.findIndex(c => c.peer === peer);
+      state.contacts[index] = result.contact;
+      contactDrafts.delete(peer);
+      contactSaves.set(peer,{status:"Saved locally; preferences queued for your peer."});
+    } catch (error) {
+      if (generation !== sessionGeneration) return;
+      const uncertain = !error.status || error.status >= 500;
+      contactSaves.set(peer,{error:true,uncertain,status:uncertain ? "Save not confirmed. Reconnect and refresh before retrying; your edits are retained." : `Not saved: ${error.message}. Your edits are retained.`});
+      if (uncertain) online = false;
+    } finally {
+      if (generation === sessionGeneration) {
+        preferenceGeneration++; render();
+        if (editingField && page() === "peers" && document.activeElement === document.body) {
+          const form = Array.from(screen.querySelectorAll("form[data-contact]")).find(f => f.dataset.contact === peer);
+          const field = form?.elements.namedItem(editingField);
+          if (field && !field.disabled && !draggingControl) field.focus({preventScroll:true});
+        }
+      }
+    }
+  }
+
+  document.addEventListener("pointerdown", event => {
+    if (event.target.matches('form[data-contact] input[type="range"]') && !event.target.disabled) {
+      draggingControl = event.target;
+      clearTimeout(contactSaves.get(event.target.closest("form").dataset.contact)?.timer);
+    }
+  });
+  for (const name of ["pointerup","pointercancel"]) document.addEventListener(name, () => {
+    if (!draggingControl) return;
+    draggingControl = null;
+    // Native range change fires after pointerup. Keep its target until then.
+    setTimeout(() => { if (renderPending) render(); },0);
+  });
+  document.addEventListener("change", event => {
+    const form = event.target.closest("form[data-contact]");
+    if (form && preferenceKeys.includes(event.target.name)) scheduleContactSave(form.dataset.contact);
+  });
+
   document.addEventListener("submit", async event => {
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
@@ -253,17 +353,7 @@
       await refresh();
       return;
     }
-    if (form.dataset.contact) {
-      const values = new FormData(form);
-      const body = {expected_revision:Number(form.dataset.revision), credit_limit:Number(values.get("credit_limit")), comfort_min:Number(values.get("comfort_min")), comfort_max:Number(values.get("comfort_max")), auto_adjust:values.has("auto_adjust")};
-      if (![body.credit_limit,body.comfort_min,body.comfort_max].every(value => Number.isSafeInteger(value) && Math.abs(value) <= 1000000000000) || body.credit_limit < 0 || body.comfort_min > body.comfort_max) {
-        announce("Use whole TEST units within ±1,000,000,000,000, a nonnegative credit limit, and a minimum no greater than the maximum.", true); return;
-      }
-      const peer = form.dataset.contact;
-      const saved = await mutate(`/api/contacts/${encodeURIComponent(peer)}/preferences`, body, () => "Preferences saved locally and queued for this peer. Balances are unchanged; every testnet clearing proposal still requires manual approval.");
-      if (saved) { contactDrafts.delete(peer); render(); }
-      return;
-    }
+    if (form.dataset.contact) { scheduleContactSave(form.dataset.contact); return; }
     if (form.id === "discover") {
       const value = Number(new FormData(form).get("amount"));
       if (!Number.isSafeInteger(value) || value <= 0 || value > 1000000000) {
@@ -281,8 +371,17 @@
     if (event.target.name === "mode" && event.target.closest("#discover")) { searchMode=event.target.value; return; }
     const form = event.target.closest("form[data-contact]");
     if (!form) return;
-    if (event.target.name === "comfort_min") event.target.value = Math.min(Number(event.target.value),Number(form.elements.comfort_max.value));
+    const save = contactSaves.get(form.dataset.contact);
+    if (save?.saving || event.target.disabled) return;
+    clearTimeout(save?.timer);
+    const limit = form.elements.credit_limit, minimum = form.elements.comfort_min, maximum = form.elements.comfort_max;
+    if (event.target.name === "credit_limit") {
+      maximum.value = Math.min(Number(maximum.value),Number(limit.value));
+      minimum.value = Math.min(Number(minimum.value),Number(maximum.value));
+    }
+    if (event.target.name === "comfort_min") event.target.value = Math.min(Number(event.target.value),Number(maximum.value));
     if (event.target.name === "comfort_max") event.target.value = Math.max(Number(event.target.value),Number(form.elements.comfort_min.value));
+    if (event.target.name === "comfort_max") limit.value = Math.max(Number(limit.value),Number(maximum.value));
     const values = new FormData(form);
     const draft = {expected_revision: Number(form.dataset.revision), credit_limit: values.get("credit_limit"), comfort_min: values.get("comfort_min"), comfort_max: values.get("comfort_max"), auto_adjust: values.has("auto_adjust")};
     contactDrafts.set(form.dataset.contact,draft);
@@ -293,11 +392,8 @@
     }
     const contact = state.contacts.find(c => c.peer === form.dataset.contact);
     form.querySelector("[data-comfort-preview]").innerHTML = comfortPreview(contact,draft,Number(form.querySelector("[data-radius]").dataset.radius));
-    if (!form.querySelector("[data-reset-contact]")) {
-      const discard = document.createElement("button"); discard.type="button"; discard.className="secondary";
-      discard.dataset.resetContact=form.dataset.contact; discard.textContent="Discard unsaved edits";
-      form.querySelector('button[type="submit"]').after(discard);
-    }
+    contactSaves.set(form.dataset.contact,{status:"Release the control to save your changes."});
+    form.querySelector("[data-contact-save]").textContent = "Release the control to save your changes.";
   });
 
   document.addEventListener("click", async event => {
@@ -311,9 +407,13 @@
       else contactScales.set(contact.peer,button.dataset.scale === "full" ? preferenceBound : Math.min(preferenceBound,current*10));
       render();
     } else if (button.dataset.resetContact) {
+      clearTimeout(contactSaves.get(button.dataset.resetContact)?.timer); contactSaves.delete(button.dataset.resetContact);
       contactDrafts.delete(button.dataset.resetContact); render(); announce("Unsaved edits discarded; showing the latest preferences received from your node.");
+    } else if (button.dataset.retryContact) {
+      await refresh(true);
+      scheduleContactSave(button.dataset.retryContact);
     } else if (button.dataset.action === "disconnect") {
-      searchMode="cancellation"; contactDrafts.clear(); sessionGeneration++; token = ""; state = null; online = false; lastSeen = null;
+      searchMode="cancellation"; contactDrafts.clear(); clearContactSaves(); draggingControl=null; sessionGeneration++; token = ""; state = null; online = false; lastSeen = null;
       try { sessionStorage.removeItem("ledgerloops.testnet.token"); } catch (_) {}
       render(); announce("Browser disconnected. The node continues any pending settlement work.");
     } else if (button.dataset.action === "refresh") await refresh(true);
