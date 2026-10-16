@@ -25,6 +25,12 @@ The example clears Alice→Bob 7, Bob→Doris 3, Doris→Alice 5 to **4 / 0 / 2*
 
 Ctrl-C stops the launcher and its nodes. Restart with the same directory to retain state. A fresh directory creates an entirely separate test network. Never delete pending state or restore an old database to free reserved balances.
 
+## Authentication and restarts
+
+Reuse the same `--data-dir` and browser address when updating or restarting a demo. Existing JSON configs retain their client tokens and peer keys; launching a fresh data directory creates a different test network with different credentials. Keep configs and databases together. The browser stores its token per tab and origin, so closing the tab or changing between `localhost`, `127.0.0.1` or ports can require entering the same token again.
+
+If the UI reports a rejected token, use the `token` field from the matching node JSON config in the data directory printed by the running launcher. Alice, Bob and Doris have different tokens. The connection flow ignores delayed authentication responses from an earlier login attempt, so an old rejection cannot clear a newly entered valid token. No token rotation is needed to recover from an incorrect cached credential.
+
 ## Contacts and comfort zones
 
 The [address book](COMFORT.md) now supports your own credit grant, personal comfort minimum/maximum and a saved assistance preference. Peer settings synchronize directly; the shared range reflects both perspectives. [The simulation](../experiments/COMFORT-SIMULATION.md) evaluates comfort-assisted moves separately. The app now supports explicit, manually approved [comfort-assisted hashlock settlement](comfort_protocol.md), including helping through zero-balance links. The checkbox grants assistance eligibility; it does not enable unattended execution.

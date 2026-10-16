@@ -8,6 +8,10 @@ Do not confuse this instruction with an ability to restart an inactive assistant
 
 Read [the research queue](docs/research-queue.md) when resuming. Check the actual repository state and saved result completion markers before rerunning work. Preserve existing user changes and agents' work. Use the existing checkout; do not create a Git worktree unless explicitly requested.
 
+## Preserve demo credentials and user state
+
+Keep the user's existing data directory, node JSON configs, tokens, peer keys and databases across normal updates and restarts. Do not switch their running demo to a freshly seeded fixture as part of delivering a feature. Keep the same browser origin and port when practical, since browser token storage is scoped to that origin. Isolated automated tests may create their own fixtures; never run mutating browser tests against the user's demo data. Do not print credentials in logs or chat.
+
 ## What counts as node-local
 
 Each participant decides using its own balances, limits, reservations, protocol state, and direct-neighbour messages. No routing or acceptance decision may inspect a global credit graph, another node's object, a simulator-wide counter, or an MCF answer. Global access is permitted for test generation, event delivery, audits and offline scoring. Label simulator-provided serialization and centrally generated starting ledgers explicitly; they do not establish a concurrent decentralized protocol.

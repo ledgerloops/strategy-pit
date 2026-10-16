@@ -6,7 +6,7 @@
   const connection = document.querySelector("#connection");
   let token = "";
   try { token = sessionStorage.getItem("ledgerloops.testnet.token") || ""; } catch (_) { /* Storage can be disabled. */ }
-  let state = null, online = false, busy = false, lastSeen = null, refreshing = false;
+  let state = null, online = false, busy = false, lastSeen = null, refreshing = null;
   let fulfillmentChecks = new Map();
   const contactDrafts = new Map();
   const contactSaves = new Map();
@@ -117,9 +117,9 @@
   }
 
   async function refresh(manual = false) {
-    if (!token || refreshing) return;
-    refreshing = true;
     const generation = sessionGeneration;
+    if (!token || refreshing === generation) return;
+    refreshing = generation;
     const preferencesAtStart = preferenceGeneration;
     try {
       const next = await api("/api/state");
@@ -158,8 +158,10 @@
         try { sessionStorage.removeItem("ledgerloops.testnet.token"); } catch (_) {}
       }
       render();
-      announce(error.name === "AbortError" ? "Your node did not respond. Outcomes may be uncertain; reconnect and refresh." : error.message, true);
-    } finally { refreshing = false; }
+      announce(error.status === 401 || error.status === 403
+        ? `Token rejected by this node (${location.origin}). Use the token from this node’s JSON config in the data directory of the running demo, then reconnect. Restarting with the same directory keeps that token.`
+        : error.name === "AbortError" ? "Your node did not respond. Outcomes may be uncertain; reconnect and refresh." : error.message, true);
+    } finally { if (refreshing === generation) refreshing = null; }
   }
 
   function changesTable(changes) {
@@ -437,8 +439,14 @@
     event.preventDefault();
     if (form.id === "connect") {
       if (busy) return;
-      token = new FormData(form).get("token").trim();
-      if (!token) return;
+      const nextToken = new FormData(form).get("token").trim();
+      if (!nextToken) return;
+      if (nextToken !== token) {
+        contactDrafts.clear(); clearContactSaves(); rememberPendingObligation(null);
+        obligationDraft = {peer:"",direction:"i_owe",amount:"",description:"",consent:false};
+      }
+      // A response sent with a previous credential cannot replace this attempt.
+      sessionGeneration++; token = nextToken;
       try { sessionStorage.setItem("ledgerloops.testnet.token", token); } catch (_) {}
       await refresh();
       return;
