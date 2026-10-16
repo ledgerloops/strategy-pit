@@ -10,7 +10,7 @@ One signed balance diagram combines your editable comfort zone above the axis, t
 
 Preferences save automatically after you release a dragged control or pause keyboard adjustments. The assistance checkbox also saves automatically. The status below the diagram reports saving, local success, or an error; success means local persistence and queued delivery to your peer, not confirmed peer delivery. A failed save retains your edits for retry or discard. There is no Save button. Older saved zones outside your own maximum are fitted in the editable draft; simply opening the contact does not change saved preferences.
 
-Select **View history** on a contact to see that relationship's clearing proposals and local receipts, with dates and before/after balances. This filters the latest 100 proposals and latest 100 receipts returned by your node; it is not a complete historical archive or a preference-change journal. Downloaded receipts contain both of your local edges for the operation, as disclosed on the screen.
+Select **View history** on a contact to see that relationship's obligation proposals, clearing proposals and local receipts, with dates and before/after balances. This includes unresolved obligations and up to 100 recent completed obligations, 100 clearing proposals and 100 receipts returned by your node; it is not a complete historical archive or a preference-change journal. New bilateral TEST obligations can be entered in [Obligations](OBLIGATIONS.md) and must be approved by the other peer. Downloaded receipts contain both of your local edges for the operation, as disclosed on the screen.
 
 ## Save and synchronize
 

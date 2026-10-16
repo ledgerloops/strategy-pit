@@ -31,6 +31,18 @@ The [address book](COMFORT.md) now supports your own credit grant, personal comf
 
 Try the dedicated example with `python3 app/run_comfort_demo.py --data-dir /tmp/ledgerloops-comfort-settlement`. At Alice select **Move toward shared comfort**, request **2 TEST**, and review/approve at each of the three nodes. This clears Alice–Bob while creating two comfortable helper balances: gross debt rises from 2 to 4 while discomfort falls to zero. See [browser instructions](COMFORT.md#network-comfort-browser-exercise).
 
+## Enter new obligations
+
+Open **06 / Obligations** to propose a TEST obligation to a direct peer, review and approve incoming proposals, and list pending/completed/declined entries. Both people must agree before balances change. Obligations appear in Activity and contact history alongside clearing receipts. Proposing reserves the relationship until its outcome is known; there is no proposer withdrawal yet.
+
+For a fresh zero-balance demo with 10 TEST credit grants:
+
+```sh
+python3 app/run_obligations_demo.py --data-dir /tmp/ledgerloops-obligations-demo --base-port 8991
+```
+
+Enter Alice→Bob, Bob→Doris and Doris→Alice obligations of 3 TEST, obtain each counterparty's approval, then clear 3 TEST through the existing clearing flow. See [obligation instructions, API and recovery limits](OBLIGATIONS.md).
+
 ## What hashlocks establish here
 
 Each approval binds a locally stored quote and condition. The origin releases a fresh cryptographically random secret only after readiness has traversed consenting nodes. Every node checks its own consent, reservations and the context-bound secret before applying its own changes. Decisions and forwarding work persist atomically, so retries and crashes do not apply a fulfillment twice.
@@ -43,7 +55,7 @@ Read the exact [private protocol](private_protocol.md), [validation scope](PRIVA
 
 This is **TEST units only**, with honest peers, retained databases and eventual network recovery. There are no timelocks or unsafe timeout unlocks. An unavailable origin or peer can leave capacity reserved indefinitely. Decline produces an evidenced abort before release; after conditional consent, the participant must await the outcome. Local application can occur at different times across peers.
 
-Only preconfigured, mutually consistent fixture balances are supported. Account enrollment, new bilateral transactions, live assets, public identity/key management, TLS deployment, stale-backup recovery, bounded retention and hostile-peer protection remain product work. Plain HTTP and bearer credentials are for loopback/isolated development only. Localhost URLs refer to the machine running the nodes; no public SaaS has been deployed.
+Only preconfigured direct neighbours are supported. Private v2 nodes can now propose and approve new bilateral TEST obligations within synchronized credit grants. Account enrollment, live assets, public identity/key management, TLS deployment, stale-backup recovery, bounded retention and hostile-peer protection remain product work. Plain HTTP and bearer credentials are for loopback/isolated development only. Localhost URLs refer to the machine running the nodes; no public SaaS has been deployed.
 
 ## Versions and tests
 

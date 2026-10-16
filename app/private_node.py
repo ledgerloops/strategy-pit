@@ -11,6 +11,7 @@ from pathlib import Path
 from http.server import ThreadingHTTPServer
 from node import Node as TransportNode, make_handler, MAX_AMOUNT
 from comfort import validate_preferences, shared_comfort, allows_balance, discomfort, comfort_move
+from obligations import Obligations
 
 PROTOCOL = 'private-hashlock-v2'
 HASHLOCK_SCHEME = 'sha256-context-v2'
@@ -38,7 +39,7 @@ def hash_comfort_condition(ident, amount, preimage, direction):
     return hashlib.sha256(json.dumps(context,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode('ascii')).hexdigest()
 
 
-class Node:
+class Node(Obligations):
     def __init__(self, config, database):
         if config.get('mode') != 'testnet':
             raise ValueError('Only explicit mode=testnet is supported')
@@ -68,6 +69,7 @@ class Node:
         CREATE TABLE IF NOT EXISTS contacts(peer TEXT PRIMARY KEY, own TEXT NOT NULL, peer_preferences TEXT);
         CREATE TABLE IF NOT EXISTS receipts(id TEXT PRIMARY KEY,data TEXT NOT NULL);
         ''')
+        self.initialize_obligations()
         with self.db:
             identity = self.db.execute("SELECT v FROM meta WHERE k='node'").fetchone()
             if identity and identity[0] != self.name:
@@ -107,7 +109,7 @@ class Node:
                     proposals.append(dict(data, status=row['status'], approved=bool(row['approved'])))
             return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),contacts=self.contacts(),discovery_modes=['cancellation','comfort'],
                         balances=[dict(r) for r in self.db.execute('SELECT b.*,r.proposal AS reserved_by FROM balances b LEFT JOIN reservations r USING(peer) ORDER BY peer')],
-                        proposals=proposals, receipts=self.receipts(),
+                        proposals=proposals, receipts=self.receipts(), obligation_capable=True, obligations=self.obligations(),
                         searches=[dict(r) for r in self.db.execute('SELECT * FROM searches ORDER BY rowid DESC LIMIT 100')],
                         outbox_pending=self.db.execute('SELECT count(*) FROM outbox').fetchone()[0])
 
@@ -381,6 +383,8 @@ class Node:
     def receive(self,sender,data):
         if sender not in self.peers:
             raise ValueError('Unknown sender')
+        if isinstance(data.get('kind'),str) and data['kind'].startswith('obligation_'):
+            return self.receive_obligation(sender,data)
         if data.get('kind') == 'preferences':
             return self.receive_preferences(sender,data)
         allowed={'kind','id','condition','amount','protocol','message_id','preimage','clearing_mode','policy','direction','edge_quote'}

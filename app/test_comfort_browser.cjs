@@ -101,8 +101,9 @@ const fs=require('node:fs');const assert=require('node:assert/strict');const {ch
   // A committed POST with a lost response is reconciled by GET, without resubmitting.
   const postsBeforeLostAck=posts;
   await alice.route('**/api/contacts/bob/preferences',async route=>{await route.fetch();await route.fulfill({status:503,json:{error:'Committed response lost at gateway'}});});
+  const lostResponse=alice.waitForResponse(response=>response.url().endsWith('/api/contacts/bob/preferences')&&response.status()===503);
   await dot.focus();await dot.press('ArrowRight');
-  await form.locator('[data-contact-save]').filter({hasText:'Save not confirmed'}).waitFor();
+  await lostResponse;
   await alice.unroute('**/api/contacts/bob/preferences');
   await saved(alice,'bob');assert.equal(posts,postsBeforeLostAck+1);
   assert.equal((await own(alice,'bob')).comfort_min,-3);
