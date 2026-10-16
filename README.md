@@ -22,6 +22,8 @@ The [component PRDs and interactive wireframes](docs/product/README.md) turn tha
 
 The [runnable hashlock app](app/README.md) connects a responsive client to independent SQLite-backed peer nodes without enumerated routes or loop lengths. Try conditional approvals, locally verified fulfillment receipts and restart recovery using TEST units. See [private network validation](app/PRIVATE_TESTING.md) and the [phone screenshot](app/screenshots/private/mobile.png).
 
+The [obligation entry demo](app/OBLIGATIONS.md) starts with zero balances and supports proposing, approving and listing bilateral TEST obligations, then clearing an entered three-node cycle. Obligation entries and clearing receipts appear in contact history.
+
 ## Meet the animals
 
 These are research prototypes from several generations. Early animals explored loop discovery and message ordering; later ones attempted negotiation and settlement. Their descriptions explain what we learned, rather than establish a performance ranking. The historical source links point to the last snapshot before the older implementations were removed.

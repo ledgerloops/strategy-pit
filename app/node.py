@@ -374,6 +374,8 @@ def make_handler(node):
                     return self.reply(401,dict(error='Client authentication required'))
                 if self.path == '/api/state':
                     return self.reply(200,node.state())
+                if self.path == '/api/obligations' and hasattr(node,'obligations'):
+                    return self.reply(200,node.obligations())
                 if self.path == '/api/receipts':
                     return self.reply(200,node.receipts())
                 if self.path.startswith('/api/receipts/'):
@@ -410,6 +412,12 @@ def make_handler(node):
                 if peer:
                     node.receive(self.headers.get('X-Peer-ID',''),data)
                     result=dict(ok=True)
+                elif self.path == '/api/obligations' and hasattr(node,'propose_obligation'):
+                    result=node.propose_obligation(data)
+                elif self.path.startswith('/api/obligations/') and self.path.endswith('/approve') and hasattr(node,'approve_obligation'):
+                    result=node.approve_obligation(self.path.split('/')[-2],data.get('digest'))
+                elif self.path.startswith('/api/obligations/') and self.path.endswith('/decline') and hasattr(node,'decline_obligation'):
+                    result=node.decline_obligation(self.path.split('/')[-2],data.get('digest'))
                 elif self.path.startswith('/api/contacts/') and self.path.endswith('/preferences') and hasattr(node,'set_preferences'):
                     from urllib.parse import unquote
                     result=node.set_preferences(unquote(self.path.split('/')[-2]),data)
