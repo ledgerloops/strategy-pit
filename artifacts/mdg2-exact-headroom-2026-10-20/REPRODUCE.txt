@@ -1,0 +1,66 @@
+Exact node-local comfort-headroom clearing — 20 October 2026
+
+Run from the strategy-pit repository root. Base checkout:
+  1e0e87d4859e470d87b430b488c64db3c08df6ae
+The research files are separately pinned; the base commit alone is not their
+version. Extract the package preserving repository-relative paths.
+
+Environment: Python 3.12.14, NetworkX 3.5; report uses matplotlib 3.10.8.
+Original measurement interpreter:
+  /workspace/cycles-comparison-venv/bin/python
+
+Prospective files:
+  experiments/mdg2/exact-headroom-plan.json
+  experiments/mdg2/exact-headroom-workloads.json
+  experiments/mdg2/exact-headroom-freeze.json
+
+Focused correctness checks:
+
+  /workspace/cycles-comparison-venv/bin/python -m unittest discover \
+    -s experiments/mdg2 -p 'test_exact_headroom*.py' -v
+
+Reproduce measurements to a NEW output path; never overwrite saved evidence:
+
+  /workspace/cycles-comparison-venv/bin/python \
+    experiments/mdg2/exact_headroom_benchmark.py \
+    --output artifacts/exact-headroom-reproduction/results.json
+
+There are 15 runs: exact mode on three broad static, three narrow static and
+three broad 1000-arrival workloads; budgeted debt-first control on the six broad
+workloads. Run serially without another performance workload.
+
+Each arrival run clears initially and after every 100 arrivals. The simulator
+buffers external transactions during search/settlement. These are 11 frozen
+snapshots, not continuously concurrent service. All 96 trustlines receive new
+transactions in every fixed 1000-arrival stream.
+
+Exact mode stops on a certificate or a total 2,000,000-message safety ceiling.
+The control has 1024 messages per trustline TOTAL spread across epochs; this is
+not an equal-budget superiority test. Actual costs and incomplete epochs are
+retained. Completion with narrow comfort means no currently admissible improving
+unit cycle, not necessarily the relaxed hard-bound optimum.
+
+Independent audit of supplied evidence:
+
+  python experiments/mdg2/exact_headroom_audit.py \
+    --results artifacts/mdg2-exact-headroom-2026-10-20/results.json
+
+Render supplied evidence without rerunning algorithms:
+
+  python experiments/mdg2/build_exact_headroom_report.py
+
+Raw receipts permit independent balance/consent/conservation replay. Completion
+certificates expose potentials and every trustline incidence for independent
+reduced-cost checks; broad completed epochs also match independently certified
+offline minimum-gross-debt solutions. Wire counters/bytes are measured by the
+frozen encoder; full wire payloads are not retained for separate re-encoding.
+
+The distributed algorithm uses neighbour messages and local state. A known node
+count, fixed coordinator, stable topology, synchronous reliable delivery and
+serialized epochs are explicit simulation assumptions. Counted traffic includes
+control-tree setup, search round broadcasts/reports, candidate routing, quote
+collection, prepare/commit/cleanup, and final certificate broadcast. Initial
+ledger/preference distribution, external-transfer admission transport, network
+headers and transport ACK/retry traffic are excluded.
+
+No production app code, demo data, credentials or tokens are changed.

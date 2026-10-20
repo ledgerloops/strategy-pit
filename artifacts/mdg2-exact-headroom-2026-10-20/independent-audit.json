@@ -1,0 +1,525 @@
+{
+  "independent_audit_passed": true,
+  "results_sha256": "e7e10767e628ec7b88f011c2a9bc3a07aec55b938d52b688be73b929e9f32f27",
+  "auditor_sha256": "9edce54345887730c6926f79cacdc8282cf665f58fc4365c074cb1e8b924808c",
+  "runs_checked": 15,
+  "epochs": 75,
+  "settlements_replayed": 3773,
+  "assisted_settlements_replayed": 3510,
+  "transfers_replayed": 6000,
+  "oracle_optima_certified": 75,
+  "broad_epochs_certified_globally_optimal": 36,
+  "narrow_epochs_certified_currently_locally_optimal": 3,
+  "incomplete_exact_epochs": 0,
+  "run_audits": [
+    {
+      "case": "medium32-broad-seed501",
+      "method": "decrease_first",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 55,
+      "assisted_settlements_replayed": 55,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": []
+    },
+    {
+      "case": "medium32-broad-seed501",
+      "method": "exact",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 111,
+      "assisted_settlements_replayed": 104,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 1,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-broad-seed501",
+      "method": "decrease_first",
+      "mode": "arrivals",
+      "independent_audit_passed": true,
+      "epochs": 11,
+      "settlements_replayed": 368,
+      "assisted_settlements_replayed": 366,
+      "transfers_replayed": 1000,
+      "oracle_optima_certified": 11,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": []
+    },
+    {
+      "case": "medium32-broad-seed501",
+      "method": "exact",
+      "mode": "arrivals",
+      "independent_audit_passed": true,
+      "epochs": 11,
+      "settlements_replayed": 661,
+      "assisted_settlements_replayed": 612,
+      "transfers_replayed": 1000,
+      "oracle_optima_certified": 11,
+      "broad_epochs_certified_globally_optimal": 11,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 1,
+          "prefix": 100,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 2,
+          "prefix": 200,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 3,
+          "prefix": 300,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 4,
+          "prefix": 400,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 5,
+          "prefix": 500,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 6,
+          "prefix": 600,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 7,
+          "prefix": 700,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 8,
+          "prefix": 800,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 9,
+          "prefix": 900,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 10,
+          "prefix": 1000,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-narrow-seed501",
+      "method": "exact",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 59,
+      "assisted_settlements_replayed": 49,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 1,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 137,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-broad-seed502",
+      "method": "exact",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 101,
+      "assisted_settlements_replayed": 95,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 1,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-broad-seed502",
+      "method": "decrease_first",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 51,
+      "assisted_settlements_replayed": 47,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": []
+    },
+    {
+      "case": "medium32-broad-seed502",
+      "method": "exact",
+      "mode": "arrivals",
+      "independent_audit_passed": true,
+      "epochs": 11,
+      "settlements_replayed": 667,
+      "assisted_settlements_replayed": 628,
+      "transfers_replayed": 1000,
+      "oracle_optima_certified": 11,
+      "broad_epochs_certified_globally_optimal": 11,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 1,
+          "prefix": 100,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 2,
+          "prefix": 200,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 3,
+          "prefix": 300,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 4,
+          "prefix": 400,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 5,
+          "prefix": 500,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 6,
+          "prefix": 600,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 7,
+          "prefix": 700,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 8,
+          "prefix": 800,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 9,
+          "prefix": 900,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 10,
+          "prefix": 1000,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-broad-seed502",
+      "method": "decrease_first",
+      "mode": "arrivals",
+      "independent_audit_passed": true,
+      "epochs": 11,
+      "settlements_replayed": 329,
+      "assisted_settlements_replayed": 319,
+      "transfers_replayed": 1000,
+      "oracle_optima_certified": 11,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": []
+    },
+    {
+      "case": "medium32-narrow-seed502",
+      "method": "exact",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 69,
+      "assisted_settlements_replayed": 60,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 1,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 149,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-broad-seed503",
+      "method": "decrease_first",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 53,
+      "assisted_settlements_replayed": 52,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": []
+    },
+    {
+      "case": "medium32-broad-seed503",
+      "method": "exact",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 117,
+      "assisted_settlements_replayed": 93,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 1,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-broad-seed503",
+      "method": "decrease_first",
+      "mode": "arrivals",
+      "independent_audit_passed": true,
+      "epochs": 11,
+      "settlements_replayed": 347,
+      "assisted_settlements_replayed": 343,
+      "transfers_replayed": 1000,
+      "oracle_optima_certified": 11,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": []
+    },
+    {
+      "case": "medium32-broad-seed503",
+      "method": "exact",
+      "mode": "arrivals",
+      "independent_audit_passed": true,
+      "epochs": 11,
+      "settlements_replayed": 694,
+      "assisted_settlements_replayed": 630,
+      "transfers_replayed": 1000,
+      "oracle_optima_certified": 11,
+      "broad_epochs_certified_globally_optimal": 11,
+      "narrow_epochs_certified_currently_locally_optimal": 0,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 1,
+          "prefix": 100,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 2,
+          "prefix": 200,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 3,
+          "prefix": 300,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 4,
+          "prefix": 400,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 5,
+          "prefix": 500,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 6,
+          "prefix": 600,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 7,
+          "prefix": 700,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 8,
+          "prefix": 800,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 9,
+          "prefix": 900,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        },
+        {
+          "epoch": 10,
+          "prefix": 1000,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 192,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    },
+    {
+      "case": "medium32-narrow-seed503",
+      "method": "exact",
+      "mode": "static",
+      "independent_audit_passed": true,
+      "epochs": 1,
+      "settlements_replayed": 91,
+      "assisted_settlements_replayed": 57,
+      "transfers_replayed": 0,
+      "oracle_optima_certified": 1,
+      "broad_epochs_certified_globally_optimal": 0,
+      "narrow_epochs_certified_currently_locally_optimal": 1,
+      "incomplete_exact_epochs": 0,
+      "residual_certificate_checks": [
+        {
+          "epoch": 0,
+          "prefix": 0,
+          "verified_nodes": 32,
+          "eligible_residual_arcs": 157,
+          "minimum_reduced_cost": 0
+        }
+      ]
+    }
+  ],
+  "certificate_scope": "Every supplied actor potential is checked on every eligible unit residual arc; broad certified epochs must also match a separately certified hard-bound L1 optimum.",
+  "limits": "Narrow completion certifies only current admissible residual optimality. Grouped arrivals are buffered during static epochs. Timing and budgets are unmatched between exact completion and finite-budget control. Full wire payloads are not independently re-encoded."
+}

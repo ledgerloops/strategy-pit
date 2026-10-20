@@ -1,0 +1,50 @@
+Horsing Around with LedgerLoops — MDG2, 25 October 2026
+Measured 20 October 2026.
+
+Presentation assets:
+  comfort-zone-ui.png — actual app, isolated demo data, no credentials visible
+  comparison.png / comparison.svg — medium-size workload comparison
+  report.html — complete results, definitions, versions and limitations
+  comparison.csv / comparison.json — machine-readable aggregate table
+  ledgerloops-results.json / cycles-results.json — all raw measured runs
+
+The user-facing app and benchmark research algorithms are separate implementations.
+Do not describe the Cycles notebook numbers as measurements of its hosted product.
+Cycles protocol communication is unmeasured, never zero.
+
+Sources:
+  LedgerLoops: https://github.com/ledgerloops/strategy-pit
+  Algorithms pinned at 1e0e87d4859e470d87b430b488c64db3c08df6ae
+  Cycles: https://github.com/informalsystems/cycles-overview
+  Cycles commit 32dc873c45041accb365e73a8ef35bee10a80f1d
+  Python 3.12.14; NetworkX 3.5; Matplotlib 3.10.8.
+
+The supplied reproduce/experiments snapshot contains the unchanged LedgerLoops
+research modules and benchmark wrappers. It can be placed in a clean directory.
+Create a Python environment with networkx==3.5 and matplotlib==3.10.8 installed.
+Clone the Cycles repository separately and check out the exact commit above.
+
+From reproduce/:
+  python experiments/mdg2/ledgerloops_benchmark.py --self-test
+  python experiments/mdg2/ledgerloops_benchmark.py --input experiments/mdg2/workloads.json --output ledgerloops-new.json --repeats 3
+  python experiments/mdg2/cycles_benchmark.py --cycles-repo /absolute/path/to/cycles-overview --input experiments/mdg2/workloads.json --output cycles-new.json --repeats 3
+
+Run the timing campaigns sequentially, with other heavy work stopped. Output
+paths must be fresh. Fixed workloads and parameters were chosen before results.
+Do not regenerate or retune them to improve a score. Times vary by host.
+
+The Cycles wrapper audits feasibility and certifies minimum retained debt via
+absence of negative cost cycles; independent audit also checked that certificate.
+All 81 saved ledgers preserve capacities and every node net position. LedgerLoops
+cycles exactly reproduce residual ledgers. Compact JSON byte aggregates reconcile;
+individual message traces were not saved, so byte sequences are not independently
+reconstructible from the raw aggregate artifact alone.
+
+An initial instrumentation run was interrupted by the source-change guard while
+the wrapper was being finalized. It was marked incomplete and excluded. The final
+campaigns use frozen sources and identical workloads; no algorithm tuning followed.
+The incomplete preflight is retained in the repository under experiments/mdg2/.
+
+Screenshot reproduction requires the full LedgerLoops app checkout plus Playwright
+and Chromium; see capture-comfort-ui.cjs and comfort-zone-ui-provenance.json. It
+creates and removes an isolated test fixture and never changes user demo configs.

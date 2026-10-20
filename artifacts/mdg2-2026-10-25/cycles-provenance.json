@@ -1,0 +1,37 @@
+{
+  "as_of": "2026-10-20",
+  "benchmark_label": "Cycles official public notebook clearing core (local run)",
+  "repository": "https://github.com/informalsystems/cycles-overview",
+  "commit_sha": "32dc873c45041accb365e73a8ef35bee10a80f1d",
+  "commit_date": "2026-03-09T17:32:04+01:00",
+  "source_file": "utils/graph_max_flow_solvers.py",
+  "source_sha256": "a426bc1425715285c6334f7ea4975711d16bc773a6ede052c87581b483422de2",
+  "entrypoint": "max_flow_solver(G), default max_flow_min_cost",
+  "graph_edge_attributes": {
+    "capacity": "positive integer obligation amount",
+    "weight": 1
+  },
+  "return_value": "Directed graph whose edge capacities are the cyclic structure/set-offs to clear",
+  "python": "3.12.14",
+  "networkx": "3.5",
+  "primary_sources": [
+    "https://github.com/informalsystems/cycles-overview/blob/32dc873c45041accb365e73a8ef35bee10a80f1d/utils/graph_max_flow_solvers.py",
+    "https://github.com/informalsystems/cycles-overview/blob/32dc873c45041accb365e73a8ef35bee10a80f1d/utils/graph_read_write.py",
+    "https://github.com/informalsystems/cycles-overview/blob/32dc873c45041accb365e73a8ef35bee10a80f1d/concepts.md",
+    "https://cycles.money/blog/an-introduction-to-mtcs",
+    "https://cycles.money/blog/obligation-clearing-algorithm-design-101"
+  ],
+  "scope_limits": [
+    "This is the official open notebook implementation, not a benchmark of the hosted cycles.money product or current production solver.",
+    "Algorithm receives the whole graph in one process; it is not a neighbour-only node-local protocol.",
+    "No TEE, encryption, zero-knowledge proving, blockchain submission, finality, signatures or network transport is included.",
+    "No actual Cycles production communication count or byte overhead is exposed by this notebook; report it as unmeasured, not zero.",
+    "Only fixed cancellation-only obligation snapshots with uniform cost1 and no external liquidity/acceptance edges are comparable to corresponding LedgerLoops runs.",
+    "No published versioned production service endpoint with benchmark access was established by this discovery."
+  ],
+  "other_official_repo_checked": {
+    "repository": "https://github.com/informalsystems/cycles-sandbox",
+    "commit_sha": "1c088d443f9550105600a0877dcef3087398ba5b",
+    "finding": "Proof/demo experiments; its current public mtcs-core contains set-off data types and verification examples, not a reusable clearing solver."
+  }
+}

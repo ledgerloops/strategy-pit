@@ -1,0 +1,81 @@
+Comfort zones as headroom — message budget curves, 20 October 2026
+
+Run from the strategy-pit repository root. Use Python 3.12.14 and NetworkX 3.5.
+The original environment is /workspace/cycles-comparison-venv/bin/python.
+Report rendering additionally uses matplotlib 3.10.8.
+
+The original prospective configuration, inputs and source pins are:
+  experiments/mdg2/comfort-curve-plan.json
+  experiments/mdg2/comfort-curve-workloads.json
+  experiments/mdg2/comfort-curve-freeze.json
+
+Correctness checks (no performance rerun):
+
+  python -m unittest discover -s experiments/mdg2 -p 'test_comfort_headroom.py' -v
+  python -m unittest discover -s experiments/mdg2 -p 'test_comfort_decrease_first.py' -v
+  python -m unittest discover -s experiments -p 'test_comfort_simulation*.py' -q
+
+Reproduce the original 240-run campaign to a NEW output path:
+
+  /workspace/cycles-comparison-venv/bin/python \
+    experiments/mdg2/comfort_curve_benchmark.py \
+    --output artifacts/comfort-curves-reproduction/results.json
+
+The runner refuses to overwrite results, requires its prospective source/input
+freeze to match, and reports complete=true only after all 240 runs. Raw results
+contain ordered settlement/arrival events and every service allowance. Runtime
+is one illustrative sample per run, not the graph's primary endpoint.
+
+Independent audit of the supplied original results:
+
+  python experiments/mdg2/comfort_curve_audit.py
+
+The follow-up's prospective configuration, inputs and source pins are:
+  experiments/mdg2/decrease-first-plan.json
+  experiments/mdg2/decrease-first-workloads.json
+  experiments/mdg2/decrease-first-freeze.json
+
+The supplied original results must remain at their original path, because their
+hash is checked before and throughout the follow-up. Reproduce all 168 follow-up
+runs to a NEW output path (do not run another measurement process concurrently):
+
+  /workspace/cycles-comparison-venv/bin/python \
+    experiments/mdg2/decrease_first_benchmark.py \
+    --output artifacts/comfort-curves-reproduction/decrease-first-results.json
+
+Independent audit of the supplied follow-up:
+
+  python artifacts/mdg2-comfort-curves-2026-10-20/audit-decrease-first-independent.py
+
+Additional runner checks:
+
+  /workspace/cycles-comparison-venv/bin/python -m unittest discover \
+    -s experiments/mdg2 -p 'test_decrease_first_benchmark.py' -q
+
+Render the supplied completed measurements without rerunning actors:
+
+  python experiments/mdg2/build_comfort_curve_report.py
+
+The renderer also incorporates the separately frozen decrease-first comparison
+if decrease-first-results.json is present and complete. It never combines fresh
+validation seeds into the original three-seed curves.
+
+Primary plotted quantity:
+  (gross debt in the same accepted stream without clearing - actual gross debt)
+  / (gross debt in that reference - minimum gross debt under fixed hard grants).
+
+This is final-snapshot clearing potential, not cumulative cleared invoice value.
+Original undirected trustlines include zero-balance helper links and are counted
+once in the x-axis denominator. Actual JSON application messages include
+discovery, rejection, prepare, commit and cleanup. Initial data distribution,
+external transaction injection and unimplemented network headers/ACKs are excluded.
+
+All graph generation and scoring are offline. Actors use own links and received
+neighbor messages. The simulator serializes initiators and settlement; it is not
+a production deployment or a concurrency/fault/privacy proof.
+
+The ZIP preserves repository-relative paths for code, fixtures and artifacts.
+Extract into an isolated checkout of strategy-pit at base
+1e0e87d4859e470d87b430b488c64db3c08df6ae. The package contains the sources and app
+comfort helper needed by these measurements; it does not contain demo tokens,
+databases or configuration. See SOURCE-MANIFEST.json and SHA256SUMS.txt.

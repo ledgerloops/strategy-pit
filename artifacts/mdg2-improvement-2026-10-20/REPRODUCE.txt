@@ -1,0 +1,55 @@
+MDG2 closure experiment — 20 October 2026
+
+From the strategy-pit repository root:
+
+1. Use Python 3.12.14 with NetworkX 3.5. The original run used
+   /workspace/cycles-comparison-venv/bin/python.
+   Report rendering additionally requires matplotlib (original version 3.10.8).
+
+2. Obtain the official public Cycles repository at /workspace/cycles-overview:
+   https://github.com/informalsystems/cycles-overview
+   Pin commit 32dc873c45041accb365e73a8ef35bee10a80f1d.
+   The runner verifies both commit and solver SHA256.
+   This benchmarks its public notebook core, not the hosted Cycles service.
+
+3. Read experiments/mdg2/improvement-plan.json before examining outcomes.
+   Use the supplied frozen improvement-workloads.json; do not replace it.
+   Generation can be verified without writing:
+
+   python - <<'PY'
+   import json, sys
+   from pathlib import Path
+   sys.path.insert(0, 'experiments/mdg2')
+   from make_improvement_workloads import build
+   assert build() == json.loads(Path('experiments/mdg2/improvement-workloads.json').read_text())
+   print('Frozen workload generation matches')
+   PY
+
+4. Run the independent correctness tests:
+
+   python -m unittest discover -s experiments/mdg2 -p 'test_improved_numbat.py' -v
+
+5. Run measurements sequentially, without competing performance jobs:
+
+   /workspace/cycles-comparison-venv/bin/python \
+     experiments/mdg2/improvement_benchmark.py \
+     --output artifacts/mdg2-improvement-reproduction/results.json
+
+   Choose a new output path; the runner refuses to overwrite results.
+   Success requires complete=true, 216 local runs and 24 reference cases,
+   each reference case with 3 timing repeats. Runtime is machine-dependent.
+   Every repeat uses fresh state and the same graph/algorithm seed.
+   Source/input/plan mutation aborts the campaign.
+
+6. Original artifact rendering (reads the original completed results):
+
+   python experiments/mdg2/build_improvement_report.py
+
+See report.html, comparison.csv and comparison.json for all graph families and
+both splits. Results include complete cycle lists, final ledgers, communication
+counters, timing samples, source hashes and reference optimality certificates.
+The separately written audit-independent.py verifies outputs without importing
+the benchmark's replay or optimality-check helpers.
+
+Neither the original MDG2 benchmark artifacts nor the private app protocol,
+running demo data, tokens, peer keys or browser origin were changed.

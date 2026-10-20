@@ -1,0 +1,72 @@
+{
+  "source_commit": "1e0e87d4859e470d87b430b488c64db3c08df6ae",
+  "captured_at": "2026-10-20T07:45:26.624Z",
+  "browser": "154.0.8037.57",
+  "viewport_css_pixels": {
+    "detail_and_contact": {
+      "width": 1440,
+      "height": 1800
+    },
+    "wide": {
+      "width": 1440,
+      "height": 1000
+    }
+  },
+  "device_scale_factor": 2,
+  "capture": "Real authenticated private-hashlock-v2 application served by three live Python nodes with durable neighbour HTTP preference exchange. No DOM, CSS or text changes; screenshot crops use native element geometry.",
+  "fixture": {
+    "isolated": true,
+    "ephemeral_credentials_removed_after_capture": true,
+    "node": "alice",
+    "peer": "bob",
+    "balance": -3,
+    "own": {
+      "credit_limit": 20,
+      "comfort_min": -5,
+      "comfort_max": 15,
+      "auto_adjust": true
+    },
+    "peer_preferences": {
+      "credit_limit": 8,
+      "comfort_min": -10,
+      "comfort_max": 8,
+      "auto_adjust": true
+    },
+    "shared_comfort": {
+      "min": -5,
+      "max": 10
+    }
+  },
+  "source_file_sha256": {
+    "app/static/app.js": "0c9b767c329b2ae0c577a74bebe183ec311af0350302c972dbcde90e1f138f7a",
+    "app/static/index.html": "f1f6f5f98700b810052b938a30710ae0df52879556af203d06e21cddf1ce8aaf",
+    "app/static/style.css": "2eb74563856104f9e7ef45fdcbec32e6e01ce4ef519d4a5e4b21c56c22c14ab0",
+    "app/private_node.py": "e715c1b830277f27b34b0866908a193ce66ef98cc5c535c57670a2d49a4a7768",
+    "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1"
+  },
+  "images": [
+    {
+      "file": "comfort-zone-ui.png",
+      "width": 1500,
+      "height": 1000,
+      "sha256": "6b0c800c4336dd4082cdfb3117127c649247c9f3e81008507ab5569cca8c12b4"
+    },
+    {
+      "file": "comfort-zone-ui-contact.png",
+      "width": 1520,
+      "height": 2614,
+      "sha256": "adf993a3e1fbed616f9f0640bf1d8f340d53ee884ec5d5f3e6dc8d1206edbcf8"
+    },
+    {
+      "file": "comfort-zone-ui-wide.png",
+      "width": 2880,
+      "height": 2000,
+      "sha256": "3f368afd6661b719e0e980a554234567eb282e9c0e2d56bf7fcf0d215887dc17"
+    }
+  ],
+  "limitations": [
+    "TEST-only research prototype; preconfigured participants and honest-peer assumptions.",
+    "Fabricated screenshot fixture; not real economic activity.",
+    "Screenshot demonstrates saved UI preferences and a shared-zone calculation; it does not demonstrate a clearing settlement."
+  ]
+}

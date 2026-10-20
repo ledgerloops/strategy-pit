@@ -1,0 +1,25 @@
+{
+  "base_commit": "1e0e87d4859e470d87b430b488c64db3c08df6ae",
+  "variant": "exact-admissible-unit-bellman-ford-v1",
+  "python": "3.12.14",
+  "networkx": "3.5",
+  "matplotlib": "3.10.8",
+  "sources": {
+    "experiments/mdg2/exact_headroom.py": "5408d097d08452dc9980aba8cdfedcc0a19f061548ece9970160074caee09659",
+    "experiments/mdg2/exact_headroom_benchmark.py": "77548df27c6fc43a99b32f0662d3ec0c34052f41f50b0ea40304b64252c02b64",
+    "experiments/mdg2/exact_headroom_audit.py": "9edce54345887730c6926f79cacdc8282cf665f58fc4365c074cb1e8b924808c",
+    "experiments/mdg2/make_exact_headroom_workloads.py": "9e92331ff1ca824d29f3d0c08a6a2aa99ace1d26d820bd35f757ed2b4e6a04ec",
+    "experiments/mdg2/comfort_headroom.py": "21ce6253a59c4c90105fc03826cf0cd4a8fe2c4d74cedd2f364ff93c19df037e",
+    "experiments/mdg2/comfort_decrease_first.py": "8a7fe2c58d832d4c6362ec33807b1f5a831322bbe9f5913b248ef01be4fef73b",
+    "experiments/mdg2/comfort_curve_benchmark.py": "6088f135c6ac966df380b95065ddf25dea28a6dfaae5db7c7312f261ccaa8204",
+    "experiments/mdg2/comfort_curve_audit.py": "70a6d6db311e5584acf9af3f421fb75eb821bb776ab783becdca5e385f444a84",
+    "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1",
+    "experiments/mdg2/exact-headroom-plan.json": "338aeeb09a3f8787e50d34eda31e55023d851a0e6befb69e228fd7f3efbb3a88",
+    "experiments/mdg2/exact-headroom-workloads.json": "916cc151cc3e492dc9ce7b60ac74fb906ef941889e6bc68768777629c29fda3b",
+    "experiments/mdg2/exact-headroom-freeze.json": "aa8bec26e12b42ca1e0c39dee3e361af36e12e1583fd7031309a679889844bc7",
+    "experiments/mdg2/build_exact_headroom_report.py": "c2f6727d8792f0304bf7c4134f3f8c366c801b561d68c0b0c5cac8a146f0ef73",
+    "experiments/mdg2/test_exact_headroom.py": "87fdba9c1fc3dd491023edb7466a14c55f86d55ff57b1c73ddd145442a35272a",
+    "experiments/mdg2/test_exact_headroom_benchmark.py": "95c710c734c52df79f4704619524a85e13201b6882e6836c37b7c2a60c13e2c5"
+  },
+  "note": "Research sources are individually pinned and uncommitted; base commit alone does not identify this implementation."
+}

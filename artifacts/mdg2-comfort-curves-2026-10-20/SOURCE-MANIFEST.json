@@ -1,0 +1,33 @@
+{
+  "base_commit": "1e0e87d4859e470d87b430b488c64db3c08df6ae",
+  "version": "comfort-headroom-v1 and local-decrease-first-v1",
+  "python": "3.12.14",
+  "networkx": "3.5",
+  "matplotlib": "3.10.8",
+  "sources": {
+    "experiments/mdg2/comfort_headroom.py": "21ce6253a59c4c90105fc03826cf0cd4a8fe2c4d74cedd2f364ff93c19df037e",
+    "experiments/mdg2/comfort_curve_benchmark.py": "6088f135c6ac966df380b95065ddf25dea28a6dfaae5db7c7312f261ccaa8204",
+    "experiments/mdg2/comfort_curve_audit.py": "70a6d6db311e5584acf9af3f421fb75eb821bb776ab783becdca5e385f444a84",
+    "experiments/mdg2/make_comfort_curve_workloads.py": "66148eff0be11e7621d4bbd74f75886f70bba41516c5e544e4df02d8230b38e5",
+    "experiments/mdg2/comfort-curve-plan.json": "63e62a4c98f37131db580a56c44f0c656fed4ec30fad5290f05793bf7397f1e1",
+    "experiments/mdg2/comfort-curve-workloads.json": "4d956a2836269200ff39dcc9ad4f37d1febb93d8d921e4343e8831d30f82e3b8",
+    "experiments/mdg2/comfort-curve-freeze.json": "3c2471a9c67943fc3f33b6c75a4c6b4021ef9b9b7d3ea37f16bd517f697b1f0d",
+    "experiments/mdg2/comfort_decrease_first.py": "8a7fe2c58d832d4c6362ec33807b1f5a831322bbe9f5913b248ef01be4fef73b",
+    "experiments/mdg2/decrease_first_benchmark.py": "fd83f905e5e224aa497f8bd686b7bcb4a60d0769c5610e1637f424b673cacae8",
+    "experiments/mdg2/make_decrease_first_workloads.py": "2950cad8cdd8f5e8e6587c6ad9926f7efbc55c88578bd2b527735dd6d1cd270a",
+    "experiments/mdg2/decrease-first-plan.json": "0485e2f4b28f163f2a924349c191a65102f75ce4898ae67a7055cdb632e7da71",
+    "experiments/mdg2/decrease-first-workloads.json": "ae25f7e4893d6522fb358231135665a9b0a961c4c35fc461d15d4d20f4436c87",
+    "experiments/mdg2/decrease-first-freeze.json": "65d729e20a6bc6add9f7a72ff0bf821479305b2f44f52ef853bc322e227008a9",
+    "experiments/mdg2/test_comfort_headroom.py": "3ed4eaf815798abfa78ed8bad567c0e260a65c6da820cabc5f7f0c156740eb84",
+    "experiments/mdg2/test_comfort_decrease_first.py": "786a28ab18eed44b63eb60817286d88ae6276755c003f4496f855abb181802d3",
+    "experiments/mdg2/test_decrease_first_benchmark.py": "34ad267a6887c2e2e78cb8cb035318890c476ecb27da5d7547533d376ef80b04",
+    "experiments/mdg2/build_comfort_curve_report.py": "c22aa70e614a021a32143f5e83b40486c9f346732109c8f6945139a53d5f6c33",
+    "experiments/mdg2/package_comfort_curves.py": "855f277d305becdf1f9b7f8e88f619cb211920502d06b4df646661d42fa5ee6d",
+    "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1",
+    "experiments/test_comfort_simulation.py": "cd3f2bb8d448548c2e8172b4ac6dd0b0048db993d0e79804d996ff6b3bc9417b",
+    "experiments/test_comfort_simulation_expanded.py": "3b0a4d0e21592aad5745e4e4081c2d9b9e704a7b6ec862f843c906d28f57fcf4",
+    "experiments/comfort_simulation.py": "8f6b5cfa557e69441c22ff1bf36d57bbf046344d51a02d21aeaf202331e6d8c0",
+    "experiments/comfort_simulation_expanded.py": "25998022de33b7de8b640d2c024e32b143ccf5f23d5abfcee6bf776df49c160e"
+  },
+  "note": "Uncommitted research sources are pinned individually; base commit alone does not identify this experiment."
+}

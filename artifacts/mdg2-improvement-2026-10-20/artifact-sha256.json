@@ -1,0 +1,11 @@
+{
+  "artifacts/mdg2-improvement-2026-10-20/REPRODUCE.txt": "69cf8f9d78385b3724d3e43e1a55654ac20000d9604cb2e7ab4a9dd8e0f936a3",
+  "artifacts/mdg2-improvement-2026-10-20/audit-independent.py": "6b8d2812357ecfc07be7dc1ab0da5b379b1ae55b605fad2e8e698d580c64fe44",
+  "artifacts/mdg2-improvement-2026-10-20/comparison.csv": "cc13c052ddd9b25f3bf7293cb64a8081660a08449ae1207059f6dcf04e8e3633",
+  "artifacts/mdg2-improvement-2026-10-20/comparison.json": "8c1c332b5193f4f5bd6fe1876e4e6130171b2e03239f16a8fd1d2ec0cd8af050",
+  "artifacts/mdg2-improvement-2026-10-20/comparison.png": "ed0f477596e4a1cddeba45ee1a14e230b251fe27f93daaa8f6abecd4871a9a87",
+  "artifacts/mdg2-improvement-2026-10-20/comparison.svg": "493478c816673a67927cb97b762126d390a37bcb9d37bc0857d907808260b671",
+  "artifacts/mdg2-improvement-2026-10-20/independent-audit.json": "e3817bd37dbcd3aaf037c8d72f72b1ba1c814e68681e354593549f5bd0f4741c",
+  "artifacts/mdg2-improvement-2026-10-20/report.html": "8f4531bab1df692dc2d6174930ec55a1af933c289c2ebbd3259a878be62862e8",
+  "artifacts/mdg2-improvement-2026-10-20/results.json": "5cf197ef7333cf7c699ed9b047e8a176502fe4a082d339c9e029a45509eef446"
+}

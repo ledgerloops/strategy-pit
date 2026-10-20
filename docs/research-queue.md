@@ -6,6 +6,169 @@
 
 Find practical node-local clearing algorithms that perform well across static and changing credit graphs, with explicit costs and delivery/failure assumptions. Continue useful authorized work while the session is active; checkpoint before interruption. This document is not an external wake-up scheduler.
 
+## Exact residual-cycle completion — 2026-10-20
+
+The owner asked to improve node-local clearing to find all clearing potential,
+and what a completeness guarantee requires. A separate deterministic
+Bellman–Ford research mode is implemented in
+`experiments/mdg2/exact_headroom.py`; all earlier frozen experiments are preserved.
+It counts neighbour control-tree setup, rounds, candidate/quote routing,
+settlement and final certificate dissemination. Known membership, one fixed
+coordinator, reliable delivery and frozen epochs remain explicit assumptions.
+
+The prospective plan uses fresh seeds 501–503, 32 nodes and 96 trustlines.
+Each heavy stream has 1,000 random arrivals, clearing initially and after each
+100 transactions; every trustline receives 4–20 arrivals. Exact mode is tested
+on broad static, narrow static and broad arrival cases, with finite-budget
+debt-first controls on the broad cases. The stopping rules differ explicitly:
+exact seeks a certificate under a 2-million-message safety ceiling, while the
+control receives 1,024 messages per trustline total. No matched-budget win claim.
+
+Broad completion requires both a valid residual-potential certificate and
+agreement with an independently certified hard-bound optimum at every epoch.
+Narrow completion only rules out currently admissible improving unit cycles.
+All 25 focused implementation/runner tests and independent small integrations
+pass. The nine source dependencies, plan and fixtures are prospectively frozen
+in `experiments/mdg2/exact-headroom-freeze.json`; exact actor SHA256 is
+`5408d097d08452dc9980aba8cdfedcc0a19f061548ece9970160074caee09659`.
+The 15-run campaign is complete and independently audited: 75 epoch oracles,
+6,000 transfer events (3,000 unique offers replayed under each broad method),
+3,773 settlements including 3,510 assisted. All 36 broad exact epochs attain
+the independently certified hard-limit L1 optimum. All three narrow exact
+epochs have valid current-admissible-cycle certificates; no exact epoch exhausts
+its safety ceiling. Narrow pooled achievement is 85.48% of hard-limit potential,
+which must not be called 100% of that relaxed ceiling.
+
+Broad static pooled potential achieved: exact 100% versus finite debt-first
+99.8208%; mean messages/trustline 1,336.78 versus 1,023.91. Broad arrival final
+potential achieved: exact 100% versus 97.7294%; mean total messages/trustline
+8,586.14 versus 1,023.92 across eleven service epochs. Exact arrival JSON payloads
+average 139.03 MiB versus 367.53 MiB, despite more messages, because the packets
+are smaller. Illustrative measured actor runtime averages 26.23 s versus 14.26 s.
+These are different stopping budgets, not a matched-budget dominance result.
+
+Artifacts: [report](../artifacts/mdg2-exact-headroom-2026-10-20/report.html),
+[independent audit](../artifacts/mdg2-exact-headroom-2026-10-20/independent-audit.json),
+and [reproduction instructions](../artifacts/mdg2-exact-headroom-2026-10-20/REPRODUCE.txt).
+Results are complete; preserve them. This establishes exact static-epoch
+research clearing, not concurrent, fault-tolerant or neighbour-private product
+readiness. Useful next work is a separately frozen heuristic warm start plus
+exact completion/certification, or safe amount batching, to reduce repeated
+full-network searches without weakening the completion check.
+
+## Comfort headroom and random-arrival message curves — 2026-10-20
+
+The owner requested the chart label **Clearing potential achieved (%)**, curves
+against actual messages per original trustline, comfort zones as headroom, and
+random transactions arriving over time. The prior MDG2 chart/HTML/download were
+relabeled without altering measurements.
+
+The first comfort-headroom campaign is complete and independently audited:
+240 runs, 24 hard-limit L1 optima independently certified, 4,469 completed cycles
+replayed (3,268 assisted), and 4,820 accepted offered-transaction events across
+the repeated budget cases. All ledgers conserve per-node positions during
+clearing and respect bilateral comfort consent and hard grants.
+
+Fixed fixtures: 16 nodes/32 trustlines and 32 nodes/96 trustlines; seeds 301–303;
+shared broad or narrow symmetric zones; all assistance opted in. Poisson
+arrivals (rate 1 through time 40), amounts ±1…3, update original links. Five budgets
+are 4/16/64/256/1,024 application messages per original undirected trustline.
+Message counts include discovery and prepare/commit/cleanup; external transaction
+injection and initial preference distribution are excluded.
+
+At the highest budget, the 32-node broad-zone headroom policy reaches 95.11%
+of static clearing potential and 93.59% with arrivals, versus 48.47%/49.90% for
+cancellation. Narrow headroom reaches 66.80%/70.49% of the same relaxed hard-limit
+ceiling. The original no-new-credit Cycles denominator is different: this
+experiment permits signed helper balances within agreed limits, including
+opted-in zero-balance relationships. Snapshot savings replay the identical
+accepted arrival stream without clearing; they are not cumulative settled value.
+Every offer is accepted in these deliberately generous-hard-limit fixtures.
+
+Implementation: `experiments/mdg2/comfort_headroom.py`; frozen source hash
+`21ce6253a59c4c90105fc03826cf0cd4a8fe2c4d74cedd2f364ff93c19df037e`.
+Ten new focused tests plus 16 unchanged comfort tests pass. The simulator
+serializes initiators and staged settlement; actor decisions are local, but
+this is not a concurrent or neighbour-private production protocol. No app/demo
+configuration or credentials changed.
+
+See [curves/report](../artifacts/mdg2-comfort-curves-2026-10-20/report.html),
+[independent audit](../artifacts/mdg2-comfort-curves-2026-10-20/independent-audit.json),
+and [reproduction instructions](../artifacts/mdg2-comfort-curves-2026-10-20/REPRODUCE.txt).
+
+A separately frozen local debt-first routing follow-up is complete: 120
+descriptive curve-extension runs plus 48 fresh matched runs on seeds 401–403.
+The separate variant preserves the original shuffle, then prioritizes locally
+debt-reducing edges over helpers; six focused tests and seven runner checks pass.
+Independent follow-up audit replays all 168 runs and 5,971 settlements, and
+certifies 36 oracle results. All offered transactions are accepted.
+
+The prospective high-budget promotion gate **fails**: fresh pooled snapshot
+savings improve 4.75927% (1,893 versus 1,807 units), below the required 5%.
+Every profile/mode cell improves and all cost ceilings pass: message ratio
+0.999998, JSON bytes 1.028082, illustrative runtime 1.013477. Retain this positive
+tradeoff without promoting it or rounding its gain up to the threshold.
+On the fresh broad-zone graphs at about 1,024 messages per trustline, static
+potential achieved is 95.61% original / 98.85% debt-first, and arrival-mode
+potential achieved is 94.26% / 98.52%. The three fresh arrival streams contain
+144 offers, all accepted under each policy. These are small synthetic,
+serialized research workloads, not a product implementation change.
+
+Theoretical review supports almost-sure eventual hard-bound L1 optimality for
+the original uniformly shuffled policy under static integer balances, broad
+zones equal to hard bounds, bilateral helper consent, fair repeated roots,
+ideal full-support random choices and enough per-attempt search/settlement
+quota. This gives no deterministic finite-message guarantee, useful convergence
+rate or distributed termination certificate. Do not extend this argument
+automatically to debt-first ordering, narrow comfort, ongoing arrivals or
+finite seeded PRNG runs. Research discovery also permits comfort-neutral debt
+reduction at the root, unlike the app's stricter origin-comfort trigger.
+
+All 408 measurements are complete. Sources, inputs, results, charts and audits
+are packaged in `artifacts/mdg2-comfort-curves-2026-10-20.zip`. Do not overwrite
+the saved results. Useful next research is improving low-budget performance
+while retaining full-support exploration, then tighter grants and concurrent
+delivery; fresh promotion tests are required before changing defaults.
+
+## MDG2 static comparison follow-up — 2026-10-20
+
+The prospectively frozen local-closure campaign is complete: 216 local timing
+runs on 24 graphs, with 72 independently replayed unique method/graph ledgers
+and 24 independently certified Cycles optima. Eighteen graphs (six seeds at
+32/64/256 nodes) were held out. Seven independent correctness tests pass.
+All original MDG2 sources, results and demo credentials were preserved.
+
+Enabling Numbat's existing `close_first=True` clears 20.225% more pooled held-out
+debt than its default policy, with 9.760% fewer messages, 27.109% fewer compact
+JSON bytes and 13.974% less measured runtime. The new objective-scored closure
+variant clears 19.252% more than baseline but 2,100 fewer units than close-first.
+Both pass the prospectively specified clearing/cost/family gates. Individual
+seed regressions and development-ring zero-clearing results are retained.
+The simpler existing policy is the preferred option for this tested static
+workload; no production or temporal default was changed.
+
+On six held-out 256-node / 1,536-edge graphs, baseline Numbat reaches 57.442%
+of certified maximum nettable debt, close-first 70.934%, objective-scored
+closure 70.133%, and the Cycles public notebook solver 100%. That maximum is
+68.240% of initial gross debt. Net Internal Debt, the sum of positive net
+positions, is preserved by cancellation; it is not the nettable denominator.
+The verified Cycles term for the removable component is "cyclic structure";
+"endogenous debt" was not verified as its synonym.
+
+See [the full comparison](../artifacts/mdg2-improvement-2026-10-20/report.html),
+[independent audit](../artifacts/mdg2-improvement-2026-10-20/independent-audit.json),
+[frozen plan](../experiments/mdg2/improvement-plan.json), and
+[reproduction instructions](../artifacts/mdg2-improvement-2026-10-20/REPRODUCE.txt).
+Results are complete; do not rerun into the saved output path.
+
+Limits: reliable static research simulator, disclosed paths/capacity hints,
+debtor-owned balances, staged commits audited after drain; separate from the
+app's private hashlock protocol. Cycles is pinned public notebook code run
+locally, not its hosted service; its transport overhead is unmeasured.
+Next useful research is prospectively testing close-first on changing
+workloads and comparing longer search budgets before considering a default
+change. These static results do not supersede earlier temporal negatives.
+
 ## Verified status — 2026-10-11
 
 The fixed strict-episode seed replication completed at 2026-10-11 09:47:39 UTC:

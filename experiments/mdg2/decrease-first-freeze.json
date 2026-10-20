@@ -1,0 +1,17 @@
+{
+  "sources": {
+    "experiments/mdg2/decrease_first_benchmark.py": "fd83f905e5e224aa497f8bd686b7bcb4a60d0769c5610e1637f424b673cacae8",
+    "experiments/mdg2/make_decrease_first_workloads.py": "2950cad8cdd8f5e8e6587c6ad9926f7efbc55c88578bd2b527735dd6d1cd270a",
+    "experiments/mdg2/comfort_decrease_first.py": "8a7fe2c58d832d4c6362ec33807b1f5a831322bbe9f5913b248ef01be4fef73b",
+    "experiments/mdg2/comfort_curve_audit.py": "70a6d6db311e5584acf9af3f421fb75eb821bb776ab783becdca5e385f444a84",
+    "experiments/mdg2/comfort_curve_benchmark.py": "6088f135c6ac966df380b95065ddf25dea28a6dfaae5db7c7312f261ccaa8204",
+    "experiments/mdg2/comfort_headroom.py": "21ce6253a59c4c90105fc03826cf0cd4a8fe2c4d74cedd2f364ff93c19df037e",
+    "experiments/mdg2/make_comfort_curve_workloads.py": "66148eff0be11e7621d4bbd74f75886f70bba41516c5e544e4df02d8230b38e5",
+    "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1"
+  },
+  "plan_sha256": "0485e2f4b28f163f2a924349c191a65102f75ce4898ae67a7055cdb632e7da71",
+  "workload_sha256": "ae25f7e4893d6522fb358231135665a9b0a961c4c35fc461d15d4d20f4436c87",
+  "base_plan_sha256": "63e62a4c98f37131db580a56c44f0c656fed4ec30fad5290f05793bf7397f1e1",
+  "original_workloads_sha256": "4d956a2836269200ff39dcc9ad4f37d1febb93d8d921e4343e8831d30f82e3b8",
+  "base_freeze_sha256": "3c2471a9c67943fc3f33b6c75a4c6b4021ef9b9b7d3ea37f16bd517f697b1f0d"
+}

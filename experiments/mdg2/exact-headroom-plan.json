@@ -1,0 +1,40 @@
+{
+  "experiment": "exact-local-comfort-headroom-v1",
+  "date": "2026-10-20",
+  "purpose": "Test deterministic completion of residual-cycle clearing, not enumeration of every simple cycle. Retain incomplete runs and report exact cost.",
+  "seeds": [501, 502, 503],
+  "nodes": 32,
+  "trustlines": 96,
+  "profiles": ["broad", "narrow"],
+  "hard_credit_grant_each_endpoint": 10000,
+  "initial_balances": "Uniform integer -6 through 6 on a ring plus uniformly sampled distinct undirected pairs.",
+  "arrivals": {
+    "count": 1000,
+    "rate": 25,
+    "signed_amounts": [-3, -2, -1, 1, 2, 3],
+    "epoch_size": 100,
+    "interpretation": "First 1000 events of a Poisson process; stop by count, not fixed time. Uniform original trustline. Initial clearing and one fully drained service after each 100 accepted offers. Arrivals buffer during clearing; no real-time throughput claim."
+  },
+  "exact_modes": {
+    "broad": ["static", "arrivals"],
+    "narrow": ["static"]
+  },
+  "control_modes": {
+    "broad": ["static", "arrivals"]
+  },
+  "control": "Existing decrease-first headroom policy, 1024 application messages per original trustline total per run, evenly allocated across service epochs with unused credit carried. This is a finite-budget comparator; exact mode runs toward a certificate under a larger safety ceiling. Report actual costs rather than claim a matched-budget win.",
+  "control_total_messages_per_trustline": 1024,
+  "exact_total_message_safety_ceiling": 2000000,
+  "expected_runs": 15,
+  "primary_checks": [
+    "Static broad exact completion must equal independently certified hard-bound L1 oracle.",
+    "Every certified broad arrival epoch must equal its own offline oracle, not only the final snapshot.",
+    "All transfers and settlements independently replayed; bilateral consent, hard grants, net positions, message accounting and drained state checked.",
+    "Narrow no-admissible-negative-cycle completion is not automatically a global hard-limit optimum.",
+    "Safety-ceiling exhaustion is incomplete, never a completeness certificate."
+  ],
+  "scoring": "Each epoch compared with replay of exactly the same accepted prefix on the original ledger without clearing. Clearing potential = reference gross minus hard-bound minimum gross. Preserve negative savings and undefined zero-potential ratios.",
+  "versions": "Freeze actor, runner, generator, auditor, plan, workloads and imported comfort code before performance runs. Python3.12.14 NetworkX3.5.",
+  "timing": "One illustrative wall-clock sample per run; exclude oracle and independent audit work. Run all measurements serially without competing benchmarks.",
+  "limits": "Static snapshots and integer units; reliable delivery; simulator-provided rounds/serialization must be disclosed separately from counted neighbour messages. Path-bearing tokens are not neighbour-private. No app/demo changes."
+}

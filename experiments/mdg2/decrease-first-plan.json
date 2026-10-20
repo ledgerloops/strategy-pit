@@ -1,0 +1,46 @@
+{
+  "experiment": "comfort-headroom-local-decrease-first-followup-v1",
+  "date": "2026-10-20",
+  "registration": "Frozen before any candidate performance measurements. Candidate was chosen from earlier Headroom decrease-first evidence before inspecting the first comfort-curve results; focused correctness tests may precede freeze.",
+  "candidate": "comfort-headroom-local-decrease-first-v1",
+  "change": "After the existing actor's exact shuffle, stable-sort eligible neighbours by local abs(balance+1)-abs(balance), debt reductions first. Preserve random consumption and within-class shuffled order. Helpers remain eligible. No other actor, settlement, allowance, stream, scoring or policy change.",
+  "underlying_policy": "comfort_headroom",
+  "methods": ["comfort_headroom", "decrease_first"],
+  "extension": {
+    "purpose": "Descriptive extension of previously measured graphs; explicitly not held-out validation.",
+    "cases": "All 12 unchanged original comfort-curve workload cases, preserving their hashes.",
+    "modes": ["static", "arrivals"],
+    "budgets_per_original_trustline": [4, 16, 64, 256, 1024],
+    "methods": ["decrease_first"],
+    "expected_runs": 120
+  },
+  "heldout": {
+    "purpose": "Fresh prospective validation after fixing the candidate.",
+    "family": {"name": "medium32", "nodes": 32, "trustlines": 96},
+    "seeds": [401, 402, 403],
+    "profiles": ["broad", "narrow"],
+    "modes": ["static", "arrivals"],
+    "budgets_per_original_trustline": [256, 1024],
+    "methods": ["comfort_headroom", "decrease_first"],
+    "expected_runs": 48
+  },
+  "inheritance": "Reuse frozen comfort_curve_benchmark.run_case unchanged through constructor-only Network injection, restored in finally. Use original plan's graph construction, Poisson RNG, hard grants, no-clearing reference, hard-L1 oracle, time-credit service, actual communication and snapshot-savings definitions. Both methods run underlying comfort_headroom policy; record method separately.",
+  "gate": {
+    "phase": "heldout",
+    "budget_per_original_trustline": 1024,
+    "pooled_snapshot_savings_gain_minimum_fraction": 0.05,
+    "pooled_baseline_requirement": "Baseline pooled snapshot_savings must be strictly positive; otherwise gain is inconclusive and promotion fails. Never discard negative savings.",
+    "cost_ceiling_ratio": 1.25,
+    "cost_metrics": ["messages", "JSON bytes", "runtime seconds"],
+    "cell_grouping": ["profile", "mode"],
+    "cell_savings_requirement": "candidate_savings >= baseline_savings - 0.05*abs(baseline_savings); zero baseline requires candidate>=0. Ratios are null when baseline is zero.",
+    "zero_baseline_cost_requirement": "candidate cost must also be zero when baseline cost is zero; ratio remains null.",
+    "safety_requirement": "Every run accepts every offered transaction, has zero blocked or pending work, passes independent settlement/transfer replay, bounds/comfort consent, all-node conservation, service-credit accounting and independent hard-L1 oracle certification.",
+    "lower_budget_role": "Budget256 is diagnostic only and cannot substitute for a failed high-budget gate.",
+    "promotion_scope": "A passing gate supports only this tested static/serial and random-arrival research workload, not universal convergence, concurrency, private app implementation or production readiness."
+  },
+  "timing": "One illustrative sample per run, same warmed imports and fresh network construction as the first curve. Run original and candidate sequentially; alternate method order by case/mode to reduce fixed ordering bias. Communication is primary; runtime gate retained as prospectively requested.",
+  "expected_runs": 168,
+  "output": "artifacts/mdg2-comfort-curves-2026-10-20/decrease-first-results.json",
+  "preservation": "Never overwrite original source files, original workload or results, or any existing follow-up result. No performance run before the parent authorizes GO and the first comfort-curve campaign is complete."
+}

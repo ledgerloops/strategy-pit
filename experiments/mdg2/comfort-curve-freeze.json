@@ -1,0 +1,10 @@
+{
+  "sources": {
+    "experiments/mdg2/comfort_curve_benchmark.py": "6088f135c6ac966df380b95065ddf25dea28a6dfaae5db7c7312f261ccaa8204",
+    "experiments/mdg2/comfort_headroom.py": "21ce6253a59c4c90105fc03826cf0cd4a8fe2c4d74cedd2f364ff93c19df037e",
+    "experiments/mdg2/make_comfort_curve_workloads.py": "66148eff0be11e7621d4bbd74f75886f70bba41516c5e544e4df02d8230b38e5",
+    "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1"
+  },
+  "plan_sha256": "63e62a4c98f37131db580a56c44f0c656fed4ec30fad5290f05793bf7397f1e1",
+  "workload_sha256": "4d956a2836269200ff39dcc9ad4f37d1febb93d8d921e4343e8831d30f82e3b8"
+}
