@@ -6,12 +6,15 @@
 
 Find practical node-local clearing algorithms that perform well across static and changing credit graphs, with explicit costs and delivery/failure assumptions. Continue useful authorized work while the session is active; checkpoint before interruption. This document is not an external wake-up scheduler.
 
-## Exact residual-cycle completion — 2026-10-20
+## Coordinated exact reference — 2026-10-20
 
 The owner asked to improve node-local clearing to find all clearing potential,
 and what a completeness guarantee requires. A separate deterministic
 Bellman–Ford research mode is implemented in
 `experiments/mdg2/exact_headroom.py`; all earlier frozen experiments are preserved.
+Its presentation label is **Coordinated exact reference**: supplied membership, a
+fixed coordinator and path-disclosing search separate it from the coordinator-free,
+neighbour-private product target. The label correction changes no frozen evidence.
 It counts neighbour control-tree setup, rounds, candidate/quote routing,
 settlement and final certificate dissemination. Known membership, one fixed
 coordinator, reliable delivery and frozen epochs remain explicit assumptions.
@@ -387,3 +390,51 @@ Validation on October 16: the full 105-test app snapshot passed, then six subseq
 The owner asks to preserve existing demo tokens. Normal restarts already reuse node configs; switching to fresh fixture directories had changed the demo identity. Recorded the standing requirement to keep the user's existing data directory, configs, keys and databases during updates and isolate automated fixtures from user data.
 
 Reproduced and fixed a client race: a cached-token refresh could remain in flight while Connect replaced the token, suppress the new refresh, then clear the newly entered valid credential on a late 401. Each connection attempt now advances the session generation and refresh deduplication is scoped to that generation. Older successes/failures cannot affect a newer connection. Invalid authentication now identifies the relevant node origin and running config directory. The new read-only auth browser regression passes delayed-401 recovery, invalid-token correction and delayed-success/disconnect checks, and verifies all three node JSON configs remain byte-for-byte unchanged. No credential generation or server authentication rules changed.
+
+## Neighbour-private hashlock stream: completed October 20
+
+The [private stream report](../artifacts/mdg2-private-stream-2026-10-20/report.html)
+replaces coordinator/path-based evidence for this particular product claim.
+The older 100% result is now explicitly labelled **Coordinated exact reference**;
+its frozen actors, inputs and measured numbers are unchanged.
+
+The new isolated adapter uses real context-bound SHA-256 fulfillment, local
+immutable approvals, reservations and separate SQLite WAL/FULL databases.
+Independent local wakeups initiate overlapping searches while 1,000 Poisson
+transaction offers arrive per 32-node / 96-trustline network. Actual bilateral
+obligation messages post the transfers. A simulator delivers events and records
+evidence; it supplies no route, global winner, membership size or settlement
+decision to any actor. The main graph measures actual endpoint debt against
+request-plus-ACK emissions, with a separately labelled same-posted-transaction
+reference and visible pending-work accounting.
+
+Seven original runs are retained: cancellation and private nonexpansion headroom
+on seeds 601–603, plus the original comfort policy on seed 601. Headroom did not
+consistently beat cancellation. A separately frozen three-run development
+followup filters locally inadmissible two-edge continuations before forwarding,
+uniformly choosing among the remaining neighbours. It leaves 283/320/240 TEST
+debt, versus 378/398/302 for the original headroom candidate: 21.8% less debt
+with 9.8% fewer total messages across the three workloads. Against cancellation
+it leaves 18.5% less debt but uses 2.08 times the messages. These reused-seed
+development results are not held-out validation.
+
+All ten runs posted all 1,000 offers and ended with no partial hashlock operation,
+reservation, offer backlog or mirror mismatch. Independent replay checked
+2,008,956 events, local consent before secret release, ledger changes, complete
+versus partial operations, exact message/ACK body counts and offline reference
+reconstruction. All 116 MDG2 tests and 111 app tests pass. Both prospective
+source/input freezes still match. An additional post-measurement validator and
+residual diagnostic are separately pinned; no measured actor source was changed.
+Raw credential-free journals, all negative results, chart files and a graph ZIP
+are retained in the artifact directory. The user's demo data/configs are untouched.
+
+**Completion remains open.** All three filtered final ledgers have an offline
+witness of an improving headroom loop satisfying the current local policy;
+seeds 602/603 also retain ordinary debt cycles. This finite window therefore
+does not exhaust even the admitted search space. Separately, the five-edge
+`[-1,-1,-1,0,0]` counterexample proves that local nonexpansion excludes some
+globally beneficial helper loops regardless of message count. Next useful work:
+fair/exhaustive private discovery with concurrent-progress guarantees, longer
+prospectively budgeted continuations, and consent to aggregate benefit without
+revealing paths or recoverable loop length. Keep honest-peer and metadata
+limitations explicit; no Byzantine/permanent-loss recovery or anonymity proof.

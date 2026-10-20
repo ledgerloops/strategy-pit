@@ -1,0 +1,26 @@
+{
+  "base_freeze": {
+    "sources": {
+      "experiments/mdg2/private_stream.py": "f3fcab36785a31259881baa21b251b81e3ec769dab633a5937ea39f44f8d19a9",
+      "experiments/mdg2/private_stream_benchmark.py": "28fe4994ff3821ffd4e38827f5a3485051e24ec037663e4130134ae20a181b2e",
+      "experiments/mdg2/private_stream_observer.py": "97e3c4213dd452caa9adbe5771604311933f3ca39669ef3ad28e77307b99e145",
+      "experiments/mdg2/private_stream_audit.py": "3090bca9dee76d0c9d4fd7adb4ee113853be4139c01a714a1e8ce2e326d8eac4",
+      "experiments/mdg2/make_private_stream_workloads.py": "37ca6bd6785eeedae8ba10c845d4127790b7b274d2367b0b3b4a25b1f0489c53",
+      "experiments/mdg2/test_private_stream.py": "6069787f62209d0d274e01941ef9a530a57b3eaeb4074167f281e323e8aa5910",
+      "experiments/mdg2/test_private_stream_audit.py": "9f2b7c45d81dc38a5d09d5e98d138305343875c7e5f68a5282827fa0afe14a1d",
+      "experiments/mdg2/test_private_stream_observer.py": "a891bd523a1f6d8a7932fc3384e5fd75958f3532b54b9fa956cf74656041ee68",
+      "app/private_node.py": "e715c1b830277f27b34b0866908a193ce66ef98cc5c535c57670a2d49a4a7768",
+      "app/node.py": "ea56ef3aa61997cfdde08dc13dee203cc69a1cff6f41cfb93ca06ccac2dfa7d3",
+      "app/obligations.py": "e6984cd1e629ae1861433a1fbe04fd6274f5c3bfebf802ddbad68602a400fe79",
+      "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1"
+    },
+    "plan_sha256": "14f598c55a768e76a14ff4dc0a8daba81fb3c1021a3b105ebf4b03e94dcc9e6d",
+    "workloads_sha256": "6c7122ed548f5aae2b48e3f493a328dd2ab7bb74d1df8bbd1797976e5afd0dcf"
+  },
+  "plan_sha256": "47b81077daea88a283b91e6fc80266989249a8d7467092513a40e2bd5709fc49",
+  "sources": {
+    "experiments/mdg2/private_stream_filtered.py": "fa4aab863d6237379647dc1c04aecb991693c27971b572687fe91d858e267273",
+    "experiments/mdg2/test_private_filtered.py": "061799b75574ba476abb091fafd7eea822c7cad83ffb1b88556f6bb67c8547ad",
+    "experiments/mdg2/private_filter_benchmark.py": "dcc95c9edd74184151950ce73949788bfcd4ced081816b47022741cfd87d7636"
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "experiment": "neighbour-private-coordinator-free-hashlock-stream-v1",
+  "date": "2026-10-20",
+  "requirement": "No participant receives a route, non-neighbour identity, membership size, hop count, global balance/objective or coordinator instructions. Actual context-bound SHA-256 hashlock settlement, local bilateral approvals and durable reservations are mandatory.",
+  "seeds": [
+    601,
+    602,
+    603
+  ],
+  "nodes": 32,
+  "trustlines": 96,
+  "initial_balances": "Uniform signed integer -3 through 3 on a ring plus random distinct undirected original pairs.",
+  "preferences": "Broad symmetric comfort intervals and hard credit grants of 10000 at both endpoints; explicit assistance opt-in. Named headroom policy may use original zero-balance trustlines. Cancellation cannot.",
+  "arrivals": {
+    "count": 1000,
+    "rate": 25,
+    "signed_amounts": [
+      -3,
+      -2,
+      -1,
+      1,
+      2,
+      3
+    ],
+    "interpretation": "First 1000 Poisson events, uniform original trustlines; offers are generated before all runs and arrive independently of clearing activity. Actual bilateral obligation proposal/approval/commit is asynchronous. Some arrivals can reduce debt by bilateral netting. Never equate offered with fully applied."
+  },
+  "methods": [
+    "randomized_cancellation",
+    "private_nonexpansion"
+  ],
+  "negative_control": {
+    "method": "faithful_comfort",
+    "seed": 601,
+    "purpose": "Preserve evidence of the original broad-zone strict-discomfort initiation stall."
+  },
+  "expected_runs": 7,
+  "scheduling": {
+    "wake_mean": 1.0,
+    "wire_delay": [
+      0.005,
+      0.015
+    ],
+    "retry_delay": 0.05,
+    "discovery_tail": 30,
+    "settlement_tail": 10,
+    "message_cap": 250000,
+    "interpretation": "Independent local exponential wakeups; continuously overlapping searches, approvals and external obligations. Each actor stops new searches at its configured local horizon. Fixed observation window; no queue-empty-triggered arrivals, global epoch barriers, selected initiator or unbudgeted drain. Request safety cap censors the run with pending work retained."
+  },
+  "private_nonexpansion": "A separately hash-context-bound research policy. Local routing is randomized. Both incident moves must obey bilateral comfort. Every participant's sum of absolute local balance changes must be nonpositive; the initiator's must be strictly negative. No global cost sum is transmitted. This guarantees gross debt reduction for a fully applied loop but excludes some globally useful loops with consecutive helper edges.",
+  "metrics": [
+    "Cumulative actual peer application request attempts and acknowledgement messages/bytes, separately and combined.",
+    "Actual endpoint debtor-side debt after local events, with mirror discrepancy and pending reservation counts.",
+    "Observer-only quote-consistent reconstruction of fully applied operations, alongside replay of exactly the incorporated external obligations without clearing. This shadow is diagnostic; the main measured curve is actual endpoint debtor-side debt, and pending dependencies remain explicit.",
+    "Completed matched hashlock cycles, partial local fulfillment, offers/submissions/fully posted/backlog/rejections; no proposal or readiness counted as clearing.",
+    "Discomfort, hard bounds, signed positions and local evidence correctness; all failures, pending work and increasing external-transfer steps retained."
+  ],
+  "claims": "No global completeness or optimum certificate. Node-local and neighbour-private here mean no required remote membership or loop-length content, not anonymity against timing, metadata correlation or collusion. Honest stable identities and reliable transport are assumed for this first campaign; durable SQLite storage and actual hashlocks do not establish Byzantine or permanent-loss recovery.",
+  "timing": "Fixed simulated clocks and seeded local choices; fresh cryptographic secrets/identifiers and real receipt timestamps remain nondeterministic. One illustrative host runtime per run, not production throughput. Run measurements serially.",
+  "freeze": "Pin protocol adapter, research policy, observer, auditor, benchmark, fixture generator, plan, inputs and imported app protocol sources before measurements. Preserve previous coordinated-exact evidence as a separate reference."
+}

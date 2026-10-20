@@ -12,6 +12,13 @@ The [issue tracker in `docs/issues/`](docs/issues/README.md) records proposals, 
 
 The [one-unit retention research note](experiments/HEADROOM-ONE-UNIT-RETENTION.md) preserves an offline Headroom reference and counterexamples. Product work now focuses on [comfort zones](app/COMFORT.md); Headroom remains a debt-reduction baseline with different bounds and objectives.
 
+The [private hashlock stream experiment](artifacts/mdg2-private-stream-2026-10-20/report.html)
+plots actual debt against messages while transactions arrive. It uses neighbour-private
+message contents, independent local searches and real hashlocks, with no network-wide
+clearing coordinator. It retains incomplete work, the original negative results, and a
+separately frozen local-filter followup. This is finite-window research, not a proof of
+complete clearing or production readiness.
+
 ## From research to real use
 
 The [product roadmap](docs/product-roadmap.md) proposes a community clearing assistant, a durable peer protocol, and staged pilots with explicit release gates. The next milestone is a three-node crash-recovery testnet alongside a read-only user demo.
@@ -64,6 +71,7 @@ New [timestamped experiments](experiments/TEMPORAL-RESULTS.md) add dropped messa
 - [DFS, neighbour-message protocols and continuously growing graphs](experiments/README.md): reproducible runs, measured results and independent settlement checks.
 - [Trustlines and moving debt](experiments/TRUSTLINES.md): signed balances, credit limits, loop adjustments and optimization references.
 - [The bird’s-eye worm and Sarafu benchmarks](docs/worm-and-benchmarks.md): centralized DFS, minimum-cost flow, dataset construction and solution formats.
+- [Coordinated exact reference](artifacts/mdg2-exact-headroom-2026-10-20/README.md): certified frozen-epoch research with supplied membership, a fixed coordinator and disclosed paths; separate from the coordinator-free, neighbour-private product target.
 
 The worm and MCF are useful reference points for measuring our animals. Their graph-wide access is part of the benchmark, not something a node-local contestant may use.
 

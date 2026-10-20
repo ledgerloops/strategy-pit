@@ -1,0 +1,10 @@
+{
+  "scope": "Post-measurement validation and rendering only; actor inputs and measured source pins unchanged.",
+  "sources": {
+    "experiments/mdg2/build_private_stream_report.py": "b49599e164bb1062c81fdac58f2bde5ffdeb8c68130c405fb96e3e6fcc401245",
+    "experiments/mdg2/audit_private_campaign.py": "7bdf14a186e487627962b298a400ff9aef3fd7001fdf3aa0676816307aca5cb5",
+    "experiments/mdg2/private_stream_post_audit.py": "50e60975eea170b56698ea83d204e36370c0d51429bbca1f466a3b0e3abc41ae",
+    "experiments/mdg2/private_residual_diagnostic.py": "264939d3df182e5b57cf14cbc6796d6ee1ce3403ff0b776126c3d525941387f5",
+    "experiments/mdg2/test_private_residual_diagnostic.py": "30accf3d4c7d7fbce915be795f39661b4d5f2e1dea2d6dfefa095b4dad6d0ad3"
+  }
+}

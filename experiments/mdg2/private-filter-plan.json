@@ -1,0 +1,14 @@
+{
+  "experiment": "private-local-pair-filter-followup-v1",
+  "date": "2026-10-20",
+  "reason": "The first frozen seed-601 private headroom run used 52092 requests and ended with debt 378, versus cancellation 23817 and 341. Retain that result; test one local early-rejection improvement without changing consent or hashlocks.",
+  "method": "private_nonexpansion_filtered",
+  "discovery_version": "local-pair-filter-v1",
+  "change": "Before forwarding a comfort probe, a node filters outgoing neighbours by the same two-incident-edge absolute-balance nonexpansion test already required at prepare. Uniformly randomize all eligible choices; no graph, route, roster, aggregate or remote identity is supplied. Recheck consent and quotes at prepare.",
+  "seeds": [601, 602, 603],
+  "expected_runs": 3,
+  "workloads": "Exact previously frozen private-stream-workloads.json; all arrival, clock, budget, observation-window and bilateral policy parameters unchanged.",
+  "interpretation": "Paired development replication, not held-out validation: the change follows an observed seed-601 result. Report all three runs and the complete preceding seven-run campaign. No parameter retuning or claim of guaranteed improvement.",
+  "metrics": ["Actual requests and ACKs", "Final endpoint debt and fully posted transactions", "Completed hashlock loops", "Pending obligations, reservations, endpoint mismatches and dependency backlog", "Illustrative runtime and payload bytes"],
+  "limits": "The local policy still rejects some globally beneficial helper loops. Early filtering changes discovery efficiency, not completeness, anonymity, fault assumptions or economic authority."
+}

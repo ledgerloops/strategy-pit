@@ -1,0 +1,397 @@
+{
+  "freeze": {
+    "sources": {
+      "experiments/mdg2/private_stream.py": "f3fcab36785a31259881baa21b251b81e3ec769dab633a5937ea39f44f8d19a9",
+      "experiments/mdg2/private_stream_benchmark.py": "28fe4994ff3821ffd4e38827f5a3485051e24ec037663e4130134ae20a181b2e",
+      "experiments/mdg2/private_stream_observer.py": "97e3c4213dd452caa9adbe5771604311933f3ca39669ef3ad28e77307b99e145",
+      "experiments/mdg2/private_stream_audit.py": "3090bca9dee76d0c9d4fd7adb4ee113853be4139c01a714a1e8ce2e326d8eac4",
+      "experiments/mdg2/make_private_stream_workloads.py": "37ca6bd6785eeedae8ba10c845d4127790b7b274d2367b0b3b4a25b1f0489c53",
+      "experiments/mdg2/test_private_stream.py": "6069787f62209d0d274e01941ef9a530a57b3eaeb4074167f281e323e8aa5910",
+      "experiments/mdg2/test_private_stream_audit.py": "9f2b7c45d81dc38a5d09d5e98d138305343875c7e5f68a5282827fa0afe14a1d",
+      "experiments/mdg2/test_private_stream_observer.py": "a891bd523a1f6d8a7932fc3384e5fd75958f3532b54b9fa956cf74656041ee68",
+      "app/private_node.py": "e715c1b830277f27b34b0866908a193ce66ef98cc5c535c57670a2d49a4a7768",
+      "app/node.py": "ea56ef3aa61997cfdde08dc13dee203cc69a1cff6f41cfb93ca06ccac2dfa7d3",
+      "app/obligations.py": "e6984cd1e629ae1861433a1fbe04fd6274f5c3bfebf802ddbad68602a400fe79",
+      "app/comfort.py": "cf5d143f3a86f40499548246d1f52398529b3d0ac41b93a52e15d0cd486235c1"
+    },
+    "plan_sha256": "14f598c55a768e76a14ff4dc0a8daba81fb3c1021a3b105ebf4b03e94dcc9e6d",
+    "workloads_sha256": "6c7122ed548f5aae2b48e3f493a328dd2ab7bb74d1df8bbd1797976e5afd0dcf"
+  },
+  "python": "3.12.14",
+  "sqlite": "3.53.1",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "complete": true,
+  "runs": [
+    {
+      "case": "private32-seed601",
+      "seed": 601,
+      "method": "randomized_cancellation",
+      "file": "private32-seed601-randomized_cancellation.json.gz",
+      "sha256": "b69669d60659a03056a0f6b723075ca67683b73fb7f0c8e0c087dbbce16ffd13",
+      "runtime_seconds": 20.181284276011866,
+      "initialization_seconds": 0.07625754000036977,
+      "messages": 23817,
+      "acknowledgements": 23817,
+      "message_bytes": 6857654,
+      "ack_body_bytes": 285804,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 80.0164575837504,
+        "event_end_index": 126631,
+        "messages": 23817,
+        "message_bytes": 6857654,
+        "acknowledgements": 23817,
+        "ack_body_bytes": 285804,
+        "delivered_messages": 23817,
+        "debt": 341,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 80.0164575837504,
+        "message_count": 47634,
+        "causal_fully_applied_gross": 341,
+        "same_posted_no_clearing_gross": 499,
+        "gross_saving": 158,
+        "incorporated": {
+          "clearing": 72,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 352,
+        "fully_observed_dependency_blocked": 0
+      }
+    },
+    {
+      "case": "private32-seed601",
+      "seed": 601,
+      "method": "private_nonexpansion",
+      "file": "private32-seed601-private_nonexpansion.json.gz",
+      "sha256": "a3840e8789a64ee17920ce70f1c0a21b4f7c89fbe7efade58ed7f3a39bd1c0c6",
+      "runtime_seconds": 57.22956852201605,
+      "initialization_seconds": 0.07849061701563187,
+      "messages": 52092,
+      "acknowledgements": 52092,
+      "message_bytes": 20086442,
+      "ack_body_bytes": 625104,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 80.0164575837504,
+        "event_end_index": 268759,
+        "messages": 52092,
+        "message_bytes": 20086442,
+        "acknowledgements": 52092,
+        "ack_body_bytes": 625104,
+        "delivered_messages": 52092,
+        "debt": 378,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 80.0164575837504,
+        "message_count": 104184,
+        "causal_fully_applied_gross": 378,
+        "same_posted_no_clearing_gross": 499,
+        "gross_saving": 121,
+        "incorporated": {
+          "clearing": 67,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 179,
+        "fully_observed_dependency_blocked": 0
+      }
+    },
+    {
+      "case": "private32-seed602",
+      "seed": 602,
+      "method": "randomized_cancellation",
+      "file": "private32-seed602-randomized_cancellation.json.gz",
+      "sha256": "78423c19e622b25b5fa607f26b8d298685f736784d8f3f5cb03e9064b25e3ae7",
+      "runtime_seconds": 20.33997987600742,
+      "initialization_seconds": 0.0771472479973454,
+      "messages": 22956,
+      "acknowledgements": 22956,
+      "message_bytes": 6618698,
+      "ack_body_bytes": 275472,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 81.09199938807265,
+        "event_end_index": 122244,
+        "messages": 22956,
+        "message_bytes": 6618698,
+        "acknowledgements": 22956,
+        "ack_body_bytes": 275472,
+        "delivered_messages": 22956,
+        "debt": 401,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 81.09199938807265,
+        "message_count": 45912,
+        "causal_fully_applied_gross": 401,
+        "same_posted_no_clearing_gross": 492,
+        "gross_saving": 91,
+        "incorporated": {
+          "clearing": 56,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 251,
+        "fully_observed_dependency_blocked": 0
+      }
+    },
+    {
+      "case": "private32-seed602",
+      "seed": 602,
+      "method": "private_nonexpansion",
+      "file": "private32-seed602-private_nonexpansion.json.gz",
+      "sha256": "61edd6b12bea1b790e9e6b6b389a09c787c73bd7f384383f6ca80cb000694cb4",
+      "runtime_seconds": 60.527290719008306,
+      "initialization_seconds": 0.07870572901447304,
+      "messages": 56090,
+      "acknowledgements": 56090,
+      "message_bytes": 21631847,
+      "ack_body_bytes": 673080,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 81.09199938807265,
+        "event_end_index": 288844,
+        "messages": 56090,
+        "message_bytes": 21631847,
+        "acknowledgements": 56090,
+        "ack_body_bytes": 673080,
+        "delivered_messages": 56090,
+        "debt": 398,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 81.09199938807265,
+        "message_count": 112180,
+        "causal_fully_applied_gross": 398,
+        "same_posted_no_clearing_gross": 492,
+        "gross_saving": 94,
+        "incorporated": {
+          "clearing": 54,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 130,
+        "fully_observed_dependency_blocked": 0
+      }
+    },
+    {
+      "case": "private32-seed603",
+      "seed": 603,
+      "method": "randomized_cancellation",
+      "file": "private32-seed603-randomized_cancellation.json.gz",
+      "sha256": "c27baa2e6199e1124698a0456d56587497d8b99052a3444c68ce41fedd3096bd",
+      "runtime_seconds": 20.996523001027526,
+      "initialization_seconds": 0.07876250598928891,
+      "messages": 24097,
+      "acknowledgements": 24097,
+      "message_bytes": 6937136,
+      "ack_body_bytes": 289164,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 80.07425622045112,
+        "event_end_index": 128150,
+        "messages": 24097,
+        "message_bytes": 6937136,
+        "acknowledgements": 24097,
+        "ack_body_bytes": 289164,
+        "delivered_messages": 24097,
+        "debt": 292,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 80.07425622045112,
+        "message_count": 48194,
+        "causal_fully_applied_gross": 292,
+        "same_posted_no_clearing_gross": 464,
+        "gross_saving": 172,
+        "incorporated": {
+          "clearing": 75,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 374,
+        "fully_observed_dependency_blocked": 0
+      }
+    },
+    {
+      "case": "private32-seed603",
+      "seed": 603,
+      "method": "private_nonexpansion",
+      "file": "private32-seed603-private_nonexpansion.json.gz",
+      "sha256": "c54e5fe29ac7b05668c4528c33704bc4debb22bc7a774b3220345880666d6390",
+      "runtime_seconds": 68.29730364898569,
+      "initialization_seconds": 0.07739585297531448,
+      "messages": 55042,
+      "acknowledgements": 55042,
+      "message_bytes": 21229872,
+      "ack_body_bytes": 660504,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 80.07425622045112,
+        "event_end_index": 283660,
+        "messages": 55042,
+        "message_bytes": 21229872,
+        "acknowledgements": 55042,
+        "ack_body_bytes": 660504,
+        "delivered_messages": 55042,
+        "debt": 302,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 80.07425622045112,
+        "message_count": 110084,
+        "causal_fully_applied_gross": 302,
+        "same_posted_no_clearing_gross": 464,
+        "gross_saving": 162,
+        "incorporated": {
+          "clearing": 74,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 212,
+        "fully_observed_dependency_blocked": 0
+      }
+    },
+    {
+      "case": "private32-seed601",
+      "seed": 601,
+      "method": "faithful_comfort",
+      "file": "private32-seed601-faithful_comfort.json.gz",
+      "sha256": "b3ae803dd5b69124525e7b48521fa6e8f4f948dbc2209c91b9b147993de96242",
+      "runtime_seconds": 4.936655411001993,
+      "initialization_seconds": 0.09559507301310077,
+      "messages": 4384,
+      "acknowledgements": 4384,
+      "message_bytes": 1572456,
+      "ack_body_bytes": 52608,
+      "delivery_failures": 0,
+      "retried_requests": 0,
+      "censored": false,
+      "final": {
+        "time": 80.0164575837504,
+        "event_end_index": 26922,
+        "messages": 4384,
+        "message_bytes": 1572456,
+        "acknowledgements": 4384,
+        "ack_body_bytes": 52608,
+        "delivered_messages": 4384,
+        "debt": 499,
+        "mirror_mismatches": 0,
+        "absolute_mirror_gap": 0,
+        "pending_messages": 0,
+        "offered": 1000,
+        "accepted_offers": 1000,
+        "offer_backlog": 0,
+        "reservations": 0,
+        "outbox": 0,
+        "unresolved_proposals": 0,
+        "unresolved_obligations": 0
+      },
+      "observer_final": {
+        "time": 80.0164575837504,
+        "message_count": 8768,
+        "causal_fully_applied_gross": 499,
+        "same_posted_no_clearing_gross": 499,
+        "gross_saving": 0,
+        "incorporated": {
+          "clearing": 0,
+          "obligation": 1000
+        },
+        "pending": {
+          "clearing": 0,
+          "obligation": 0
+        },
+        "cumulative_clearing_gross_reduction": 0,
+        "fully_observed_dependency_blocked": 0
+      }
+    }
+  ]
+}

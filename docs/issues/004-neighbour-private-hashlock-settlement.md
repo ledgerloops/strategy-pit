@@ -61,3 +61,27 @@ The owner's subsequent instruction authorized implementation. [Private v2](../..
 [Network and adversarial validation](../../app/PRIVATE_TESTING.md) covers differently sized rings, local-view/wire audits, minimum-three/reflection, failed subcycles, decline, invalid evidence, duplicates and selected crash/restart boundaries. A failed-subcycle cleanup defect and a semantic replay hazard were found and corrected during independent review. The client and standalone receipt verifier check released evidence; tampering fails verification.
 
 This is an implemented candidate within honest-peer, stable-identity, durable-storage assumptions, not a proof against Byzantine behaviour, Sybils, traffic analysis or all possible failures. There is no deadline-based unlock or permanent-node-loss recovery. Legacy and v2 databases are mutually rejected rather than migrated. Remaining work includes broader crash exploration, explicit production identity/transport and rollback recovery, operational limits and adversarial privacy/security analysis. Keep this issue open for those release gates; do not equate implementation with full production readiness.
+
+## Private asynchronous headroom experiment
+
+The October 20 [private stream experiment](../../artifacts/mdg2-private-stream-2026-10-20/report.html)
+keeps the actual v2 hashlock, conditional approvals and durable SQLite state while
+transactions arrive asynchronously. Each node independently starts searches; a
+simulator queue delivers packets, but does not select roots, routes or settlements.
+No participant receives a remote identity, roster, route, global objective or hop count.
+The loop initiator still creates/releases its secret; removing a network-wide
+coordinator does not remove local consent or message ordering.
+
+The separately bound `private-local-nonexpansion-v1` comfort policy permits helper
+trustlines but requires every participant's two-edge absolute exposure not to
+increase, with a strict decrease at the initiator. A later local filter rejects
+already-inadmissible pairs before forwarding. Both are research variants; the
+running demo and production policy are unchanged.
+
+The policy is not complete. A broad-zone five-edge ring with signed balances
+`[-1, -1, -1, 0, 0]` can move to `[0, 0, 0, 1, 1]`, reducing gross debt from 3 to 2.
+The participant between the two helper edges would increase its local absolute
+exposure by 2, so the present policy refuses it regardless of message budget.
+Investigate privacy-preserving aggregate-benefit consent and concurrent-search
+liveness without transmitting a path, membership count or recoverable loop length.
+The earlier 100% coordinated exact reference does not satisfy this issue's boundary.

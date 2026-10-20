@@ -1,4 +1,4 @@
-Exact node-local comfort-headroom clearing — 20 October 2026
+Coordinated exact reference — 20 October 2026
 
 Run from the strategy-pit repository root. Base checkout:
   1e0e87d4859e470d87b430b488c64db3c08df6ae
@@ -55,12 +55,21 @@ reduced-cost checks; broad completed epochs also match independently certified
 offline minimum-gross-debt solutions. Wire counters/bytes are measured by the
 frozen encoder; full wire payloads are not retained for separate re-encoding.
 
-The distributed algorithm uses neighbour messages and local state. A known node
-count, fixed coordinator, stable topology, synchronous reliable delivery and
-serialized epochs are explicit simulation assumptions. Counted traffic includes
+This coordinated exact reference uses neighbour messages and local state,
+including path-disclosing search tokens. A known node count, fixed coordinator,
+stable topology, synchronous reliable delivery and serialized epochs are explicit
+simulation assumptions. It is separate from the coordinator-free, neighbour-private
+product target. Counted traffic includes
 control-tree setup, search round broadcasts/reports, candidate routing, quote
 collection, prepare/commit/cleanup, and final certificate broadcast. Initial
 ledger/preference distribution, external-transfer admission transport, network
 headers and transport ACK/retry traffic are excluded.
 
 No production app code, demo data, credentials or tokens are changed.
+
+Presentation-only label correction, 20 October 2026: generated headings, chart
+legends and package notes now say "Coordinated exact reference". Frozen actor
+sources, plan, workload, freeze, measurements and independent audit are unchanged.
+The internal method key "exact" is retained in raw evidence and machine tables.
+SOURCE-MANIFEST.json distinguishes the updated report renderer from the original
+renderer hash; SHA256SUMS.txt covers the revised presentation package.

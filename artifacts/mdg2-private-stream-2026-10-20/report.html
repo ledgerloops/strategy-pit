@@ -1,0 +1,85 @@
+<!doctype html><meta charset="utf-8"><title>Private hashlock debt stream</title>
+<style>body{font:17px/1.55 system-ui;max-width:1200px;margin:40px auto;padding:0 20px;color:#182236}
+img{width:100%;height:auto}table{border-collapse:collapse;font-size:14px;width:100%}td,th{padding:8px;border-bottom:1px solid #ccd;text-align:left}code{overflow-wrap:anywhere}li{margin:8px 0}</style>
+<h1>Neighbour-private, coordinator-free hashlock debt stream</h1>
+<p>These actors use only their own balances, reservations and direct-neighbour messages.
+Any node can initiate a search. A loop initiator holds and releases its hashlock secret;
+there is no network-wide coordinator, membership list, route or hop count in participant messages.
+The simulator has a global delivery queue and a separate observer; neither chooses the winning loop or feeds a global score to nodes.</p>
+<img src="private-debt-vs-messages.png" alt="Measured debt and same-posted no-clearing reference against messages sent">
+<h2>All retained runs</h2>
+<p>Across the three paired development workloads, early local filtering left
+<strong>21.8% less gross debt with 9.8% fewer messages</strong>
+than the original private headroom candidate. This is an aggregate comparison on reused development seeds,
+not a held-out performance guarantee.</p>
+<p>Against cancellation, the filtered headroom method left 18.5% less debt,
+but sent 2.08 times as many messages. It trades communication for additional clearing.</p>
+<table><tr><th>Method</th><th>Seed</th><th>Posted / offered</th><th>Final debt</th><th>Reference debt</th><th>Complete loops</th><th>Messages</th><th>Payload MiB</th><th>Seconds</th><th>Offer backlog</th><th>Reservations</th></tr><tr><td>Private cancellation</td><td>601</td><td>1000/1000</td><td>341</td><td>499</td><td>72</td><td>47,634</td><td>6.81</td><td>20.18</td><td>0</td><td>0</td></tr><tr><td>Private comfort headroom</td><td>601</td><td>1000/1000</td><td>378</td><td>499</td><td>67</td><td>104,184</td><td>19.75</td><td>57.23</td><td>0</td><td>0</td></tr><tr><td>Private cancellation</td><td>602</td><td>1000/1000</td><td>401</td><td>492</td><td>56</td><td>45,912</td><td>6.57</td><td>20.34</td><td>0</td><td>0</td></tr><tr><td>Private comfort headroom</td><td>602</td><td>1000/1000</td><td>398</td><td>492</td><td>54</td><td>112,180</td><td>21.27</td><td>60.53</td><td>0</td><td>0</td></tr><tr><td>Private cancellation</td><td>603</td><td>1000/1000</td><td>292</td><td>464</td><td>75</td><td>48,194</td><td>6.89</td><td>21.00</td><td>0</td><td>0</td></tr><tr><td>Private comfort headroom</td><td>603</td><td>1000/1000</td><td>302</td><td>464</td><td>74</td><td>110,084</td><td>20.88</td><td>68.30</td><td>0</td><td>0</td></tr><tr><td>Original comfort control</td><td>601</td><td>1000/1000</td><td>499</td><td>499</td><td>0</td><td>8,768</td><td>1.55</td><td>4.94</td><td>0</td><td>0</td></tr><tr><td>Private headroom + local filter</td><td>601</td><td>1000/1000</td><td>283</td><td>499</td><td>161</td><td>92,548</td><td>17.58</td><td>50.14</td><td>0</td><td>0</td></tr><tr><td>Private headroom + local filter</td><td>602</td><td>1000/1000</td><td>320</td><td>492</td><td>139</td><td>102,938</td><td>19.55</td><td>56.27</td><td>0</td><td>0</td></tr><tr><td>Private headroom + local filter</td><td>603</td><td>1000/1000</td><td>240</td><td>464</td><td>154</td><td>98,924</td><td>18.79</td><td>54.14</td><td>0</td><td>0</td></tr></table>
+<p>Messages include actual peer request attempts plus ACK emissions, including preference setup, discovery,
+settlement and obligation traffic. Exact serialized JSON body bytes are counted; HTTP/TCP headers,
+credentials, client API transport and process isolation are excluded. Runtime is one illustrative host sample
+per run, including durable SQLite writes and instrumentation, excluding initialization, offline audits and plots.
+It is not production throughput. Raw summaries retain separate request/ACK counts, errors and retries.</p>
+<h2>What the graph measures</h2>
+<p>The green curve is actual endpoint debtor-side debt after every local event, without smoothing.
+An in-flight operation may leave mirrored endpoints temporarily inconsistent. A local hashlock application
+is not counted as a completed loop until matching evidence exists at every participant.
+The dashed line replays exactly the external obligations incorporated into an offline quote-consistent
+shadow ledger, with no clearing. Dependencies that cannot be reconstructed remain pending.
+Balance quotes alone do not establish unique causal ordering after an ABA balance repetition.</p>
+<p>A transaction can raise debt or reduce it by bilateral netting. Snapshot difference from the no-clearing
+reference is not cumulative clearing: later transactions can net differently in the two ledgers.
+The CSV separately reports cumulative debt reduction from incorporated completed loops.
+Uncleared gross debt includes non-circular debt; zero is generally not an attainable target.</p>
+<img src="private-debt-event-detail.png" alt="Transaction and hashlock application effects in the first 2000 messages">
+<h2>Policy and completeness</h2>
+<p>The new <code>private-local-nonexpansion-v1</code> policy permits original zero-balance trustlines
+as comfort-zone headroom, with bilateral preferences and assistance opt-in checked on each edge.
+Each participant's two local absolute balances may not increase in sum; the initiator must strictly reduce them.
+Summing these local tests counts each edge twice, so a fully applied loop strictly reduces gross debt.
+Cancellation uses existing debt edges only. Discovery shuffles eligible local neighbours instead of repeatedly
+choosing the lexicographically first dead end. The original comfort policy is retained as a negative control.</p>
+<p>The first headroom result used more messages and ended with more debt than cancellation.
+The three-run followup filters a continuation before forwarding when the receiving node's two-edge
+test would already reject it. It still chooses uniformly among all eligible neighbours, uses the
+same hash-bound consent policy, and rechecks quotes at prepare. These are paired development runs on
+the same seeds, not held-out validation. All seven original runs and all three followup runs are retained.</p>
+<p><strong>This is not a completeness or maximum-clearing proof.</strong> A five-edge loop with marginal gross-debt
+changes −1, −1, −1, +1, +1 is globally improving, but the participant between the two helper edges would
+increase its local exposure and refuses this policy. More retries cannot overcome that consent restriction.
+Discovering every remaining admissible loop also requires a liveness argument under concurrent searches.
+Privacy-preserving aggregate consent and distributed conflict recovery remain research work.</p>
+<p>The following global diagnostic runs only after measurement and is never supplied to participants.
+Each true entry has an explicit remaining one-unit cycle witness in
+<a href="residual-diagnostics.json">residual-diagnostics.json</a>. A beneficial headroom witness may
+require consent beyond the present local nonexpansion policy; it is not a private discovery result.</p>
+<table><tr><th>Method</th><th>Workload</th><th>Debt cycle remains</th><th>Improving headroom cycle remains</th></tr><tr><td>Private cancellation</td><td>private32-seed601</td><td>True</td><td>True</td></tr><tr><td>Private comfort headroom</td><td>private32-seed601</td><td>True</td><td>True</td></tr><tr><td>Private cancellation</td><td>private32-seed602</td><td>True</td><td>True</td></tr><tr><td>Private comfort headroom</td><td>private32-seed602</td><td>True</td><td>True</td></tr><tr><td>Private cancellation</td><td>private32-seed603</td><td>True</td><td>True</td></tr><tr><td>Private comfort headroom</td><td>private32-seed603</td><td>True</td><td>True</td></tr><tr><td>Original comfort control</td><td>private32-seed601</td><td>True</td><td>True</td></tr><tr><td>Private headroom + local filter</td><td>private32-seed601</td><td>False</td><td>True</td></tr><tr><td>Private headroom + local filter</td><td>private32-seed602</td><td>True</td><td>True</td></tr><tr><td>Private headroom + local filter</td><td>private32-seed603</td><td>True</td><td>True</td></tr></table>
+<p>In these measurements, all three filtered runs still have a witnessed improving headroom loop
+that satisfies the current local nonexpansion rule. Seeds 602 and 603 also retain ordinary debt cycles.
+Thus the observed remaining gap includes finite-window discovery limits, separately from the
+five-edge counterexample demonstrating the policy's general incompleteness.</p>
+<h2>Workload and limits</h2>
+<ul><li>Three frozen 32-node / 96-trustline graphs, seeds 601–603; signed initial balances −3…3.
+All original trustlines have broad bilateral comfort and credit intervals ±10,000 TEST and assistance enabled.</li>
+<li>1,000 independently scheduled Poisson offers per graph, rate 25 per simulated time unit,
+uniform original trustline, signed sizes ±1, ±2, ±3. Offers use actual bilateral proposal/approval/commit messages.</li>
+<li>Independent exponential actor wakeups with mean 1; one-way simulated delays uniform 0.005…0.015;
+retry delay 0.05. Each actor stops new discovery 30 time units after the last offer.
+Observation ends 10 units later; no forced unlock or hidden queue-empty drain.
+A 250,000-request safety cap retains censored/pending work.</li>
+<li>Honest, stable identities; reliable delivery in these ten measurements.
+Focused tests cover selected loss/retry cases, not Byzantine security, permanent-loss recovery or deployment readiness.
+Shared opaque hashes and timing may reveal correlations; neighbour-private contents do not mean traffic anonymity.</li>
+<li>Actual SHA-256 context-bound preimages, immutable local approvals, reservations, durable outbox/inbox,
+and separate SQLite WAL/FULL databases. Automatic local approvals are a simulation policy; the user's running demo is unchanged.</li></ul>
+<img src="private-debt-all-seeds.png" alt="All nine primary and followup traces">
+<h2>Validation and versions</h2>
+<p>Independent replay: see <a href="independent-audit.json">audit results</a>.
+The 116-test MDG2 benchmark suite and 111-test app suite passed.
+Python 3.12.14; SQLite 3.53.1; plotting matplotlib 3.10.8.
+The exact source/input SHA-256 pins are in <a href="source-freeze.json">source-freeze.json</a>.
+Raw gzip journals contain every measured event and exact credential-free message body.
+Fresh cryptographic secrets and receipt timestamps are not seeded; seeded fixtures and routing choices do not
+imply byte-identical output on replay.</p>
+<p>The earlier 100% benchmark is a <strong>coordinated exact reference</strong>, with membership/path knowledge
+and serialized epochs. It does not establish the privacy or coordinator-free claims tested here.</p>

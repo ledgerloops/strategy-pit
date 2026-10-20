@@ -1,0 +1,2669 @@
+[
+  {
+    "case": "private32-seed601",
+    "method": "randomized_cancellation",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 341,
+    "positive_debt_arcs": 68,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_013",
+        "participant_006",
+        "participant_029",
+        "participant_030",
+        "participant_012",
+        "participant_013"
+      ],
+      "changes": [
+        {
+          "source": "participant_013",
+          "target": "participant_006",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_006",
+          "target": "participant_029",
+          "before": -10,
+          "after": -9,
+          "mirror_before": 10,
+          "mirror_after": 9,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": -13,
+          "after": -12,
+          "mirror_before": 13,
+          "mirror_after": 12,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_012",
+          "before": -13,
+          "after": -12,
+          "mirror_before": 13,
+          "mirror_after": 12,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_013",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -5,
+      "gross_reduction": 5,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_013": 0,
+        "participant_006": 0,
+        "participant_029": 0,
+        "participant_030": 0,
+        "participant_012": 0
+      },
+      "local_gross_delta": {
+        "participant_013": -2,
+        "participant_006": -2,
+        "participant_029": -2,
+        "participant_030": -2,
+        "participant_012": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_013",
+        "participant_006",
+        "participant_029",
+        "participant_030",
+        "participant_012",
+        "participant_013"
+      ],
+      "changes": [
+        {
+          "source": "participant_013",
+          "target": "participant_006",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_006",
+          "target": "participant_029",
+          "before": -10,
+          "after": -9,
+          "mirror_before": 10,
+          "mirror_after": 9,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": -13,
+          "after": -12,
+          "mirror_before": 13,
+          "mirror_after": 12,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_012",
+          "before": -13,
+          "after": -12,
+          "mirror_before": 13,
+          "mirror_after": 12,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_013",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -5,
+      "gross_reduction": 5,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_013": 0,
+        "participant_006": 0,
+        "participant_029": 0,
+        "participant_030": 0,
+        "participant_012": 0
+      },
+      "local_gross_delta": {
+        "participant_013": -2,
+        "participant_006": -2,
+        "participant_029": -2,
+        "participant_030": -2,
+        "participant_012": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_029",
+        "participant_030",
+        "participant_031",
+        "participant_028",
+        "participant_029"
+      ],
+      "changes": [
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": -13,
+          "after": -12,
+          "mirror_before": 13,
+          "mirror_after": 12,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_031",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_031",
+          "target": "participant_028",
+          "before": 3,
+          "after": 4,
+          "mirror_before": -3,
+          "mirror_after": -4,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_028",
+          "target": "participant_029",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -2,
+      "gross_reduction": 2,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_029": 0,
+        "participant_030": 0,
+        "participant_031": 0,
+        "participant_028": 0
+      },
+      "local_gross_delta": {
+        "participant_029": -2,
+        "participant_030": -2,
+        "participant_031": 0,
+        "participant_028": 0
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed601",
+    "method": "private_nonexpansion",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 378,
+    "positive_debt_arcs": 74,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_002",
+        "participant_023",
+        "participant_016",
+        "participant_012",
+        "participant_013",
+        "participant_006",
+        "participant_026",
+        "participant_022",
+        "participant_021",
+        "participant_015",
+        "participant_017",
+        "participant_003",
+        "participant_002"
+      ],
+      "changes": [
+        {
+          "source": "participant_002",
+          "target": "participant_023",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_016",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_012",
+          "before": -12,
+          "after": -11,
+          "mirror_before": 12,
+          "mirror_after": 11,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_013",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_013",
+          "target": "participant_006",
+          "before": -5,
+          "after": -4,
+          "mirror_before": 5,
+          "mirror_after": 4,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_006",
+          "target": "participant_026",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_026",
+          "target": "participant_022",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_021",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_021",
+          "target": "participant_015",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_017",
+          "before": -5,
+          "after": -4,
+          "mirror_before": 5,
+          "mirror_after": 4,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_003",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_002",
+          "before": -15,
+          "after": -14,
+          "mirror_before": 15,
+          "mirror_after": 14,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -12,
+      "gross_reduction": 12,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_002": 0,
+        "participant_023": 0,
+        "participant_016": 0,
+        "participant_012": 0,
+        "participant_013": 0,
+        "participant_006": 0,
+        "participant_026": 0,
+        "participant_022": 0,
+        "participant_021": 0,
+        "participant_015": 0,
+        "participant_017": 0,
+        "participant_003": 0
+      },
+      "local_gross_delta": {
+        "participant_002": -2,
+        "participant_023": -2,
+        "participant_016": -2,
+        "participant_012": -2,
+        "participant_013": -2,
+        "participant_006": -2,
+        "participant_026": -2,
+        "participant_022": -2,
+        "participant_021": -2,
+        "participant_015": -2,
+        "participant_017": -2,
+        "participant_003": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_002",
+        "participant_023",
+        "participant_016",
+        "participant_012",
+        "participant_013",
+        "participant_006",
+        "participant_026",
+        "participant_022",
+        "participant_021",
+        "participant_015",
+        "participant_017",
+        "participant_003",
+        "participant_002"
+      ],
+      "changes": [
+        {
+          "source": "participant_002",
+          "target": "participant_023",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_016",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_012",
+          "before": -12,
+          "after": -11,
+          "mirror_before": 12,
+          "mirror_after": 11,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_013",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_013",
+          "target": "participant_006",
+          "before": -5,
+          "after": -4,
+          "mirror_before": 5,
+          "mirror_after": 4,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_006",
+          "target": "participant_026",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_026",
+          "target": "participant_022",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_021",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_021",
+          "target": "participant_015",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_017",
+          "before": -5,
+          "after": -4,
+          "mirror_before": 5,
+          "mirror_after": 4,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_003",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_002",
+          "before": -15,
+          "after": -14,
+          "mirror_before": 15,
+          "mirror_after": 14,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -12,
+      "gross_reduction": 12,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_002": 0,
+        "participant_023": 0,
+        "participant_016": 0,
+        "participant_012": 0,
+        "participant_013": 0,
+        "participant_006": 0,
+        "participant_026": 0,
+        "participant_022": 0,
+        "participant_021": 0,
+        "participant_015": 0,
+        "participant_017": 0,
+        "participant_003": 0
+      },
+      "local_gross_delta": {
+        "participant_002": -2,
+        "participant_023": -2,
+        "participant_016": -2,
+        "participant_012": -2,
+        "participant_013": -2,
+        "participant_006": -2,
+        "participant_026": -2,
+        "participant_022": -2,
+        "participant_021": -2,
+        "participant_015": -2,
+        "participant_017": -2,
+        "participant_003": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_029",
+        "participant_030",
+        "participant_012",
+        "participant_013",
+        "participant_023",
+        "participant_024",
+        "participant_031",
+        "participant_028",
+        "participant_029"
+      ],
+      "changes": [
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": -13,
+          "after": -12,
+          "mirror_before": 13,
+          "mirror_after": 12,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_012",
+          "before": -15,
+          "after": -14,
+          "mirror_before": 15,
+          "mirror_after": 14,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_013",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_013",
+          "target": "participant_023",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_024",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_024",
+          "target": "participant_031",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_031",
+          "target": "participant_028",
+          "before": 4,
+          "after": 5,
+          "mirror_before": -4,
+          "mirror_after": -5,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_028",
+          "target": "participant_029",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -6,
+      "gross_reduction": 6,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_029": 0,
+        "participant_030": 0,
+        "participant_012": 0,
+        "participant_013": 0,
+        "participant_023": 0,
+        "participant_024": 0,
+        "participant_031": 0,
+        "participant_028": 0
+      },
+      "local_gross_delta": {
+        "participant_029": -2,
+        "participant_030": -2,
+        "participant_012": -2,
+        "participant_013": -2,
+        "participant_023": -2,
+        "participant_024": -2,
+        "participant_031": 0,
+        "participant_028": 0
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed602",
+    "method": "randomized_cancellation",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 401,
+    "positive_debt_arcs": 83,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_002",
+        "participant_007",
+        "participant_028",
+        "participant_027",
+        "participant_012",
+        "participant_019",
+        "participant_018",
+        "participant_015",
+        "participant_008",
+        "participant_003",
+        "participant_002"
+      ],
+      "changes": [
+        {
+          "source": "participant_002",
+          "target": "participant_007",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_007",
+          "target": "participant_028",
+          "before": -10,
+          "after": -9,
+          "mirror_before": 10,
+          "mirror_after": 9,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_028",
+          "target": "participant_027",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_027",
+          "target": "participant_012",
+          "before": -11,
+          "after": -10,
+          "mirror_before": 11,
+          "mirror_after": 10,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_019",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_019",
+          "target": "participant_018",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_015",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_008",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_008",
+          "target": "participant_003",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_002",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -10,
+      "gross_reduction": 10,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_002": 0,
+        "participant_007": 0,
+        "participant_028": 0,
+        "participant_027": 0,
+        "participant_012": 0,
+        "participant_019": 0,
+        "participant_018": 0,
+        "participant_015": 0,
+        "participant_008": 0,
+        "participant_003": 0
+      },
+      "local_gross_delta": {
+        "participant_002": -2,
+        "participant_007": -2,
+        "participant_028": -2,
+        "participant_027": -2,
+        "participant_012": -2,
+        "participant_019": -2,
+        "participant_018": -2,
+        "participant_015": -2,
+        "participant_008": -2,
+        "participant_003": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_002",
+        "participant_007",
+        "participant_028",
+        "participant_027",
+        "participant_012",
+        "participant_019",
+        "participant_018",
+        "participant_015",
+        "participant_008",
+        "participant_003",
+        "participant_002"
+      ],
+      "changes": [
+        {
+          "source": "participant_002",
+          "target": "participant_007",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_007",
+          "target": "participant_028",
+          "before": -10,
+          "after": -9,
+          "mirror_before": 10,
+          "mirror_after": 9,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_028",
+          "target": "participant_027",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_027",
+          "target": "participant_012",
+          "before": -11,
+          "after": -10,
+          "mirror_before": 11,
+          "mirror_after": 10,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_019",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_019",
+          "target": "participant_018",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_015",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_008",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_008",
+          "target": "participant_003",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_002",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -10,
+      "gross_reduction": 10,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_002": 0,
+        "participant_007": 0,
+        "participant_028": 0,
+        "participant_027": 0,
+        "participant_012": 0,
+        "participant_019": 0,
+        "participant_018": 0,
+        "participant_015": 0,
+        "participant_008": 0,
+        "participant_003": 0
+      },
+      "local_gross_delta": {
+        "participant_002": -2,
+        "participant_007": -2,
+        "participant_028": -2,
+        "participant_027": -2,
+        "participant_012": -2,
+        "participant_019": -2,
+        "participant_018": -2,
+        "participant_015": -2,
+        "participant_008": -2,
+        "participant_003": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_031",
+        "participant_015",
+        "participant_016",
+        "participant_017",
+        "participant_023",
+        "participant_022",
+        "participant_031"
+      ],
+      "changes": [
+        {
+          "source": "participant_031",
+          "target": "participant_015",
+          "before": 9,
+          "after": 10,
+          "mirror_before": -9,
+          "mirror_after": -10,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_016",
+          "before": -5,
+          "after": -4,
+          "mirror_before": 5,
+          "mirror_after": 4,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_017",
+          "before": -19,
+          "after": -18,
+          "mirror_before": 19,
+          "mirror_after": 18,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_023",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_022",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_031",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -4,
+      "gross_reduction": 4,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_031": 0,
+        "participant_015": 0,
+        "participant_016": 0,
+        "participant_017": 0,
+        "participant_023": 0,
+        "participant_022": 0
+      },
+      "local_gross_delta": {
+        "participant_031": 0,
+        "participant_015": 0,
+        "participant_016": -2,
+        "participant_017": -2,
+        "participant_023": -2,
+        "participant_022": -2
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed602",
+    "method": "private_nonexpansion",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 398,
+    "positive_debt_arcs": 78,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_005",
+        "participant_004",
+        "participant_023",
+        "participant_019",
+        "participant_018",
+        "participant_005"
+      ],
+      "changes": [
+        {
+          "source": "participant_005",
+          "target": "participant_004",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_004",
+          "target": "participant_023",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_019",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_019",
+          "target": "participant_018",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_005",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -5,
+      "gross_reduction": 5,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_005": 0,
+        "participant_004": 0,
+        "participant_023": 0,
+        "participant_019": 0,
+        "participant_018": 0
+      },
+      "local_gross_delta": {
+        "participant_005": -2,
+        "participant_004": -2,
+        "participant_023": -2,
+        "participant_019": -2,
+        "participant_018": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_005",
+        "participant_004",
+        "participant_023",
+        "participant_019",
+        "participant_018",
+        "participant_005"
+      ],
+      "changes": [
+        {
+          "source": "participant_005",
+          "target": "participant_004",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_004",
+          "target": "participant_023",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_019",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_019",
+          "target": "participant_018",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_005",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -5,
+      "gross_reduction": 5,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_005": 0,
+        "participant_004": 0,
+        "participant_023": 0,
+        "participant_019": 0,
+        "participant_018": 0
+      },
+      "local_gross_delta": {
+        "participant_005": -2,
+        "participant_004": -2,
+        "participant_023": -2,
+        "participant_019": -2,
+        "participant_018": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_021",
+        "participant_022",
+        "participant_023",
+        "participant_020",
+        "participant_021"
+      ],
+      "changes": [
+        {
+          "source": "participant_021",
+          "target": "participant_022",
+          "before": -10,
+          "after": -9,
+          "mirror_before": 10,
+          "mirror_after": 9,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_023",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_020",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_020",
+          "target": "participant_021",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -4,
+      "gross_reduction": 4,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_021": 0,
+        "participant_022": 0,
+        "participant_023": 0,
+        "participant_020": 0
+      },
+      "local_gross_delta": {
+        "participant_021": -2,
+        "participant_022": -2,
+        "participant_023": -2,
+        "participant_020": -2
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed603",
+    "method": "randomized_cancellation",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 292,
+    "positive_debt_arcs": 71,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_000",
+        "participant_021",
+        "participant_020",
+        "participant_010",
+        "participant_024",
+        "participant_011",
+        "participant_000"
+      ],
+      "changes": [
+        {
+          "source": "participant_000",
+          "target": "participant_021",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_021",
+          "target": "participant_020",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_020",
+          "target": "participant_010",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_010",
+          "target": "participant_024",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_024",
+          "target": "participant_011",
+          "before": -12,
+          "after": -11,
+          "mirror_before": 12,
+          "mirror_after": 11,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_011",
+          "target": "participant_000",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -6,
+      "gross_reduction": 6,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_000": 0,
+        "participant_021": 0,
+        "participant_020": 0,
+        "participant_010": 0,
+        "participant_024": 0,
+        "participant_011": 0
+      },
+      "local_gross_delta": {
+        "participant_000": -2,
+        "participant_021": -2,
+        "participant_020": -2,
+        "participant_010": -2,
+        "participant_024": -2,
+        "participant_011": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_000",
+        "participant_021",
+        "participant_020",
+        "participant_010",
+        "participant_024",
+        "participant_011",
+        "participant_000"
+      ],
+      "changes": [
+        {
+          "source": "participant_000",
+          "target": "participant_021",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_021",
+          "target": "participant_020",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_020",
+          "target": "participant_010",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_010",
+          "target": "participant_024",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_024",
+          "target": "participant_011",
+          "before": -12,
+          "after": -11,
+          "mirror_before": 12,
+          "mirror_after": 11,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_011",
+          "target": "participant_000",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -6,
+      "gross_reduction": 6,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_000": 0,
+        "participant_021": 0,
+        "participant_020": 0,
+        "participant_010": 0,
+        "participant_024": 0,
+        "participant_011": 0
+      },
+      "local_gross_delta": {
+        "participant_000": -2,
+        "participant_021": -2,
+        "participant_020": -2,
+        "participant_010": -2,
+        "participant_024": -2,
+        "participant_011": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_013",
+        "participant_016",
+        "participant_017",
+        "participant_018",
+        "participant_029",
+        "participant_030",
+        "participant_013"
+      ],
+      "changes": [
+        {
+          "source": "participant_013",
+          "target": "participant_016",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_017",
+          "before": -8,
+          "after": -7,
+          "mirror_before": 8,
+          "mirror_after": 7,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_018",
+          "before": 2,
+          "after": 3,
+          "mirror_before": -2,
+          "mirror_after": -3,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_029",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": 0,
+          "after": 1,
+          "mirror_before": 0,
+          "mirror_after": -1,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_013",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -2,
+      "gross_reduction": 2,
+      "assisted_edges": 2,
+      "local_net_delta": {
+        "participant_013": 0,
+        "participant_016": 0,
+        "participant_017": 0,
+        "participant_018": 0,
+        "participant_029": 0,
+        "participant_030": 0
+      },
+      "local_gross_delta": {
+        "participant_013": -2,
+        "participant_016": -2,
+        "participant_017": 0,
+        "participant_018": 0,
+        "participant_029": 0,
+        "participant_030": 0
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed603",
+    "method": "private_nonexpansion",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 302,
+    "positive_debt_arcs": 71,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_002",
+        "participant_003",
+        "participant_004",
+        "participant_012",
+        "participant_011",
+        "participant_018",
+        "participant_002"
+      ],
+      "changes": [
+        {
+          "source": "participant_002",
+          "target": "participant_003",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_004",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_004",
+          "target": "participant_012",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_011",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_011",
+          "target": "participant_018",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_002",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -6,
+      "gross_reduction": 6,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_002": 0,
+        "participant_003": 0,
+        "participant_004": 0,
+        "participant_012": 0,
+        "participant_011": 0,
+        "participant_018": 0
+      },
+      "local_gross_delta": {
+        "participant_002": -2,
+        "participant_003": -2,
+        "participant_004": -2,
+        "participant_012": -2,
+        "participant_011": -2,
+        "participant_018": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_002",
+        "participant_003",
+        "participant_004",
+        "participant_012",
+        "participant_011",
+        "participant_018",
+        "participant_002"
+      ],
+      "changes": [
+        {
+          "source": "participant_002",
+          "target": "participant_003",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_004",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_004",
+          "target": "participant_012",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_012",
+          "target": "participant_011",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_011",
+          "target": "participant_018",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_002",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -6,
+      "gross_reduction": 6,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_002": 0,
+        "participant_003": 0,
+        "participant_004": 0,
+        "participant_012": 0,
+        "participant_011": 0,
+        "participant_018": 0
+      },
+      "local_gross_delta": {
+        "participant_002": -2,
+        "participant_003": -2,
+        "participant_004": -2,
+        "participant_012": -2,
+        "participant_011": -2,
+        "participant_018": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_013",
+        "participant_016",
+        "participant_017",
+        "participant_018",
+        "participant_029",
+        "participant_030",
+        "participant_013"
+      ],
+      "changes": [
+        {
+          "source": "participant_013",
+          "target": "participant_016",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_017",
+          "before": -5,
+          "after": -4,
+          "mirror_before": 5,
+          "mirror_after": 4,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_018",
+          "before": 2,
+          "after": 3,
+          "mirror_before": -2,
+          "mirror_after": -3,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_018",
+          "target": "participant_029",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_013",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -4,
+      "gross_reduction": 4,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_013": 0,
+        "participant_016": 0,
+        "participant_017": 0,
+        "participant_018": 0,
+        "participant_029": 0,
+        "participant_030": 0
+      },
+      "local_gross_delta": {
+        "participant_013": -2,
+        "participant_016": -2,
+        "participant_017": 0,
+        "participant_018": 0,
+        "participant_029": -2,
+        "participant_030": -2
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed601",
+    "method": "faithful_comfort",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 499,
+    "positive_debt_arcs": 87,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_000",
+        "participant_015",
+        "participant_011",
+        "participant_010",
+        "participant_009",
+        "participant_000"
+      ],
+      "changes": [
+        {
+          "source": "participant_000",
+          "target": "participant_015",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_011",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_011",
+          "target": "participant_010",
+          "before": -7,
+          "after": -6,
+          "mirror_before": 7,
+          "mirror_after": 6,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_010",
+          "target": "participant_009",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_009",
+          "target": "participant_000",
+          "before": -11,
+          "after": -10,
+          "mirror_before": 11,
+          "mirror_after": 10,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -5,
+      "gross_reduction": 5,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_000": 0,
+        "participant_015": 0,
+        "participant_011": 0,
+        "participant_010": 0,
+        "participant_009": 0
+      },
+      "local_gross_delta": {
+        "participant_000": -2,
+        "participant_015": -2,
+        "participant_011": -2,
+        "participant_010": -2,
+        "participant_009": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_000",
+        "participant_015",
+        "participant_011",
+        "participant_010",
+        "participant_009",
+        "participant_000"
+      ],
+      "changes": [
+        {
+          "source": "participant_000",
+          "target": "participant_015",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_011",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_011",
+          "target": "participant_010",
+          "before": -7,
+          "after": -6,
+          "mirror_before": 7,
+          "mirror_after": 6,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_010",
+          "target": "participant_009",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_009",
+          "target": "participant_000",
+          "before": -11,
+          "after": -10,
+          "mirror_before": 11,
+          "mirror_after": 10,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -5,
+      "gross_reduction": 5,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_000": 0,
+        "participant_015": 0,
+        "participant_011": 0,
+        "participant_010": 0,
+        "participant_009": 0
+      },
+      "local_gross_delta": {
+        "participant_000": -2,
+        "participant_015": -2,
+        "participant_011": -2,
+        "participant_010": -2,
+        "participant_009": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_029",
+        "participant_022",
+        "participant_026",
+        "participant_027",
+        "participant_028",
+        "participant_029"
+      ],
+      "changes": [
+        {
+          "source": "participant_029",
+          "target": "participant_022",
+          "before": -8,
+          "after": -7,
+          "mirror_before": 8,
+          "mirror_after": 7,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_026",
+          "before": 2,
+          "after": 3,
+          "mirror_before": -2,
+          "mirror_after": -3,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_026",
+          "target": "participant_027",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_027",
+          "target": "participant_028",
+          "before": -11,
+          "after": -10,
+          "mirror_before": 11,
+          "mirror_after": 10,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_028",
+          "target": "participant_029",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -3,
+      "gross_reduction": 3,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_029": 0,
+        "participant_022": 0,
+        "participant_026": 0,
+        "participant_027": 0,
+        "participant_028": 0
+      },
+      "local_gross_delta": {
+        "participant_029": -2,
+        "participant_022": 0,
+        "participant_026": 0,
+        "participant_027": -2,
+        "participant_028": -2
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed601",
+    "method": "private_nonexpansion_filtered",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 283,
+    "positive_debt_arcs": 62,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": null,
+    "admissible_debt_cycle": null,
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_029",
+        "participant_030",
+        "participant_031",
+        "participant_028",
+        "participant_029"
+      ],
+      "changes": [
+        {
+          "source": "participant_029",
+          "target": "participant_030",
+          "before": -12,
+          "after": -11,
+          "mirror_before": 12,
+          "mirror_after": 11,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_030",
+          "target": "participant_031",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_031",
+          "target": "participant_028",
+          "before": 1,
+          "after": 2,
+          "mirror_before": -1,
+          "mirror_after": -2,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_028",
+          "target": "participant_029",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -2,
+      "gross_reduction": 2,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_029": 0,
+        "participant_030": 0,
+        "participant_031": 0,
+        "participant_028": 0
+      },
+      "local_gross_delta": {
+        "participant_029": -2,
+        "participant_030": -2,
+        "participant_031": 0,
+        "participant_028": 0
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed602",
+    "method": "private_nonexpansion_filtered",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 320,
+    "positive_debt_arcs": 74,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_000",
+        "participant_015",
+        "participant_016",
+        "participant_000"
+      ],
+      "changes": [
+        {
+          "source": "participant_000",
+          "target": "participant_015",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_016",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_000",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -3,
+      "gross_reduction": 3,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_000": 0,
+        "participant_015": 0,
+        "participant_016": 0
+      },
+      "local_gross_delta": {
+        "participant_000": -2,
+        "participant_015": -2,
+        "participant_016": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_000",
+        "participant_015",
+        "participant_016",
+        "participant_000"
+      ],
+      "changes": [
+        {
+          "source": "participant_000",
+          "target": "participant_015",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_015",
+          "target": "participant_016",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_000",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -3,
+      "gross_reduction": 3,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_000": 0,
+        "participant_015": 0,
+        "participant_016": 0
+      },
+      "local_gross_delta": {
+        "participant_000": -2,
+        "participant_015": -2,
+        "participant_016": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_015",
+        "participant_016",
+        "participant_017",
+        "participant_023",
+        "participant_015"
+      ],
+      "changes": [
+        {
+          "source": "participant_015",
+          "target": "participant_016",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_017",
+          "before": -18,
+          "after": -17,
+          "mirror_before": 18,
+          "mirror_after": 17,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_023",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_023",
+          "target": "participant_015",
+          "before": 7,
+          "after": 8,
+          "mirror_before": -7,
+          "mirror_after": -8,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -2,
+      "gross_reduction": 2,
+      "assisted_edges": 1,
+      "local_net_delta": {
+        "participant_015": 0,
+        "participant_016": 0,
+        "participant_017": 0,
+        "participant_023": 0
+      },
+      "local_gross_delta": {
+        "participant_015": 0,
+        "participant_016": -2,
+        "participant_017": -2,
+        "participant_023": 0
+      },
+      "local_nonexpansion_permitted": true
+    }
+  },
+  {
+    "case": "private32-seed603",
+    "method": "private_nonexpansion_filtered",
+    "scope": "Global offline static diagnostic only; no actor input or private reachability claim.",
+    "nodes": 32,
+    "trustlines": 96,
+    "gross_debt": 240,
+    "positive_debt_arcs": 63,
+    "admissible_unit_arcs": 192,
+    "positive_debt_cycle": {
+      "path": [
+        "participant_019",
+        "participant_020",
+        "participant_022",
+        "participant_003",
+        "participant_019"
+      ],
+      "changes": [
+        {
+          "source": "participant_019",
+          "target": "participant_020",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_020",
+          "target": "participant_022",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_003",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_019",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -4,
+      "gross_reduction": 4,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_019": 0,
+        "participant_020": 0,
+        "participant_022": 0,
+        "participant_003": 0
+      },
+      "local_gross_delta": {
+        "participant_019": -2,
+        "participant_020": -2,
+        "participant_022": -2,
+        "participant_003": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "admissible_debt_cycle": {
+      "path": [
+        "participant_019",
+        "participant_020",
+        "participant_022",
+        "participant_003",
+        "participant_019"
+      ],
+      "changes": [
+        {
+          "source": "participant_019",
+          "target": "participant_020",
+          "before": -4,
+          "after": -3,
+          "mirror_before": 4,
+          "mirror_after": 3,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_020",
+          "target": "participant_022",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_022",
+          "target": "participant_003",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_003",
+          "target": "participant_019",
+          "before": -3,
+          "after": -2,
+          "mirror_before": 3,
+          "mirror_after": 2,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -4,
+      "gross_reduction": 4,
+      "assisted_edges": 0,
+      "local_net_delta": {
+        "participant_019": 0,
+        "participant_020": 0,
+        "participant_022": 0,
+        "participant_003": 0
+      },
+      "local_gross_delta": {
+        "participant_019": -2,
+        "participant_020": -2,
+        "participant_022": -2,
+        "participant_003": -2
+      },
+      "local_nonexpansion_permitted": true
+    },
+    "improving_headroom_cycle": {
+      "path": [
+        "participant_023",
+        "participant_024",
+        "participant_025",
+        "participant_016",
+        "participant_017",
+        "participant_020",
+        "participant_023"
+      ],
+      "changes": [
+        {
+          "source": "participant_023",
+          "target": "participant_024",
+          "before": -7,
+          "after": -6,
+          "mirror_before": 7,
+          "mirror_after": 6,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_024",
+          "target": "participant_025",
+          "before": -1,
+          "after": 0,
+          "mirror_before": 1,
+          "mirror_after": 0,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_025",
+          "target": "participant_016",
+          "before": 1,
+          "after": 2,
+          "mirror_before": -1,
+          "mirror_after": -2,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_016",
+          "target": "participant_017",
+          "before": -10,
+          "after": -9,
+          "mirror_before": 10,
+          "mirror_after": 9,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_017",
+          "target": "participant_020",
+          "before": 0,
+          "after": 1,
+          "mirror_before": 0,
+          "mirror_after": -1,
+          "cost": 1,
+          "bilateral_comfort_admissible": true
+        },
+        {
+          "source": "participant_020",
+          "target": "participant_023",
+          "before": -2,
+          "after": -1,
+          "mirror_before": 2,
+          "mirror_after": 1,
+          "cost": -1,
+          "bilateral_comfort_admissible": true
+        }
+      ],
+      "gross_delta": -2,
+      "gross_reduction": 2,
+      "assisted_edges": 2,
+      "local_net_delta": {
+        "participant_023": 0,
+        "participant_024": 0,
+        "participant_025": 0,
+        "participant_016": 0,
+        "participant_017": 0,
+        "participant_020": 0
+      },
+      "local_gross_delta": {
+        "participant_023": -2,
+        "participant_024": -2,
+        "participant_025": 0,
+        "participant_016": 0,
+        "participant_017": 0,
+        "participant_020": 0
+      },
+      "local_nonexpansion_permitted": true
+    }
+  }
+]

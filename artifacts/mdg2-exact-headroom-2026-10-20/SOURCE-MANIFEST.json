@@ -17,9 +17,28 @@
     "experiments/mdg2/exact-headroom-plan.json": "338aeeb09a3f8787e50d34eda31e55023d851a0e6befb69e228fd7f3efbb3a88",
     "experiments/mdg2/exact-headroom-workloads.json": "916cc151cc3e492dc9ce7b60ac74fb906ef941889e6bc68768777629c29fda3b",
     "experiments/mdg2/exact-headroom-freeze.json": "aa8bec26e12b42ca1e0c39dee3e361af36e12e1583fd7031309a679889844bc7",
-    "experiments/mdg2/build_exact_headroom_report.py": "c2f6727d8792f0304bf7c4134f3f8c366c801b561d68c0b0c5cac8a146f0ef73",
+    "experiments/mdg2/build_exact_headroom_report.py": "84591329ccd7677018580306ad46411e614fabc992f0dc506cc324cc258fed93",
     "experiments/mdg2/test_exact_headroom.py": "87fdba9c1fc3dd491023edb7466a14c55f86d55ff57b1c73ddd145442a35272a",
     "experiments/mdg2/test_exact_headroom_benchmark.py": "95c710c734c52df79f4704619524a85e13201b6882e6836c37b7c2a60c13e2c5"
   },
-  "note": "Research sources are individually pinned and uncommitted; base commit alone does not identify this implementation."
+  "note": "Research sources are individually pinned and uncommitted; base commit alone does not identify this implementation.",
+  "presentation_correction": {
+    "date": "2026-10-20",
+    "label": "Coordinated exact reference",
+    "scope": "Presentation only: headings, legends and assumptions. No algorithms rerun; frozen measured sources, plan, workload, freeze, measurements, independent audit and numeric comparison tables unchanged.",
+    "original_report_builder_sha256": "c2f6727d8792f0304bf7c4134f3f8c366c801b561d68c0b0c5cac8a146f0ef73",
+    "original_source_manifest_sha256": "ab55096103404630550265dbc45a0a1d38dd17b4c6ac8a237deb391914afa5e0",
+    "presentation_sources": {
+      "experiments/mdg2/build_exact_headroom_report.py": "84591329ccd7677018580306ad46411e614fabc992f0dc506cc324cc258fed93"
+    },
+    "unchanged_evidence_sha256": {
+      "experiments/mdg2/exact-headroom-plan.json": "338aeeb09a3f8787e50d34eda31e55023d851a0e6befb69e228fd7f3efbb3a88",
+      "experiments/mdg2/exact-headroom-workloads.json": "916cc151cc3e492dc9ce7b60ac74fb906ef941889e6bc68768777629c29fda3b",
+      "experiments/mdg2/exact-headroom-freeze.json": "aa8bec26e12b42ca1e0c39dee3e361af36e12e1583fd7031309a679889844bc7",
+      "artifacts/mdg2-exact-headroom-2026-10-20/comparison.csv": "17a71fb3a465ef33220f849f1e5dc0a5acbe840f76c154dc992f82fe6072c9fb",
+      "artifacts/mdg2-exact-headroom-2026-10-20/comparison.json": "3eb1307cce6cd97b60c1198cc3faf6701591fc8c6c21a5fb73404c19e595c169",
+      "artifacts/mdg2-exact-headroom-2026-10-20/results.json": "e7e10767e628ec7b88f011c2a9bc3a07aec55b938d52b688be73b929e9f32f27",
+      "artifacts/mdg2-exact-headroom-2026-10-20/independent-audit.json": "fc6434747c3a5211f50b179e384e6ebd652e2f5f59cb6aba7510499a53935318"
+    }
+  }
 }

@@ -1,0 +1,7 @@
+From the repository root, with the pinned files present:
+python -m unittest discover -s experiments/mdg2 -p "test_private*.py" -q
+python experiments/mdg2/private_stream_benchmark.py --run
+python experiments/mdg2/private_filter_benchmark.py --run
+python experiments/mdg2/audit_private_campaign.py
+python experiments/mdg2/build_private_stream_report.py
+The runner checks the prospective freeze and resumes existing matching evidence.
