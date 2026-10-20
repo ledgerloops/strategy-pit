@@ -19,7 +19,13 @@ const fs=require('node:fs');const assert=require('node:assert/strict');const {ch
   const form=alice.locator('form[data-contact="bob"]');
   assert.equal(await form.locator('input[type=number]').count(),0);
   await form.locator('[data-scale=fit]').click();
+  const minValue=form.locator('.integrated-diagram [data-value=comfort_min]');
+  const maxValue=form.locator('.integrated-diagram [data-value=comfort_max]');
+  assert.equal(await minValue.innerText(),'−5 TEST');
+  assert.equal(await maxValue.innerText(),'+15 TEST');
+  assert.equal(await form.locator('.diagram-values [data-value=comfort_min], .diagram-values [data-value=comfort_max]').count(),0);
   const dot=form.locator('[name=comfort_min]');await dot.focus();await dot.press('ArrowRight');assert.equal(await dot.inputValue(),'-4');
+  assert.equal(await minValue.innerText(),'−4 TEST');
   await alice.getByRole('link',{name:'View history with bob',exact:true}).click();
   await alice.getByText('No clearing history for this contact',{exact:false}).waitFor();
   await alice.getByRole('link',{name:'← Back to contact preferences'}).click();assert.equal(await dot.inputValue(),'-4');
@@ -33,6 +39,10 @@ const fs=require('node:fs');const assert=require('node:assert/strict');const {ch
   assert.equal(await zeroForm.locator('[name=comfort_min]').inputValue(),'-1');
   assert.equal(await zeroForm.locator('[name=comfort_max]').inputValue(),'1');
   await zeroForm.locator('[data-reset-contact]').click();
+  assert.equal(await zeroForm.locator('.diagram-endpoint.comfort_min output').innerText(),'0 TEST');
+  assert.equal(await zeroForm.locator('.diagram-endpoint.comfort_max output').innerText(),'0 TEST');
+  const endpointBoxes=await zeroForm.locator('.diagram-endpoint').evaluateAll(els=>els.map(el=>{const r=el.getBoundingClientRect();return {top:r.top,bottom:r.bottom}}));
+  assert.ok(endpointBoxes[0].bottom < endpointBoxes[1].top,'coincident endpoint labels remain separate');
   for(const width of[320,390,1280]){await alice.setViewportSize({width,height:900});assert.equal(await alice.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`overflow ${width}`);}
   if(process.env.APP_SCREENSHOT_DIR){fs.mkdirSync(process.env.APP_SCREENSHOT_DIR,{recursive:true});for(const[name,width]of[['desktop',1280],['mobile',390]]){await alice.setViewportSize({width,height:900});await alice.screenshot({path:`${process.env.APP_SCREENSHOT_DIR}/${name}.png`,fullPage:true});if(name==='mobile')await alice.locator('.contact').first().screenshot({path:`${process.env.APP_SCREENSHOT_DIR}/contact-diagram.png`})}}
   await save(pages.bob,'alice',1,16,18,false);await expectedShared(alice,'bob',0,0,true);
@@ -44,6 +54,17 @@ const fs=require('node:fs');const assert=require('node:assert/strict');const {ch
   assert.equal(await form.locator('[name=credit_limit]').inputValue(),'1000000000000');
   assert.equal(await form.locator('[name=comfort_min]').inputValue(),'-1000000000000');
   assert.equal(await form.locator('[name=comfort_max]').inputValue(),'1000000000000');
+  assert.equal(await minValue.innerText(),'−1,000,000,000,000 TEST');
+  assert.equal(await maxValue.innerText(),'+1,000,000,000,000 TEST');
+  for(const width of[320,390,1280]){
+   await alice.setViewportSize({width,height:900});
+   assert.equal(await alice.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false,`full range overflow ${width}`);
+   for(const label of await form.locator('.diagram-endpoint').all()){
+    const bounds=await label.evaluate(el=>{const r=el.getBoundingClientRect(),d=el.closest('.diagram-drawing').getBoundingClientRect();return {left:r.left,right:r.right,start:d.left,end:d.right,scroll:el.scrollWidth,width:el.clientWidth}});
+    assert.ok(bounds.left>=bounds.start-1&&bounds.right<=bounds.end+1,`endpoint label stays in diagram at ${width}`);
+    assert.ok(bounds.scroll<=bounds.width,`endpoint text fits badge at ${width}`);
+   }
+  }
   await alice.context().setOffline(true);await alice.waitForTimeout(100);assert.equal(await alice.locator('form[data-contact="bob"] button[type=submit]').isDisabled(),true);
   assert.deepEqual(errors,[]);console.log('PASS contact edits, mirrored shared zone, peer sync, no overlap, lowered cap, responsive layouts and offline guard');
  }finally{await browser.close()}
