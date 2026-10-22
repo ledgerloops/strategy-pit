@@ -142,6 +142,23 @@ class DeployTests(unittest.TestCase):
         self.assertNotIn('secret', str(caught.exception))
         self.assertEqual(caught.exception.status, 401)
 
+    def test_source_upload_preserves_signed_content_type_without_api_auth(self):
+        requests = []
+        class SourceStorage:
+            def open(self, request, **kwargs):
+                requests.append(request)
+                if request.get_header('Content-type') != '':
+                    raise HTTPError(request.full_url, 403, 'SignatureDoesNotMatch', {}, None)
+                return contextlib.closing(io.BytesIO())
+        with tempfile.TemporaryDirectory() as temporary:
+            archive = Path(temporary) / 'source.tar.gz'
+            archive.write_bytes(b'committed-source')
+            upload_source('https://sources.example/put?private=secret', archive,
+                          opener=SourceStorage())
+        self.assertEqual(requests[0].get_method(), 'PUT')
+        self.assertEqual(requests[0].data, b'committed-source')
+        self.assertIsNone(requests[0].get_header('Authorization'))
+
     def test_dns_refuses_wrong_zone_and_conflicting_record(self):
         class Cloudflare:
             def __init__(self, zone='ledgerloops.com'):

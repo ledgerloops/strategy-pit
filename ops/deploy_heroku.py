@@ -92,8 +92,10 @@ def upload_source(url, archive, opener=None):
     if urlsplit(url).scheme != 'https':
         raise DeploymentError('Source upload must use HTTPS')
     # Source URLs are short-lived credentials. Never print them or attach Heroku auth.
+    # Heroku signs an empty Content-Type. Supplying a media type changes the
+    # S3 signature; omitting the header makes urllib supply its own default.
     request = Request(url, data=Path(archive).read_bytes(), method='PUT',
-                      headers={'Content-Type': 'application/octet-stream'})
+                      headers={'Content-Type': ''})
     try:
         with (opener or build_opener(NoRedirect())).open(request, timeout=120) as response:
             response.read()
