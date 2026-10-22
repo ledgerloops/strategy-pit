@@ -150,7 +150,7 @@ class HostedRuntime:
             config['peers'][peer] = dict(url=self.origin+'/nodes/'+peer, key=key, balance=0)
             node.peers[peer] = config['peers'][peer]
             node.db.execute('INSERT INTO balances VALUES(?,0)', (peer,))
-            own = dict(revision=1,credit_limit=0,comfort_min=0,comfort_max=0,auto_adjust=False)
+            own = dict(revision=1,credit_limit=10,comfort_min=-10,comfort_max=10,auto_adjust=False)
             node.db.execute('INSERT INTO contacts VALUES(?,?,NULL)', (peer,json.dumps(own)))
             node.enqueue(peer, dict(kind='preferences',protocol=PROTOCOL,preferences=own))
             node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))

@@ -265,6 +265,29 @@ class HostedGatewayTests(unittest.TestCase):
         response = alice['client'].get('/api/state', base_url='https://evil.example')
         self.assertEqual(response.status_code, 421)
 
+    def test_new_relationship_can_record_event_without_setup_but_needs_peer_approval(self):
+        alice, bob = self.enroll('Alice'), self.enroll('Bob')
+        self.connect(alice, bob)
+        self.pump()
+        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False)
+        for user in (alice, bob):
+            state = self.get(user, '/api/state')
+            self.assertFalse(state['automation']['enabled'])
+            self.assertEqual(state['contacts'][0]['own'], expected)
+            self.assertEqual(state['contacts'][0]['peer_preferences'], expected)
+        proposal = self.post(alice, '/api/obligations', dict(
+            id=secrets.token_hex(32), peer=bob['account']['node_id'], amount=3,
+            direction='i_owe', description='Shared lunch'))['obligation']
+        self.pump()
+        pending = next(o for o in self.get(bob, '/api/obligations') if o['id'] == proposal['id'])
+        self.assertEqual(pending['status'], 'pending')
+        for user in (alice, bob):
+            self.assertEqual(self.get(user, '/api/state')['balances'][0]['balance'], 0)
+        self.post(bob, '/api/obligations/'+proposal['id']+'/approve', {'digest': pending['digest']})
+        self.pump()
+        self.assertEqual(self.get(alice, '/api/state')['balances'][0]['balance'], -3)
+        self.assertEqual(self.get(bob, '/api/state')['balances'][0]['balance'], 3)
+
     def test_invitation_retry_and_new_invite_preserve_keys_balances_and_local_stores(self):
         alice, bob, carol = self.enroll('Alice'), self.enroll('Bob'), self.enroll('Carol')
         invitation = self.connect(alice, bob)

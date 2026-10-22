@@ -63,6 +63,23 @@ class HostedNamedInviteTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'already accepted'):
             self.runtime.accept_invite(self.carol, invitation)
 
+    def test_new_defaults_apply_only_to_new_relationships(self):
+        invitation = self.runtime.invite(self.alice, 'Bob')['invite_token']
+        self.runtime.accept_invite(self.bob, invitation)
+        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False)
+        self.assertEqual(self.contact(self.alice)['own'], expected)
+        self.assertEqual(self.contact(self.bob)['own'], expected)
+        with self.runtime.node(self.alice) as node:
+            # Represent a retained legacy relationship whose limits were zero.
+            previous = dict(revision=1, credit_limit=0, comfort_min=0, comfort_max=0, auto_adjust=False)
+            node.db.execute('UPDATE contacts SET own=? WHERE peer=?', (json.dumps(previous), self.bob))
+        restarted = HostedRuntime(self.stores, self.runtime.origin)
+        restarted.provision(dict(node_id=self.alice, name='Alice'))
+        restarted.accept_invite(self.bob, invitation)
+        restarted.accept_invite(self.bob, restarted.invite(self.alice)['invite_token'])
+        self.assertEqual(self.contact(self.alice)['own'], previous)
+        self.assertEqual(self.contact(self.bob)['own'], expected)
+
     def test_retries_new_and_crossed_invites_preserve_names_keys_and_balances(self):
         first = self.runtime.invite(self.alice, 'Robert')['invite_token']
         crossed = self.runtime.invite(self.bob, 'Alicia')['invite_token']
