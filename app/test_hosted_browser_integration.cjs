@@ -135,6 +135,45 @@ async function until(read, predicate, message, timeout=20000) {
       }
     }
 
+    const financial = state => state.contacts.map(({peer,balance,reserved_by,own,peer_preferences}) => ({peer,balance,reserved_by,own,peer_preferences})).sort((a,b) => a.peer.localeCompare(b.peer));
+    const privateAlias = 'Workshop <Bob & Co>';
+    const beforeRename = financial(await api(alice,'/api/state'));
+    const beforeRemoteRename = financial(await api(bob,'/api/state'));
+    await alice.page.goto(origin+'/#overview');
+    const aliceBobCard = alice.page.locator(`article[data-peer="${bob.account.node_id}"]`);
+    await aliceBobCard.locator('[data-rename-peer]').click();
+    await alice.page.locator('#hosted-dialog[open] #rename-peer').waitFor();
+    await alice.page.getByLabel('Peer name',{exact:true}).fill(privateAlias);
+    await alice.page.getByRole('button',{name:'Save name',exact:true}).click();
+    await alice.page.waitForFunction(() => !document.querySelector('#hosted-dialog').open);
+    await aliceBobCard.getByRole('heading',{name:privateAlias,exact:true}).waitFor();
+    assert.deepEqual(financial(await api(alice,'/api/state')),beforeRename,'A personal alias preserves all financial state');
+    const bobAfterRename = await api(bob,'/api/state');
+    assert.deepEqual(financial(bobAfterRename),beforeRemoteRename);
+    assert.equal(bobAfterRename.contacts.find(contact => contact.peer === alice.account.node_id).name,'Browser Alice','A personal alias is never shared with the peer');
+    await alice.page.reload();
+    await aliceBobCard.getByRole('heading',{name:privateAlias,exact:true}).waitFor();
+    assert.equal(await aliceBobCard.locator('bob').count(),0,'Alias markup is escaped');
+
+    async function sendMessage(first,second,text) {
+      const before = financial(await api(first,'/api/state'));
+      await first.page.goto(origin+'/#overview');
+      const card = first.page.locator(`article[data-peer="${second.account.node_id}"]`);
+      await card.locator('[data-message-peer]').click();
+      await first.page.locator('#hosted-dialog[open] #send-message').waitFor();
+      await first.page.getByLabel('Message',{exact:true}).fill(text);
+      await first.page.locator('#send-message').getByRole('button',{name:'Send message',exact:true}).click();
+      await first.page.waitForFunction(() => !document.querySelector('#hosted-dialog').open);
+      const received = await until(() => api(second,'/api/state'),state => state.messages.some(item => item.peer === first.account.node_id && item.direction === 'incoming' && item.text === text),'Peer message did not arrive over neighbour HTTP');
+      assert.equal(received.messages.filter(item => item.peer === first.account.node_id && item.text === text).length,1);
+      assert.deepEqual(financial(await api(first,'/api/state')),before,'Messages change no balances, reservations or preferences');
+    }
+    const outgoingText = '<img src=x onerror="window.browserMessageXss=true"> Hello & welcome\nFrom Alice';
+    const incomingText = 'Thanks <Alice> & see you soon';
+    await sendMessage(alice,bob,outgoingText);
+    await sendMessage(bob,alice,incomingText);
+    await sendMessage(alice,carol,'CAROL ONLY private conversation');
+
     // Exercise actual autosaving controls on one relationship; set the remaining
     // controls through authenticated HTTP to keep this test focused and quick.
     const initialAliceContact = (await api(alice,'/api/state')).contacts.find(contact => contact.peer === bob.account.node_id);
@@ -165,13 +204,14 @@ async function until(read, predicate, message, timeout=20000) {
           auto_adjust:true,expected_revision:contact.own.revision});
       }
     }
-    for (const user of users) await until(() => api(user,'/api/state'),state => state.contacts.every(c => c.peer_preferences?.auto_adjust), 'Assistance preferences did not synchronize');
+    for (const user of users) await until(() => api(user,'/api/state'),state => state.contacts.every(c => c.peer_preferences?.auto_adjust && c.peer_preferences.credit_limit === 10 && c.peer_preferences.comfort_min === -10 && c.peer_preferences.comfort_max === 10), 'Assistance preferences did not synchronize');
 
     async function economicEvent(first,second,direction='i_owe',amount=1,verifyBalance=true) {
       const before = (await api(first,'/api/state')).contacts.find(contact => contact.peer === second.account.node_id).balance;
       await first.page.goto(origin+'/#overview');
       const card = first.page.locator(`article[data-peer="${second.account.node_id}"]`);
-      await card.getByRole('heading',{name:second.account.name,exact:true}).waitFor();
+      const localName = (await api(first,'/api/state')).contacts.find(contact => contact.peer === second.account.node_id).name;
+      await card.getByRole('heading',{name:localName,exact:true}).waitFor();
       assert.equal(await first.page.locator('#screen input[type=range], #screen input[type=checkbox]').count(),0);
       await card.getByRole('button',{name:'Record a value delivery',exact:true}).click();
       await first.page.locator('#hosted-dialog[open] #new-obligation').waitFor();
@@ -185,6 +225,10 @@ async function until(read, predicate, message, timeout=20000) {
       await first.page.getByRole('button',{name:'Send for confirmation',exact:true}).click();
       const pending = await until(() => api(second,'/api/obligations'),items => items.some(item => !item.origin && item.status === 'pending'), 'Obligation proposal did not arrive');
       const proposal = pending.find(item => !item.origin && item.status === 'pending');
+      if (first === alice && second === bob && amount === 2) {
+        assert.ok((await api(first,'/api/state')).contacts.find(contact => contact.peer === second.account.node_id).reserved_by,'Fixture has a pending financial reservation');
+        await sendMessage(first,second,'A message while this delivery awaits your confirmation');
+      }
       await second.page.goto(origin+'/#overview');
       const approval = second.page.locator(`form[data-obligation-approve="${proposal.id}"]`);
       await approval.waitFor();
@@ -218,6 +262,25 @@ async function until(read, predicate, message, timeout=20000) {
       await user.page.locator('span.tag').filter({hasText:'Applied locally · fulfillment verified'}).first().waitFor();
       assert.ok((await api(user,'/api/state')).balances.every(b => b.reserved_by === null));
     }
+
+    await alice.page.goto(origin+'/#overview');
+    await aliceBobCard.getByRole('link',{name:'View history',exact:true}).click();
+    await alice.page.locator('[data-history-type=message]').first().waitFor();
+    const bobHistory = await alice.page.locator('#screen').textContent();
+    assert.ok(bobHistory.includes(outgoingText));
+    assert.ok(bobHistory.includes(incomingText));
+    assert.ok(bobHistory.includes('A message while this delivery awaits your confirmation'));
+    assert.ok(bobHistory.includes('Browser integration TEST'),'Delivery entries remain in the combined history');
+    assert.equal(bobHistory.includes('CAROL ONLY private conversation'),false,'History excludes a different peer conversation');
+    assert.equal(await alice.page.locator('#screen img[src=x]').count(),0);
+    assert.equal(await alice.page.evaluate(() => window.browserMessageXss),undefined);
+    assert.ok(await alice.page.locator('[data-history-type=delivery]').count() >= 2);
+    assert.ok(await alice.page.locator('[data-history-type=clearing]').count() > 0,'Completed loop clearing appears in peer history');
+    await bob.page.goto(origin+'/#overview');
+    await bob.page.locator(`article[data-peer="${alice.account.node_id}"]`).getByRole('link',{name:'View history',exact:true}).click();
+    await bob.page.locator('[data-history-type=message]').first().waitFor();
+    assert.ok((await bob.page.locator('#screen').textContent()).includes(outgoingText),'Incoming messages appear in the receiving peer history');
+    assert.equal(await bob.page.locator('#screen img[src=x]').count(),0);
 
     await alice.page.goto(origin+'/#settings');
     await alice.page.getByRole('link',{name:'Demo identity',exact:true}).click();
@@ -276,7 +339,7 @@ async function until(read, predicate, message, timeout=20000) {
     assert.deepEqual(manualClearingRequests,[],'Clearing must settle without discovery or approval calls from the browser');
     assert.deepEqual(pageErrors,[]);
     assert.deepEqual(workerErrors,[]);
-    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, named invites, autosave, value delivery deltas and explicit confirmation, independent MAX trust defaults and shared comfort, automatic HTTP headroom 2→1 without participant discovery or approval, receipt verification and stable browser identity');
+    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, named invites, autosave, value delivery deltas and explicit confirmation, independent MAX trust defaults and shared comfort, automatic HTTP headroom 2→1 without participant discovery or approval, private aliases, zero/reserved-edge messages, escaped combined peer history, receipt verification and stable browser identity');
   } finally {
     if (browser) await browser.close();
     child.kill('SIGTERM');

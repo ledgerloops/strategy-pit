@@ -17,15 +17,15 @@ const {chromium} = require('playwright');
     amount:1,unit:'TEST',protocol:'private-hashlock-v2',status:'committed',local_fulfilled:true,
     clearing_mode:'headroom',policy:'comfort-surplus-bit-v1',direction:1,hashlock_scheme:'sha256-headroom-v1',
     surplus_origin:false,surplus_in:true,surplus_out:false,
-    changes:[{peer:'fixture-a',before:0,after:-1,own_preferences:terms,peer_preferences:terms},
-             {peer:'fixture-b',before:0,after:1,own_preferences:terms,peer_preferences:terms}]};
+    changes:[{peer:'fixture-peer',before:0,after:-1,own_preferences:terms,peer_preferences:terms},
+             {peer:'duplicate-peer',before:0,after:1,own_preferences:terms,peer_preferences:terms}]};
   const context = Object.fromEntries(['amount','clearing_mode','direction','id','policy','preimage','protocol','unit'].map(key => [key,receipt[key]]));
   receipt.condition = crypto.createHash('sha256').update(JSON.stringify(context)).digest('hex');
-  const sessions = new Map(), contacts = new Map(), obligations = new Map();
-  let authPosts = [], mutations = [], automatic = true, accountCount = 0, failNextObligation = false;
+  const sessions = new Map(), contacts = new Map(), obligations = new Map(), messages = new Map();
+  let authPosts = [], mutations = [], automatic = true, accountCount = 0, failNextObligation = false, failNextMessage = false, hiddenMessageId = "";
   const fixtureState = current => ({node:account.node_id,mode:'testnet',protocol:'private-hashlock-v2',unit:'TEST',
     paused:false,contacts:contacts.get(current.id) || [],balances:contacts.get(current.id) || [],proposals:[{...receipt,id:'fixture-pending-clearing',status:'pending',approved:false}],receipts:[receipt],searches:[],
-    discovery_modes:['cancellation','headroom'],obligation_capable:true,obligations:obligations.get(current.id) || [],outbox_pending:0,
+    discovery_modes:['cancellation','headroom'],obligation_capable:true,obligations:obligations.get(current.id) || [],messages:(messages.get(current.id) || []).filter(item => item.id !== hiddenMessageId),outbox_pending:0,
     automation:{enabled:automatic,next_search_at:0}});
   const server = http.createServer(async (request,response) => {
     const route = new URL(request.url,'http://localhost').pathname;
@@ -42,6 +42,22 @@ const {chromium} = require('playwright');
     if (request.method === 'GET' && route === '/api/state') {
       assert.equal(request.headers.authorization,undefined);
       return authenticated ? reply(200,{...fixtureState(currentAccount),node:currentAccount.node_id}) : reply(401,{error:'Sign in required'});
+    }
+    if (request.method === 'GET' && /^\/api\/contacts\/[^/]+\/messages$/.test(route)) {
+      assert.ok(authenticated);
+      const peer = decodeURIComponent(route.split('/')[3]);
+      return reply(200,(messages.get(currentAccount.id) || []).filter(item => item.peer === peer && item.id !== hiddenMessageId));
+    }
+    if (request.method === 'GET' && /^\/api\/contacts\/[^/]+\/history$/.test(route)) {
+      assert.ok(authenticated);
+      const peer = decodeURIComponent(route.split('/')[3]);
+      const entries = [
+        ...(messages.get(currentAccount.id) || []).filter(item => item.peer === peer && item.id !== hiddenMessageId).map(item => ({...item,type:'message',timestamp:item.created_at})),
+        ...(obligations.get(currentAccount.id) || []).filter(item => item.peer === peer).map(item => ({...item,type:'delivery',timestamp:item.created_at || 100})),
+        ...(receipt.changes.some(change => change.peer === peer) ? [{...receipt,type:'clearing',timestamp:50}] : [])
+      ].sort((first,second) => second.timestamp-first.timestamp);
+      const offset = Number(new URL(request.url,'http://localhost').searchParams.get('offset') || 0);
+      return reply(200,{entries:entries.slice(offset,offset+100),has_more:offset+100 < entries.length,total:entries.length});
     }
     if (request.method === 'POST') {
       let raw = ''; for await (const chunk of request) raw += chunk;
@@ -72,6 +88,26 @@ const {chromium} = require('playwright');
         obligations.set(currentAccount.id,[item,...(obligations.get(currentAccount.id) || [])]);
         if (failNextObligation) { failNextObligation = false; return reply(503,{error:'Accepted by the fixture, but the response was lost'}); }
         return reply(200,{obligation:item});
+      }
+      if (/^\/api\/contacts\/[^/]+\/rename$/.test(route)) {
+        const peer = decodeURIComponent(route.split('/')[3]);
+        const contact = contacts.get(currentAccount.id).find(item => item.peer === peer);
+        contact.name = body.name;
+        return reply(200,{ok:true,peer,name:body.name});
+      }
+      if (/^\/api\/contacts\/[^/]+\/messages$/.test(route)) {
+        const peer = decodeURIComponent(route.split('/')[3]);
+        assert.match(body.id,/^[a-f0-9]{64}$/);
+        const previous = (messages.get(currentAccount.id) || []).find(item => item.id === body.id);
+        if (previous) assert.equal(previous.text,body.text,'Retry preserves the original message content');
+        const item = previous || {...body,peer,direction:'outgoing',status:'delivered',created_at:Math.floor(Date.now()/1000),sent_at:null,received_at:null,delivered_at:null};
+        if (!previous) messages.set(currentAccount.id,[item,...(messages.get(currentAccount.id) || [])]);
+        if (failNextMessage) {
+          failNextMessage = false; hiddenMessageId = body.id;
+          return reply(503,{error:'Message accepted, but the response was lost'});
+        }
+        if (hiddenMessageId === body.id) hiddenMessageId = '';
+        return reply(200,{ok:true,message:item});
       }
       if (route === '/api/discover') return reply(200,{id:'fixture-search'});
       if (route === '/api/automation') { automatic = body.enabled; return reply(200,{enabled:automatic}); }
@@ -210,6 +246,84 @@ const {chromium} = require('playwright');
     await page.getByText('Clearing runs automatically in the background.',{exact:false}).first().waitFor();
     assert.equal(await page.locator('#discover, form[data-approve]').count(),0,'Hosted clearing must not ask participants to discover or approve loops');
     assert.equal(await page.getByRole('button',{name:'Discover a loop',exact:true}).count(),0);
+    // Personal aliases do not change peer identity or any financial terms.
+    const originalContact = contacts.get(account.id)[0];
+    contacts.get(account.id).push({...structuredClone(originalContact),peer:'duplicate-peer',balance:originalContact.balance});
+    await page.goto(origin+'/#overview');
+    await page.reload();
+    const duplicateCard = page.locator('article[data-peer="duplicate-peer"]');
+    await duplicateCard.getByRole('heading',{name:'Invited friend',exact:true}).waitFor();
+    assert.equal(await page.getByRole('heading',{name:'Invited friend',exact:true}).count(),2,'Fixture includes distinct peers with the same label');
+    const financialState = () => contacts.get(account.id).map(({name,...financial}) => financial);
+    const beforeAlias = JSON.stringify(financialState());
+    await peerCard.locator('[data-rename-peer]').click();
+    await dialog.locator('#rename-peer').waitFor();
+    const alias = 'Workshop <Bob & Co>';
+    await dialog.getByLabel('Peer name',{exact:true}).fill(alias);
+    await dialog.getByRole('button',{name:'Save name',exact:true}).click();
+    await page.waitForFunction(() => !document.querySelector('#hosted-dialog').open);
+    await peerCard.getByRole('heading',{name:alias,exact:true}).waitFor();
+    assert.equal(JSON.stringify(financialState()),beforeAlias,'A rename changes no balances, limits or reservations');
+    assert.equal(contacts.get(account.id)[1].name,'Invited friend','Renaming one peer leaves a duplicate label alone');
+    await page.reload();
+    await peerCard.getByRole('heading',{name:alias,exact:true}).waitFor();
+    assert.equal(await peerCard.locator('bob').count(),0,'An alias is rendered as text');
+
+    // Chat remains available on a zero-balance relationship reserved by a
+    // financial operation. Messages neither require nor change credit limits.
+    originalContact.balance = 0; originalContact.reserved_by = 'fixture-reservation';
+    const beforeMessage = JSON.stringify(financialState());
+    await page.reload();
+    await peerCard.locator('[data-message-peer]').click();
+    const messageText = '<img src=x onerror="window.fixtureMessageXss=true"> A & B\nSecond line';
+    await dialog.locator('#send-message textarea[name=text]').fill(messageText);
+    await page.keyboard.press('Escape');
+    await peerCard.locator('[data-message-peer]').click();
+    assert.equal(await dialog.locator('#send-message textarea[name=text]').inputValue(),messageText,'Message drafts survive Escape');
+    await dialog.locator('#send-message').getByRole('button',{name:'Send message',exact:true}).click();
+    await page.waitForFunction(() => !document.querySelector('#hosted-dialog').open);
+    assert.equal(JSON.stringify(financialState()),beforeMessage,'Chat changes no balances, limits or reservations');
+    const sent = messages.get(account.id)[0];
+    messages.get(account.id).push({id:'a'.repeat(64),peer:'fixture-peer',direction:'incoming',status:'received',text:'Incoming <hello> & welcome',created_at:sent.created_at+2,received_at:sent.created_at+2});
+    messages.get(account.id).push({id:'b'.repeat(64),peer:'duplicate-peer',direction:'incoming',status:'received',text:'Other peer private text',created_at:sent.created_at+3});
+    for (let index=0; index<104; index++) messages.get(account.id).push({id:crypto.createHash('sha256').update(`older-message-${index}`).digest('hex'),peer:'fixture-peer',direction:'incoming',status:'received',text:`Earlier message ${index}`,created_at:2});
+    const earliestId = crypto.createHash('sha256').update('earliest-message').digest('hex');
+    messages.get(account.id).push({id:earliestId,peer:'fixture-peer',direction:'incoming',status:'received',text:'Earliest peer message',created_at:1});
+    await peerCard.getByRole('link',{name:'View history',exact:true}).click();
+    await page.locator(`[data-message-id="${sent.id}"]`).waitFor();
+    assert.ok((await page.locator('#screen').textContent()).includes(messageText));
+    assert.ok((await page.locator('#screen').textContent()).includes('Incoming <hello> & welcome'));
+    assert.equal(await page.locator('#screen img[src=x]').count(),0,'Message HTML is escaped');
+    assert.equal(await page.evaluate(() => window.fixtureMessageXss),undefined);
+    assert.equal((await page.locator('#screen').textContent()).includes('Other peer private text'),false);
+    assert.ok(await page.locator('[data-history-type=delivery]').count() > 0);
+    assert.ok(await page.locator('[data-history-type=clearing]').count() > 0);
+    assert.equal((await page.locator('#screen').textContent()).includes('fixture-pending-clearing'),false,'Uncompleted loop attempts are absent from peer history');
+    const timelineKinds = await page.locator('[data-history-type]').evaluateAll(elements => elements.map(element => element.dataset.historyType));
+    assert.deepEqual(timelineKinds.slice(0,2),['message','message'],'New messages are combined with earlier financial history');
+    assert.equal(await page.locator(`[data-message-id="${earliestId}"]`).count(),0,'The first history page contains the latest records');
+    await page.getByRole('button',{name:'Load earlier',exact:true}).click();
+    await page.locator(`[data-message-id="${earliestId}"]`).waitFor();
+    assert.equal(await page.getByRole('button',{name:'Load earlier',exact:true}).count(),0,'Loading earlier history reaches the last stored record');
+    assert.equal(await page.locator(`[data-message-id="${sent.id}"]`).count(),1,'History pagination retains newer entries without duplicates');
+
+    // A lost response retains the same id and text for an explicit retry.
+    await page.goto(origin+'/#overview');
+    await peerCard.locator('[data-message-peer]').click();
+    const retryText = 'Retain this message id after a lost response';
+    await dialog.locator('#send-message textarea[name=text]').fill(retryText);
+    failNextMessage = true;
+    await dialog.locator('#send-message').getByRole('button',{name:'Send message',exact:true}).click();
+    const retryButton = page.locator('[data-retry-message="fixture-peer"]').first();
+    await retryButton.waitFor();
+    await retryButton.click();
+    await page.waitForFunction(() => !document.querySelector('#hosted-dialog').open);
+    const retryPosts = mutations.filter(item => item.route === '/api/contacts/fixture-peer/messages' && item.body.text === retryText);
+    assert.equal(retryPosts.length,2);
+    assert.equal(retryPosts[0].body.id,retryPosts[1].body.id,'Retry must preserve the original message id');
+    assert.equal(messages.get(account.id).filter(item => item.text === retryText).length,1,'Retry stores one message');
+    assert.equal(JSON.stringify(financialState()),beforeMessage);
+    originalContact.reserved_by = null;
     await page.goto(origin+'/#settings');
     await page.getByRole('button',{name:'Turn off automatic clearing'}).waitFor();
     await page.getByRole('link',{name:'Demo identity',exact:true}).click();
@@ -250,6 +364,6 @@ const {chromium} = require('playwright');
     assert.equal(mutations.some(r => r.route === '/api/automation'),false,'Automatic clearing must already be enabled without participant setup');
     assert.ok(authPosts.every(r => r.route === '/auth/demo/start'),'Demo must not invoke passkey or recovery routes');
     assert.deepEqual(errors,[]);
-    console.log('PASS hosted UI: persistent cookie demo identity, same-browser reuse, isolated new identity, CSRF, named invites, value delivery deltas, explicit confirmation, modal drafts, uncertain-response reconciliation and asymmetric trust previews, verified headroom receipts and automatic clearing by default');
+    console.log('PASS hosted UI: persistent cookie demo identity, same-browser reuse, isolated new identity, CSRF, named invites, value delivery deltas, explicit confirmation, modal drafts, uncertain-response reconciliation and asymmetric trust previews, private aliases, escaped peer messages/history and stable retry ids, verified headroom receipts and automatic clearing by default');
   } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }
 })().catch(error => { console.error(error.stack || error.message); process.exitCode = 1; });
