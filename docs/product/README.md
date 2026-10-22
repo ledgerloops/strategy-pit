@@ -2,6 +2,13 @@
 
 Draft v0.1 · 11 October 2026 · [Roadmap](../product-roadmap.md)
 
+**22 October design discussion:** the [hosted alpha proposal](hosted-alpha-discussion.md)
+records the user's agreement to host at `ledgerloops.com` with disclosed operator
+access, while forbidding algorithmic use of cross-node visibility. It discusses
+passkeys, sessions, durable hosting and a writable TEST alpha; it is not a deployed
+service or an implementation authorization. Older release proposals below remain
+background and must be reconciled with that discussion before implementation.
+
 An installable, mobile-friendly web app with optional hosted nodes and self-hosting. The first alpha is a read-only clearing assistant. Durable node operation and live settlement are separate release gates. These specifications are proposed contracts for implementation and review, not descriptions of existing services.
 
 ## First implementation

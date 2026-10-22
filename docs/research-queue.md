@@ -438,3 +438,26 @@ fair/exhaustive private discovery with concurrent-progress guarantees, longer
 prospectively budgeted continuations, and consent to aggregate benefit without
 revealing paths or recoverable loop length. Keep honest-peer and metadata
 limitations explicit; no Byzantine/permanent-loss recovery or anonymity proof.
+
+### 22 October 2026 — convergence proof and hosted-alpha design
+
+The [convergence analysis](../experiments/PRIVATE-CONVERGENCE.md) proves the
+negative-residual-cycle optimality criterion for fixed signed integer bounds,
+fixed net positions and consent to all required aggregate-improving moves.
+This is conditional mathematics, not a convergence claim for the current protocol.
+Fair private discovery, private verification of aggregate benefit and concurrent
+settlement progress remain open protocol obligations.
+
+An independently reviewed six-node/seven-trustline counterexample shows that
+clearing a competing loop can leave gross debt 3 instead of the optimum 2.
+Current local nonexpansion prevents every repair sequence, despite unchanged
+broad comfort zones. The offline checker enumerates all 2,187 bounded ledgers
+and verifies the obstruction; run
+`python experiments/mdg2/check_convergence_counterexample.py`.
+
+The [hosted-alpha discussion](product/hosted-alpha-discussion.md) records the
+accepted infrastructure-only hosting model: operator access is disclosed, but
+node decisions use only their own stores and neighbour messages. No cross-node
+SQL settlement or graph-informed repair is allowed. Passkeys plus session cookies
+and Heroku web/workers with durable node-scoped storage are proposals, not deployed
+features. No app code, demo credentials or frozen measurements changed.
