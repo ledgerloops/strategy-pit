@@ -4,6 +4,11 @@ Research analysis, 22 October 2026. This is a conditional mathematical result,
 not a convergence claim for the current implementation. Hosting all nodes does
 not give the algorithm access to the global objects used in this proof.
 
+The current preferred [comfort-zone consent design](COMFORT-ZONE-POLICY.md)
+removes historical-gain and local-nonexpansion restrictions within agreed zones.
+It matches this fixed-box optimization model when the stated feasibility and
+protocol assumptions hold; it does not yet implement the convergence protocol.
+
 ## The precise optimization problem
 
 Take a finite fixed graph with one bilateral trustline per unordered node pair.

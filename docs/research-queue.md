@@ -476,3 +476,19 @@ local willingness alone is insufficient. This is not live settlement authorizati
 Private verification of aggregate improvement remains necessary: no global
 observer result is fed to runtime nodes. Production integration also needs durable
 epoch-bound approvals and reservations. No app code or frozen benchmark changed.
+
+### 22 October 2026 — comfort zones supersede historical-gain permission
+
+The user prefers any adjustment within agreed comfort zones, permitting debt to
+move from longer paths onto direct trustlines. The new
+[comfort-zone policy](../experiments/COMFORT-ZONE-POLICY.md) removes historical
+gain and local exposure nonexpansion gates while preserving bilateral automatic
+assistance opt-outs and hard limits. Existing agreed zero-balance links are
+explicitly permitted by this named alternative.
+
+The isolated conditional-consent predicate and six focused tests verify both
+theta choices shorten to gross debt 1 with an added C–A trustline. They also
+verify the original 3-to-2 helper repair and show local consent alone permits
+unwanted 1-to-3 lengthening. Private collective-benefit verification remains
+mandatory; the host supplies no answers to runtime nodes. No discovery, hashlock
+or production policy was changed, and frozen benchmark files remain unchanged.

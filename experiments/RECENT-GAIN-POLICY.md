@@ -1,5 +1,10 @@
 # Reusing clearing gains as trustline headroom
 
+**Superseded as the preferred design:** the subsequent
+[comfort-zone policy](COMFORT-ZONE-POLICY.md) permits any balance within agreed
+comfort bounds, including previously unused trustlines, conditional on collective
+improvement. This historical-gain model is retained as an alternative comparison.
+
 Research policy design, 22 October 2026. The user chose a per-trustline allowance
 with **no time expiry**: it ends when that trustline receives a new external
 transaction or either endpoint changes its relevant preferences. This note
