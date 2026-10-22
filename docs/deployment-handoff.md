@@ -6,9 +6,14 @@ Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task 
 
 ## Current demo release — 22 October 2026
 
-**Heroku v9**, source `24f95c73ef5ed05961a5f9536e5f781fd67dd9e5`, is live at
+**Heroku v10**, source `a77a7d1f8eb4fd2fb93377735fda167116518144`, is live at
 **https://app.ledgerloops.com**. Verified after restart: one **Basic web.1** dyno
 is up, supervising HTTP and the background worker. Essential-0 PostgreSQL remains.
+
+The v10 follow-up makes **Copy invitation** copy only the URL. The targeted
+Chromium suite passed again, and the live frontend bytes and HTTPS health were
+verified. The broader feature and restart checks below were completed for v9
+(source `24f95c73ef5ed05961a5f9536e5f781fd67dd9e5`).
 
 The user approved the peer-list wireframes and the phrase **Record a value
 delivery**, then asked for Invite a peer and delivery forms to be modals. The

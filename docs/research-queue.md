@@ -675,3 +675,11 @@ that fixture request drained its reservations and the briefly paused fixture
 nodes were resumed. ExistingTEST identities,balances,deliveries and historical
 receipts remain; automatic aborted search attempts append audit rows normally.
 Heroku reports exactly one up Basic web.1 dyno. See deployment handoff for detail.
+
+### 22 October 2026 — copy invitation URL only
+
+The user requested that Copy invitation write only the invitation URL, without
+names or introductory text. Updated the clipboard payload and confirmation copy.
+The hosted Chromium suite passed; Heroku v10 deployed source
+`a77a7d1f8eb4fd2fb93377735fda167116518144`. Live frontend bytes match the
+committed update and canonical HTTPS health passed.
