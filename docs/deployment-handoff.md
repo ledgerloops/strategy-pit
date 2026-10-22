@@ -4,6 +4,46 @@
 Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task cwd
 `/Users/michieldejong/Documents/Codex/2026-10-22/ledg`.
 
+## Local deployment result — 22 October 2026
+
+The local worker deployed **https://app.ledgerloops.com** on Heroku app
+`ledgerloops-alpha` (EU, Cedar, Heroku-24). Current app release **v7** succeeded,
+source `84809d45b9fb3f526e760ab526e738ea2b797a13`. At the user's request,
+**one Basic web dyno runs both HTTP and background delivery**, supervised by
+`app/hosted_single.py`; there is no separate running worker dyno. Essential-0
+PostgreSQL remains attached. Expected recurring cost is USD 12/month before tax.
+
+Cloudflare now has a DNS-only CNAME for `app` targeting
+`fathomless-atoll-4r9cg1op2j5o4r1otfoqg951.herokudns.com`. The existing root A
+record and wildcard CNAME are retained. Heroku ACM reports **Cert issued**, with
+verified Let's Encrypt TLS for `app.ledgerloops.com`, expiring 20 January 2027.
+
+Live HTTPS checks passed: real P-256 WebAuthn server verification, sign-out/in,
+second credential, one-use recovery and session revocation, protected session
+cookies, invitations, synchronized comfort settings, two approved TEST
+obligations, real background neighbour HTTP, 2-to-1 headroom clearing and local
+receipt consistency. Restarting the single web dyno retained sessions/node
+identities, balances, receipts and an additional pending TEST obligation and its
+reservation. That pending test obligation was then declined through its ordinary
+protocol; all test outboxes drained and no reservations remained. Three clearly
+named Deployment TEST accounts and their settled one-unit TEST debt remain.
+No preexisting user's credentials, local demo files or older testnet apps changed.
+
+These live tests used software authenticators through HTTP, not a platform
+passkey browser UI. This Mac initially retained the old site in its OS DNS cache;
+test requests resolved the assigned Heroku target while retaining the canonical
+HTTPS hostname, origin and full certificate verification. Public DNS resolvers
+and the authoritative nameserver returned the new target. Browser UX must be
+checked after the local stale DNS entry expires; no certificate warning was
+bypassed.
+
+The initial Sources API upload signature issue was fixed by preserving the
+signed empty Content-Type; a live upload/build/release succeeded. The build poller
+was subsequently corrected to recognize the provider's actual `succeeded` status
+(commit `fa02ba9`; tooling only, excluded from runtime archive). Eight deployment
+unit tests and three real subprocess supervisor lifecycle tests pass. The earlier
+cloud handoff below remains historical context, not the current deployment status.
+
 ## Request and current external state
 
 The user authorized documenting and implementing comfort-zone clearing and working

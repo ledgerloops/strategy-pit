@@ -557,3 +557,33 @@ has been asked to complete sign-in before updating only the app CNAME to the
 assigned Heroku target, DNS-only. Root, mail and other records must be preserved.
 Canonical TLS, live account/settlement checks and restart persistence remain
 unverified; do not announce the canonical URL as ready yet.
+
+### 22 October 2026 — one-dyno public alpha and live restart verification
+
+The user requested one dyno. Commit `b9e1f50` adds a bounded stdlib supervisor
+for Gunicorn and background delivery on one Basic web dyno; either service
+failing stops its sibling and fails the dyno. Three real subprocess lifecycle
+tests pass (both failure directions, SIGTERM, forced cleanup). The standalone
+worker dyno is scaled to zero and removed from the current Procfile.
+
+Heroku `ledgerloops-alpha` release **v7**, source
+`84809d45b9fb3f526e760ab526e738ea2b797a13`, succeeded with one Basic web dyno
+and retained Essential-0 PostgreSQL (approximately USD 12/month before tax).
+Cloudflare app-only DNS and ACM certificate issuance are complete. The public
+canonical origin is **https://app.ledgerloops.com**; details and exact test
+limitations are in [the updated handoff](deployment-handoff.md).
+
+Live canonical HTTPS/real P-256 auth/recovery/invitation/preferences/TEST
+obligation checks passed, as did actual worker HTTP delivery, 2-to-1 headroom
+settlement, local receipt checks, and single-dyno restart persistence including
+a deliberately pending reservation. The pending TEST obligation was declined
+through the normal protocol afterward; all test outboxes drained and reservations
+cleared. Three labeled deployment TEST accounts remain. Software-authenticator
+HTTP checks do not establish platform passkey browser UX; this Mac initially
+retained stale DNS, so tests resolved the actual Heroku target while keeping
+canonical HTTPS identity and certificate validation. No browser TLS warning was
+bypassed. Public resolvers already reflect the new app-only CNAME.
+
+Live provider testing also fixed Sources API signing (empty signed Content-Type)
+and recognition of build status `succeeded`; eight ops tests pass. No algorithm,
+frozen benchmark result, user's demo identity or existing ledger was reset.
