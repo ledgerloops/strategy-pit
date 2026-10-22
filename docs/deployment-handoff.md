@@ -4,6 +4,49 @@
 Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task cwd
 `/Users/michieldejong/Documents/Codex/2026-10-22/ledg`.
 
+## Current demo release — 22 October 2026
+
+**Heroku v8**, source `7b6771317c293ed75e077ff83107a04274127f26`, is live at
+**https://app.ledgerloops.com**, still on one Basic web dyno plus Essential-0
+PostgreSQL. This release supersedes the passkey-first UI described in the older
+checkpoints below, at the user's request.
+
+The demo now asks only for a name, then keeps an opaque identity cookie for one
+year, renewing it on return. Passkey/recovery setup is absent. Recovery issuance
+and redemption are disabled by default; old accounts, passkeys, recovery hashes
+and valid browser sessions remain. Names never authenticate or recover accounts.
+Cookie loss/expiry or using another browser starts a new identity.
+
+Before a peer exists, the app shows only the name/greeting and invitations.
+Named `https://app.ledgerloops.com/#invite=…` links preview the inviter's name,
+prefill the intended peer name through signup, and require explicit acceptance.
+Copying an invite includes both names. Existing relationships keep their labels,
+keys and preferences. New relationships start with credit 10 TEST, comfort
+[-10,10], assistance off and automation off.
+
+Once connected, named peer cards show balances, pending decisions and **Record an
+economic event**. An event is a balance delta, confirmed by both peers before it
+posts. Existing API/storage names remain `obligation`; Advanced contains research
+controls after peers exist. A no-peer browser sees no navigation, financial
+summary, raw invitation-code entry, sliders or settings.
+
+Validation: all 52 hosted Python tests pass with isolated real PostgreSQL. Both
+isolated Chromium fixtures pass name-only onboarding, returning cookie identity,
+separate browser identities, names/links through signup, no automatic invitation
+acceptance, same-tab fragment navigation, additive economic events in both
+directions, consent, autosave, real neighbour HTTP and headroom 2-to-1 clearing.
+The broader 179-test app suite passed before the final relationship-default and
+UI refinements; targeted hosted and browser checks cover those refinements.
+
+After deployment, live canonical HTTPS checks passed with three labeled Cookie
+Demo TEST identities: persistent protected cookies/repeated-start reuse, disabled
+recovery, named URL and preview metadata, explicit acceptance, economic events,
+headroom 2-to-1 receipts, and a pending event reservation. Restarting the single
+dyno retained those identities, ledgers and the pending reservation; normal
+protocol decline then cleared it. The three older deployment test identities,
+ledgers and cookies also stayed unchanged. Chrome retained the user's existing
+identity and displayed the new invitation-only home without any credential reset.
+
 ## Local deployment result — 22 October 2026
 
 The local worker deployed **https://app.ledgerloops.com** on Heroku app

@@ -608,8 +608,17 @@ recovery issuance/redemption is disabled by default. Named fragment-based invite
 links carry through enrollment, show the inviter and intended peer names, and
 require explicit acceptance; name metadata never influences clearing decisions.
 
-The hosted home is being simplified to peer cards with economic-event recording,
+The hosted home is simplified to peer cards with economic-event recording,
 while advanced controls remain available after a peer exists. New hosted
 relationships allow 10 TEST within comfort [-10,10] without setup, but assistance
 and automation remain off and each event still needs bilateral approval. Existing
-preferences are preserved. Deployment and final UI verification follow local checks.
+preferences are preserved.
+
+Deployed to Heroku **v8**, source `7b6771317c293ed75e077ff83107a04274127f26`,
+still one Basic dyno plus Essential-0 PostgreSQL. All 52 hosted Python tests and
+both isolated Chromium suites pass. Live HTTPS checks verify cookie reuse,
+named links, explicit acceptance, economic-event posting, headroom 2-to-1,
+receipt consistency and restart persistence of cookie identities/ledgers/pending
+reservations. Older deployed TEST accounts and balances are unchanged. Chrome
+also retained the existing user identity and showed only the named invite flow
+before its first peer. See [current deployment details](deployment-handoff.md).
