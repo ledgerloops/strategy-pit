@@ -4,8 +4,11 @@
   const screen = document.querySelector("#screen");
   const notice = document.querySelector("#notice");
   const connection = document.querySelector("#connection");
+  const hosted = window.LEDGERLOOPS_HOSTED === true || document.body.dataset.hosted === "true";
+  let hostedAccount = null, csrfToken = "", invitation = null, invitationDraft = "";
+  const connectedIdentity = () => hosted ? Boolean(hostedAccount) : Boolean(token);
   let token = "";
-  try { token = sessionStorage.getItem("ledgerloops.testnet.token") || ""; } catch (_) { /* Storage can be disabled. */ }
+  if (!hosted) try { token = sessionStorage.getItem("ledgerloops.testnet.token") || ""; } catch (_) { /* Storage can be disabled. */ }
   let state = null, online = false, busy = false, lastSeen = null, refreshing = null;
   let fulfillmentChecks = new Map();
   const contactDrafts = new Map();
@@ -14,7 +17,7 @@
   let pendingObligation = null;
   try {
     const pending = JSON.parse(sessionStorage.getItem("ledgerloops.testnet.obligation.pending") || "null");
-    if (token && pending && /^[a-f0-9]{64}$/.test(pending.id) && typeof pending.peer === "string" && ["i_owe","peer_owes"].includes(pending.direction) && Number.isSafeInteger(pending.amount) && pending.amount > 0 && typeof pending.description === "string") {
+    if (!hosted && token && pending && /^[a-f0-9]{64}$/.test(pending.id) && typeof pending.peer === "string" && ["i_owe","peer_owes"].includes(pending.direction) && Number.isSafeInteger(pending.amount) && pending.amount > 0 && typeof pending.description === "string") {
       pendingObligation = pending;
       obligationDraft = {...pending,amount:String(pending.amount),consent:true};
     }
@@ -22,8 +25,9 @@
   function rememberPendingObligation(value) {
     pendingObligation = value;
     try {
-      if (value) sessionStorage.setItem("ledgerloops.testnet.obligation.pending",JSON.stringify(value));
-      else sessionStorage.removeItem("ledgerloops.testnet.obligation.pending");
+      const key = hosted ? `ledgerloops.hosted.${hostedAccount?.id}.obligation.pending` : "ledgerloops.testnet.obligation.pending";
+      if (value) sessionStorage.setItem(key,JSON.stringify(value));
+      else sessionStorage.removeItem(key);
     } catch (_) { /* In-memory idempotency still protects retries in this page. */ }
   }
   let preferenceGeneration = 0, draggingControl = null, renderPending = false;
@@ -45,6 +49,7 @@
   const privateProtocol = () => state?.protocol === "private-hashlock-v2";
   let searchMode = "cancellation";
   const comfortAvailable = () => privateProtocol() && state.discovery_modes?.includes("comfort");
+  const headroomAvailable = () => privateProtocol() && state.discovery_modes?.includes("headroom");
   const obligationsAvailable = () => privateProtocol() && state.obligation_capable === true;
   const protocolLabel = () => privateProtocol() ? "Private hashlock v2 · experimental" : "Legacy infrastructure test · route-visible";
   function statusText(p) {
@@ -70,19 +75,40 @@
     if (next.protocol !== "private-hashlock-v2") return checks;
     for (const receipt of next.receipts || []) {
       if (receipt.status !== "committed") continue;
-      if (!["sha256-context-v2","sha256-comfort-v1"].includes(receipt.hashlock_scheme)) { checks.set(receipt.id, "unavailable — unsupported verification scheme"); continue; }
+      if (!["sha256-context-v2","sha256-comfort-v1","sha256-headroom-v1"].includes(receipt.hashlock_scheme)) { checks.set(receipt.id, "unavailable — unsupported verification scheme"); continue; }
       if (!receipt.local_fulfilled || !/^[a-f0-9]{64}$/.test(receipt.preimage || "") || !/^[a-f0-9]{64}$/.test(receipt.condition || "") || !/^[a-f0-9]{64}$/.test(receipt.id || "") || !Number.isSafeInteger(receipt.amount) || receipt.amount <= 0 || receipt.protocol !== "private-hashlock-v2" || receipt.unit !== "TEST") { checks.set(receipt.id, "invalid"); continue; }
       if (!globalThis.crypto?.subtle) { checks.set(receipt.id, "unavailable — a secure browser context is required"); continue; }
       const comfort = receipt.hashlock_scheme === "sha256-comfort-v1";
+      const headroom = receipt.hashlock_scheme === "sha256-headroom-v1";
       if (comfort && (receipt.clearing_mode !== "comfort" || receipt.policy !== "bilateral-comfort-v1" || ![-1,1].includes(receipt.direction))) { checks.set(receipt.id,"invalid"); continue; }
-      if (!comfort && ["clearing_mode","policy","direction"].some(key => key in receipt)) { checks.set(receipt.id,"invalid"); continue; }
-      const context = comfort ? {amount:receipt.amount,clearing_mode:receipt.clearing_mode,direction:receipt.direction,id:receipt.id,policy:receipt.policy,preimage:receipt.preimage,protocol:receipt.protocol,unit:receipt.unit} : {amount:receipt.amount,id:receipt.id,preimage:receipt.preimage,protocol:receipt.protocol,unit:receipt.unit};
+      if (headroom && (receipt.clearing_mode !== "headroom" || receipt.policy !== "comfort-surplus-bit-v1" || ![-1,1].includes(receipt.direction) || !validHeadroomReceipt(receipt))) { checks.set(receipt.id,"invalid"); continue; }
+      if (!comfort && !headroom && ["clearing_mode","policy","direction"].some(key => key in receipt)) { checks.set(receipt.id,"invalid"); continue; }
+      const context = comfort || headroom ? {amount:receipt.amount,clearing_mode:receipt.clearing_mode,direction:receipt.direction,id:receipt.id,policy:receipt.policy,preimage:receipt.preimage,protocol:receipt.protocol,unit:receipt.unit} : {amount:receipt.amount,id:receipt.id,preimage:receipt.preimage,protocol:receipt.protocol,unit:receipt.unit};
       const bytes = new TextEncoder().encode(JSON.stringify(context));
       const digest = await crypto.subtle.digest("SHA-256", bytes);
       const hash = Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
       checks.set(receipt.id, hash === receipt.condition ? "verified" : "invalid");
     }
     return checks;
+  }
+
+  function validHeadroomReceipt(receipt) {
+    if (!["surplus_in","surplus_out","surplus_origin"].every(key => typeof receipt[key] === "boolean") || !Array.isArray(receipt.changes) || receipt.changes.length !== 2) return false;
+    if (receipt.changes.some(change => !change || typeof change.peer !== "string") || receipt.changes[0].peer === receipt.changes[1].peer) return false;
+    const delta = receipt.direction*receipt.amount;
+    for (const [index,change] of receipt.changes.entries()) {
+      if (![change.before,change.after].every(value => Number.isSafeInteger(value) && Math.abs(value) <= 1000000000000) || change.after-change.before !== (index ? delta : -delta) || change.before < 0 && change.after > 0 || change.before > 0 && change.after < 0) return false;
+      const own = change.own_preferences, peer = change.peer_preferences;
+      if (!own || !peer || own.auto_adjust !== true || peer.auto_adjust !== true || ![own.credit_limit,own.comfort_min,own.comfort_max,peer.credit_limit,peer.comfort_min,peer.comfort_max].every(value => Number.isSafeInteger(value) && Math.abs(value) <= 1000000000000) || own.credit_limit < 0 || peer.credit_limit < 0 || own.comfort_min > own.comfort_max || peer.comfort_min > peer.comfort_max) return false;
+      const lower = Math.max(own.comfort_min,-peer.comfort_max,-peer.credit_limit);
+      const upper = Math.min(own.comfort_max,-peer.comfort_min,own.credit_limit);
+      if (lower > upper || change.after < lower || change.after > upper) return false;
+    }
+    const cost = receipt.changes.reduce((sum,c) => sum+Math.abs(c.after)-Math.abs(c.before),0);
+    if (receipt.surplus_origin) return cost === -2*receipt.amount && receipt.surplus_out === false;
+    if (cost === -2*receipt.amount) return receipt.surplus_out === true;
+    if (cost === 0) return receipt.surplus_out === receipt.surplus_in;
+    return cost === 2*receipt.amount && receipt.surplus_in === true && receipt.surplus_out === false;
   }
 
   function announce(text, error = false) {
@@ -96,8 +122,8 @@
     try {
       const response = await fetch(path, {
         method: body === undefined ? "GET" : "POST", cache: "no-store",
-        credentials: "omit", signal: controller.signal,
-        headers: {Authorization: `Bearer ${token}`, ...(body === undefined ? {} : {"Content-Type": "application/json"})},
+        credentials: hosted ? "same-origin" : "omit", signal: controller.signal,
+        headers: {...(hosted ? (body === undefined ? {} : {"X-CSRF-Token": csrfToken}) : {Authorization: `Bearer ${token}`}), ...(body === undefined ? {} : {"Content-Type": "application/json"})},
         ...(body === undefined ? {} : {body: JSON.stringify(body)})
       });
       const data = await response.json();
@@ -110,15 +136,61 @@
     } finally { clearTimeout(timeout); }
   }
 
+  async function bootstrapHosted() {
+    try {
+      const session = await api("/api/session");
+      if (!session.account?.id || typeof session.csrf_token !== "string") throw new Error("Incomplete account session; sign in again.");
+      hostedAccount = session.account; csrfToken = session.csrf_token;
+      try {
+        const pending = JSON.parse(sessionStorage.getItem(`ledgerloops.hosted.${hostedAccount.id}.obligation.pending`) || "null");
+        if (pending && /^[a-f0-9]{64}$/.test(pending.id) && typeof pending.peer === "string" && ["i_owe","peer_owes"].includes(pending.direction) && Number.isSafeInteger(pending.amount) && pending.amount > 0 && typeof pending.description === "string") {
+          pendingObligation = pending; obligationDraft = {...pending,amount:String(pending.amount),consent:true};
+        }
+      } catch (_) { /* Browser storage is optional. */ }
+      document.querySelector("header .tag").textContent = "HOSTED ALPHA · TEST UNITS ONLY";
+      document.querySelector("footer").textContent = "Hosted TEST alpha. The operator can access node data and protocol credentials. No money moves; do not enter real obligations.";
+      await refresh();
+    } catch (error) {
+      if (error.status === 401) { location.replace("/login"); return; }
+      announce(error.name === "AbortError" ? "Account service did not respond. Retry when the connection recovers." : error.message,true);
+      render();
+    }
+  }
+
+  function invitationView() {
+    return `<section class="card"><h2>Connect with someone you know</h2><p>Share an invitation privately to establish a direct relationship. Each person sets their own limits; connecting creates no debt.</p><button data-action="create-invitation" ${!online || busy ? "disabled" : ""}>Create an invitation</button>${invitation ? `<label>Invitation code<input readonly value="${esc(invitation.invite_token)}" aria-label="Invitation code"></label><p class="subtle">Share only with your intended peer. Expires: ${esc(invitation.expires_at ? new Date(typeof invitation.expires_at === "number" ? invitation.expires_at*1000 : invitation.expires_at).toLocaleString() : "as stated by the server")}.</p>` : ""}<form id="accept-invitation"><label for="invitation-code">Invitation from your peer</label><input id="invitation-code" name="invite_token" type="text" autocomplete="off" spellcheck="false" maxlength="512" value="${esc(invitationDraft)}" required ${!online || busy ? "disabled" : ""}><button type="submit" ${!online || busy ? "disabled" : ""}>Accept invitation</button></form></section>`;
+  }
+
+  function automationView() {
+    return `<section class="card"><h2>Background clearing</h2><p>${state.automation?.enabled ? "Enabled: your node can search for and approve eligible clearing while your browser is closed." : "Off: search and approve clearing yourself."}</p><p>Automatic clearing only uses relationships where both people enabled assistance and the quoted balances stay within agreed comfort zones. It never approves new obligations for you.</p><button data-action="automation" ${!online || busy ? "disabled" : ""}>${state.automation?.enabled ? "Turn off automatic clearing" : "Enable automatic clearing"}</button><p class="subtle">Turning this off stops new automatic approvals. It cannot revoke an approval already given or cancel pending settlement.</p></section>`;
+  }
+
+  async function invitationRequest(path, body) {
+    if (busy || !online) return;
+    busy = true; render();
+    try {
+      const result = await api(path,body);
+      if (path.endsWith("/invite")) {
+        if (typeof result.invite_token !== "string") throw new Error("The invitation response was incomplete.");
+        invitation = result; announce("Invitation created. Share it privately with your intended peer.");
+      } else {
+        invitationDraft = ""; announce("Invitation accepted. Your direct relationship is being established; preferences synchronize through neighbour messages.");
+        await refresh();
+      }
+    } catch (error) {
+      announce(error.message,true);
+    } finally { busy = false; render(); }
+  }
+
   function updateConnection() {
     connection.classList.toggle("stale", !online);
-    connection.textContent = !state ? (token ? "Connecting to this node…" : "Not connected") :
+    connection.textContent = !state ? (connectedIdentity() ? "Connecting to this node…" : hosted ? "Checking your account session…" : "Not connected") :
       `${online ? "Connected" : "OFFLINE / STALE — actions disabled"} · ${state.node} · ${protocolLabel()} · last observed ${lastSeen.toLocaleTimeString()}${state.paused ? " · new clearing paused" : ""}`;
   }
 
   async function refresh(manual = false) {
     const generation = sessionGeneration;
-    if (!token || refreshing === generation) return;
+    if (!connectedIdentity() || refreshing === generation) return;
     refreshing = generation;
     const preferencesAtStart = preferenceGeneration;
     try {
@@ -151,6 +223,10 @@
     } catch (error) {
       if (generation !== sessionGeneration) return;
       online = false;
+      if (hosted && error.status === 401) {
+        sessionGeneration++; hostedAccount = null; csrfToken = ""; state = null;
+        location.replace("/login"); return;
+      }
       if (error.status === 401 || error.status === 403) {
         sessionGeneration++; draggingControl = null; busy = false;
         token = ""; state = null; contactDrafts.clear(); clearContactSaves(); rememberPendingObligation(null);
@@ -171,10 +247,11 @@
 
   function proposalCard(p) {
     const approve = approvalReady(p);
-    return `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(p.id) === "verified" : ["committed","completed"].includes(p.status)) ? "completed" : "pending"}"><h2>${p.clearing_mode === "comfort" ? "Adjust" : "Clear"} ${esc(amount(p.amount))}</h2><span class="tag">${esc(statusText(p))}</span><p class="subtle">Proposal <code>${esc(p.id)}</code></p>${changesTable(p.changes)}${comfortTerms(p)}${hashlockDetails(p)}${approve ? `<form data-approve="${esc(p.id)}" data-digest="${esc(p.digest)}"><label class="consent"><input type="checkbox" name="consent" required ${disabled() ? "disabled" : ""}> I approve these exact changes to my test balances.</label><button type="submit" ${disabled() ? "disabled" : ""}>Approve test clearing</button><button type="button" class="secondary" data-decline="${esc(p.id)}" data-digest="${esc(p.digest)}" ${!online || busy ? "disabled" : ""}>Decline proposal</button><p class="subtle">Approval permits these changes. Reserved amounts remain unavailable while a settlement outcome is pending.</p></form>` : !["committed","completed","aborted","rejected","expired"].includes(p.status) ? "<p>Waiting for participants and settlement evidence. Closing this app does not cancel the operation.</p>" : ""}</article>`;
+    return `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(p.id) === "verified" : ["committed","completed"].includes(p.status)) ? "completed" : "pending"}"><h2>${p.clearing_mode === "headroom" ? "Clear with headroom" : p.clearing_mode === "comfort" ? "Adjust" : "Clear"} ${esc(amount(p.amount))}</h2><span class="tag">${esc(statusText(p))}</span><p class="subtle">Proposal <code>${esc(p.id)}</code></p>${changesTable(p.changes)}${comfortTerms(p)}${hashlockDetails(p)}${approve ? `<form data-approve="${esc(p.id)}" data-digest="${esc(p.digest)}"><label class="consent"><input type="checkbox" name="consent" required ${disabled() ? "disabled" : ""}> I approve these exact changes to my test balances.</label><button type="submit" ${disabled() ? "disabled" : ""}>Approve test clearing</button><button type="button" class="secondary" data-decline="${esc(p.id)}" data-digest="${esc(p.digest)}" ${!online || busy ? "disabled" : ""}>Decline proposal</button><p class="subtle">Approval permits these changes. Reserved amounts remain unavailable while a settlement outcome is pending.</p></form>` : !["committed","completed","aborted","rejected","expired"].includes(p.status) ? "<p>Waiting for participants and settlement evidence. Closing this app does not cancel the operation.</p>" : ""}</article>`;
   }
 
   function comfortTerms(proposal, onlyPeer = null) {
+    if (proposal.clearing_mode === "headroom") return `<section class="comfort-terms"><h3>Clearing within comfort zones</h3><p>This proposal may move debt onto a comfortable trustline to help clear a loop or shorten a debt path. Your net position is preserved. Review your own changes; the full route is not shared. The alpha searches a limited set of improving adjustments.</p></section>`;
     if (proposal.clearing_mode !== "comfort") return "";
     return `<section class="comfort-terms"><h3>Comfort adjustment · manual approval</h3><p>This proposal aims to improve a shared comfort position. A helping relationship can take on more debt within its agreed limits. Your net position is preserved when the operation completes.</p>${(proposal.changes || []).filter(change => onlyPeer === null || change.peer === onlyPeer).map(change => `<div class="card"><h4>${esc(change.peer)}</h4><p>Distance from shared comfort: <strong>${esc(amount(change.discomfort_before))} → ${esc(amount(change.discomfort_after))}</strong></p><details><summary>Preferences pinned to this proposal</summary><p>Your revision ${esc(change.own_revision)} · peer revision ${esc(change.peer_revision)}</p><p>Shared zone: ${change.shared_comfort && !change.shared_comfort.empty ? `${esc(balanceText(change.shared_comfort.min))} → ${esc(balanceText(change.shared_comfort.max))}` : "No valid shared zone supplied"}</p>${change.own_preferences ? `<p>Your credit grant: ${esc(amount(change.own_preferences.credit_limit))}. Your comfort: ${esc(balanceText(change.own_preferences.comfort_min))} → ${esc(balanceText(change.own_preferences.comfort_max))}. Assistance permission: ${change.own_preferences.auto_adjust ? "yes" : "no"}.</p>` : ""}${change.peer_preferences ? `<p>Peer credit grant: ${esc(amount(change.peer_preferences.credit_limit))}. Peer comfort, from your viewpoint: ${esc(balanceText(-change.peer_preferences.comfort_max))} → ${esc(balanceText(-change.peer_preferences.comfort_min))}. Peer assistance permission: ${change.peer_preferences.auto_adjust ? "yes" : "no"}.</p>` : ""}</details></div>`).join("")}</section>`;
   }
@@ -275,6 +352,10 @@
     document.querySelectorAll("nav a").forEach(a => {
       if (a.hash === `#${page()}` || (page().startsWith("history/") && a.hash === "#peers")) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
+    if (!state && hosted) {
+      screen.innerHTML = intro("Your hosted node", "TEST alpha · the operator can access hosted records and node credentials.") + `<p>${hostedAccount ? "Loading your node…" : "Checking your sign-in…"}</p><button data-action="hosted-retry">Retry connection</button><a class="button secondary" href="/login">Sign in</a>`;
+      return;
+    }
     if (!state) {
       screen.innerHTML = intro("Your node. Your say.", "Connect to the test node serving this page. No live money or obligations belong here.") +
         `<form id="connect" class="card"><h2>Connect to this test node</h2><p>Endpoint: <code>${esc(location.origin)}</code></p><label for="token">Node access token</label><input id="token" name="token" type="password" autocomplete="off" required spellcheck="false" aria-describedby="token-help"><p id="token-help" class="subtle">Use the test token supplied by the network operator. It stays in this browser tab’s session and is sent only to this origin.</p><button type="submit" ${busy ? "disabled" : ""}>Connect</button></form><aside>The operator of this experimental node can inspect its database and act with its credentials. This is not a production custody or signing system.</aside>`;
@@ -286,17 +367,17 @@
     const owes = balances.reduce((sum, b) => sum + (b.balance < 0 ? -BigInt(b.balance) : 0n), 0n);
     const owed = balances.reduce((sum, b) => sum + (b.balance > 0 ? BigInt(b.balance) : 0n), 0n);
     const views = {
-      overview: () => intro(`Hello, ${state.node}.`, "Your direct relationships. Your approval. Test clearing with no bank transfer.") +
+      overview: () => intro(`Hello, ${hostedAccount?.name || state.node}.`, "Your direct relationships. Your approval. Test clearing with no bank transfer.") +
         `<div class="card"><div class="row"><span>You owe</span><strong class="big">${esc(amount(owes))}</strong></div><div class="row"><span>You are owed</span><strong class="big">${esc(amount(owed))}</strong></div><p>Net position <strong>${esc(amount(owed - owes))}</strong></p><small>Recorded local balances. In-flight clearing can temporarily leave counterparties out of sync.</small></div><div class="card"><h2>${proposals.filter(approvalReady).length} proposals need your approval</h2><p>Review your before and after balances before permitting any test clearing.</p><a class="button" href="#clearing">Review clearing</a></div>${obligationsAvailable() ? `<div class="card"><h2>${(state.obligations || []).filter(item => !item.origin && item.status === "pending").length} obligations need your approval</h2><a class="button" href="#obligations">Review obligations</a></div>` : ""}<p>${esc(state.outbox_pending ?? 0)} outgoing messages awaiting delivery.</p>`,
       peers: () => intro("Your address book", "Set your own credit and comfort preferences for each direct peer. No global graph is shared.") +
-        (Array.isArray(state.contacts) ? (state.contacts.length ? state.contacts.map(contactCard).join("") : "<p>No configured contacts yet.</p>") : `<div class="card">${balances.length ? balances.map(b => `<div class="row"><strong>${esc(b.peer)}</strong><span>${esc(balanceText(b.balance))}${b.reserved_by ? `<br><small>Reserved for pending clearing</small>` : ""}</span></div>`).join("") : "<p>No configured test peers yet.</p>"}</div><p>Contact preference editing is unavailable on this node version.</p>`) + "<aside>Peer identities and starting test balances are configured by the network operator. Invitations and ledger imports are not available yet.</aside>",
+        (Array.isArray(state.contacts) ? (state.contacts.length ? state.contacts.map(contactCard).join("") : "<p>No configured contacts yet.</p>") : `<div class="card">${balances.length ? balances.map(b => `<div class="row"><strong>${esc(b.peer)}</strong><span>${esc(balanceText(b.balance))}${b.reserved_by ? `<br><small>Reserved for pending clearing</small>` : ""}</span></div>`).join("") : "<p>No configured test peers yet.</p>"}</div><p>Contact preference editing is unavailable on this node version.</p>`) + (hosted ? invitationView() : "<aside>Peer identities and starting test balances are configured by the network operator. Invitations and ledger imports are not available yet.</aside>"),
       obligations: obligationsView,
       clearing: () => intro("Find a loop. Agree the changes.", "Discovery uses neighbour messages. Finding a loop does not approve or settle it.") +
-        `<form id="discover" class="card"><h2>Search for test clearing</h2>${comfortAvailable() ? `<fieldset ${disabled() ? "disabled" : ""}><legend>What should this search do?</legend><label><input type="radio" name="mode" value="cancellation" ${searchMode === "cancellation" ? "checked" : ""}> Reduce existing debt</label><label><input type="radio" name="mode" value="comfort" ${searchMode === "comfort" ? "checked" : ""}> Move toward shared comfort</label><p class="subtle">Comfort clearing can use credit in either direction, including agreed zero-balance relationships. Helping moves require bilateral assistance permission. Every proposal still needs manual approval.</p></fieldset>` : ""}<label for="amount">${privateProtocol() ? "Exact amount (whole TEST units)" : "Maximum amount (whole TEST units)"}</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${privateProtocol() ? "<p class=\"subtle\">Search uses this exact amount. If no loop is found, a smaller amount may still clear.</p>" : ""}${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
+        `<form id="discover" class="card"><h2>Search for test clearing</h2>${comfortAvailable() || headroomAvailable() ? `<fieldset ${disabled() ? "disabled" : ""}><legend>What should this search do?</legend><label><input type="radio" name="mode" value="cancellation" ${searchMode === "cancellation" ? "checked" : ""}> Reduce existing debt</label>${headroomAvailable() ? `<label><input type="radio" name="mode" value="headroom" ${searchMode === "headroom" ? "checked" : ""}> Clear within comfort zones</label><p class="subtle">Use agreed headroom to clear loops and shorten debt paths. The alpha searches a limited set of improving adjustments; it does not guarantee all possible clearing.</p>` : ""}${comfortAvailable() ? `<label><input type="radio" name="mode" value="comfort" ${searchMode === "comfort" ? "checked" : ""}> Move toward shared comfort</label><p class="subtle">Comfort clearing can use credit in either direction, including agreed zero-balance relationships. Helping moves require bilateral assistance permission.</p>` : ""}<p class="subtle">${state.automation?.enabled ? "Your node may approve eligible clearing automatically under your saved permissions. Obligations still need your approval." : "Every proposal still needs your approval unless you enable automatic clearing in Your node."}</p></fieldset>` : ""}<label for="amount">${privateProtocol() ? "Exact amount (whole TEST units)" : "Maximum amount (whole TEST units)"}</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${privateProtocol() ? "<p class=\"subtle\">Search uses this exact amount. If no loop is found, a smaller amount may still clear.</p>" : ""}${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
       activity: () => intro("Activity and receipts", "A recorded local completion is distinct from approval or an unanswered request.") +
         (receipts.length ? receipts.slice().reverse().map(r => `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(r.id) === "verified" : r.cycle_complete) ? "completed" : "pending"}"><h2>Test receipt</h2><span class="tag">${esc(statusText(r))}</span><p><code>${esc(r.id)}</code></p>${changesTable(r.changes)}${comfortTerms(r)}${hashlockDetails(r)}<button data-export="${esc(r.id)}" ${!online || busy ? "disabled" : ""}>Download receipt JSON</button><p class="subtle">Local testnet journal evidence. Not a bank payment or production settlement certificate.</p></article>`).join("") : "<p class=\"empty\">No receipts returned by your node.</p>") + `<h2>Proposal history</h2>${proposals.length ? proposals.slice().reverse().map(p => `<div class="card"><code>${esc(p.id)}</code><p>${esc(statusText(p))}</p></div>`).join("") : "<p>No proposals recorded.</p>"}` + (obligationsAvailable() ? `<h2>Obligation history</h2>${(state.obligations || []).length ? state.obligations.map(obligationCard).join("") : "<p>No obligation proposals yet.</p>"}` : ""),
       settings: () => intro("Your node. Your permissions.", "The node exchanges messages while your browser is closed.") +
-        `<div class="card"><div class="row"><strong>Node identity</strong><span class="node-id">${esc(state.node)}</span></div><div class="row"><strong>Mode / unit</strong><span>TESTNET / TEST</span></div><div class="row"><strong>Protocol</strong><span>${esc(protocolLabel())}</span></div><div class="row"><strong>Approval policy</strong><span>Ask each participant</span></div><button data-action="pause" ${!online || busy ? "disabled" : ""}>${state.paused ? "Resume new clearing" : "Pause new clearing"}</button><p>Pausing stops new work. Already admitted settlement messages still need recovery.</p></div><div class="card"><h2>Connection</h2><p><code>${esc(location.origin)}</code></p><button class="secondary" data-action="refresh" ${busy ? "disabled" : ""}>Refresh node state</button><button class="secondary" data-action="disconnect">Disconnect this browser</button><p class="subtle">Disconnect clears this tab’s token and displayed state. It does not revoke the operator token, stop the node, or cancel pending clearing.</p></div><aside>Test-only shared-secret authentication. The node operator holds the credentials and database. Backups, identity rotation and production key custody require further implementation and review.</aside>`
+        `<div class="card"><div class="row"><strong>Node identity</strong><span class="node-id">${esc(state.node)}</span></div><div class="row"><strong>Mode / unit</strong><span>TESTNET / TEST</span></div><div class="row"><strong>Protocol</strong><span>${esc(protocolLabel())}</span></div><div class="row"><strong>Approval policy</strong><span>${state.automation?.enabled ? "Automatic within agreed comfort permissions" : "Ask each participant"}</span></div><button data-action="pause" ${!online || busy ? "disabled" : ""}>${state.paused ? "Resume new clearing" : "Pause new clearing"}</button><p>Pausing stops new work. Already admitted settlement messages still need recovery.</p></div>${hosted ? automationView() : ""}<div class="card"><h2>Connection</h2><p><code>${esc(location.origin)}</code></p><button class="secondary" data-action="refresh" ${busy ? "disabled" : ""}>Refresh node state</button><button class="secondary" data-action="disconnect">${hosted ? "Sign out" : "Disconnect this browser"}</button>${hosted ? `<a class="button secondary" href="/login?manage=1">Passkeys and recovery</a><p class="subtle">Signing out ends this browser session. Your node and pending work remain. Account reference: <code>${esc(hostedAccount.id)}</code>.</p>` : "<p class=\"subtle\">Disconnect clears this tab’s token and displayed state. It does not revoke the operator token, stop the node, or cancel pending clearing.</p>"}</div><aside>${hosted ? "Hosted TEST alpha. The operator can access node records and protocol credentials. Your passkey authenticates your account; it does not make hosted node data private from the operator. No real money moves." : "Test-only shared-secret authentication. The node operator holds the credentials and database. Backups, identity rotation and production key custody require further implementation and review."}</aside>`
     };
     let historyPeer = null;
     if (page().startsWith("history/")) { try { historyPeer = decodeURIComponent(page().slice(8)); } catch (_) {} }
@@ -437,6 +518,11 @@
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
     event.preventDefault();
+    if (hosted && form.id === "accept-invitation") {
+      invitationDraft = String(new FormData(form).get("invite_token") || "").trim();
+      if (invitationDraft) await invitationRequest("/api/contacts/accept",{invite_token:invitationDraft});
+      return;
+    }
     if (form.id === "connect") {
       if (busy) return;
       const nextToken = new FormData(form).get("token").trim();
@@ -474,8 +560,8 @@
       if (!Number.isSafeInteger(value) || value <= 0 || value > 1000000000) {
         announce("Enter a positive whole amount up to 1,000,000,000 TEST.", true); return;
       }
-      const mode = comfortAvailable() ? new FormData(form).get("mode") || "cancellation" : "cancellation";
-      await mutate("/api/discover", {amount: value,...(mode === "comfort" ? {mode} : {})}, r => `Discovery accepted (${r.id}). Waiting for neighbour responses; no balances have been cleared by this request alone.`);
+      const mode = comfortAvailable() || headroomAvailable() ? new FormData(form).get("mode") || "cancellation" : "cancellation";
+      await mutate("/api/discover", {amount: value,...(mode !== "cancellation" ? {mode} : {})}, r => `Discovery accepted (${r.id}). Waiting for neighbour responses; no balances have been cleared by this request alone.`);
     } else if (form.dataset.approve && new FormData(form).get("consent")) {
       const id = form.dataset.approve;
       await mutate(`/api/proposals/${encodeURIComponent(id)}/approve`, {digest: form.dataset.digest}, () => "The node accepted your approval request. Check the proposal status for settlement progress; approval is not completion.");
@@ -483,6 +569,7 @@
   });
 
   document.addEventListener("input", event => {
+    if (hosted && event.target.closest("#accept-invitation")) { invitationDraft = event.target.value; return; }
     const obligationForm = event.target.closest("#new-obligation");
     if (obligationForm && !pendingObligation) { updateObligationDraft(obligationForm); return; }
     if (event.target.name === "mode" && event.target.closest("#discover")) { searchMode=event.target.value; return; }
@@ -516,6 +603,12 @@
   document.addEventListener("click", async event => {
     const button = event.target.closest("button");
     if (!button || button.disabled) return;
+    if (hosted && button.dataset.action === "hosted-retry") { await bootstrapHosted(); return; }
+    if (hosted && button.dataset.action === "create-invitation") { await invitationRequest("/api/contacts/invite",{}); return; }
+    if (hosted && button.dataset.action === "automation") {
+      await mutate("/api/automation",{enabled:!state.automation?.enabled},r => r.enabled ? "Automatic clearing enabled within your bilateral comfort permissions." : "New automatic clearing approvals disabled. Pending work remains.");
+      return;
+    }
     if (button.dataset.scale) {
       const form = button.closest("form[data-contact]");
       const contact = state.contacts.find(c => c.peer === form.dataset.contact);
@@ -535,6 +628,14 @@
     } else if (button.dataset.obligationDecline) {
       await writeObligation(`/api/obligations/${encodeURIComponent(button.dataset.obligationDecline)}/decline`,{digest:button.dataset.digest});
     } else if (button.dataset.action === "disconnect") {
+      if (hosted) {
+        try {
+          await api("/auth/logout",{});
+          rememberPendingObligation(null); hostedAccount = null; csrfToken = "";
+          location.replace("/login");
+        } catch (error) { announce(`Sign-out not confirmed: ${error.message}`,true); }
+        return;
+      }
       searchMode="cancellation"; contactDrafts.clear(); clearContactSaves(); draggingControl=null; sessionGeneration++; busy = false; token = ""; state = null; online = false; lastSeen = null;
       rememberPendingObligation(null); obligationDraft = {peer:"",direction:"i_owe",amount:"",description:"",consent:false};
       try { sessionStorage.removeItem("ledgerloops.testnet.token"); } catch (_) {}
@@ -562,5 +663,5 @@
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
   setInterval(() => { if (!document.hidden && !busy) refresh(); }, 3000);
   render();
-  if (token) refresh();
+  if (hosted) bootstrapHosted(); else if (token) refresh();
 })();

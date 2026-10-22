@@ -1,5 +1,13 @@
 # LedgerLoops hashlock network app
 
+**22 October 2026 hosted alpha:** passkey accounts, durable PostgreSQL storage,
+peer invitations and bounded-surplus headroom clearing are now implemented.
+See [hosted architecture and limits](HOSTED_ALPHA.md),
+[clearing theory and protocol](headroom_protocol.md) and
+[Heroku deployment](HEROKU_DEPLOYMENT.md). The target is `app.ledgerloops.com`;
+implementation and local tests do not establish that this domain is deployed.
+The original token-based local demos below remain supported.
+
 The app now runs a separate **neighbour-private hashlock v2 testnet**: a responsive client, local consent, context-bound SHA-256 fulfillment, durable SQLite state and real neighbour HTTP messages. Participants keep only their incoming/outgoing neighbours for a proposal; no participant list or exact loop length is sent. This implements the honest-peer experimental scope of [issue 004](../docs/issues/004-neighbour-private-hashlock-settlement.md), not a production or Byzantine-safe payment system.
 
 ## Run the private network
@@ -61,7 +69,13 @@ Read the exact [private protocol](private_protocol.md), [validation scope](PRIVA
 
 This is **TEST units only**, with honest peers, retained databases and eventual network recovery. There are no timelocks or unsafe timeout unlocks. An unavailable origin or peer can leave capacity reserved indefinitely. Decline produces an evidenced abort before release; after conditional consent, the participant must await the outcome. Local application can occur at different times across peers.
 
-Only preconfigured direct neighbours are supported. Private v2 nodes can now propose and approve new bilateral TEST obligations within synchronized credit grants. Account enrollment, live assets, public identity/key management, TLS deployment, stale-backup recovery, bounded retention and hostile-peer protection remain product work. Plain HTTP and bearer credentials are for loopback/isolated development only. Localhost URLs refer to the machine running the nodes; no public SaaS has been deployed.
+The original standalone launcher uses preconfigured direct neighbours. The hosted
+gateway adds passkey enrollment and bilateral invitations; see the hosted docs
+above. Private v2 nodes can propose and approve new bilateral TEST obligations
+within synchronized credit grants. Live assets, stale-backup recovery, bounded
+retention and hostile-peer protection remain product work. Plain HTTP and bearer
+credentials are for loopback/isolated development only. Localhost URLs refer to
+the machine running the nodes; deployment must be verified independently.
 
 ## Versions and tests
 

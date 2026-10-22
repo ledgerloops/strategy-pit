@@ -1,0 +1,13 @@
+{
+  "name": "LedgerLoops TEST alpha",
+  "description": "Hosted neighbour-private hashlock clearing in TEST units; operator access disclosed.",
+  "stack": "heroku-24",
+  "buildpacks": [{"url": "heroku/python"}],
+  "formation": {"web": {"quantity": 1, "size": "basic"}, "worker": {"quantity": 1, "size": "basic"}},
+  "addons": ["heroku-postgresql:essential-0"],
+  "env": {
+    "PUBLIC_ORIGIN": {"description": "Canonical HTTPS origin; passkeys bind to this domain.", "value": "https://app.ledgerloops.com"},
+    "PYTHONUNBUFFERED": {"value": "1"},
+    "PGSSLMODE": {"value": "require"}
+  }
+}

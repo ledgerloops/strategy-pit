@@ -9,6 +9,13 @@ passkeys, sessions, durable hosting and a writable TEST alpha; it is not a deplo
 service or an implementation authorization. Older release proposals below remain
 background and must be reconciled with that discussion before implementation.
 
+**Subsequent authorization and implementation:** the user requested implementation
+and Heroku deployment at `app.ledgerloops.com`. The
+[hosted architecture](../../app/HOSTED_ALPHA.md) and
+[local-worker handoff](../deployment-handoff.md) supersede the earlier read-only
+scope and discussion-only status. Deployment still requires a verified release
+and live domain checks; do not infer it from the existence of these files.
+
 An installable, mobile-friendly web app with optional hosted nodes and self-hosting. The first alpha is a read-only clearing assistant. Durable node operation and live settlement are separate release gates. These specifications are proposed contracts for implementation and review, not descriptions of existing services.
 
 ## First implementation

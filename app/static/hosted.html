@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>LedgerLoops · hosted alpha</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/hosted.css">
+  <script src="/hosted.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/"><img src="/logo.jpg" alt="LedgerLoops" width="96" height="58"><span>/ hosted alpha</span></a><span class="tag">TEST UNITS ONLY</span></header>
+  <main class="account-main">
+    <section aria-labelledby="account-title">
+      <p class="account-eyebrow">YOUR RELATIONSHIPS. YOUR LIMITS.</p>
+      <h1 id="account-title">A little less debt<br>going around.</h1>
+      <p class="account-lead">Try neighbour-to-neighbour clearing with people you know. Set comfort zones, propose TEST obligations and approve clearing together.</p>
+      <aside class="operator-notice"><strong>A hosted experiment, with operator access.</strong> The operator can access your node’s records and protocol credentials. Your passkey protects sign-in; it does not hide hosted data from the operator. No real money moves.</aside>
+      <div id="account-notice" role="status" aria-live="polite"></div>
+      <section id="account-entry" class="account-columns">
+        <form id="sign-in" class="card">
+          <h2>Welcome back</h2>
+          <p>Use a passkey to return to the same account and node.</p>
+          <button type="submit">Sign in with a passkey</button>
+        </form>
+        <form id="create-account" class="card">
+          <h2>Join the TEST alpha</h2>
+          <label for="display-name">Your display name</label>
+          <input id="display-name" name="display_name" type="text" autocomplete="nickname" maxlength="80" required>
+          <label class="consent"><input name="disclosure" type="checkbox" required>I understand this is TEST data and the operator can access hosted node records.</label>
+          <button type="submit">Create an account with a passkey</button>
+        </form>
+        <details class="account-recovery">
+          <summary>Use a recovery code</summary>
+          <form id="recover-account" class="card">
+            <p>Use your saved account reference and one unused recovery code. Your node and outstanding work stay attached to the same account.</p>
+            <label for="recovery-account">Account reference</label>
+            <input id="recovery-account" name="account_id" type="text" autocomplete="off" spellcheck="false" required>
+            <label for="recovery-code">Recovery code</label>
+            <input id="recovery-code" name="recovery_code" type="password" autocomplete="off" spellcheck="false" required>
+            <button type="submit">Recover this account</button>
+          </form>
+        </details>
+      </section>
+      <section id="recovery-bundle" class="card" hidden>
+        <h2>Save your account recovery details</h2>
+        <p>Store these privately in your password manager or another safe place. Each recovery code works once. They are shown only now.</p>
+        <p>Account reference: <code id="bundle-account"></code></p>
+        <pre id="bundle-codes" aria-label="Recovery codes"></pre>
+        <button id="download-recovery" type="button">Download recovery details</button>
+        <label class="consent"><input id="recovery-saved" type="checkbox">I saved my account reference and recovery codes.</label>
+        <button id="continue-after-recovery" type="button" disabled>Continue to my node</button>
+      </section>
+      <section id="account-management" class="card" hidden>
+        <h2>Your account</h2>
+        <p id="account-name"></p>
+        <p>Account reference: <code id="managed-account"></code></p>
+        <p>Add a second passkey so you have another way to sign in. Your existing passkeys and node identity stay the same.</p>
+        <button id="add-passkey" type="button">Add another passkey</button>
+        <a class="button secondary" href="/">Open my node</a>
+        <button id="sign-out" type="button" class="secondary">Sign out</button>
+        <p class="subtle">Signing out ends this browser session. It does not stop your node or cancel pending obligations and clearing.</p>
+      </section>
+    </section>
+  </main>
+  <footer>Experimental TEST network. Only enter test obligations. Clearing is neighbour-private in the protocol; the hosting operator still controls the runtime.</footer>
+  <noscript>JavaScript and a browser supporting passkeys are required to create or sign in to an account. No action has been taken.</noscript>
+</body>
+</html>

@@ -5,14 +5,16 @@ import hashlib
 import json
 from pathlib import Path
 from comfort import comfort_move, shared_comfort, discomfort
+from headroom_policy import pair_surplus, edge_allowed as headroom_edge_allowed
 
 
 def verify(value):
     receipt = value.get('receipt', value)
     if not isinstance(receipt, dict):
         raise ValueError('Receipt must be an object')
-    comfort=receipt.get('clearing_mode') == 'comfort'
-    scheme='sha256-comfort-v1' if comfort else 'sha256-context-v2'
+    headroom=receipt.get('clearing_mode') == 'headroom'
+    comfort=receipt.get('clearing_mode') in ('comfort','headroom')
+    scheme='sha256-headroom-v1' if headroom else 'sha256-comfort-v1' if comfort else 'sha256-context-v2'
     expected = {'protocol': 'private-hashlock-v2', 'hashlock_scheme': scheme,
                 'mode': 'testnet', 'unit': 'TEST', 'status': 'committed', 'local_fulfilled': True}
     for field, wanted in expected.items():
@@ -27,9 +29,9 @@ def verify(value):
         raise ValueError('Invalid amount')
     context = {key: receipt[key] for key in ('amount', 'id', 'preimage', 'protocol', 'unit')}
     if comfort:
-        if receipt.get('policy') != 'bilateral-comfort-v1' or type(receipt.get('direction')) is not int or receipt['direction'] not in (-1,1):
+        if receipt.get('policy') != ('comfort-surplus-bit-v1' if headroom else 'bilateral-comfort-v1') or type(receipt.get('direction')) is not int or receipt['direction'] not in (-1,1):
             raise ValueError('Invalid comfort policy context')
-        context.update(clearing_mode='comfort',policy=receipt['policy'],direction=receipt['direction'])
+        context.update(clearing_mode='headroom' if headroom else 'comfort',policy=receipt['policy'],direction=receipt['direction'])
     elif any(key in receipt for key in ('clearing_mode','policy','direction')):
         raise ValueError('Unexpected cancellation policy context')
     digest = hashlib.sha256(json.dumps(context, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode('ascii')).hexdigest()
@@ -62,7 +64,8 @@ def verify(value):
                     raise ValueError('Invalid preference revision')
             if any(not isinstance(p,dict) or type(p.get('revision')) is not int or not 1 <= p['revision'] <= 10**12 for p in (own,remote)):
                 raise ValueError('Invalid pinned preference revision')
-            if not comfort_move(before,after,own,remote):
+            permitted = headroom_edge_allowed(before,after,own,remote) if headroom else comfort_move(before,after,own,remote)
+            if not permitted:
                 raise ValueError('Change violates pinned comfort permissions')
             zone=shared_comfort(own,remote)
             if change.get('shared_comfort') != zone or change.get('discomfort_before') != discomfort(before,zone) or change.get('discomfort_after') != discomfort(after,zone):
@@ -74,6 +77,11 @@ def verify(value):
         deltas.append(after-before)
     if sum(deltas) != 0:
         raise ValueError('Local signed net position changed')
+    if headroom:
+        if any(type(receipt.get(key)) is not bool for key in ('surplus_in','surplus_out','surplus_origin')):
+            raise ValueError('Invalid pinned surplus transition')
+        if pair_surplus(changes, amount, receipt['surplus_in'], origin=receipt['surplus_origin']) != receipt['surplus_out']:
+            raise ValueError('Pinned surplus transition does not match local changes')
     return {'valid': True, 'id': receipt['id'], 'scope': 'Hashlock and local accounting consistency only; no signature, actual-application or whole-loop proof.'}
 
 

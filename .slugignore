@@ -1,0 +1,17 @@
+/node_modules
+/.git
+/artifacts
+/experiments
+/src
+/coverage
+/build
+/docs
+/ops
+/app/screenshots
+/app/test_*
+/app/run_hosted_test_server.py
+/app/*test-results.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.log

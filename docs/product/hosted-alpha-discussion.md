@@ -1,17 +1,20 @@
 # ledgerloops.com hosted alpha — design discussion
 
-22 October 2026. Discussion draft, not deployment instructions or authorization
-to provision infrastructure. The older component PRDs remain background proposals;
-this note records the user's newer hosting constraints and a proposed alpha scope.
+22 October 2026. Initial design discussion, subsequently authorized for
+implementation and deployment by the user. The canonical target is now
+`app.ledgerloops.com`. See the [implemented hosting architecture](../../app/HOSTED_ALPHA.md)
+and [deployment runbook](../../app/HEROKU_DEPLOYMENT.md) for current implementation
+status. This note retains the agreed constraints and original design rationale.
 
 ## Agreed constraints
 
-- Host the demo/alpha at `ledgerloops.com`; shared hosting is acceptable.
+- Host the demo/alpha at `app.ledgerloops.com`; shared hosting is acceptable.
 - Disclose that the operator can access hosted node data and controls the runtime.
 - Preserve neighbour-private algorithm messages and coordinator-free clearing.
 - Never use cross-node visibility to choose probes, routes, amounts, approvals,
   progress decisions, reversals or winning loops. Hosting is infrastructure only.
-- Keep this a design discussion before implementation or deployment.
+- The user subsequently authorized implementation and deployment; do not treat
+  this earlier discussion as an approval gate.
 
 ## Proposed product scope
 

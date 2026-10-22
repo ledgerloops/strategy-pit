@@ -492,3 +492,37 @@ verify the original 3-to-2 helper repair and show local consent alone permits
 unwanted 1-to-3 lengthening. Private collective-benefit verification remains
 mandatory; the host supplies no answers to runtime nodes. No discovery, hashlock
 or production policy was changed, and frozen benchmark files remain unchanged.
+
+### 22 October 2026 — implemented hosted alpha; deployment handed to local worker
+
+The user authorized implementation and deployment, then selected
+**https://app.ledgerloops.com** and requested handoff to **Ledgerloops (local)**.
+See [the handoff](deployment-handoff.md), [hosted architecture](../app/HOSTED_ALPHA.md)
+and [Heroku runbook](../app/HEROKU_DEPLOYMENT.md). No public deployment or DNS
+change occurred in this cloud task: neither Chrome control nor Heroku/DNS
+credentials was available. Do not claim the target is live without verification.
+
+Implemented `headroom` clearing uses a bounded surplus bit, with an honest-peer
+proof of strict aggregate improvement and no path/roster/count/total in messages.
+It supports 3-to-1, 2-to-1 and the original 3-to-2 helper-increase examples through
+actual local hashlocks. It is an incomplete sufficient certificate, not a general
+private sum proof, Byzantine-safe mechanism or convergence-to-optimum guarantee.
+The bit discloses one capped predicate about the preceding traversal.
+
+The hosted implementation adds real passkeys, stable accounts, opaque sessions,
+CSRF/origin checks, recovery, bilateral invitations, explicit background clearing,
+and authoritative per-node PostgreSQL snapshot transactions with HTTP outboxes.
+No node algorithm receives another node's state or a host-generated clearing
+decision. The operator-access disclosure is visible before enrollment. Existing
+demo tokens/configuration/databases and frozen benchmark artifacts were preserved.
+
+Validation: **158 application Python tests pass with real PostgreSQL enabled**,
+including real WebAuthn signatures, multiprocess storage and process death,
+gateway account isolation, invitation races and hashlock recovery. Four review
+regressions cover automatic approval limits and empty comfort zones. Real Chromium
+with actual Flask, PostgreSQL and neighbour HTTP completes three-account enrollment,
+invitation/comfort/obligation UI flows and **2-to-1 headroom settlement**, verifies
+receipts, adds a second authenticator, and signs back into the same node. The
+separate hosted UI fixture and standalone authentication browser regression pass.
+Seven deployment-tool tests use mocked providers and temporary Git source; they
+are not live Heroku/DNS evidence. No performance benchmark was rerun.

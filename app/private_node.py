@@ -12,11 +12,14 @@ from http.server import ThreadingHTTPServer
 from node import Node as TransportNode, make_handler, MAX_AMOUNT
 from comfort import validate_preferences, shared_comfort, allows_balance, discomfort, comfort_move
 from obligations import Obligations
+from headroom_policy import edge_allowed as headroom_edge_allowed, pair_surplus
 
 PROTOCOL = 'private-hashlock-v2'
 HASHLOCK_SCHEME = 'sha256-context-v2'
 COMFORT_SCHEME = 'sha256-comfort-v1'
 COMFORT_POLICY = 'bilateral-comfort-v1'
+HEADROOM_SCHEME = 'sha256-headroom-v1'
+HEADROOM_POLICY = 'comfort-surplus-bit-v1'
 
 
 def canonical_hex(value):
@@ -39,17 +42,28 @@ def hash_comfort_condition(ident, amount, preimage, direction):
     return hashlib.sha256(json.dumps(context,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode('ascii')).hexdigest()
 
 
+def hash_headroom_condition(ident, amount, preimage, direction):
+    hash_condition(ident, amount, preimage)
+    if type(direction) is not int or direction not in (-1, 1):
+        raise ValueError('Invalid headroom direction')
+    context = dict(protocol=PROTOCOL, unit='TEST', id=ident, amount=amount,
+                   preimage=preimage, clearing_mode='headroom',
+                   policy=HEADROOM_POLICY, direction=direction)
+    return hashlib.sha256(json.dumps(context, sort_keys=True, separators=(',', ':'),
+                                     ensure_ascii=True).encode('ascii')).hexdigest()
+
+
 class Node(Obligations):
-    def __init__(self, config, database):
+    def __init__(self, config, database, connection=None):
         if config.get('mode') != 'testnet':
             raise ValueError('Only explicit mode=testnet is supported')
         self.name, self.token, self.peers = config['node'], config['token'], config['peers']
-        if not self.token or not self.peers or self.name in self.peers:
+        if not self.token or self.name in self.peers:
             raise ValueError('Distinct local identity and neighbours required')
         if any(not p.get('key') or p['key'] == self.token for p in self.peers.values()):
             raise ValueError('Distinct client and neighbour credentials required')
         self.lock = threading.RLock()
-        self.db = sqlite3.connect(database, check_same_thread=False)
+        self.db = connection if connection is not None else sqlite3.connect(database, check_same_thread=False)
         self.db.row_factory = sqlite3.Row
         tables = {r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
         if tables:
@@ -107,7 +121,7 @@ class Node(Obligations):
                 data = json.loads(row['data'])
                 if row['prepared'] or row['status'] in ('committed', 'aborted', 'declining'):
                     proposals.append(dict(data, status=row['status'], approved=bool(row['approved'])))
-            return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),contacts=self.contacts(),discovery_modes=['cancellation','comfort'],
+            return dict(node=self.name, mode='testnet', protocol=PROTOCOL, unit='TEST', paused=self.paused(),contacts=self.contacts(),discovery_modes=['cancellation','comfort','headroom'],
                         balances=[dict(r) for r in self.db.execute('SELECT b.*,r.proposal AS reserved_by FROM balances b LEFT JOIN reservations r USING(peer) ORDER BY peer')],
                         proposals=proposals, receipts=self.receipts(), obligation_capable=True, obligations=self.obligations(),
                         searches=[dict(r) for r in self.db.execute('SELECT * FROM searches ORDER BY rowid DESC LIMIT 100')],
@@ -175,8 +189,11 @@ class Node(Obligations):
 
     def send(self, peer, data, kind, **extra):
         if peer is not None:
-            if data.get('clearing_mode') == 'comfort' and kind in ('probe','prepare'):
+            if data.get('clearing_mode') in ('comfort','headroom') and kind in ('probe','prepare'):
                 extra['edge_quote']=self.quote_wire(self.edge_terms(peer,self.balance(peer),self.balance(peer)+data['direction']*data['amount']))
+                if data.get('clearing_mode') == 'headroom':
+                    local = json.loads(self.proposal(data['id'])['data'])
+                    extra['surplus'] = local['surplus_out']
             self.enqueue(peer, self.envelope(data, kind, **extra))
 
     def edge_terms(self,peer,before,after):
@@ -203,8 +220,38 @@ class Node(Obligations):
             local=self.edge_terms(peer,before,after)
         except ValueError:
             return False
+        eligible = (headroom_edge_allowed(before, after, local['own_preferences'], local['peer_preferences'])
+                    if data.get('clearing_mode') == 'headroom' else
+                    comfort_move(before,after,local['own_preferences'],local['peer_preferences']))
         return (quote == dict(before=-before,after=-after,own_revision=local['peer_revision'],peer_revision=local['own_revision'])
-                and comfort_move(before,after,local['own_preferences'],local['peer_preferences']))
+                and eligible)
+
+    def headroom_candidate(self, amount, direction, exclude=None, surplus=False):
+        """Only own edge quotes plus the predecessor's single surplus bit.
+
+        Origin starts on a full exposure reduction. Each other node chooses a
+        quoted pair whose exact cost fits the finite-state surplus certificate.
+        Random retries explore alternatives without a roster or remote path.
+        """
+        delta = direction * amount
+        eligible = []
+        for peer in sorted(self.peers):
+            if peer == exclude or self.db.execute('SELECT 1 FROM reservations WHERE peer=?', (peer,)).fetchone():
+                continue
+            try:
+                before = self.balance(peer)
+                outgoing = self.edge_terms(peer, before, before + delta)
+                if exclude is None:
+                    if (headroom_edge_allowed(before, before+delta, outgoing['own_preferences'], outgoing['peer_preferences'])
+                            and abs(before+delta)-abs(before) == -amount):
+                        eligible.append((peer, False))
+                else:
+                    incoming = self.edge_terms(exclude, self.balance(exclude), self.balance(exclude)-delta)
+                    next_surplus = pair_surplus([incoming, outgoing], amount, surplus)
+                    eligible.append((peer, next_surplus))
+            except ValueError:
+                continue
+        return secrets.choice(eligible) if eligible else (None, False)
 
     def comfort_candidate(self,amount,direction,exclude=None,strict=False):
         for peer in sorted(self.peers):
@@ -228,7 +275,7 @@ class Node(Obligations):
     def discover(self, amount, mode="cancellation"):
         if type(amount) is not int or not 0 < amount <= MAX_AMOUNT:
             raise ValueError('amount must be a positive bounded integer')
-        if mode not in ('cancellation','comfort'):
+        if mode not in ('cancellation','comfort','headroom'):
             raise ValueError('Unknown clearing mode')
         with self.lock, self.db:
             if self.paused():
@@ -240,14 +287,25 @@ class Node(Obligations):
                     following=self.comfort_candidate(amount,direction,strict=True)
                     if following is not None:
                         break
+            if mode == 'headroom':
+                for direction in (1, -1):
+                    following, _ = self.headroom_candidate(amount, direction)
+                    if following is not None:
+                        break
             if following is None:
                 raise ValueError('No unreserved outgoing debt channel with requested capacity')
             preimage = secrets.token_bytes(32).hex()
             ident = secrets.token_bytes(32).hex()
-            condition = hash_condition(ident,amount,preimage) if mode == 'cancellation' else hash_comfort_condition(ident,amount,preimage,direction)
+            condition = (hash_condition(ident,amount,preimage) if mode == 'cancellation' else
+                         hash_headroom_condition(ident,amount,preimage,direction) if mode == 'headroom' else
+                         hash_comfort_condition(ident,amount,preimage,direction))
             data = dict(id=ident,condition=condition,amount=amount,protocol=PROTOCOL,hashlock_scheme=HASHLOCK_SCHEME,changes=[],created_at=time.time())
             if mode == 'comfort':
                 data.update(clearing_mode='comfort',policy=COMFORT_POLICY,direction=direction,hashlock_scheme=COMFORT_SCHEME,
+                            outgoing_quote=self.edge_terms(following,self.balance(following),self.balance(following)+direction*amount))
+            if mode == 'headroom':
+                data.update(clearing_mode='headroom', policy=HEADROOM_POLICY, direction=direction,
+                            hashlock_scheme=HEADROOM_SCHEME, surplus_out=False, surplus_origin=True,
                             outgoing_quote=self.edge_terms(following,self.balance(following),self.balance(following)+direction*amount))
             self.db.execute('INSERT INTO proposals(id,data,status,next,origin) VALUES(?,?,?,?,1)', (ident,json.dumps(data),'searching',following))
             self.db.execute('INSERT INTO private_secrets VALUES(?,?)', (ident,preimage))
@@ -276,17 +334,27 @@ class Node(Obligations):
         incoming, outgoing = self.balance(prev), self.balance(following)
         if self.paused():
             return False
-        comfort=data.get('clearing_mode') == 'comfort'
+        comfort=data.get('clearing_mode') in ('comfort','headroom')
+        headroom=data.get('clearing_mode') == 'headroom'
         delta=data.get('direction',1)*data['amount']
         if comfort:
             try:
                 changes=[self.edge_terms(prev,incoming,incoming-delta),self.edge_terms(following,outgoing,outgoing+delta)]
             except ValueError:
                 return False
-            if any(not comfort_move(c['before'],c['after'],c['own_preferences'],c['peer_preferences']) for c in changes):
-                return False
-            if row['origin'] and not comfort_move(outgoing,outgoing+delta,changes[1]['own_preferences'],changes[1]['peer_preferences'],strict=True):
-                return False
+            if headroom:
+                try:
+                    output = pair_surplus(changes, data['amount'], data.get('surplus_in'), origin=bool(row['origin']))
+                except ValueError:
+                    return False
+                if (type(data.get('surplus_out')) is not bool or output != data['surplus_out']
+                        or type(data.get('surplus_origin')) is not bool or data['surplus_origin'] != bool(row['origin'])):
+                    return False
+            else:
+                if any(not comfort_move(c['before'],c['after'],c['own_preferences'],c['peer_preferences']) for c in changes):
+                    return False
+                if row['origin'] and not comfort_move(outgoing,outgoing+delta,changes[1]['own_preferences'],changes[1]['peer_preferences'],strict=True):
+                    return False
             if data.get('incoming_quote') != changes[0] or data.get('outgoing_quote') != changes[1]:
                 return False
         else:
@@ -352,7 +420,9 @@ class Node(Obligations):
         preimage=data.get('preimage')
         if not canonical_hex(preimage):
             raise ValueError('Invalid hashlock fulfillment')
-        condition=hash_comfort_condition(data['id'],data['amount'],preimage,data['direction']) if data.get('clearing_mode') == 'comfort' else hash_condition(data['id'],data['amount'],preimage)
+        condition=(hash_comfort_condition(data['id'],data['amount'],preimage,data['direction']) if data.get('clearing_mode') == 'comfort' else
+                   hash_headroom_condition(data['id'],data['amount'],preimage,data['direction']) if data.get('clearing_mode') == 'headroom' else
+                   hash_condition(data['id'],data['amount'],preimage))
         if condition != data['condition']:
             raise ValueError('Invalid hashlock fulfillment')
 
@@ -387,7 +457,7 @@ class Node(Obligations):
             return self.receive_obligation(sender,data)
         if data.get('kind') == 'preferences':
             return self.receive_preferences(sender,data)
-        allowed={'kind','id','condition','amount','protocol','message_id','preimage','clearing_mode','policy','direction','edge_quote'}
+        allowed={'kind','id','condition','amount','protocol','message_id','preimage','clearing_mode','policy','direction','edge_quote','surplus'}
         if set(data)-allowed:
             raise ValueError('Unexpected wire fields')
         if data.get('protocol') != PROTOCOL or not canonical_hex(data.get('condition')) or not canonical_hex(data.get('id')):
@@ -399,13 +469,19 @@ class Node(Obligations):
         kind=data.get('kind')
         if kind not in ('probe','probe_rejected','prepare','ready','reject','abort','fulfill'):
             raise ValueError('Unknown message kind')
-        comfort=data.get('clearing_mode') == 'comfort'
+        comfort=data.get('clearing_mode') in ('comfort','headroom')
+        headroom=data.get('clearing_mode') == 'headroom'
         if comfort:
-            if data.get('policy') != COMFORT_POLICY or type(data.get('direction')) is not int or data['direction'] not in (-1,1):
+            if data.get('policy') != (HEADROOM_POLICY if headroom else COMFORT_POLICY) or type(data.get('direction')) is not int or data['direction'] not in (-1,1):
                 raise ValueError('Invalid comfort policy')
             if ('edge_quote' in data) != (kind in ('probe','prepare')):
                 raise ValueError('Edge quote only required on comfort admission')
-        elif any(key in data for key in ('clearing_mode','policy','direction','edge_quote')):
+            if headroom and kind in ('probe','prepare'):
+                if type(data.get('surplus')) is not bool:
+                    raise ValueError('Headroom admission requires a surplus bit')
+            elif 'surplus' in data:
+                raise ValueError('Surplus bit only permitted on headroom admission')
+        elif any(key in data for key in ('clearing_mode','policy','direction','edge_quote','surplus')):
             raise ValueError('Unexpected cancellation policy fields')
         if kind == 'fulfill':
             self.check_preimage(data)
@@ -428,6 +504,8 @@ class Node(Obligations):
                         local=json.loads(row['data'])
                         if comfort:
                             local['incoming_quote']=self.edge_terms(sender,self.balance(sender),self.balance(sender)-data['direction']*data['amount'])
+                            if headroom:
+                                local['surplus_in'] = data['surplus']
                         self.db.execute('UPDATE proposals SET prev=?,data=? WHERE id=?',(sender,json.dumps(local),row['id']))
                         row=self.proposal(row['id'])
                         if self.prepare_local(row):
@@ -445,13 +523,21 @@ class Node(Obligations):
                         self.db.execute('INSERT INTO inbox VALUES(?)',(data['message_id'],))
                         return
                     if comfort:
-                        following=None if self.paused() else self.comfort_candidate(data['amount'],data['direction'],sender)
+                        if headroom:
+                            following, next_surplus = ((None, False) if self.paused() else
+                                self.headroom_candidate(data['amount'], data['direction'], sender, data['surplus']))
+                        else:
+                            following=None if self.paused() else self.comfort_candidate(data['amount'],data['direction'],sender)
                     else:
                         following=None if self.paused() or self.balance(sender) < data['amount'] else self.candidate(data['amount'],sender)
                     local=dict(id=data['id'],condition=data['condition'],amount=data['amount'],protocol=PROTOCOL,hashlock_scheme=HASHLOCK_SCHEME,changes=[],created_at=time.time())
                     if comfort:
-                        local.update(clearing_mode='comfort',policy=COMFORT_POLICY,direction=data['direction'],hashlock_scheme=COMFORT_SCHEME,
+                        local.update(clearing_mode='headroom' if headroom else 'comfort',
+                                     policy=HEADROOM_POLICY if headroom else COMFORT_POLICY,
+                                     direction=data['direction'],hashlock_scheme=HEADROOM_SCHEME if headroom else COMFORT_SCHEME,
                                      incoming_quote=self.edge_terms(sender,self.balance(sender),self.balance(sender)-data['direction']*data['amount']))
+                        if headroom:
+                            local.update(surplus_in=data['surplus'], surplus_out=next_surplus, surplus_origin=False)
                         if following:
                             local['outgoing_quote']=self.edge_terms(following,self.balance(following),self.balance(following)+data['direction']*data['amount'])
                     self.db.execute('INSERT INTO proposals(id,data,status,prev,next) VALUES(?,?,?,?,?)',(data['id'],json.dumps(local),'searching',sender,following))
@@ -472,6 +558,10 @@ class Node(Obligations):
                 elif kind == 'reject':
                     self.reject(row)
                 elif kind == 'prepare':
+                    if headroom and data['surplus'] != json.loads(row['data']).get('surplus_in'):
+                        self.reject(row)
+                        self.db.execute('INSERT INTO inbox VALUES(?)',(data['message_id'],))
+                        return
                     if comfort and not self.quote_matches(sender,data):
                         self.reject(row)
                         self.db.execute('INSERT INTO inbox VALUES(?)',(data['message_id'],))

@@ -1,8 +1,11 @@
 # Comfort zones as clearing permission
 
 Research design, 22 October 2026. This supersedes the recent-gain-only proposal
-as the preferred policy. It is implemented as an isolated local consent predicate
-and offline fixtures, not enabled in the running application or frozen benchmarks.
+as the preferred policy. The full local permission rule is modelled below.
+The application now implements a sound but incomplete
+[bounded-surplus selection protocol](../app/headroom_protocol.md) under that rule,
+with actual hashlock settlement. The general private benefit predicate is still
+open. Frozen benchmarks remain unchanged; implementation is not deployment evidence.
 
 ## Two separate requirements
 
