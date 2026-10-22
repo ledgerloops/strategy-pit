@@ -47,7 +47,8 @@ class HostedRuntime:
                               mode='testnet', peers={}, label=account['name'])
                 node = Node(config, ':memory:', connection=db)
                 db.execute("INSERT INTO meta VALUES('hosted_config',?)", (json.dumps(config),))
-                db.execute("INSERT INTO meta VALUES('hosted_automation','false')")
+                db.execute("INSERT INTO meta VALUES('hosted_automation','true')")
+                db.execute("INSERT INTO meta VALUES('hosted_automatic_clearing_v1','[]')")
                 self._invite_schema(db)
                 node.stopped.set()
         finally:
@@ -63,6 +64,45 @@ class HostedRuntime:
         if 'peer_name' not in columns:
             db.execute("ALTER TABLE hosted_invites ADD COLUMN peer_name TEXT NOT NULL DEFAULT ''")
 
+    @staticmethod
+    def _automatic_clearing_defaults(node):
+        """One hosted TEST policy upgrade, respecting later explicit opt-outs.
+
+        Only untouched revision-one assistance defaults are upgraded. Limits,
+        comfort, balances, pauses and proposal digests remain unchanged. A
+        reserved edge retains its exact quoted revision until its protocol
+        finishes; the durable pending list retries that upgrade on later wakes.
+        """
+        marker = node.db.execute("SELECT v FROM meta WHERE k='hosted_automatic_clearing_v1'").fetchone()
+        if marker:
+            pending = json.loads(marker[0])
+            if not pending:
+                return
+        else:
+            pending = []
+            for row in node.db.execute('SELECT peer,own FROM contacts'):
+                own = json.loads(row['own'])
+                if own in (dict(revision=1, credit_limit=0, comfort_min=0, comfort_max=0, auto_adjust=False),
+                           dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False)):
+                    pending.append(row['peer'])
+            # The demo's newly requested policy replaces its old node-wide
+            # default once. Subsequent explicit automation=false is retained.
+            node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automation','true')")
+        deferred = []
+        for peer in pending:
+            row = node.db.execute('SELECT own FROM contacts WHERE peer=?', (peer,)).fetchone()
+            if not row:
+                continue
+            own = json.loads(row[0])
+            if own['revision'] != 1 or own['auto_adjust']:
+                continue
+            if node.db.execute('SELECT 1 FROM reservations WHERE peer=?', (peer,)).fetchone():
+                deferred.append(peer)
+                continue
+            node.set_preferences(peer, dict(own, expected_revision=own['revision'], auto_adjust=True))
+        node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automatic_clearing_v1',?)",
+                        (json.dumps(deferred),))
+
     @contextmanager
     def node(self, node_id):
         db = self.stores.connection(self.key(node_id))
@@ -76,6 +116,7 @@ class HostedRuntime:
                 n = Node(json.loads(row[0]), ':memory:', connection=db)
                 try:
                     self._invite_schema(db)
+                    self._automatic_clearing_defaults(n)
                     yield n
                 finally:
                     n.stopped.set()
@@ -150,7 +191,7 @@ class HostedRuntime:
             config['peers'][peer] = dict(url=self.origin+'/nodes/'+peer, key=key, balance=0)
             node.peers[peer] = config['peers'][peer]
             node.db.execute('INSERT INTO balances VALUES(?,0)', (peer,))
-            own = dict(revision=1,credit_limit=10,comfort_min=-10,comfort_max=10,auto_adjust=False)
+            own = dict(revision=1,credit_limit=10,comfort_min=-10,comfort_max=10,auto_adjust=True)
             node.db.execute('INSERT INTO contacts VALUES(?,?,NULL)', (peer,json.dumps(own)))
             node.enqueue(peer, dict(kind='preferences',protocol=PROTOCOL,preferences=own))
             node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))

@@ -6,20 +6,27 @@ transport fixture delivers serialized HTTP envelopes through the Flask gateway;
 it does not provide routes or aggregate clearing decisions to participants.
 """
 import json
+from http.cookiejar import CookieJar
 import os
 import secrets
 import sqlite3
 import threading
+import time
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import Mock, patch
 from urllib.error import HTTPError
 from urllib.parse import urlsplit
+from urllib.request import HTTPCookieProcessor, Request, build_opener, urlopen
+
+from flask import request
+from werkzeug.serving import WSGIRequestHandler, make_server
 
 from hosted_auth import COOKIE_NAME, DEMO_SESSION_SECONDS
 from hosted_server import create_app
 from hosted_storage import PgStoreFactory, TABLE
 from test_hosted_auth import Authenticator, ORIGIN
+from verify_private_receipt import verify
 
 
 class ScopedStores:
@@ -269,10 +276,10 @@ class HostedGatewayTests(unittest.TestCase):
         alice, bob = self.enroll('Alice'), self.enroll('Bob')
         self.connect(alice, bob)
         self.pump()
-        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False)
+        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=True)
         for user in (alice, bob):
             state = self.get(user, '/api/state')
-            self.assertFalse(state['automation']['enabled'])
+            self.assertTrue(state['automation']['enabled'])
             self.assertEqual(state['contacts'][0]['own'], expected)
             self.assertEqual(state['contacts'][0]['peer_preferences'], expected)
         proposal = self.post(alice, '/api/obligations', dict(
@@ -396,6 +403,10 @@ class HostedGatewayTests(unittest.TestCase):
 
     def test_three_accounts_real_hashlock_clearing_over_durable_envelopes(self):
         users = [self.enroll(name) for name in ('Alice', 'Bob', 'Carol')]
+        # Preserve a separate explicit/manual clearing regression alongside the
+        # default background-clearing test below.
+        for user in users:
+            self.post(user, '/api/automation', {'enabled': False})
         for i, user in enumerate(users):
             self.connect(user, users[(i+1) % 3])
         self.pump()
@@ -421,6 +432,133 @@ class HostedGatewayTests(unittest.TestCase):
             self.assertEqual(len(state['receipts']), 1)
             self.assertEqual(state['outbox_pending'], 0)
             self.assertTrue(all(obligation['status'] == 'committed' for obligation in state['obligations']))
+
+    def test_default_background_headroom_over_real_http_survives_restart_and_duplicates(self):
+        """Only invitations/events/confirmations are submitted by the users.
+
+        Genuine HTTP carries every neighbour packet. Independent worker ticks
+        find, approve and settle a two-edge chain through its zero-balance link;
+        the fixture never calls discover or clearing approval functions/routes.
+        """
+        class QuietHandler(WSGIRequestHandler):
+            def log_request(self, *args, **kwargs):
+                pass
+
+        server = make_server('127.0.0.1', 0, None, threaded=True, request_handler=QuietHandler)
+        origin = 'http://localhost:'+str(server.server_port)
+        wire = []
+        apps = []
+
+        def restart():
+            app = create_app(stores=self.stores, origin=origin, development=True)
+
+            @app.before_request
+            def record_transport():
+                if request.path.endswith('/peer/message'):
+                    wire.append((request.path, dict(request.headers), request.get_data()))
+
+            apps.append(app)
+            server.app = app
+            return app.extensions['hosted_runtime']
+
+        runtime = restart()
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+
+        def stop():
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=5)
+            for app in apps:
+                app.extensions['hosted_auth'].db.close()
+
+        self.addCleanup(stop)
+
+        def call(user, path, body=None):
+            headers = {} if body is None else {'Origin': origin, 'Content-Type': 'application/json'}
+            if body is not None and user.get('csrf_token'):
+                headers['X-CSRF-Token'] = user['csrf_token']
+            req = Request(origin+path, headers=headers,
+                          data=None if body is None else json.dumps(body).encode())
+            with user['http'].open(req, timeout=5) as response:
+                return json.load(response)
+
+        users = []
+        for name in ('HTTP Alice', 'HTTP Bob', 'HTTP Carol'):
+            jar = CookieJar()
+            user = dict(http=build_opener(HTTPCookieProcessor(jar)))
+            user.update(call(user, '/auth/demo/start', {'display_name': name}))
+            # Browsers treat localhost as a secure context; urllib's cookie jar
+            # does not. Allow this isolated loopback fixture to return its cookie.
+            for cookie in jar:
+                cookie.secure = False
+            users.append(user)
+        alice, bob, carol = users
+        for first, second in ((alice, bob), (bob, carol), (carol, alice)):
+            invitation = call(first, '/api/contacts/invite', {'peer_name': second['account']['name']})
+            call(second, '/api/contacts/accept', {'invite_token': invitation['invite_token']})
+
+        def states():
+            return [call(user, '/api/state') for user in users]
+
+        def wake_until(predicate, description):
+            deadline = time.monotonic()+30
+            while time.monotonic() < deadline:
+                for node_id in runtime.scheduled_nodes():
+                    runtime.tick(node_id)
+                current = states()
+                if predicate(current):
+                    return current
+                time.sleep(.02)
+            self.fail(description)
+
+        wake_until(lambda rows: all(all(c['peer_preferences'] for c in row['contacts']) for row in rows),
+                   'Default preferences did not synchronize')
+        for row in states():
+            self.assertTrue(row['automation']['enabled'])
+            self.assertTrue(all(c['own']['auto_adjust'] and c['peer_preferences']['auto_adjust'] for c in row['contacts']))
+
+        def event(first, second):
+            proposed = call(first, '/api/obligations', dict(id=secrets.token_hex(32),
+                peer=second['account']['node_id'], amount=1, direction='i_owe', description='HTTP TEST event'))['obligation']
+            current = wake_until(lambda rows: any(any(e['id'] == proposed['id'] and e['status'] == 'pending'
+                                    for e in row['obligations']) for row in rows), 'Event did not arrive')
+            # Background clearing consent must never confirm a new economic event.
+            for _ in range(4):
+                for node_id in runtime.scheduled_nodes():
+                    runtime.tick(node_id)
+            pending = next(e for e in call(second, '/api/obligations') if e['id'] == proposed['id'])
+            self.assertEqual(pending['status'], 'pending')
+            call(second, '/api/obligations/'+proposed['id']+'/approve', {'digest': pending['digest']})
+            return wake_until(lambda rows: all(all(e['status'] == 'committed' for e in row['obligations']) for row in rows),
+                              'Confirmed economic event did not commit')
+
+        event(alice, bob)
+        # Reload node/auth gateways against the same PostgreSQL stores before
+        # the second event. Browser cookies, channel keys and first event persist.
+        baseline = states()
+        runtime = restart()
+        self.assertEqual([row['balances'] for row in states()], [row['balances'] for row in baseline])
+        event(bob, carol)
+        result = wake_until(lambda rows: all(any(r['status'] == 'committed' for r in row['receipts']) and row['outbox_pending'] == 0 and
+                        all(c['reserved_by'] is None for c in row['contacts']) for row in rows),
+                            'Background headroom clearing did not settle')
+        self.assertEqual(sum(abs(b['balance']) for row in result for b in row['balances'])//2, 1)
+        self.assertTrue(all(b['balance'] == 0 for b in result[1]['balances']))
+        self.assertEqual({row['node']: sum(b['balance'] for b in row['balances']) for row in result},
+                         {alice['account']['node_id']: -1, bob['account']['node_id']: 0, carol['account']['node_id']: 1})
+        for row in result:
+            self.assertTrue(any(receipt['status'] == 'committed' for receipt in row['receipts']))
+            self.assertTrue(all(verify(receipt)['valid'] for receipt in row['receipts'] if receipt['status'] == 'committed'))
+        # Repeated deliveries of already applied envelopes cannot post twice.
+        for path, headers, body in list(wire):
+            with urlopen(Request(origin+path, headers=headers, data=body), timeout=5) as response:
+                self.assertEqual(response.status, 200)
+        runtime = restart()
+        after = states()
+        self.assertEqual([row['balances'] for row in after], [row['balances'] for row in result])
+        self.assertEqual([row['receipts'] for row in after], [row['receipts'] for row in result])
+        self.assertTrue(all(row['automation']['enabled'] for row in after))
 
 
 if __name__ == '__main__':

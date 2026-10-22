@@ -66,7 +66,7 @@ class HostedNamedInviteTests(unittest.TestCase):
     def test_new_defaults_apply_only_to_new_relationships(self):
         invitation = self.runtime.invite(self.alice, 'Bob')['invite_token']
         self.runtime.accept_invite(self.bob, invitation)
-        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False)
+        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=True)
         self.assertEqual(self.contact(self.alice)['own'], expected)
         self.assertEqual(self.contact(self.bob)['own'], expected)
         with self.runtime.node(self.alice) as node:
@@ -79,6 +79,65 @@ class HostedNamedInviteTests(unittest.TestCase):
         restarted.accept_invite(self.bob, restarted.invite(self.alice)['invite_token'])
         self.assertEqual(self.contact(self.alice)['own'], previous)
         self.assertEqual(self.contact(self.bob)['own'], expected)
+
+    def legacy_defaults(self, node_id, own, *, reserved=False):
+        with self.runtime.node(node_id) as node:
+            node.db.execute("DELETE FROM meta WHERE k='hosted_automatic_clearing_v1'")
+            node.db.execute("UPDATE meta SET v='false' WHERE k='hosted_automation'")
+            node.db.execute("UPDATE meta SET v='true' WHERE k='paused'")
+            node.db.execute('UPDATE contacts SET own=?', (json.dumps(own),))
+            node.db.execute('DELETE FROM outbox')
+            if reserved:
+                node.db.execute('INSERT INTO reservations VALUES(?,?)', (self.bob, 'retained-proposal'))
+
+    def test_policy_migrates_only_untouched_defaults_once_without_resetting_state(self):
+        self.runtime.accept_invite(self.bob, self.runtime.invite(self.alice)['invite_token'])
+        previous = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False)
+        with self.runtime.node(self.alice) as node:
+            token, peer_key = node.token, node.peers[self.bob]['key']
+            node.db.execute('UPDATE balances SET balance=-7')
+        self.legacy_defaults(self.alice, previous)
+        state = self.runtime.state(self.alice)
+        self.assertTrue(state['automation']['enabled'])
+        self.assertTrue(state['paused'])
+        self.assertEqual(state['balances'][0]['balance'], -7)
+        self.assertEqual(state['contacts'][0]['own'], dict(previous, revision=2, auto_adjust=True))
+        with self.runtime.node(self.alice) as node:
+            self.assertEqual((node.token, node.peers[self.bob]['key']), (token, peer_key))
+            messages = [json.loads(row['data']) for row in node.db.execute('SELECT * FROM outbox')]
+            self.assertEqual(len(messages), 1)
+            self.assertEqual(messages[0]['preferences'], dict(previous, revision=2, auto_adjust=True))
+        self.runtime.automation(self.alice, False)
+        restarted = HostedRuntime(self.stores, self.runtime.origin)
+        restarted.provision(dict(node_id=self.alice, name='Preserve original'))
+        self.assertFalse(restarted.state(self.alice)['automation']['enabled'])
+        with restarted.node(self.alice) as node:
+            self.assertEqual(node.db.execute('SELECT count(*) FROM outbox').fetchone()[0], 1)
+
+    def test_migration_preserves_custom_bounds_and_explicit_assistance_opt_out(self):
+        self.runtime.accept_invite(self.bob, self.runtime.invite(self.alice)['invite_token'])
+        for own in (dict(revision=2, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=False),
+                    dict(revision=1, credit_limit=3, comfort_min=-2, comfort_max=1, auto_adjust=False)):
+            with self.subTest(own=own):
+                self.legacy_defaults(self.alice, own)
+                self.assertEqual(self.runtime.state(self.alice)['contacts'][0]['own'], own)
+                with self.runtime.node(self.alice) as node:
+                    self.assertEqual(node.db.execute('SELECT count(*) FROM outbox').fetchone()[0], 0)
+
+    def test_migration_defers_reserved_revision_and_retries_after_restart(self):
+        self.runtime.accept_invite(self.bob, self.runtime.invite(self.alice)['invite_token'])
+        previous = dict(revision=1, credit_limit=0, comfort_min=0, comfort_max=0, auto_adjust=False)
+        self.legacy_defaults(self.alice, previous, reserved=True)
+        state = self.runtime.state(self.alice)
+        self.assertEqual(state['contacts'][0]['own'], previous)
+        self.assertEqual(state['contacts'][0]['reserved_by'], 'retained-proposal')
+        with self.runtime.node(self.alice) as node:
+            self.assertEqual(json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_automatic_clearing_v1'").fetchone()[0]), [self.bob])
+            node.db.execute('DELETE FROM reservations')
+        restarted = HostedRuntime(self.stores, self.runtime.origin)
+        self.assertEqual(restarted.state(self.alice)['contacts'][0]['own'], dict(previous, revision=2, auto_adjust=True))
+        with restarted.node(self.alice) as node:
+            self.assertEqual(node.db.execute("SELECT v FROM meta WHERE k='hosted_automatic_clearing_v1'").fetchone()[0], '[]')
 
     def test_retries_new_and_crossed_invites_preserve_names_keys_and_balances(self):
         first = self.runtime.invite(self.alice, 'Robert')['invite_token']
