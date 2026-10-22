@@ -6,9 +6,36 @@ Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task 
 
 ## Current demo release — 22 October 2026
 
-**Heroku v10**, source `a77a7d1f8eb4fd2fb93377735fda167116518144`, is live at
+**Heroku v11**, source `2ac9a37b12eef4b67757db22fd956338802245e7`, is live at
 **https://app.ledgerloops.com**. Verified after restart: one **Basic web.1** dyno
 is up, supervising HTTP and the background worker. Essential-0 PostgreSQL remains.
+
+The v11 release adds **Rename** (a private label for one direct peer), **Send
+message** and **View history**. Message and rename forms are native modals.
+Messages use durable own-node records and authenticated neighbour outboxes,
+including zero-balance/paused/reserved relationships. Stable request IDs and
+receiver deduplication prevent double sends after lost responses or delivery ACKs.
+Delivered means persisted at the peer node, not read by its human participant.
+Renaming never changes the peer's own label, identity, limits or balances.
+
+Per-peer history combines messages, value deliveries and committed loop-clearing
+receipts in date order. It filters durable local records before paging 100 entries;
+Load earlier retains older records. Aborted background search noise is omitted
+from this view. Text is escaped and message line breaks preserved. Financial
+protocol envelopes take priority over queued chat in the outgoing worker batch.
+
+All **201 Python app tests** passed with real isolated PostgreSQL, including
+independent transport/privacy/ACK-loss/queue-priority fixtures. Both updated
+Chromium suites passed aliases, zero/reserved-edge chat, HTML-like text, retained
+retries and paginated combined history. Independent desktop/mobile real-browser
+QA also checked 4xx error retention, lost-response reconciliation and focus.
+Live canonical HTTPS checks used only the worker's existing labeled Value Delivery
+TEST accounts: private rename isolation, both message directions, repeated-send
+deduplication, peer-only mixed history, unchanged financial state and preserved
+older TEST ledgers/receipts. An actual single-dyno restart retained cookies, private
+aliases and messages. The temporary TEST alias was restored afterward. Existing
+user accounts, balances, keys and preferences were not reset. Canonical deployed
+frontend bytes match the source commit; Heroku reports one up Basic web.1 dyno.
 
 The v10 follow-up makes **Copy invitation** copy only the URL. The targeted
 Chromium suite passed again, and the live frontend bytes and HTTPS health were

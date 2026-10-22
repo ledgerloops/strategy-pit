@@ -708,3 +708,12 @@ updated Chromium suites passed real HTTP delivery, private rename isolation,
 zero/reserved-edge chat, escaped mixed history, old-page loading and stable-ID
 retry after a lost response. Independent desktop/mobile real-browser QA passed
 including 4xx error retention and clearing stale errors after reconciliation.
+
+Deployed as **Heroku v11**, source
+`2ac9a37b12eef4b67757db22fd956338802245e7`. Canonical frontend bytes and HTTPS
+health passed. Live checks between the worker's labeled TEST accounts verified
+private alias isolation, bidirectional messages with stable-ID deduplication,
+combined peer-only history and unchanged financial records. An actual restart of
+the single Basic web dyno retained cookies, aliases and message history; the TEST
+alias was restored afterward. Older TEST balances, deliveries and receipt records
+were independently verified preserved. No human peer was sent a test message.
