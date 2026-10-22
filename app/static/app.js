@@ -846,8 +846,7 @@
     }
     if (hosted && button.dataset.action === "copy-invitation" && invitation) {
       const url = invitation.invite_url || `${location.origin}/#invite=${encodeURIComponent(invitation.invite_token)}`;
-      const text = `${invitation.inviter_name || hostedAccount.name} invited${invitation.peer_name ? " " + invitation.peer_name : " you"} to LedgerLoops: ${url}`;
-      try { await navigator.clipboard.writeText(text); announce("Invitation copied, including your name and the link."); }
+      try { await navigator.clipboard.writeText(url); announce("Invitation link copied."); }
       catch (_) { announce("Select and copy the invitation link above."); }
       return;
     }
