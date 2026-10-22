@@ -11,7 +11,9 @@ import json
 import re
 import secrets
 import time
+import unicodedata
 from urllib.error import URLError
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 from private_node import Node, PROTOCOL
@@ -39,18 +41,27 @@ class HostedRuntime:
                 tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
                 previous = db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone() if 'meta' in tables else None
                 if previous:
+                    self._invite_schema(db)
                     return
                 config = dict(node=account['node_id'], token=secrets.token_urlsafe(32),
                               mode='testnet', peers={}, label=account['name'])
                 node = Node(config, ':memory:', connection=db)
                 db.execute("INSERT INTO meta VALUES('hosted_config',?)", (json.dumps(config),))
                 db.execute("INSERT INTO meta VALUES('hosted_automation','false')")
-                db.execute('''CREATE TABLE hosted_invites(
-                    token_hash TEXT PRIMARY KEY,expires REAL NOT NULL,
-                    accepted_by TEXT,peer_key TEXT)''')
+                self._invite_schema(db)
                 node.stopped.set()
         finally:
             db.close()
+
+    @staticmethod
+    def _invite_schema(db):
+        """Add invitation metadata without replacing provisioned node state."""
+        db.execute('''CREATE TABLE IF NOT EXISTS hosted_invites(
+            token_hash TEXT PRIMARY KEY,expires REAL NOT NULL,
+            accepted_by TEXT,peer_key TEXT,peer_name TEXT NOT NULL DEFAULT '')''')
+        columns = {row[1] for row in db.execute('PRAGMA table_info(hosted_invites)')}
+        if 'peer_name' not in columns:
+            db.execute("ALTER TABLE hosted_invites ADD COLUMN peer_name TEXT NOT NULL DEFAULT ''")
 
     @contextmanager
     def node(self, node_id):
@@ -64,6 +75,7 @@ class HostedRuntime:
                     raise ValueError('Node not provisioned')
                 n = Node(json.loads(row[0]), ':memory:', connection=db)
                 try:
+                    self._invite_schema(db)
                     yield n
                 finally:
                     n.stopped.set()
@@ -80,6 +92,8 @@ class HostedRuntime:
             state['automation'] = dict(enabled=bool(enabled and enabled[0] == 'true'))
             state['hosted'] = True
             state['operator_access'] = True
+            for contact in state['contacts']:
+                contact['name'] = node.peers[contact['peer']].get('name', '')
             return state
 
     def automation(self, node_id, enabled):
@@ -89,14 +103,41 @@ class HostedRuntime:
             node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automation',?)", ('true' if enabled else 'false',))
         return dict(enabled=enabled)
 
-    def invite(self, node_id):
+    def invite(self, node_id, peer_name=''):
+        if (not isinstance(peer_name, str) or len(peer_name) > 80 or
+                any(unicodedata.category(char) in ('Cc', 'Cf', 'Cs') for char in peer_name)):
+            raise ValueError('Peer name must be at most 80 characters without control characters')
+        peer_name = peer_name.strip()
         token = secrets.token_urlsafe(32)
         expires = time.time()+24*60*60
         with self.node(node_id) as node:
+            config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
             node.db.execute('DELETE FROM hosted_invites WHERE expires<? AND accepted_by IS NULL', (time.time(),))
-            node.db.execute('INSERT INTO hosted_invites(token_hash,expires) VALUES(?,?)',
-                            (hashlib.sha256(token.encode()).hexdigest(), expires))
-        return dict(invite_token=node_id+'.'+token, expires_at=expires)
+            node.db.execute('INSERT INTO hosted_invites(token_hash,expires,peer_name) VALUES(?,?,?)',
+                            (hashlib.sha256(token.encode()).hexdigest(), expires, peer_name))
+        invitation = node_id+'.'+token
+        return dict(invite_token=invitation, expires_at=expires, inviter_name=config.get('label', ''),
+                    peer_name=peer_name, invite_url=self.origin+'/#invite='+quote(invitation, safe=''))
+
+    def _invitation(self, invitation):
+        if not isinstance(invitation, str) or len(invitation) > 200 or '.' not in invitation:
+            raise ValueError('Invalid invitation')
+        issuer, token = invitation.split('.', 1)
+        self.key(issuer)
+        if not re.fullmatch(r'[A-Za-z0-9_-]{43}', token):
+            raise ValueError('Invalid invitation')
+        return issuer, hashlib.sha256(token.encode()).hexdigest()
+
+    def preview_invite(self, invitation):
+        """Only names/expiry are disclosed to a bearer of an unused invitation."""
+        issuer, token_hash = self._invitation(invitation)
+        with self.node(issuer) as node:
+            row = node.db.execute('SELECT expires,accepted_by,peer_name FROM hosted_invites WHERE token_hash=?',
+                                  (token_hash,)).fetchone()
+            if not row or row['accepted_by'] is not None or row['expires'] < time.time():
+                raise ValueError('Invitation expired or unavailable')
+            config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
+            return dict(inviter_name=config.get('label', ''), peer_name=row['peer_name'], expires_at=row['expires'])
 
     def _connect_local(self, node_id, peer, key):
         """Enrollment is a separate local action at each endpoint, at zero debt."""
@@ -114,22 +155,32 @@ class HostedRuntime:
             node.enqueue(peer, dict(kind='preferences',protocol=PROTOCOL,preferences=own))
             node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))
 
+    def _name_local(self, node_id, peer, name):
+        # Display metadata only; never replaces an established private label.
+        if not name:
+            return
+        with self.node(node_id) as node:
+            config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
+            if not config['peers'][peer].get('name'):
+                config['peers'][peer]['name'] = name
+                node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))
+
     def accept_invite(self, node_id, invitation):
-        if not isinstance(invitation, str) or len(invitation) > 200 or '.' not in invitation:
-            raise ValueError('Invalid invitation')
-        issuer, token = invitation.split('.', 1)
-        self.key(issuer)
+        issuer, token_hash = self._invitation(invitation)
         if issuer == node_id:
             raise ValueError('Invite a different participant')
         with self.node(issuer) as node:
             row = node.db.execute('SELECT * FROM hosted_invites WHERE token_hash=?',
-                                  (hashlib.sha256(token.encode()).hexdigest(),)).fetchone()
+                                  (token_hash,)).fetchone()
             if not row or (row['accepted_by'] is None and row['expires'] < time.time()):
                 raise ValueError('Invitation expired or unavailable')
             if row['accepted_by'] not in (None,node_id):
                 raise ValueError('Invitation already accepted')
             node.db.execute('UPDATE hosted_invites SET accepted_by=? WHERE token_hash=?',
-                            (node_id,hashlib.sha256(token.encode()).hexdigest()))
+                            (node_id,token_hash))
+            peer_name = row['peer_name']
+            config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
+            inviter_name = config.get('label', '')
         # Account enrollment assigns a stable channel key once per pair. This
         # prevents crossed invitations racing to install different secrets.
         # The registry is never passed to an algorithm or queried for routing.
@@ -146,7 +197,9 @@ class HostedRuntime:
         # Retrying the same invitation completes either half after a crash.
         # This is bilateral account enrollment, never a clearing decision.
         self._connect_local(node_id,issuer,key)
+        self._name_local(node_id,issuer,inviter_name)
         self._connect_local(issuer,node_id,key)
+        self._name_local(issuer,node_id,peer_name)
         return dict(ok=True,peer=issuer)
 
     def receive(self, node_id, sender, authorization, data):
