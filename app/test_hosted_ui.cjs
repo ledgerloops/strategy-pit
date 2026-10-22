@@ -21,10 +21,10 @@ const {chromium} = require('playwright');
              {peer:'fixture-b',before:0,after:1,own_preferences:terms,peer_preferences:terms}]};
   const context = Object.fromEntries(['amount','clearing_mode','direction','id','policy','preimage','protocol','unit'].map(key => [key,receipt[key]]));
   receipt.condition = crypto.createHash('sha256').update(JSON.stringify(context)).digest('hex');
-  const sessions = new Map();
+  const sessions = new Map(), contacts = new Map();
   let authPosts = [], mutations = [], automatic = false, accountCount = 0;
-  const fixtureState = () => ({node:account.node_id,mode:'testnet',protocol:'private-hashlock-v2',unit:'TEST',
-    paused:false,contacts:[],balances:[],proposals:[],receipts:[receipt],searches:[],
+  const fixtureState = current => ({node:account.node_id,mode:'testnet',protocol:'private-hashlock-v2',unit:'TEST',
+    paused:false,contacts:contacts.get(current.id) || [],balances:contacts.get(current.id) || [],proposals:[],receipts:[receipt],searches:[],
     discovery_modes:['cancellation','headroom'],obligation_capable:true,obligations:[],outbox_pending:0,
     automation:{enabled:automatic,next_search_at:0}});
   const server = http.createServer(async (request,response) => {
@@ -41,7 +41,7 @@ const {chromium} = require('playwright');
     }
     if (request.method === 'GET' && route === '/api/state') {
       assert.equal(request.headers.authorization,undefined);
-      return authenticated ? reply(200,{...fixtureState(),node:currentAccount.node_id}) : reply(401,{error:'Sign in required'});
+      return authenticated ? reply(200,{...fixtureState(currentAccount),node:currentAccount.node_id}) : reply(401,{error:'Sign in required'});
     }
     if (request.method === 'POST') {
       let raw = ''; for await (const chunk of request) raw += chunk;
@@ -62,7 +62,12 @@ const {chromium} = require('playwright');
       assert.equal(request.headers['x-csrf-token'],csrf,'API mutation requires CSRF');
       mutations.push({route,body});
       if (route === '/api/contacts/invite') return reply(200,{invite_token:'fixture-private-invitation',invite_url:`${origin}/#invite=fixture-private-invitation`,inviter_name:'Test person',peer_name:body.peer_name,expires_at:Math.floor(Date.now()/1000)+600});
-      if (route === '/api/contacts/accept') return reply(200,{ok:true});
+      if (route === '/api/contacts/accept') {
+        contacts.set(currentAccount.id,[{peer:'fixture-peer',name:'Invited friend',balance:-2,reserved_by:null,
+          own:{...terms,revision:1},peer_preferences:{...terms,revision:1},hard_min:-10,hard_max:10,shared_comfort:{min:-10,max:10,empty:false}}]);
+        return reply(200,{ok:true});
+      }
+      if (route === '/api/obligations') return reply(200,{ok:true});
       if (route === '/api/discover') return reply(200,{id:'fixture-search'});
       if (route === '/api/automation') { automatic = body.enabled; return reply(200,{enabled:automatic}); }
       return reply(404,{error:'Unknown fixture route'});
@@ -90,7 +95,6 @@ const {chromium} = require('playwright');
     assert.equal(await page.locator('#recover-account, #recovery-bundle, #sign-in, #add-passkey').count(),0);
     assert.equal(authPosts.length,0,'Opening the demo must not enroll automatically');
     await page.getByLabel('Your display name').fill('Test person');
-    await page.getByLabel('I understand this is TEST data').check();
     await page.getByRole('button',{name:'Start demo',exact:true}).click();
     await page.getByRole('heading',{name:'Hello, Test person.'}).waitFor();
     assert.equal(await page.evaluate(() => document.cookie.includes('fixture_session')),false,'Identity cookie is HttpOnly');
@@ -107,15 +111,10 @@ const {chromium} = require('playwright');
     assert.equal(reused.account.name,'Test person');
     assert.equal(accountCount,1);
     assert.equal(await page.getByLabel('Node access token').count(),0,'Hosted view must not show demo-token login');
-    await page.getByRole('link',{name:'04 / Activity'}).click();
-    await page.getByText('Applied locally · fulfillment verified',{exact:true}).waitFor();
-    receipt.surplus_in = false;
-    await page.getByRole('link',{name:'05 / Your node'}).click();
-    await page.getByRole('button',{name:'Refresh node state'}).click();
-    await page.getByRole('link',{name:'04 / Activity'}).click();
-    await page.getByText('Verification failed · needs investigation',{exact:true}).waitFor();
-    receipt.surplus_in = true;
-    await page.getByRole('link',{name:'02 / Peers'}).click();
+    assert.equal(await page.getByRole('navigation',{name:'Main navigation'}).isVisible(),false,'A participant without peers only sees invitations');
+    assert.equal(await page.locator('#screen input[type=range], #screen input[type=checkbox]').count(),0);
+    assert.equal(await page.getByRole('button',{name:'Discover a loop',exact:true}).count(),0);
+    assert.equal(await page.locator('#screen .metrics').count(),0);
     await page.getByLabel('Peer name',{exact:true}).fill('Invited friend');
     await page.getByRole('button',{name:'Create an invitation'}).click();
     const inviteLink = page.getByLabel('Invitation link',{exact:true});
@@ -131,16 +130,42 @@ const {chromium} = require('playwright');
     });
     await page.getByRole('heading',{name:'Test person invited you',exact:true}).waitFor();
     assert.equal(await page.evaluate(() => window.sameDocumentInviteFixture),true,'Invite navigation must remain in the existing document');
-    assert.equal(await page.getByLabel('Invitation from your peer').inputValue(),'received-fixture-invitation');
+    assert.equal(await page.locator('#accept-invitation input[name=invite_token]').inputValue(),'received-fixture-invitation');
     assert.equal(mutations.filter(item => item.route === '/api/contacts/accept').length,acceptsBeforeHash,'An existing participant must explicitly accept the invitation');
-    await page.getByLabel('Invitation from your peer').fill(`${origin}/#invite=received-fixture-invitation`);
     await page.getByRole('button',{name:'Accept invitation'}).click();
     await page.waitForFunction(() => document.querySelector('#notice').textContent.includes('Invitation accepted'));
-    await page.getByRole('link',{name:'03 / Clearing'}).click();
+    await page.goto(origin+'/#overview');
+    const peerCard = page.locator('article[data-peer="fixture-peer"]');
+    await peerCard.getByRole('heading',{name:'Invited friend',exact:true}).waitFor();
+    assert.equal(await page.locator('#screen input[type=range], #screen input[type=checkbox]').count(),0);
+    await peerCard.getByRole('button',{name:'Record an economic event',exact:true}).click();
+    await page.locator('#new-obligation').waitFor();
+    assert.equal(await page.locator('#new-obligation [name=peer]').inputValue(),'fixture-peer');
+    assert.equal(/obligation/i.test(await page.locator('#screen').innerText()),false,'Product copy describes economic events');
+    await page.locator('#new-obligation input[name=amount]').fill('3');
+    await page.locator('#new-obligation select[name=direction]').selectOption('peer_owes');
+    await page.locator('#new-obligation input[name=description]').fill('Shared lunch TEST event');
+    assert.match(await page.locator('[data-obligation-preview]').textContent(),/You owe Invited friend 2 TEST → Invited friend owes you 1 TEST/,'The amount changes the current balance rather than replacing it');
+    const beforeConsent = mutations.filter(item => item.route === '/api/obligations').length;
+    await page.getByRole('button',{name:'Record event',exact:true}).click();
+    assert.equal(mutations.filter(item => item.route === '/api/obligations').length,beforeConsent,'Recording requires explicit consent');
+    await page.locator('#new-obligation input[name=consent]').check();
+    await page.getByRole('button',{name:'Record event',exact:true}).click();
+    await page.waitForFunction(() => document.querySelector('#notice').textContent.includes('Waiting for your peer'));
+    assert.ok(mutations.some(item => item.route === '/api/obligations' && item.body.peer === 'fixture-peer' && item.body.amount === 3 && item.body.direction === 'peer_owes'));
+    await page.goto(origin+'/#activity');
+    await page.getByText('Applied locally · fulfillment verified',{exact:true}).waitFor();
+    receipt.surplus_in = false;
+    await page.goto(origin+'/#settings');
+    await page.getByRole('button',{name:'Refresh node state'}).click();
+    await page.goto(origin+'/#activity');
+    await page.getByText('Verification failed · needs investigation',{exact:true}).waitFor();
+    receipt.surplus_in = true;
+    await page.goto(origin+'/#clearing');
     await page.getByLabel('Clear within comfort zones',{exact:true}).check();
     await page.getByRole('button',{name:'Discover a loop'}).click();
     await page.waitForFunction(() => document.querySelector('#notice').textContent.includes('Discovery accepted'));
-    await page.getByRole('link',{name:'05 / Your node'}).click();
+    await page.goto(origin+'/#settings');
     await page.getByRole('button',{name:'Enable automatic clearing'}).click();
     await page.getByRole('button',{name:'Turn off automatic clearing'}).waitFor();
     await page.getByRole('link',{name:'Demo identity',exact:true}).click();
@@ -159,10 +184,9 @@ const {chromium} = require('playwright');
     assert.equal(await fresh.getByRole('heading',{name:'Welcome back',exact:true}).count(),0);
     assert.equal(mutations.filter(item => item.route === '/api/contacts/accept').length,acceptsBeforeInvite,'Preview must not accept an invitation');
     await fresh.getByLabel('Your display name').fill('Another person');
-    await fresh.getByLabel('I understand this is TEST data').check();
     await fresh.getByRole('button',{name:'Start demo',exact:true}).click();
-    await fresh.getByLabel('Invitation from your peer').waitFor();
-    assert.equal(await fresh.getByLabel('Invitation from your peer').inputValue(),'fixture-private-invitation');
+    await fresh.locator('#accept-invitation').waitFor();
+    assert.equal(await fresh.locator('#accept-invitation input[name=invite_token]').inputValue(),'fixture-private-invitation');
     assert.equal(mutations.filter(item => item.route === '/api/contacts/accept').length,acceptsBeforeInvite,'Joining a demo must not accept an invitation automatically');
     await fresh.getByRole('button',{name:'Accept invitation',exact:true}).click();
     await fresh.waitForFunction(() => document.querySelector('#notice').textContent.includes('Invitation accepted'));
@@ -178,6 +202,6 @@ const {chromium} = require('playwright');
     assert.ok(mutations.some(r => r.route === '/api/automation' && r.body.enabled === true));
     assert.ok(authPosts.every(r => r.route === '/auth/demo/start'),'Demo must not invoke passkey or recovery routes');
     assert.deepEqual(errors,[]);
-    console.log('PASS hosted UI: persistent cookie demo identity, same-browser reuse, isolated new identity, CSRF, invitations, headroom receipts and automation');
+    console.log('PASS hosted UI: persistent cookie demo identity, same-browser reuse, isolated new identity, CSRF, named invites, economic event deltas and consent, headroom receipts and automation');
   } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }
 })().catch(error => { console.error(error.message); process.exitCode = 1; });
