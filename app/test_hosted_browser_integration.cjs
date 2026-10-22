@@ -75,8 +75,8 @@ async function until(read, predicate, message, timeout=20000) {
       assert.equal(await user.page.getByRole('heading',{name:'Welcome back',exact:true}).count(),0);
       assert.equal(await user.page.locator('#recover-account, #recovery-bundle, #sign-in, #add-passkey').count(),0);
       await user.page.getByLabel('Your display name').fill(name);
-      await user.page.getByRole('button',{name:'Start demo',exact:true}).click();
-      await user.page.getByRole('heading',{name:`Hello, ${name}.`}).waitFor();
+      await user.page.getByRole('button',{name:'Continue',exact:true}).click();
+      await user.page.locator('[data-action=invite-peer]').first().waitFor();
       assert.equal(await user.page.getByRole('navigation',{name:'Main navigation'}).isVisible(),false);
       assert.equal(await user.page.locator('#screen input[type=range], #screen input[type=checkbox]').count(),0);
       assert.equal(await user.page.locator('#screen .metrics').count(),0);
@@ -96,16 +96,22 @@ async function until(read, predicate, message, timeout=20000) {
     const [alice,bob,carol] = users;
     async function connect(first,second) {
       await first.page.goto(origin+'/#peers');
-      await first.page.getByLabel('Peer name',{exact:true}).fill(second.account.name);
-      await first.page.getByRole('button',{name:'Create an invitation'}).click();
+      await first.page.locator('[data-action=invite-peer]').first().click();
+      await first.page.locator('#hosted-dialog[open] #create-invitation').waitFor();
+      await first.page.getByLabel('Their display name',{exact:true}).fill(second.account.name);
+      assert.equal(await first.page.locator('#create-invitation [name=max_trust]').inputValue(),'10');
+      await first.page.getByRole('button',{name:'Create invite link',exact:true}).click();
       const input = first.page.getByLabel('Invitation link',{exact:true});
       await input.waitFor();
       const invitation = await input.inputValue();
+      await first.page.getByRole('button',{name:'Done',exact:true}).click();
+      await first.page.waitForFunction(() => !document.querySelector('#hosted-dialog').open);
       const url = new URL(invitation);
       assert.equal(url.origin,origin);
       assert.ok(url.hash.startsWith('#invite='));
       await second.page.goto(invitation);
       await second.page.getByRole('heading',{name:`${first.account.name} invited you`,exact:true}).waitFor();
+      assert.equal(await second.page.locator('#accept-invitation [name=max_trust]').inputValue(),'10');
       await second.page.getByRole('button',{name:'Accept invitation'}).click();
       await until(() => api(second,'/api/state'),state => state.contacts.some(c => c.peer === first.account.node_id), 'Invitation did not establish a peer');
       // The server can expose the relationship before the accepting tab has
@@ -122,6 +128,11 @@ async function until(read, predicate, message, timeout=20000) {
       const state = await until(() => api(user,'/api/state'),state => state.contacts.length === 2 && state.contacts.every(c => c.peer_preferences), 'Peer preferences did not synchronize');
       assert.equal(state.automation.enabled,true,'Background clearing must be enabled without participant setup');
       assert.ok(state.contacts.every(contact => contact.own.auto_adjust && contact.peer_preferences.auto_adjust),'New hosted peers must allow automatic clearing by default');
+      for (const contact of state.contacts) {
+        assert.deepEqual([contact.own.credit_limit,contact.own.comfort_min,contact.own.comfort_max],[10,-10,5],'MAX 10 defaults to your comfort zone [-10,5]');
+        assert.deepEqual([contact.peer_preferences.credit_limit,contact.peer_preferences.comfort_min,contact.peer_preferences.comfort_max],[10,-10,5]);
+        assert.deepEqual([contact.shared_comfort.min,contact.shared_comfort.max],[-5,5],'Shared comfort reflects the opposite viewpoint');
+      }
     }
 
     // Exercise actual autosaving controls on one relationship; set the remaining
@@ -162,23 +173,25 @@ async function until(read, predicate, message, timeout=20000) {
       const card = first.page.locator(`article[data-peer="${second.account.node_id}"]`);
       await card.getByRole('heading',{name:second.account.name,exact:true}).waitFor();
       assert.equal(await first.page.locator('#screen input[type=range], #screen input[type=checkbox]').count(),0);
-      await card.getByRole('button',{name:'Record an economic event',exact:true}).click();
-      await first.page.locator('#new-obligation').waitFor();
+      await card.getByRole('button',{name:'Record a value delivery',exact:true}).click();
+      await first.page.locator('#hosted-dialog[open] #new-obligation').waitFor();
       assert.equal(await first.page.locator('#new-obligation [name=peer]').inputValue(),second.account.node_id);
       await first.page.locator('#new-obligation select[name=direction]').selectOption(direction);
-      assert.equal(/obligation/i.test(await first.page.locator('#screen').innerText()),false);
+      assert.equal(/obligation/i.test(await first.page.locator('#hosted-dialog').innerText()),false);
+      assert.equal(await first.page.locator('#new-obligation [name=consent]').count(),0);
       await first.page.locator('#new-obligation input[name=amount]').fill(String(amount));
       await first.page.locator('#new-obligation input[name=description]').fill('Browser integration TEST');
-      await first.page.getByRole('button',{name:'Record event',exact:true}).click();
-      assert.equal((await api(first,'/api/obligations')).filter(item => item.status !== 'committed').length,0,'Recording requires explicit consent');
-      await first.page.locator('#new-obligation input[name=consent]').check();
-      await first.page.locator('#new-obligation button[type=submit]').click();
+      assert.equal((await api(first,'/api/obligations')).filter(item => item.status !== 'committed' && item.status !== 'aborted').length,0,'A draft alone must not submit a delivery');
+      await first.page.getByRole('button',{name:'Send for confirmation',exact:true}).click();
       const pending = await until(() => api(second,'/api/obligations'),items => items.some(item => !item.origin && item.status === 'pending'), 'Obligation proposal did not arrive');
       const proposal = pending.find(item => !item.origin && item.status === 'pending');
       await second.page.goto(origin+'/#overview');
       const approval = second.page.locator(`form[data-obligation-approve="${proposal.id}"]`);
-      await approval.waitFor(); await approval.locator('input[name=consent]').check();
-      await approval.getByRole('button',{name:'Confirm event',exact:true}).click();
+      await approval.waitFor();
+      assert.equal(await approval.locator('input[name=consent]').count(),0,'The explicit confirm action needs no extra checkbox');
+      await approval.getByRole('button',{name:'Decline',exact:true}).waitFor();
+      assert.equal(await approval.getByRole('button').count(),2);
+      await approval.getByRole('button',{name:'Confirm delivery',exact:true}).click();
       await until(() => api(first,'/api/obligations'),items => items.some(item => item.id === proposal.id && item.status === 'committed'), 'Economic event did not commit');
       const after = await until(() => api(first,'/api/state'),state => state.contacts.find(contact => contact.peer === second.account.node_id).reserved_by === null,'Event balance did not unlock');
       if (verifyBalance) assert.equal(after.contacts.find(contact => contact.peer === second.account.node_id).balance,before+(direction === 'i_owe' ? -amount : amount),'An economic event adds a delta to the existing balance');
@@ -212,26 +225,28 @@ async function until(read, predicate, message, timeout=20000) {
     assert.equal(await alice.page.locator('#add-passkey, #sign-out, #recovery-bundle').count(),0);
     await alice.page.goto(origin+'/login');
     await alice.page.waitForURL(origin+'/');
-    await alice.page.getByRole('heading',{name:'Hello, Browser Alice.'}).waitFor();
+    await alice.page.locator('[data-action=invite-peer]').first().waitFor();
     assert.equal((await api(alice,'/api/session')).account.node_id,alice.account.node_id);
     assert.equal((await api(alice,'/api/state')).balances.find(b => b.peer === carol.account.node_id).balance,-1);
     const secondTab = await alice.context.newPage();
     await secondTab.goto(origin+'/login');
     await secondTab.waitForURL(origin+'/');
-    await secondTab.getByRole('heading',{name:'Hello, Browser Alice.'}).waitFor();
+    await secondTab.locator('[data-action=invite-peer]').first().waitFor();
     await secondTab.close();
     // Restore the browser's persistent cookies in another isolated session.
     const reopened = await browser.newContext({storageState:await alice.context.storageState()});
     const reopenedPage = await reopened.newPage();
     await reopenedPage.goto(origin+'/login');
     await reopenedPage.waitForURL(origin+'/');
-    await reopenedPage.getByRole('heading',{name:'Hello, Browser Alice.'}).waitFor();
+    await reopenedPage.locator('[data-action=invite-peer]').first().waitFor();
     const reopenedSession = await reopenedPage.evaluate(async () => (await fetch('/api/session')).json());
     assert.equal(reopenedSession.account.id,alice.account.id);
     await reopened.close();
     await alice.page.goto(origin+'/#peers');
-    await alice.page.getByLabel('Peer name',{exact:true}).fill('Browser Dana');
-    await alice.page.getByRole('button',{name:'Create an invitation',exact:true}).click();
+    await alice.page.locator('[data-action=invite-peer]').first().click();
+    await alice.page.getByLabel('Their display name',{exact:true}).fill('Browser Dana');
+    await alice.page.locator('#create-invitation [name=max_trust]').fill('14');
+    await alice.page.getByRole('button',{name:'Create invite link',exact:true}).click();
     const newInvite = await alice.page.getByLabel('Invitation link',{exact:true}).inputValue();
     const newcomer = await demoPage();
     const acceptRequests = [];
@@ -244,18 +259,24 @@ async function until(read, predicate, message, timeout=20000) {
     assert.equal(await newcomer.page.getByLabel('Your display name').inputValue(),'Browser Dana');
     assert.equal(await newcomer.page.getByRole('heading',{name:'Welcome back',exact:true}).count(),0);
     assert.equal(acceptRequests.length,0,'Preview must not accept the invitation');
-    await newcomer.page.getByRole('button',{name:'Start demo',exact:true}).click();
-    await newcomer.page.locator('#accept-invitation').waitFor();
-    assert.equal((await api(newcomer,'/api/state')).contacts.length,0,'Joining must not silently connect peers');
-    assert.equal(acceptRequests.length,0,'Demo enrollment must not accept the invitation');
-    await newcomer.page.getByRole('button',{name:'Accept invitation',exact:true}).click();
+    assert.equal(await newcomer.page.locator('[name=max_trust]').inputValue(),'10');
+    await newcomer.page.locator('[name=max_trust]').fill('6');
+    assert.match(await newcomer.page.locator('#own-comfort').textContent(),/-6 to \+3 TEST/);
+    assert.match(await newcomer.page.locator('#shared-comfort').textContent(),/-6 to \+3 TEST/);
+    await newcomer.page.getByRole('button',{name:'Connect with Browser Alice',exact:true}).click();
+    await newcomer.page.waitForURL(origin+'/');
     await until(() => api(newcomer,'/api/state'),state => state.contacts.some(contact => contact.peer === alice.account.node_id),'Named invite did not connect the new demo identity');
-    assert.equal(acceptRequests.length,1);
+    assert.equal(acceptRequests.length,1,'One explicit Connect submits one acceptance');
+    const newcomerState = await until(() => api(newcomer,'/api/state'),state => state.contacts[0]?.peer_preferences?.credit_limit === 14,'Independent invitation trust did not synchronize');
+    const asymmetric = newcomerState.contacts[0];
+    assert.deepEqual([asymmetric.own.credit_limit,asymmetric.own.comfort_min,asymmetric.own.comfort_max],[6,-6,3]);
+    assert.deepEqual([asymmetric.peer_preferences.credit_limit,asymmetric.peer_preferences.comfort_min,asymmetric.peer_preferences.comfort_max],[14,-14,7]);
+    assert.deepEqual([asymmetric.shared_comfort.min,asymmetric.shared_comfort.max],[-6,3]);
     await newcomer.context.close();
     assert.deepEqual(manualClearingRequests,[],'Clearing must settle without discovery or approval calls from the browser');
     assert.deepEqual(pageErrors,[]);
     assert.deepEqual(workerErrors,[]);
-    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, named invites, autosave, economic event deltas and consent, automatic HTTP headroom 2→1 without participant discovery or approval, receipt verification and stable browser identity');
+    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, named invites, autosave, value delivery deltas and explicit confirmation, independent MAX trust defaults and shared comfort, automatic HTTP headroom 2→1 without participant discovery or approval, receipt verification and stable browser identity');
   } finally {
     if (browser) await browser.close();
     child.kill('SIGTERM');
@@ -265,4 +286,4 @@ async function until(read, predicate, message, timeout=20000) {
       child.once('exit',() => { clearTimeout(timer); resolve(); });
     });
   }
-})().catch(error => { console.error(error.message); process.exitCode = 1; });
+})().catch(error => { console.error(error.stack || error.message); process.exitCode = 1; });
