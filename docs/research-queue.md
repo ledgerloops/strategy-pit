@@ -587,3 +587,8 @@ bypassed. Public resolvers already reflect the new app-only CNAME.
 Live provider testing also fixed Sources API signing (empty signed Content-Type)
 and recognition of build status `succeeded`; eight ops tests pass. No algorithm,
 frozen benchmark result, user's demo identity or existing ledger was reset.
+
+The Mac DNS cache subsequently expired. Chrome then loaded the canonical HTTPS
+login page normally, with TEST-only and operator-access disclosures visible. The
+ordinary system-resolved HTTPS health check also passed; no DNS override or TLS
+warning bypass was needed for this final check.

@@ -33,9 +33,9 @@ These live tests used software authenticators through HTTP, not a platform
 passkey browser UI. This Mac initially retained the old site in its OS DNS cache;
 test requests resolved the assigned Heroku target while retaining the canonical
 HTTPS hostname, origin and full certificate verification. Public DNS resolvers
-and the authoritative nameserver returned the new target. Browser UX must be
-checked after the local stale DNS entry expires; no certificate warning was
-bypassed.
+and the authoritative nameserver returned the new target. After the local stale DNS entry expired, Chrome loaded the canonical
+login page normally and displayed the TEST/operator-access notices. Interactive
+platform-passkey enrollment remains untested; no certificate warning was bypassed.
 
 The initial Sources API upload signature issue was fixed by preserving the
 signed empty Content-Type; a live upload/build/release succeeded. The build poller
