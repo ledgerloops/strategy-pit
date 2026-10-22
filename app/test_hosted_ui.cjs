@@ -22,9 +22,9 @@ const {chromium} = require('playwright');
   const context = Object.fromEntries(['amount','clearing_mode','direction','id','policy','preimage','protocol','unit'].map(key => [key,receipt[key]]));
   receipt.condition = crypto.createHash('sha256').update(JSON.stringify(context)).digest('hex');
   const sessions = new Map(), contacts = new Map();
-  let authPosts = [], mutations = [], automatic = false, accountCount = 0;
+  let authPosts = [], mutations = [], automatic = true, accountCount = 0;
   const fixtureState = current => ({node:account.node_id,mode:'testnet',protocol:'private-hashlock-v2',unit:'TEST',
-    paused:false,contacts:contacts.get(current.id) || [],balances:contacts.get(current.id) || [],proposals:[],receipts:[receipt],searches:[],
+    paused:false,contacts:contacts.get(current.id) || [],balances:contacts.get(current.id) || [],proposals:[{...receipt,id:'fixture-pending-clearing',status:'pending',approved:false}],receipts:[receipt],searches:[],
     discovery_modes:['cancellation','headroom'],obligation_capable:true,obligations:[],outbox_pending:0,
     automation:{enabled:automatic,next_search_at:0}});
   const server = http.createServer(async (request,response) => {
@@ -162,11 +162,10 @@ const {chromium} = require('playwright');
     await page.getByText('Verification failed · needs investigation',{exact:true}).waitFor();
     receipt.surplus_in = true;
     await page.goto(origin+'/#clearing');
-    await page.getByLabel('Clear within comfort zones',{exact:true}).check();
-    await page.getByRole('button',{name:'Discover a loop'}).click();
-    await page.waitForFunction(() => document.querySelector('#notice').textContent.includes('Discovery accepted'));
+    await page.getByText('Clearing runs automatically in the background.',{exact:false}).first().waitFor();
+    assert.equal(await page.locator('#discover, form[data-approve]').count(),0,'Hosted clearing must not ask participants to discover or approve loops');
+    assert.equal(await page.getByRole('button',{name:'Discover a loop',exact:true}).count(),0);
     await page.goto(origin+'/#settings');
-    await page.getByRole('button',{name:'Enable automatic clearing'}).click();
     await page.getByRole('button',{name:'Turn off automatic clearing'}).waitFor();
     await page.getByRole('link',{name:'Demo identity',exact:true}).click();
     await page.getByRole('heading',{name:'Your account',exact:true}).waitFor();
@@ -195,13 +194,13 @@ const {chromium} = require('playwright');
     assert.notEqual(other.account.node_id,account.node_id);
     assert.equal(accountCount,2);
     await freshContext.close();
-    assert.ok(mutations.some(r => r.route === '/api/discover' && r.body.mode === 'headroom'));
+    assert.equal(mutations.some(r => r.route === '/api/discover' || /^\/api\/proposals\/[^/]+\/approve$/.test(r.route)),false,'Hosted browser must never initiate discovery or approve clearing');
     assert.ok(mutations.some(r => r.route === '/api/contacts/invite' && r.body.peer_name === 'Invited friend'));
     assert.ok(mutations.some(r => r.route === '/api/contacts/accept' && r.body.invite_token === 'received-fixture-invitation'));
     assert.ok(mutations.some(r => r.route === '/api/contacts/accept' && r.body.invite_token === 'fixture-private-invitation'));
-    assert.ok(mutations.some(r => r.route === '/api/automation' && r.body.enabled === true));
+    assert.equal(mutations.some(r => r.route === '/api/automation'),false,'Automatic clearing must already be enabled without participant setup');
     assert.ok(authPosts.every(r => r.route === '/auth/demo/start'),'Demo must not invoke passkey or recovery routes');
     assert.deepEqual(errors,[]);
-    console.log('PASS hosted UI: persistent cookie demo identity, same-browser reuse, isolated new identity, CSRF, named invites, economic event deltas and consent, headroom receipts and automation');
+    console.log('PASS hosted UI: persistent cookie demo identity, same-browser reuse, isolated new identity, CSRF, named invites, economic event deltas and consent, verified headroom receipts and automatic clearing by default');
   } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }
 })().catch(error => { console.error(error.message); process.exitCode = 1; });

@@ -43,11 +43,15 @@ async function until(read, predicate, message, timeout=20000) {
       child.once('exit',() => { clearTimeout(timer); reject(new Error('Hosted test server exited before startup')); });
     });
     browser = await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium'});
-    const pageErrors = [];
+    const pageErrors = [], manualClearingRequests = [];
     async function demoPage() {
       const context = await browser.newContext();
       const page = await context.newPage();
       page.on('pageerror',error => pageErrors.push(error.message));
+      page.on('request',request => {
+        const route = new URL(request.url()).pathname;
+        if (request.method() === 'POST' && (route === '/api/discover' || route === '/api/proposals/approve' || /^\/api\/proposals\/[^/]+\/approve$/.test(route))) manualClearingRequests.push(route);
+      });
       return {page,context};
     }
     async function api(user, route, body) {
@@ -104,9 +108,21 @@ async function until(read, predicate, message, timeout=20000) {
       await second.page.getByRole('heading',{name:`${first.account.name} invited you`,exact:true}).waitFor();
       await second.page.getByRole('button',{name:'Accept invitation'}).click();
       await until(() => api(second,'/api/state'),state => state.contacts.some(c => c.peer === first.account.node_id), 'Invitation did not establish a peer');
+      // The server can expose the relationship before the accepting tab has
+      // finished its POST response, redirect and refresh. Let that UI action
+      // finish before the same tab creates its next invitation.
+      await second.page.waitForURL(origin+'/#overview');
+      await second.page.waitForFunction(() => {
+        const button = document.querySelector('button[data-record-event]');
+        return button && !button.disabled;
+      });
     }
     await connect(alice,bob); await connect(bob,carol); await connect(carol,alice);
-    for (const user of users) await until(() => api(user,'/api/state'),state => state.contacts.length === 2 && state.contacts.every(c => c.peer_preferences), 'Peer preferences did not synchronize');
+    for (const user of users) {
+      const state = await until(() => api(user,'/api/state'),state => state.contacts.length === 2 && state.contacts.every(c => c.peer_preferences), 'Peer preferences did not synchronize');
+      assert.equal(state.automation.enabled,true,'Background clearing must be enabled without participant setup');
+      assert.ok(state.contacts.every(contact => contact.own.auto_adjust && contact.peer_preferences.auto_adjust),'New hosted peers must allow automatic clearing by default');
+    }
 
     // Exercise actual autosaving controls on one relationship; set the remaining
     // controls through authenticated HTTP to keep this test focused and quick.
@@ -140,7 +156,7 @@ async function until(read, predicate, message, timeout=20000) {
     }
     for (const user of users) await until(() => api(user,'/api/state'),state => state.contacts.every(c => c.peer_preferences?.auto_adjust), 'Assistance preferences did not synchronize');
 
-    async function economicEvent(first,second,direction='i_owe',amount=1) {
+    async function economicEvent(first,second,direction='i_owe',amount=1,verifyBalance=true) {
       const before = (await api(first,'/api/state')).contacts.find(contact => contact.peer === second.account.node_id).balance;
       await first.page.goto(origin+'/#overview');
       const card = first.page.locator(`article[data-peer="${second.account.node_id}"]`);
@@ -165,26 +181,20 @@ async function until(read, predicate, message, timeout=20000) {
       await approval.getByRole('button',{name:'Confirm event',exact:true}).click();
       await until(() => api(first,'/api/obligations'),items => items.some(item => item.id === proposal.id && item.status === 'committed'), 'Economic event did not commit');
       const after = await until(() => api(first,'/api/state'),state => state.contacts.find(contact => contact.peer === second.account.node_id).reserved_by === null,'Event balance did not unlock');
-      assert.equal(after.contacts.find(contact => contact.peer === second.account.node_id).balance,before+(direction === 'i_owe' ? -amount : amount),'An economic event adds a delta to the existing balance');
+      if (verifyBalance) assert.equal(after.contacts.find(contact => contact.peer === second.account.node_id).balance,before+(direction === 'i_owe' ? -amount : amount),'An economic event adds a delta to the existing balance');
       await until(() => api(second,'/api/state'),state => state.contacts.find(contact => contact.peer === first.account.node_id).reserved_by === null,'Peer event balance did not unlock');
     }
     await economicEvent(alice,bob,'i_owe',2);
     await economicEvent(alice,bob,'peer_owes',1);
-    await economicEvent(carol,bob,'peer_owes',1);
-    let states = await Promise.all(users.map(user => api(user,'/api/state')));
-    assert.equal(states.reduce((sum,s) => sum+s.balances.reduce((v,b) => v+Math.abs(b.balance),0),0)/2,2);
-    await bob.page.goto(origin+'/#clearing');
-    await bob.page.getByLabel('Clear within comfort zones',{exact:true}).check();
-    await bob.page.getByRole('button',{name:'Discover a loop'}).click();
+    // The second nonzero link creates the improving path. Once both peers
+    // confirm its event the background worker may clear before this tab polls.
+    await economicEvent(carol,bob,'peer_owes',1,false);
     for (const user of users) {
-      const state = await until(() => api(user,'/api/state'),s => s.proposals.some(p => p.status === 'pending'), 'Headroom proposal did not arrive');
-      const proposal = state.proposals.find(p => p.status === 'pending');
       await user.page.goto(origin+'/#clearing');
-      const form = user.page.locator(`form[data-approve="${proposal.id}"]`);
-      await form.waitFor(); await form.locator('input[name=consent]').check();
-      await form.getByRole('button',{name:'Approve test clearing',exact:true}).click();
+      await user.page.getByText('Clearing runs automatically in the background.',{exact:false}).first().waitFor();
+      assert.equal(await user.page.locator('#discover, form[data-approve]').count(),0);
     }
-    states = [];
+    const states = [];
     for (const user of users) states.push(await until(() => api(user,'/api/state'),s => s.receipts.some(r => r.status === 'committed') && s.outbox_pending === 0, 'Headroom did not settle'));
     assert.equal(states.reduce((sum,s) => sum+s.balances.reduce((v,b) => v+Math.abs(b.balance),0),0)/2,1);
     assert.equal(states[0].balances.find(b => b.peer === carol.account.node_id).balance,-1);
@@ -242,9 +252,10 @@ async function until(read, predicate, message, timeout=20000) {
     await until(() => api(newcomer,'/api/state'),state => state.contacts.some(contact => contact.peer === alice.account.node_id),'Named invite did not connect the new demo identity');
     assert.equal(acceptRequests.length,1);
     await newcomer.context.close();
+    assert.deepEqual(manualClearingRequests,[],'Clearing must settle without discovery or approval calls from the browser');
     assert.deepEqual(pageErrors,[]);
     assert.deepEqual(workerErrors,[]);
-    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, named invites, autosave, economic event deltas and consent, HTTP headroom 2→1, receipt verification and stable browser identity');
+    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, named invites, autosave, economic event deltas and consent, automatic HTTP headroom 2→1 without participant discovery or approval, receipt verification and stable browser identity');
   } finally {
     if (browser) await browser.close();
     child.kill('SIGTERM');
