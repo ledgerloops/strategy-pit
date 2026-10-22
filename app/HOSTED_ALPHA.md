@@ -6,16 +6,31 @@ deployment; the deployment record must include the actual release and live check
 
 ## What is implemented
 
-- Passkey accounts backed by maintained WebAuthn verification, user verification,
-  exact origin/RP binding, expiring single-use challenges and opaque server sessions.
-- Secure, HttpOnly, SameSite session cookies; authenticated writes require an exact
-  Origin and a session CSRF token. Cookies do not hold the node's identity or keys.
-- Second passkeys and one-use recovery codes. Recovering the account preserves its
-  node, balances, preferences, peer credentials and outstanding hashlocks.
-- Private invitations establish zero-balance direct relationships. No public roster
+- Browser-bound demo identities: enter a display name once, then return with the
+  same opaque cookie. No passkey, password or recovery-code setup is required.
+- Secure, HttpOnly, SameSite=Lax cookies persist for one year, renewed when the
+  app resumes the browser identity. Authenticated writes retain exact Origin and
+  CSRF checks. Cookies contain no node balances or protocol credentials.
+- Clearing cookies, cookie expiry, private browsing or a different browser starts
+  another identity. There is no demo account recovery. Existing account records,
+  passkeys and sessions are retained; legacy passkey APIs remain available.
+  Recovery-code issuance/redemption is disabled by default; the explicit server
+  setting `LEDGERLOOPS_RECOVERY_CODES_ENABLED=1` restores the legacy feature.
+- Named invitations provide shareable `https://app.ledgerloops.com/#invite=…`
+  links, including the inviter's name and an optional intended peer name. The
+  secret stays in the URL fragment, outside server request paths. Its holder can
+  preview the names and expiry, then explicitly accept after starting a demo.
+  Display labels do not change routing identities or authorize balance changes.
+  Private invitations establish zero-balance direct relationships. No public roster
   or network graph is supplied to nodes. Both endpoints set their own credit grants,
   comfort zones and assistance preference before headroom can be used.
-- Obligation proposal/approval/history and the existing responsive comfort controls.
+- A simple hosted flow: enter your name, invite peers by name, then record an
+  economic event from a peer card. Navigation and advanced controls stay hidden
+  until a peer exists; clearing and limits live under Advanced afterward.
+  Each event changes a trustline balance and requires the other peer's approval;
+  it does not set an absolute balance. API/storage names retain `obligation` for
+  compatibility. New relationships start with 10 TEST credit, comfort [-10,10],
+  and assistance/automation off. Existing preferences are never reset.
 - Real cancellation and [comfort-zone headroom clearing](headroom_protocol.md),
   with local reservations, context-bound SHA-256 fulfillment and durable retries.
 - Explicit optional background clearing. Enabling it allows own-node searches and
@@ -102,6 +117,7 @@ Protocol tests use separate local databases and serialized neighbour messages.
 Storage tests additionally use real PostgreSQL, independent OS processes and
 process death before commit. Account tests generate real P-256 WebAuthn signatures;
 gateway tests combine real accounts, PostgreSQL, invitations, obligations and
-hashlock fulfillment. Browser tests cover passkey flows and preserve standalone
-authentication. See [deployment runbook](HEROKU_DEPLOYMENT.md) for execution commands
+hashlock fulfillment. Browser tests cover persistent demo cookies, distinct browser
+identities, named invitation links through signup and explicit acceptance, while
+preserving standalone authentication. Legacy WebAuthn signatures remain tested. See [deployment runbook](HEROKU_DEPLOYMENT.md) for execution commands
 and live checks required before calling the target deployed.

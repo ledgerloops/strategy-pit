@@ -1,7 +1,7 @@
 # LedgerLoops hashlock network app
 
-**22 October 2026 hosted alpha:** passkey accounts, durable PostgreSQL storage,
-peer invitations and bounded-surplus headroom clearing are now implemented.
+**22 October 2026 hosted alpha:** browser-cookie demo identities, durable PostgreSQL storage,
+named invitation links and bounded-surplus headroom clearing are now implemented.
 See [hosted architecture and limits](HOSTED_ALPHA.md),
 [clearing theory and protocol](headroom_protocol.md) and
 [Heroku deployment](HEROKU_DEPLOYMENT.md). The target is `app.ledgerloops.com`;
@@ -70,7 +70,7 @@ Read the exact [private protocol](private_protocol.md), [validation scope](PRIVA
 This is **TEST units only**, with honest peers, retained databases and eventual network recovery. There are no timelocks or unsafe timeout unlocks. An unavailable origin or peer can leave capacity reserved indefinitely. Decline produces an evidenced abort before release; after conditional consent, the participant must await the outcome. Local application can occur at different times across peers.
 
 The original standalone launcher uses preconfigured direct neighbours. The hosted
-gateway adds passkey enrollment and bilateral invitations; see the hosted docs
+gateway adds cookie-based enrollment and named bilateral invitation links; see the hosted docs
 above. Private v2 nodes can propose and approve new bilateral TEST obligations
 within synchronized credit grants. Live assets, stale-backup recovery, bounded
 retention and hostile-peer protection remain product work. Plain HTTP and bearer

@@ -4,7 +4,7 @@ Deployment target: **https://app.ledgerloops.com**. The root `ledgerloops.com`
 website and other DNS records are not changed. The source contains a Python
 Heroku application with a release process and one web dyno running both HTTP
 and background worker processes, PostgreSQL-backed
-durable local stores, passkey accounts, session cookies and neighbour envelopes.
+durable local stores, cookie-based demo identities and neighbour envelopes.
 This document and the deployment script do not establish that a public deployment
 has happened; verify the release and public application after execution.
 
@@ -74,9 +74,9 @@ If API credentials are unavailable but the local browser is signed into Heroku:
    `app`. With Cloudflare, start DNS-only so Heroku certificate validation can
    reach the app. Remove conflicting records only as an explicit DNS migration.
 
-The temporary Heroku hostname is suitable for `/healthz` checks. The app deliberately
-requires the canonical domain for enrollment and ordinary UI requests; register
-lasting passkeys only after `https://app.ledgerloops.com` works.
+The temporary Heroku hostname is suitable for `/healthz` checks. The app requires
+the canonical domain for enrollment and ordinary UI requests; create persistent
+demo identities only after `https://app.ledgerloops.com` works.
 
 ## Verify before announcing availability
 
@@ -86,8 +86,10 @@ lasting passkeys only after `https://app.ledgerloops.com` works.
   groups, with forced cleanup after 20 seconds (Gunicorn gets 15 seconds to drain).
 - DNS resolves the custom domain to its assigned target; ACM has issued a valid
   certificate. HTTPS `/healthz` returns `service: ledgerloops-alpha`, `status: ok`.
-- Sign up with a passkey on the canonical domain. Save recovery codes privately.
-  Sign out/in and exercise second-passkey/recovery using isolated TEST accounts.
+- Start a named TEST demo on the canonical domain. Verify its persistent protected
+  cookie returns to the same account/node, while a separate isolated browser gets
+  a new identity. Verify no passkey/recovery prompt appears. Check a named invitation
+  link preserves inviter/peer names through signup and requires explicit acceptance.
 - Establish mutually accepted trustlines and comfort zones; propose and approve
   TEST obligations, then run headroom clearing and inspect local receipts/history.
 - Restart the web dyno and confirm account identity, obligations, balances

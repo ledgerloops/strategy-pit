@@ -592,3 +592,24 @@ The Mac DNS cache subsequently expired. Chrome then loaded the canonical HTTPS
 login page normally, with TEST-only and operator-access disclosures visible. The
 ordinary system-resolved HTTPS health check also passed; no DNS override or TLS
 warning bypass was needed for this final check.
+
+### 22 October 2026 — browser demo identity, named links and economic-event UI
+
+The user asked to remove recovery setup and then passkeys for this demo, retain
+identity in the browser, create shareable invitations naming both parties, and
+show only name/invitations until the first peer. The selected product phrase is
+**Record an economic event**: a delta to a trustline balance, not its final balance.
+
+The implementation adds an opaque, protected one-year cookie demo identity,
+renewed on return. A valid older session is retained and extended, not reseeded.
+Without the cookie, a browser starts a new identity; display names are never
+authentication credentials. Existing account/passkey/session records remain, but
+recovery issuance/redemption is disabled by default. Named fragment-based invite
+links carry through enrollment, show the inviter and intended peer names, and
+require explicit acceptance; name metadata never influences clearing decisions.
+
+The hosted home is being simplified to peer cards with economic-event recording,
+while advanced controls remain available after a peer exists. New hosted
+relationships allow 10 TEST within comfort [-10,10] without setup, but assistance
+and automation remain off and each event still needs bilateral approval. Existing
+preferences are preserved. Deployment and final UI verification follow local checks.
