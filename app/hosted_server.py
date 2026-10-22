@@ -210,6 +210,31 @@ def create_app(*, stores=None, origin=None, development=False):
         owner=account(True)
         return jsonify(runtime.automation(owner['node_id'],payload().get('enabled')))
 
+    @app.post('/api/contacts/<peer>/rename')
+    def rename_peer(peer):
+        owner=account(True); body=payload()
+        if set(body) != {'name'}:
+            raise ValueError('Provide a peer name')
+        return jsonify(runtime.rename(owner['node_id'],peer,body['name']))
+
+    @app.route('/api/contacts/<peer>/messages',methods=['GET','POST'])
+    def peer_messages(peer):
+        owner=account(request.method=='POST')
+        if request.method=='GET':
+            return jsonify(runtime.messages(owner['node_id'],peer))
+        body=payload()
+        if set(body) != {'id','text'}:
+            raise ValueError('Provide a message id and text')
+        return jsonify(runtime.send_message(owner['node_id'],peer,body['id'],body['text']))
+
+    @app.get('/api/contacts/<peer>/history')
+    def peer_history(peer):
+        owner=account()
+        value=request.args.get('offset','0')
+        if not value.isascii() or not value.isdecimal() or len(value)>10:
+            raise ValueError('History offset must be a nonnegative bounded integer')
+        return jsonify(runtime.history(owner['node_id'],peer,int(value)))
+
     @app.route('/api/<path:action>',methods=['GET','POST'])
     def node_api(action):
         write=request.method=='POST'

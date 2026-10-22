@@ -20,6 +20,8 @@ from private_node import Node, PROTOCOL
 
 NODE_ID = re.compile(r'n_[0-9a-f]{32}\Z')
 MAX_TRUST = 10**9
+MESSAGE_PROTOCOL = 'hosted-message-v1'
+MESSAGE_KIND = 'hosted_message'
 
 
 class HostedRuntime:
@@ -68,6 +70,14 @@ class HostedRuntime:
             db.execute('ALTER TABLE hosted_invites ADD COLUMN max_trust INTEGER NOT NULL DEFAULT 10')
         if 'accepted_max_trust' not in columns:
             db.execute('ALTER TABLE hosted_invites ADD COLUMN accepted_max_trust INTEGER')
+
+    @staticmethod
+    def _message_schema(db):
+        db.execute('''CREATE TABLE IF NOT EXISTS hosted_messages(
+            id TEXT NOT NULL,peer TEXT NOT NULL,direction TEXT NOT NULL,text TEXT NOT NULL,
+            status TEXT NOT NULL,created_at REAL NOT NULL,sent_at REAL,received_at REAL,
+            delivered_at REAL,PRIMARY KEY(peer,id,direction))''')
+        db.execute('CREATE INDEX IF NOT EXISTS hosted_messages_peer_time ON hosted_messages(peer,created_at)')
 
     @staticmethod
     def _automatic_clearing_defaults(node):
@@ -121,6 +131,7 @@ class HostedRuntime:
                 n = Node(json.loads(row[0]), ':memory:', connection=db)
                 try:
                     self._invite_schema(db)
+                    self._message_schema(db)
                     self._automatic_clearing_defaults(n)
                     yield n
                 finally:
@@ -138,6 +149,7 @@ class HostedRuntime:
             state['automation'] = dict(enabled=bool(enabled and enabled[0] == 'true'))
             state['hosted'] = True
             state['operator_access'] = True
+            state['messages'] = self._messages(node)
             for contact in state['contacts']:
                 contact['name'] = node.peers[contact['peer']].get('name', '')
             return state
@@ -223,6 +235,104 @@ class HostedRuntime:
                 config['peers'][peer]['name'] = name
                 node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))
 
+    @staticmethod
+    def _direct_peer(node, peer):
+        if not isinstance(peer, str) or peer == node.name or peer not in node.peers:
+            raise ValueError('Choose an existing direct peer')
+
+    def rename(self, node_id, peer, name):
+        if (not isinstance(name, str) or not 1 <= len(name.strip()) <= 80 or
+                any(unicodedata.category(char) in ('Cc', 'Cf', 'Cs') for char in name)):
+            raise ValueError('Peer name must be 1 to 80 characters without control characters')
+        name = name.strip()
+        with self.node(node_id) as node:
+            self._direct_peer(node, peer)
+            config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
+            config['peers'][peer]['name'] = name
+            node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))
+        return dict(ok=True, peer=peer, name=name)
+
+    @staticmethod
+    def _message_values(ident, text):
+        if not isinstance(ident, str) or not re.fullmatch(r'[0-9a-f]{64}', ident):
+            raise ValueError('Message id must be 64 lowercase hexadecimal characters')
+        if (not isinstance(text, str) or not 1 <= len(text) <= 2000 or not text.strip() or
+                any(unicodedata.category(char) in ('Cc', 'Cf', 'Cs') and char not in '\n\t\u200c\u200d'
+                    for char in text)):
+            raise ValueError('Message must be 1 to 2000 characters without unsupported control characters')
+        return ident, text.strip()
+
+    @staticmethod
+    def _messages(node, peer=None):
+        where, values = (' WHERE peer=?', (peer,)) if peer is not None else ('', ())
+        # Keep every unresolved send visible, even when more than 100 newer
+        # received/delivered messages exist. This is a display cap, not deletion.
+        query = f'''SELECT * FROM hosted_messages {where} AND status='queued' ''' if where else "SELECT * FROM hosted_messages WHERE status='queued' "
+        query += f'''UNION SELECT * FROM (SELECT * FROM hosted_messages {where}
+                    ORDER BY created_at DESC,id DESC,direction DESC LIMIT 100)
+                    ORDER BY created_at DESC,id DESC,direction DESC'''
+        return [dict(row) for row in node.db.execute(query, values+values)]
+
+    def messages(self, node_id, peer):
+        with self.node(node_id) as node:
+            self._direct_peer(node, peer)
+            return self._messages(node, peer)
+
+    def send_message(self, node_id, peer, ident, text):
+        ident, text = self._message_values(ident, text)
+        with self.node(node_id) as node:
+            self._direct_peer(node, peer)
+            previous = node.db.execute("SELECT * FROM hosted_messages WHERE id=? AND direction='outgoing'", (ident,)).fetchone()
+            if previous:
+                if previous['peer'] != peer or previous['text'] != text:
+                    raise ValueError('Message id already binds different terms')
+                return dict(ok=True, message=dict(previous))
+            now = time.time()
+            node.db.execute('''INSERT INTO hosted_messages
+                (id,peer,direction,text,status,created_at,sent_at) VALUES(?,?,'outgoing',?,'queued',?,?)''',
+                (ident, peer, text, now, now))
+            node.enqueue(peer, dict(kind=MESSAGE_KIND, protocol=MESSAGE_PROTOCOL, id=ident, text=text))
+            row = node.db.execute("SELECT * FROM hosted_messages WHERE peer=? AND id=? AND direction='outgoing'", (peer, ident)).fetchone()
+            return dict(ok=True, message=dict(row))
+
+    def _receive_message(self, node, sender, data):
+        if (set(data) != {'kind', 'protocol', 'id', 'text', 'message_id'} or
+                data['protocol'] != MESSAGE_PROTOCOL or not isinstance(data['message_id'], str) or
+                not re.fullmatch(r'[0-9a-f]{32}', data['message_id'])):
+            raise ValueError('Invalid hosted message envelope')
+        ident, text = self._message_values(data['id'], data['text'])
+        previous = node.db.execute("SELECT * FROM hosted_messages WHERE peer=? AND id=? AND direction='incoming'", (sender, ident)).fetchone()
+        if previous:
+            if previous['text'] != text:
+                raise ValueError('Message id already binds different terms')
+            return
+        now = time.time()
+        node.db.execute('''INSERT INTO hosted_messages
+            (id,peer,direction,text,status,created_at,received_at) VALUES(?,?,'incoming',?,'received',?,?)''',
+            (ident, sender, text, now, now))
+
+    def history(self, node_id, peer, offset=0):
+        if type(offset) is not int or not 0 <= offset <= 10**9:
+            raise ValueError('History offset must be a nonnegative bounded integer')
+        with self.node(node_id) as node:
+            self._direct_peer(node, peer)
+            entries = [dict(dict(row), type='message', timestamp=row['created_at'])
+                       for row in node.db.execute('SELECT * FROM hosted_messages WHERE peer=?', (peer,))]
+            for row in node.db.execute('SELECT * FROM obligations WHERE peer=?', (peer,)):
+                item = node.obligation_view(row)
+                entries.append(dict(item, type='delivery', timestamp=item['created_at']))
+            # Filter meaningful outcomes and the direct peer before materializing
+            # receipts, so thousands of failed background probes cannot hide a
+            # completed clearing or another peer's history.
+            for row in node.db.execute('''SELECT data FROM receipts
+                    WHERE json_extract(data,'$.status')='committed' AND EXISTS(
+                    SELECT 1 FROM json_each(receipts.data,'$.changes') AS change
+                    WHERE json_extract(change.value,'$.peer')=?)''', (peer,)):
+                item = json.loads(row['data'])
+                entries.append(dict(item, type='clearing', timestamp=item['decided_at']))
+            entries.sort(key=lambda item: (item['timestamp'], item['type'], item['id'], item.get('direction', '')), reverse=True)
+            return dict(entries=entries[offset:offset+100], has_more=offset+100 < len(entries), total=len(entries))
+
     def accept_invite(self, node_id, invitation, max_trust=10):
         max_trust = self._max_trust(max_trust)
         issuer, token_hash = self._invitation(invitation)
@@ -269,10 +379,13 @@ class HostedRuntime:
 
     def receive(self, node_id, sender, authorization, data):
         with self.node(node_id) as node:
-            if sender not in node.peers or not hmac.compare_digest(
+            if not isinstance(sender, str) or not isinstance(authorization, str) or sender not in node.peers or not hmac.compare_digest(
                     authorization, 'Bearer '+node.peers[sender]['key']):
                 raise PermissionError('Peer authentication required')
-            node.receive(sender,data)
+            if isinstance(data, dict) and data.get('kind') == MESSAGE_KIND:
+                self._receive_message(node, sender, data)
+            else:
+                node.receive(sender,data)
         return dict(ok=True)
 
     def tick(self, node_id):
@@ -315,10 +428,12 @@ class HostedRuntime:
                     node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_next_search',?)",
                                     (str(time.time()+2+secrets.randbelow(4000)/1000),))
             outgoing=[]
-            for row in node.db.execute('SELECT * FROM outbox LIMIT 5'):
+            # Chats to an unavailable peer cannot sit ahead of financial
+            # protocol work merely because their outbox rows were queued first.
+            for row in node.db.execute("SELECT * FROM outbox ORDER BY CASE WHEN json_extract(data,'$.kind')=? THEN 1 ELSE 0 END,rowid LIMIT 5", (MESSAGE_KIND,)):
                 peer=node.peers[row['peer']]
                 outgoing.append(dict(id=row['id'],url=peer['url'].rstrip('/')+'/peer/message',
-                                     key=peer['key'],body=row['data']))
+                                     key=peer['key'],peer=row['peer'],body=row['data']))
         # Network delivery never holds local/remote database locks together.
         for item in outgoing:
             request=Request(item['url'],data=item['body'].encode(),headers={
@@ -331,6 +446,12 @@ class HostedRuntime:
             except (URLError,OSError,TimeoutError):
                 continue
             with self.node(node_id) as node:
+                data = json.loads(item['body'])
+                if data.get('kind') == MESSAGE_KIND:
+                    node.db.execute("""UPDATE hosted_messages SET status='delivered',
+                        delivered_at=coalesce(delivered_at,?)
+                        WHERE peer=? AND id=? AND direction='outgoing'""",
+                        (time.time(), item['peer'], data['id']))
                 node.db.execute('DELETE FROM outbox WHERE id=?',(item['id'],))
 
     def scheduled_nodes(self):
