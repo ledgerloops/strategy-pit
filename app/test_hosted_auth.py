@@ -11,7 +11,7 @@ import cbor2
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 
-from hosted_auth import HostedAuth, AuthError, b64, unb64, SESSION_SECONDS
+from hosted_auth import HostedAuth, AuthError, b64, unb64, SESSION_SECONDS, DEMO_SESSION_SECONDS
 
 ORIGIN = 'https://app.ledgerloops.com'
 RP_ID = 'app.ledgerloops.com'
@@ -75,7 +75,8 @@ class HostedAuthTests(unittest.TestCase):
         authenticator, enrolled = self.enroll()
         account_id = enrolled['account']['id']
         self.assertEqual(enrolled['account']['node_id'], 'n_'+account_id)
-        self.assertEqual(len(enrolled['recovery_codes']), 8)
+        self.assertNotIn('recovery_codes', enrolled)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM auth_recovery').fetchone()[0], 0)
         self.db.close()
         self.db = sqlite3.connect(self.path)
         self.auth = HostedAuth(self.db, now=lambda: self.clock[0])
@@ -86,6 +87,58 @@ class HostedAuthTests(unittest.TestCase):
         self.assertEqual(login['account'], enrolled['account'])
         self.assertNotEqual(login['session_token'], enrolled['session_token'])
         self.assertEqual(self.auth.authorize(login['session_token'], login['csrf_token'], ORIGIN)['id'], account_id)
+
+    def test_demo_identity_persists_after_restart_and_repeated_start(self):
+        enrolled = self.auth.start_demo(' Alice ', ORIGIN)
+        self.assertEqual(enrolled['account']['name'], 'Alice')
+        self.assertEqual(enrolled['expires'], self.clock[0] + DEMO_SESSION_SECONDS)
+        self.assertNotIn('recovery_codes', enrolled)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM auth_credentials').fetchone()[0], 0)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM auth_recovery').fetchone()[0], 0)
+        self.db.close()
+        self.db = sqlite3.connect(self.path)
+        self.auth = HostedAuth(self.db, now=lambda: self.clock[0])
+        self.clock[0] += 30 * 24 * 60 * 60
+        self.assertEqual(self.auth.session(enrolled['session_token'])['account'], enrolled['account'])
+        repeated = self.auth.start_demo('A different name', ORIGIN, enrolled['session_token'])
+        self.assertEqual(repeated['account'], enrolled['account'])
+        self.assertEqual(repeated['session_token'], enrolled['session_token'])
+        self.assertEqual(repeated['csrf_token'], enrolled['csrf_token'])
+        self.assertEqual(repeated['expires'], self.clock[0] + DEMO_SESSION_SECONDS)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM auth_accounts').fetchone()[0], 1)
+        self.clock[0] = repeated['expires']
+        with self.assertRaises(AuthError):
+            self.auth.session(enrolled['session_token'])
+
+    def test_demo_name_never_attaches_another_browser_to_an_account(self):
+        first = self.auth.start_demo('Alice', ORIGIN)
+        second = self.auth.start_demo('Alice', ORIGIN)
+        third = self.auth.start_demo('Alice', ORIGIN, 'invalid-token')
+        self.assertEqual(len({r['account']['id'] for r in (first, second, third)}), 3)
+        for result in (first, second, third):
+            self.assertNotIn(result['session_token'], [r[0] for r in self.db.execute('SELECT token_hash FROM auth_sessions')])
+            self.assertEqual(self.auth.authorize(result['session_token'], result['csrf_token'], ORIGIN), result['account'])
+            with self.assertRaises(AuthError):
+                self.auth.authorize(result['session_token'], 'wrong-csrf', ORIGIN)
+
+    def test_demo_origin_and_name_validation_cannot_create_accounts(self):
+        for origin in (None, 'https://evil.example'):
+            with self.assertRaises(AuthError):
+                self.auth.start_demo('Alice', origin)
+        for name in (None, '', '   ', 'A'*81, 'Alice\nBob'):
+            with self.assertRaises(AuthError):
+                self.auth.start_demo(name, ORIGIN)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM auth_accounts').fetchone()[0], 0)
+
+    def test_demo_reuses_existing_passkey_account_without_removing_credentials(self):
+        authenticator, enrolled = self.enroll()
+        repeated = self.auth.start_demo('Different', ORIGIN, enrolled['session_token'])
+        self.assertEqual(repeated['account'], enrolled['account'])
+        self.assertEqual(self.auth.session(enrolled['session_token'])['expires'], repeated['expires'])
+        options = self.auth.begin_authentication(ORIGIN)
+        login = self.auth.finish_authentication(options['challenge_id'],
+                                              authenticator.authenticate(options['public_key']), ORIGIN)
+        self.assertEqual(login['account'], enrolled['account'])
 
     def test_successful_challenges_cannot_be_replayed(self):
         authenticator = Authenticator()
@@ -144,6 +197,7 @@ class HostedAuthTests(unittest.TestCase):
         self.assertEqual(self.db.execute('SELECT count(*) FROM auth_accounts').fetchone()[0], 1)
 
     def test_expiry_and_raw_session_tokens_not_stored(self):
+        self.auth = HostedAuth(self.db, recovery_codes_enabled=True, now=lambda: self.clock[0])
         _, enrolled = self.enroll()
         stored = self.db.execute('SELECT token_hash FROM auth_sessions').fetchone()[0]
         self.assertNotEqual(stored, enrolled['session_token'])
@@ -174,7 +228,9 @@ class HostedAuthTests(unittest.TestCase):
         self.assertEqual(logged_in['account']['node_id'], enrolled['account']['node_id'])
 
     def test_recovery_is_one_use_revokes_sessions_and_preserves_node(self):
+        self.auth = HostedAuth(self.db, recovery_codes_enabled=True, now=lambda: self.clock[0])
         _, enrolled = self.enroll()
+        self.assertEqual(len(enrolled['recovery_codes']), 8)
         _, other = self.enroll('Bob')
         account_id, code = enrolled['account']['id'], enrolled['recovery_codes'][0]
         with self.assertRaises(AuthError):
@@ -189,6 +245,25 @@ class HostedAuthTests(unittest.TestCase):
         with self.assertRaises(AuthError):
             self.auth.recover(account_id, enrolled['recovery_codes'][1], ORIGIN)
         self.auth.recover(account_id, replacement['recovery_codes'][0], ORIGIN)
+
+    def test_disabling_recovery_preserves_codes_sessions_and_passkeys(self):
+        self.auth = HostedAuth(self.db, recovery_codes_enabled=True, now=lambda: self.clock[0])
+        authenticator, enrolled = self.enroll()
+        before = self.db.execute('SELECT * FROM auth_recovery ORDER BY code_hash').fetchall()
+        self.auth = HostedAuth(self.db, now=lambda: self.clock[0])
+        with self.assertRaisesRegex(AuthError, 'Recovery codes are disabled'):
+            self.auth.recover(enrolled['account']['id'], enrolled['recovery_codes'][0], ORIGIN)
+        with self.assertRaisesRegex(AuthError, 'Recovery codes are disabled'):
+            self.auth.replace_recovery_codes(enrolled['session_token'], enrolled['csrf_token'], ORIGIN)
+        self.assertEqual(before, self.db.execute('SELECT * FROM auth_recovery ORDER BY code_hash').fetchall())
+        self.assertEqual(self.auth.session(enrolled['session_token'])['account'], enrolled['account'])
+        options = self.auth.begin_authentication(ORIGIN)
+        login = self.auth.finish_authentication(options['challenge_id'],
+                                              authenticator.authenticate(options['public_key']), ORIGIN)
+        self.assertEqual(login['account'], enrolled['account'])
+        self.auth = HostedAuth(self.db, recovery_codes_enabled=True, now=lambda: self.clock[0])
+        recovered = self.auth.recover(enrolled['account']['id'], enrolled['recovery_codes'][0], ORIGIN)
+        self.assertEqual(recovered['account'], enrolled['account'])
 
     def test_counter_reuse_rejected_with_fresh_challenge(self):
         authenticator, _ = self.enroll()

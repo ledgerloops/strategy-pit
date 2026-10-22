@@ -8,14 +8,15 @@ it does not provide routes or aggregate clearing decisions to participants.
 import json
 import os
 import secrets
+import sqlite3
 import threading
 import unittest
 from concurrent.futures import ThreadPoolExecutor
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from urllib.error import HTTPError
 from urllib.parse import urlsplit
 
-from hosted_auth import COOKIE_NAME
+from hosted_auth import COOKIE_NAME, DEMO_SESSION_SECONDS
 from hosted_server import create_app
 from hosted_storage import PgStoreFactory, TABLE
 from test_hosted_auth import Authenticator, ORIGIN
@@ -33,6 +34,106 @@ class ScopedStores:
 
     def list_nodes(self):
         return [key[len(self.prefix):] for key in self.factory.list_nodes() if key.startswith(self.prefix)]
+
+
+class HostedDemoGatewayTests(unittest.TestCase):
+    """Real HTTP/auth with an isolated auth database; no node provisioning needed."""
+    def setUp(self):
+        self.env = patch.dict(os.environ)
+        self.env.start()
+        self.addCleanup(self.env.stop)
+        os.environ.pop('LEDGERLOOPS_RECOVERY_CODES_ENABLED', None)
+        self.db = sqlite3.connect(':memory:', check_same_thread=False)
+        self.addCleanup(self.db.close)
+        stores = Mock()
+        stores.connection.return_value = self.db
+        self.app = create_app(stores=stores)
+        self.app.testing = True
+        self.auth = self.app.extensions['hosted_auth']
+        self.client = self.app.test_client()
+
+    def start(self, client=None, name='Alice'):
+        return (client or self.client).post('/auth/demo/start', base_url=ORIGIN,
+                  headers={'Origin': ORIGIN}, json={'display_name': name})
+
+    def test_demo_sets_year_cookie_and_reuses_browser_identity(self):
+        response = self.start()
+        self.assertEqual(response.status_code, 200)
+        result = response.get_json()
+        self.assertNotIn('session_token', result)
+        self.assertNotIn('recovery_codes', result)
+        cookie = response.headers['Set-Cookie']
+        for attribute in (COOKIE_NAME+'=', 'Secure', 'HttpOnly', 'Path=/', 'SameSite=Lax',
+                          'Max-Age='+str(DEMO_SESSION_SECONDS)):
+            self.assertIn(attribute, cookie)
+        self.assertNotIn('Domain=', cookie)
+        repeated = self.start(name='Different').get_json()
+        self.assertEqual(repeated['account'], result['account'])
+        another = self.start(self.app.test_client()).get_json()
+        self.assertNotEqual(another['account']['id'], result['account']['id'])
+        bad_csrf = self.client.post('/auth/logout', base_url=ORIGIN,
+                   headers={'Origin': ORIGIN, 'X-CSRF-Token': 'wrong'}, json={})
+        self.assertEqual(bad_csrf.status_code, 401)
+        self.assertEqual(self.start().get_json()['account'], result['account'])
+
+    def test_demo_requires_exact_browser_origin(self):
+        for headers in ({}, {'Origin': 'https://evil.example'}):
+            response = self.client.post('/auth/demo/start', base_url=ORIGIN,
+                                        headers=headers, json={'display_name': 'Alice'})
+            self.assertEqual(response.status_code, 403)
+        self.assertEqual(self.db.execute('SELECT count(*) FROM auth_accounts').fetchone()[0], 0)
+
+    def test_disabled_recovery_routes_do_not_issue_or_consume_codes(self):
+        self.auth.recovery_codes_enabled = True
+        options = self.auth.begin_registration('Alice', ORIGIN)
+        enrolled = self.auth.finish_registration(options['challenge_id'],
+                      Authenticator().register(options['public_key']), ORIGIN)
+        self.auth.recovery_codes_enabled = False
+        before = self.db.execute('SELECT * FROM auth_recovery ORDER BY code_hash').fetchall()
+        for route in ('recover', 'recovery/replace'):
+            response = self.client.post('/auth/'+route, base_url=ORIGIN,
+                       headers={'Origin': ORIGIN}, json={'account_id': enrolled['account']['id'],
+                       'recovery_code': enrolled['recovery_codes'][0]})
+            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.get_json()['error'], 'Recovery codes are disabled')
+        self.assertEqual(before, self.db.execute('SELECT * FROM auth_recovery ORDER BY code_hash').fetchall())
+        self.assertEqual(self.auth.session(enrolled['session_token'])['account'], enrolled['account'])
+
+    def test_recovery_opt_in_requires_explicit_one(self):
+        self.assertFalse(self.auth.recovery_codes_enabled)
+        for value in ('0', 'false', 'true', '', '1'):
+            with self.subTest(value=value), patch.dict(os.environ, {'LEDGERLOOPS_RECOVERY_CODES_ENABLED': value}):
+                stores = Mock()
+                stores.connection.return_value = self.db
+                app = create_app(stores=stores)
+                self.assertEqual(app.extensions['hosted_auth'].recovery_codes_enabled, value == '1')
+
+    def test_invitation_preview_is_public_but_requires_exact_origin(self):
+        runtime = self.app.extensions['hosted_runtime']
+        with patch.object(runtime, 'preview_invite', create=True, return_value={'inviter_name': 'Alice'}) as preview:
+            for headers in ({}, {'Origin': 'https://evil.example'}):
+                response = self.client.post('/api/invitations/preview', base_url=ORIGIN,
+                                            headers=headers, json={'invite_token': 'opaque-token'})
+                self.assertEqual(response.status_code, 403)
+            preview.assert_not_called()
+            response = self.client.post('/api/invitations/preview', base_url=ORIGIN,
+                       headers={'Origin': ORIGIN}, json={'invite_token': 'opaque-token'})
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.get_json(), {'inviter_name': 'Alice'})
+            preview.assert_called_once_with('opaque-token')
+
+    def test_named_invitation_uses_current_cookie_account_and_csrf(self):
+        enrolled = self.start().get_json()
+        runtime = self.app.extensions['hosted_runtime']
+        with patch.object(runtime, 'provision'), patch.object(runtime, 'invite', return_value={'invite_token': 'opaque-token'}) as invite:
+            bad = self.client.post('/api/contacts/invite', base_url=ORIGIN,
+                  headers={'Origin': ORIGIN, 'X-CSRF-Token': 'wrong'}, json={'peer_name': 'Bob'})
+            self.assertEqual(bad.status_code, 401)
+            invite.assert_not_called()
+            response = self.client.post('/api/contacts/invite', base_url=ORIGIN,
+                       headers={'Origin': ORIGIN, 'X-CSRF-Token': enrolled['csrf_token']}, json={'peer_name': 'Bob'})
+            self.assertEqual(response.status_code, 200)
+            invite.assert_called_once_with(enrolled['account']['node_id'], peer_name='Bob')
 
 
 @unittest.skipUnless(os.environ.get('LEDGERLOOPS_TEST_POSTGRES_DSN'),
@@ -243,6 +344,7 @@ class HostedGatewayTests(unittest.TestCase):
         self.assertEqual(len(self.get(bob, '/api/state')['contacts']), 1)
 
     def test_durable_obligation_and_recovery_keep_same_node(self):
+        self.auth.recovery_codes_enabled = True
         alice, bob = self.enroll('Alice'), self.enroll('Bob')
         self.connect(alice, bob)
         self.pump()

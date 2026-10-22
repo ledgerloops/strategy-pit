@@ -11,7 +11,7 @@ from urllib.parse import urlsplit
 from flask import Flask, jsonify, request, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-from hosted_auth import HostedAuth, AuthError, COOKIE_NAME, SESSION_SECONDS
+from hosted_auth import HostedAuth, AuthError, COOKIE_NAME
 from hosted_runtime import HostedRuntime
 from hosted_storage import PgStoreFactory
 
@@ -23,7 +23,8 @@ def create_app(*, stores=None, origin=None, development=False):
         raise ValueError('Hosted alpha requires HTTPS')
     stores=stores or PgStoreFactory(os.environ['DATABASE_URL'],max_connections=4)
     stores.create('accounts')
-    auth=HostedAuth(stores.connection('accounts'),origin=origin,rp_id=parsed.hostname,development=development)
+    auth=HostedAuth(stores.connection('accounts'),origin=origin,rp_id=parsed.hostname,development=development,
+                    recovery_codes_enabled=os.environ.get('LEDGERLOOPS_RECOVERY_CODES_ENABLED') == '1')
     runtime=HostedRuntime(stores,origin)
     app=Flask(__name__,static_folder=None)
     app.config['MAX_CONTENT_LENGTH']=65536
@@ -142,11 +143,15 @@ def create_app(*, stores=None, origin=None, development=False):
 
     @app.post('/auth/<path:action>')
     def authenticate(action):
+        if action in ('recover','recovery/replace') and not auth.recovery_codes_enabled:
+            return jsonify(error='Recovery codes are disabled'),404
         body=payload()
         browser_origin=request.headers.get('Origin')
         token=request.cookies.get(COOKIE_NAME,'')
         csrf=request.headers.get('X-CSRF-Token')
-        if action=='register/begin':
+        if action=='demo/start':
+            result=auth.start_demo(body.get('display_name'),browser_origin,token)
+        elif action=='register/begin':
             result=auth.begin_registration(body.get('display_name'),browser_origin)
         elif action=='register/finish':
             result=auth.finish_registration(body.get('challenge_id'),body.get('credential'),browser_origin)
@@ -174,7 +179,7 @@ def create_app(*, stores=None, origin=None, development=False):
         # lose freshly issued recovery codes to an unrelated provisioning failure.
         response=jsonify(result)
         if session_token:
-            response.set_cookie(COOKIE_NAME,session_token,max_age=SESSION_SECONDS,
+            response.set_cookie(COOKIE_NAME,session_token,max_age=result['expires']-int(auth.now()),
                                 secure=True,httponly=True,samesite='Lax',path='/')
         return response
 
@@ -184,8 +189,14 @@ def create_app(*, stores=None, origin=None, development=False):
 
     @app.route('/api/contacts/invite',methods=['POST'])
     def invite():
-        owner=account(True); payload()
-        return jsonify(runtime.invite(owner['node_id']))
+        owner=account(True); body=payload()
+        return jsonify(runtime.invite(owner['node_id'],peer_name=body.get('peer_name','')))
+
+    @app.post('/api/invitations/preview')
+    def preview_invite():
+        if request.headers.get('Origin') != origin:
+            return jsonify(error='Origin not allowed'),403
+        return jsonify(runtime.preview_invite(payload().get('invite_token')))
 
     @app.post('/api/contacts/accept')
     def accept_invite():

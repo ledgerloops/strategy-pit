@@ -26,6 +26,7 @@ from webauthn.helpers.structs import (AuthenticatorSelectionCriteria,
 
 COOKIE_NAME = '__Host-ledgerloops_session'
 SESSION_SECONDS = 7 * 24 * 60 * 60
+DEMO_SESSION_SECONDS = 365 * 24 * 60 * 60
 CHALLENGE_SECONDS = 5 * 60
 
 
@@ -57,7 +58,7 @@ def digest(value):
 
 class HostedAuth:
     def __init__(self, db, *, origin='https://app.ledgerloops.com', rp_id='app.ledgerloops.com',
-                 development=False, now=time.time):
+                 development=False, recovery_codes_enabled=False, now=time.time):
         parsed = urlsplit(origin)
         if (parsed.path or parsed.query or parsed.fragment or parsed.username or
                 parsed.password or parsed.hostname != rp_id):
@@ -66,6 +67,7 @@ class HostedAuth:
                 development and parsed.scheme == 'http' and rp_id in ('localhost', '127.0.0.1')):
             raise ValueError('HTTPS origin required')
         self.db, self.origin, self.rp_id, self.now = db, origin, rp_id, now
+        self.recovery_codes_enabled = recovery_codes_enabled
         self.lock = threading.RLock()
         with self.lock, self.db:
             self.db.executescript('''
@@ -132,9 +134,9 @@ class HostedAuth:
             session = self._authorized(token, csrf_token, origin)
             return self._account(session['account_id'])
 
-    def _issue_session(self, account_id):
+    def _issue_session(self, account_id, *, seconds=SESSION_SECONDS):
         token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
-        expires = int(self.now()) + SESSION_SECONDS
+        expires = int(self.now()) + seconds
         self.db.execute('INSERT INTO auth_sessions VALUES(?,?,?,?)',
                         (digest(token), account_id, csrf, expires))
         return dict(account=self._account(account_id), session_token=token,
@@ -169,13 +171,40 @@ class HostedAuth:
             exclude_credentials=credentials)
         return json.loads(options_to_json(options))
 
-    def begin_registration(self, display_name, origin):
-        self.check_origin(origin)
+    @staticmethod
+    def _display_name(display_name):
         if not isinstance(display_name, str) or not 1 <= len(display_name.strip()) <= 80:
             raise AuthError('Choose a display name of 1 to 80 characters')
         name = display_name.strip()
         if any(ord(char) < 32 for char in name):
             raise AuthError('Display name contains control characters')
+        return name
+
+    def start_demo(self, display_name, origin, session_token=None):
+        """Keep one browser's TEST identity in a durable opaque cookie session."""
+        self.check_origin(origin)
+        with self.lock, self.db:
+            try:
+                session = self._session(session_token)
+            except AuthError:
+                session = None
+            if session:
+                # Repeated signup in an already enrolled browser never changes
+                # identity, even when another display name was entered.
+                expires = max(session['expires'], int(self.now()) + DEMO_SESSION_SECONDS)
+                self.db.execute('UPDATE auth_sessions SET expires=? WHERE token_hash=?',
+                                (expires, digest(session_token)))
+                return dict(account=self._account(session['account_id']), session_token=session_token,
+                            csrf_token=session['csrf'], expires=expires)
+            name = self._display_name(display_name)
+            account_id = secrets.token_hex(16)
+            self.db.execute('INSERT INTO auth_accounts VALUES(?,?,?,?)',
+                            (account_id, 'n_'+account_id, name, int(self.now())))
+            return self._issue_session(account_id, seconds=DEMO_SESSION_SECONDS)
+
+    def begin_registration(self, display_name, origin):
+        self.check_origin(origin)
+        name = self._display_name(display_name)
         with self.lock, self.db:
             account_id = secrets.token_hex(16)
             ident, challenge = self._challenge('register', dict(account_id=account_id, name=name))
@@ -199,6 +228,7 @@ class HostedAuth:
                          verified.sign_count, int(self.now())))
 
     def _new_recovery_codes(self, account_id):
+        self._require_recovery_codes()
         codes = [secrets.token_urlsafe(24) for _ in range(8)]
         self.db.execute('DELETE FROM auth_recovery WHERE account_id=?', (account_id,))
         for code in codes:
@@ -215,7 +245,8 @@ class HostedAuth:
                             (account_id, 'n_'+account_id, context['name'], int(self.now())))
             self._save_credential(account_id, verified)
             result = self._issue_session(account_id)
-            result['recovery_codes'] = self._new_recovery_codes(account_id)
+            if self.recovery_codes_enabled:
+                result['recovery_codes'] = self._new_recovery_codes(account_id)
             return result
 
     def begin_authentication(self, origin):
@@ -284,9 +315,14 @@ class HostedAuth:
             self.db.execute('DELETE FROM auth_sessions WHERE token_hash=?', (digest(session_token),))
             return dict(ok=True)
 
+    def _require_recovery_codes(self):
+        if not self.recovery_codes_enabled:
+            raise AuthError('Recovery codes are disabled')
+
     def recover(self, account_id, recovery_code, origin):
         """A one-use high-entropy recovery code restores the SAME account/node."""
         self.check_origin(origin)
+        self._require_recovery_codes()
         with self.lock, self.db:
             recovered = self.db.execute('''UPDATE auth_recovery SET consumed=1
                 WHERE account_id=? AND code_hash=? AND consumed=0''', (account_id, digest(recovery_code)))
@@ -296,6 +332,7 @@ class HostedAuth:
             return self._issue_session(account_id)
 
     def replace_recovery_codes(self, session_token, csrf_token, origin):
+        self._require_recovery_codes()
         with self.lock, self.db:
             session = self._authorized(session_token, csrf_token, origin)
             return dict(recovery_codes=self._new_recovery_codes(session['account_id']))
