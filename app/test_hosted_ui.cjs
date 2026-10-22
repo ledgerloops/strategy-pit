@@ -122,6 +122,17 @@ const {chromium} = require('playwright');
     await inviteLink.waitFor();
     const inviteUrl = await inviteLink.inputValue();
     assert.equal(inviteUrl,`${origin}/#invite=fixture-private-invitation`);
+    const acceptsBeforeHash = mutations.filter(item => item.route === '/api/contacts/accept').length;
+    // Existing participants can open an invite in the same tab without reloading
+    // the application. Fragment changes must load the preview and draft token.
+    await page.evaluate(() => {
+      window.sameDocumentInviteFixture = true;
+      location.hash = 'invite=received-fixture-invitation';
+    });
+    await page.getByRole('heading',{name:'Test person invited you',exact:true}).waitFor();
+    assert.equal(await page.evaluate(() => window.sameDocumentInviteFixture),true,'Invite navigation must remain in the existing document');
+    assert.equal(await page.getByLabel('Invitation from your peer').inputValue(),'received-fixture-invitation');
+    assert.equal(mutations.filter(item => item.route === '/api/contacts/accept').length,acceptsBeforeHash,'An existing participant must explicitly accept the invitation');
     await page.getByLabel('Invitation from your peer').fill(`${origin}/#invite=received-fixture-invitation`);
     await page.getByRole('button',{name:'Accept invitation'}).click();
     await page.waitForFunction(() => document.querySelector('#notice').textContent.includes('Invitation accepted'));
