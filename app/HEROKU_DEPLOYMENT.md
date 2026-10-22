@@ -2,7 +2,8 @@
 
 Deployment target: **https://app.ledgerloops.com**. The root `ledgerloops.com`
 website and other DNS records are not changed. The source contains a Python
-Heroku application with release, web and worker processes, PostgreSQL-backed
+Heroku application with a release process and one web dyno running both HTTP
+and background worker processes, PostgreSQL-backed
 durable local stores, passkey accounts, session cookies and neighbour envelopes.
 This document and the deployment script do not establish that a public deployment
 has happened; verify the release and public application after execution.
@@ -10,8 +11,9 @@ has happened; verify the release and public application after execution.
 ## Required access and resources
 
 - The intended Heroku account, a chosen unique app name and permission to create
-  or update that app. A new deployment provisions one Basic web dyno, one Basic
-  worker and `heroku-postgresql:essential-0`; these are paid resources.
+  or update that app. A new deployment provisions one Basic web dyno and
+  `heroku-postgresql:essential-0`; these are paid resources, approximately
+  USD 12/month before tax (USD 7 dyno plus USD 5 PostgreSQL).
 - DNS access for `app.ledgerloops.com`. Use Heroku's generated DNS target, never
   a guessed IP or the app's ordinary `herokuapp.com` hostname.
 - A committed SHA containing all deployment inputs. The script archives committed
@@ -49,7 +51,8 @@ change root-domain, email, TXT or unrelated records.
 
 The script uses the Heroku Sources API to upload a short-lived source archive,
 creates a build pinned to the SHA, waits for a successful build and release phase,
-then scales web/worker processes. It sets `PUBLIC_ORIGIN=https://app.ledgerloops.com`,
+then scales one Basic web dyno and disables any legacy standalone worker dyno.
+It sets `PUBLIC_ORIGIN=https://app.ledgerloops.com`,
 `PGSSLMODE=require` and `PYTHONUNBUFFERED=1`. Existing secrets are retained. It adds
 the custom domain and enables Automated Certificate Management (ACM).
 
@@ -64,7 +67,8 @@ If API credentials are unavailable but the local browser is signed into Heroku:
 1. Open the intended Heroku app, or create a Cedar/Heroku-24 Python app in EU.
 2. Attach persistent Heroku Postgres and set the public configuration above.
 3. Deploy the pinned repository commit, ensuring its release phase succeeds.
-4. Enable one Basic `web` and one Basic `worker` process.
+4. Enable one Basic `web` dyno and disable any old standalone `worker` dyno.
+   `hosted_single.py` supervises Gunicorn and the background worker within web.
 5. Add `app.ledgerloops.com` in Settings → Domains and enable ACM.
 6. Copy the generated `*.herokudns.com` target into the DNS provider's CNAME for
    `app`. With Cloudflare, start DNS-only so Heroku certificate validation can
@@ -76,14 +80,17 @@ lasting passkeys only after `https://app.ledgerloops.com` works.
 
 ## Verify before announcing availability
 
-- Heroku shows successful build/release and running web **and** worker processes.
+- Heroku shows successful build/release and one running Basic web dyno. Its
+  supervisor runs both Gunicorn and background wakeups; either service exiting
+  fails the dyno so Heroku can restart it. SIGTERM reaches both service process
+  groups, with forced cleanup after 20 seconds (Gunicorn gets 15 seconds to drain).
 - DNS resolves the custom domain to its assigned target; ACM has issued a valid
   certificate. HTTPS `/healthz` returns `service: ledgerloops-alpha`, `status: ok`.
 - Sign up with a passkey on the canonical domain. Save recovery codes privately.
   Sign out/in and exercise second-passkey/recovery using isolated TEST accounts.
 - Establish mutually accepted trustlines and comfort zones; propose and approve
   TEST obligations, then run headroom clearing and inspect local receipts/history.
-- Restart web and worker dynos and confirm account identity, obligations, balances
+- Restart the web dyno and confirm account identity, obligations, balances
   and pending protocol state persist. Do not restore an old ledger snapshot to
   release reservations or discard pending work.
 - Verify that operator-access and TEST-only disclosures are visible. The headroom
@@ -104,7 +111,10 @@ database can invalidate outstanding obligations and hashlock decisions.
 
 ```sh
 python -m unittest discover -s ops -p 'test_*.py' -v
+python -m unittest discover -s app -p 'test_hosted_single.py' -v
 ```
 
 These tests use mocked provider APIs and a temporary local Git repository. They
 do not create live resources or demonstrate real account/DNS authorization.
+The supervisor checks use real isolated subprocesses to verify service failure,
+signal forwarding and bounded cleanup without accessing a database.

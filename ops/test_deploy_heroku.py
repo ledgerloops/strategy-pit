@@ -15,9 +15,10 @@ from deploy_heroku import (Api, DeploymentError, ORIGIN, HOSTNAME, REQUIRED_SOUR
 
 
 class FakeHeroku:
-    def __init__(self, *, exists=True, database=True, origin=ORIGIN):
+    def __init__(self, *, exists=True, database=True, origin=ORIGIN, old_worker=True):
         self.exists = exists
         self.calls = []
+        self.old_worker = old_worker
         self.config = {'PUBLIC_ORIGIN': origin, 'EXISTING_SECRET': 'retained'}
         if database:
             self.config['DATABASE_URL'] = 'private-url-never-logged'
@@ -47,6 +48,8 @@ class FakeHeroku:
             return {'id': 'build', 'status': 'successful', 'release': {'id': 'release'}}
         if path.endswith('/releases/release'):
             return {'status': 'succeeded', 'version': 3}
+        if path.endswith('/formation') and method == 'GET':
+            return [{'type': 'web'}] + ([{'type': 'worker'}] if self.old_worker else [])
         if path.endswith('/domains'):
             return [{'hostname': HOSTNAME, 'cname': 'alpha.herokudns.com', 'acm_status': 'pending'}]
         return {}
@@ -81,21 +84,27 @@ class DeployTests(unittest.TestCase):
         build = next(body for method, path, body in api.calls if method == 'POST' and path.endswith('/builds'))
         self.assertEqual(build['source_blob']['version'], 'a'*40)
         release_index = next(i for i,c in enumerate(api.calls) if c[1].endswith('/releases/release'))
-        formation_index = next(i for i,c in enumerate(api.calls) if c[1].endswith('/formation'))
+        formation_index = next(i for i,c in enumerate(api.calls) if c[0] == 'PATCH' and c[1].endswith('/formation'))
         self.assertLess(release_index, formation_index)
+        self.assertEqual(api.calls[formation_index][2]['updates'], [
+            {'type': 'web', 'quantity': 1, 'dyno_size': {'name': 'Basic'}},
+            {'type': 'worker', 'quantity': 0},
+        ])
         self.assertFalse(any(path.endswith('/addons') for _,path,_ in api.calls))
         self.assertNotIn('private=secret', output.getvalue())
         self.assertNotIn('private-url', output.getvalue())
 
     @patch('deploy_heroku.healthy', return_value=False)
     def test_create_app_and_database_only_when_missing(self, _):
-        api = FakeHeroku(exists=False, database=False)
+        api = FakeHeroku(exists=False, database=False, old_worker=False)
         with contextlib.redirect_stdout(io.StringIO()):
             deploy(api, 'test-alpha', 'a'*40, Path('/unused'), 'SHA256:checksum',
                    uploader=lambda *args: None, waiter=immediate)
         self.assertEqual(sum(method == 'POST' and path == '/apps' for method,path,_ in api.calls), 1)
         addon = next(body for method,path,body in api.calls if method == 'POST' and path.endswith('/addons'))
         self.assertEqual(addon['plan'], 'heroku-postgresql:essential-0')
+        formation = next(body for method,path,body in api.calls if method == 'PATCH' and path.endswith('/formation'))
+        self.assertEqual(formation['updates'], [{'type': 'web', 'quantity': 1, 'dyno_size': {'name': 'Basic'}}])
 
     def test_existing_passkey_origin_is_not_rewritten(self):
         api = FakeHeroku(origin='https://another.example')

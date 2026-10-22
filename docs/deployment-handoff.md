@@ -63,7 +63,8 @@ must be preserved. No token rotation or fresh reseed as part of an update.
   controls, obligations/history, headroom receipt verification and automation.
   Standalone bearer-token demos remain functional. Operator access is disclosed.
 - `Procfile`, `.python-version`, `requirements.txt`, `app.json`, `.slugignore`:
-  Python/Heroku web + worker + release migration, PostgreSQL, canonical origin.
+  Python/Heroku one web dyno supervising HTTP + worker, a release migration,
+  PostgreSQL and canonical origin.
   Force the Python buildpack despite the repository's older `package.json`.
 
 Review fixes included crossed-invitation key races, rejecting automatic cancellation
@@ -106,7 +107,9 @@ were not changed or rerun, and no new performance comparison is claimed.
    Never print API keys, database URLs, recovery codes or full config dumps.
 2. Follow [the Heroku runbook](../app/HEROKU_DEPLOYMENT.md). Inspect existing apps
    first. Deploy the pushed commit with Python buildpack, durable PostgreSQL,
-   one web and one worker process, and `PUBLIC_ORIGIN=https://app.ledgerloops.com`.
+   one Basic web dyno running both HTTP and background worker processes, and
+   `PUBLIC_ORIGIN=https://app.ledgerloops.com`. Disable the old standalone worker
+   dyno when updating a two-dyno release; the user requested one dyno locally.
    The release phase initializes storage idempotently. Review current plan/billing
    facts, not assumed historical prices. Do not touch unrelated existing apps.
 3. Add `app.ledgerloops.com` to Heroku and obtain its actual DNS target. Determine

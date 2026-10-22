@@ -211,9 +211,12 @@ def deploy(api, app, commit, archive, checksum, *, region='eu', dns=None,
         raise DeploymentError('Build has no release; refusing to report deployment success')
     release = waiter(lambda: api.request('GET', base+'/releases/'+release_id),
                      lambda value: value.get('status') == 'succeeded', ('failed',), timeout=900)
-    api.request('PATCH', base+'/formation', dict(updates=[
-        dict(type='web', quantity=1, dyno_size=dict(name='Basic')),
-        dict(type='worker', quantity=1, dyno_size=dict(name='Basic'))]))
+    formation = api.request('GET', base+'/formation')
+    updates = [dict(type='web', quantity=1, dyno_size=dict(name='Basic'))]
+    # Older releases used a second dyno. Disable it if it remains in formation.
+    if any(item.get('type') == 'worker' for item in formation):
+        updates.append(dict(type='worker', quantity=0))
+    api.request('PATCH', base+'/formation', dict(updates=updates))
     custom = domain(api, app)
     if custom is None:
         custom = api.request('POST', base+'/domains', dict(hostname=HOSTNAME, sni_endpoint=None))

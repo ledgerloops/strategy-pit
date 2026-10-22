@@ -75,8 +75,11 @@ Retries repair interrupted enrollment without rotating an established peer key.
 
 ## Durability and operations
 
-Heroku web processes serve the UI, accounts and local-node APIs; separate worker
-processes recover outboxes and initiate explicitly enabled local work. PostgreSQL
+One Basic Heroku web dyno runs Gunicorn for the UI, accounts and local-node APIs
+alongside a background worker that recovers outboxes and initiates explicitly
+enabled local work. `hosted_single.py` supervises both process groups: either
+service exiting fails the dyno, and termination stops both with bounded cleanup.
+There is no separately billed worker dyno. PostgreSQL
 is authoritative for accounts and every node. The current compatibility adapter
 stores each private in-memory SQLite image in a separate PostgreSQL row, committing
 the ledger and outbox together before success. There are no authoritative SQLite
