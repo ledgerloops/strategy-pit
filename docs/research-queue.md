@@ -683,3 +683,28 @@ names or introductory text. Updated the clipboard payload and confirmation copy.
 The hosted Chromium suite passed; Heroku v10 deployed source
 `a77a7d1f8eb4fd2fb93377735fda167116518144`. Live frontend bytes match the
 committed update and canonical HTTPS health passed.
+
+### 22 October 2026 — private peer labels, messages and relationship history
+
+The user showed two peer entries named Michiel and asked for Rename, Send message
+and View history containing messages, value deliveries and loop-clearing events.
+Private aliases update only the selected owner's contact metadata. Native modal
+forms retain drafts through polling. Direct-peer messages use their own local
+tables and authenticated neighbour outboxes, with stable IDs, exact duplicate
+checks, delivery acknowledgments and account-scoped browser retry state. Messaging
+also works while a financial relationship is reserved or has zero balance.
+
+History queries filter durable own-node records for the requested peer before
+paging, so old completed clearings cannot disappear behind failed search noise.
+Load earlier retains already displayed records. Rendering escapes text, including
+HTML-like aliases and messages, and preserves message newlines. Completed clearing
+entries show the selected peer's before/after balance; message actions never
+change a balance, limit, reservation or protocol decision. Worker batches prioritize
+financial envelopes over chat to avoid an offline chat queue blocking clearing.
+
+Validation: all **201 Python app tests** passed with real isolated PostgreSQL,
+including independent ACK-loss/restart/privacy/queue-priority fixtures. Both
+updated Chromium suites passed real HTTP delivery, private rename isolation,
+zero/reserved-edge chat, escaped mixed history, old-page loading and stable-ID
+retry after a lost response. Independent desktop/mobile real-browser QA passed
+including 4xx error retention and clearing stale errors after reconciliation.

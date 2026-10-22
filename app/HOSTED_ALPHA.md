@@ -36,6 +36,21 @@ deployment; the deployment record must include the actual release and live check
   exactly who will owe whom. Sending and confirming are explicit actions without
   extra consent toggles. The other peer must confirm before posting. API/storage
   names retain `obligation` for compatibility.
+- **Rename** saves a private label on the selected direct relationship. It never
+  changes the other participant's identity, their own labels, balances or limits.
+  **Send message** is available even on zero-balance or reserved relationships.
+  Outgoing text and its stable request ID are committed with the sender's durable
+  outbox; authenticated neighbour HTTP delivers it into the recipient's own store.
+  Retries and duplicate delivery preserve a single record on each side. Delivered
+  means the recipient's node committed it, not that the person has read it.
+- **View history** combines this peer's incoming/outgoing messages, value delivery
+  records and completed loop clearings in date order. It filters by direct peer
+  before paging 100 entries at a time; Load earlier retrieves older records.
+  Aborted discovery attempts are omitted from this operational history, while
+  protocol audit records remain available in the existing advanced activity view.
+  Message text and private labels are rendered as text, with retained drafts and
+  stable-ID retry/reconciliation if a send response is lost. Financial protocol
+  envelopes take priority over chat in the worker's outgoing batch.
 - Real cancellation and [comfort-zone headroom clearing](headroom_protocol.md),
   with local reservations, context-bound SHA-256 fulfillment and durable retries.
   Hosted clearing runs automatically in the background within bilateral comfort

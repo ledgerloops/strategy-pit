@@ -1,7 +1,8 @@
 # LedgerLoops hashlock network app
 
 **22 October 2026 hosted alpha:** browser-cookie demo identities, durable PostgreSQL storage,
-named trust invitations, peer comfort bars, value delivery dialogs and automatic
+named trust invitations, private peer labels, messages, combined relationship
+history, peer comfort bars, value delivery dialogs and automatic
 background headroom clearing are implemented.
 See [hosted architecture and limits](HOSTED_ALPHA.md),
 [clearing theory and protocol](headroom_protocol.md) and

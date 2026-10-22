@@ -8,6 +8,8 @@
   if (hosted) document.body.classList.add("hosted-demo");
   let hostedAccount = null, csrfToken = "", invitation = null, invitationDraft = "", invitePeerName = "", invitePreview = null;
   let inviteMaxTrust = "10", acceptMaxTrust = "10", hostedModal = null, dialogKey = "", dialogReturnFocus = null;
+  const renameDrafts = new Map(), messageDrafts = new Map(), pendingMessages = new Map(), peerHistories = new Map();
+  let dialogNoticeText = "", dialogNoticeError = false;
   const hostedDialog = hosted ? document.createElement("dialog") : null;
   if (hostedDialog) {
     hostedDialog.id = "hosted-dialog";
@@ -41,6 +43,11 @@
       if (value) sessionStorage.setItem(key,JSON.stringify(value));
       else sessionStorage.removeItem(key);
     } catch (_) { /* In-memory idempotency still protects retries in this page. */ }
+  }
+  function rememberPendingMessage(peer, message) {
+    if (message) pendingMessages.set(peer,message); else pendingMessages.delete(peer);
+    try { sessionStorage.setItem(`ledgerloops.hosted.${hostedAccount.id}.messages.pending`,JSON.stringify([...pendingMessages])); }
+    catch (_) { /* The in-memory request ID still protects retries in this page. */ }
   }
   let preferenceGeneration = 0, draggingControl = null, renderPending = false;
   const preferenceKeys = ["credit_limit","comfort_min","comfort_max","auto_adjust"];
@@ -129,6 +136,7 @@
     // remain unchanged, as do participant names and descriptions in the UI.
     notice.textContent = hosted ? String(text).replace(/\bObligations\b/g,"Value deliveries").replace(/\bobligations\b/g,"value deliveries").replace(/\bObligation\b/g,"Value delivery").replace(/\bobligation\b/g,"value delivery") : text;
     notice.classList.toggle("error", error);
+    if (hostedModal) { dialogNoticeText = notice.textContent; dialogNoticeError = error; }
     const dialogNotice = hostedDialog?.querySelector("[data-dialog-notice]");
     if (dialogNotice) { dialogNotice.textContent = notice.textContent; dialogNotice.classList.toggle("error",error); }
   }
@@ -159,6 +167,14 @@
       if (session.account?.name) session = await api("/auth/demo/start",{display_name:session.account.name});
       if (!session.account?.id || typeof session.csrf_token !== "string") throw new Error("Incomplete demo identity. Reopen the demo to try again.");
       hostedAccount = session.account; csrfToken = session.csrf_token;
+      try {
+        const saved = JSON.parse(sessionStorage.getItem(`ledgerloops.hosted.${hostedAccount.id}.messages.pending`) || "[]");
+        for (const [peer,message] of Array.isArray(saved) ? saved : []) {
+          if (typeof peer === "string" && /^[a-f0-9]{64}$/.test(message?.id || "") && typeof message.text === "string" && message.text.length <= 2000) {
+            pendingMessages.set(peer,message); messageDrafts.set(peer,message.text);
+          }
+        }
+      } catch (_) { /* Storage can be disabled or contain an unfinished draft. */ }
       try {
         const pending = JSON.parse(sessionStorage.getItem(`ledgerloops.hosted.${hostedAccount.id}.obligation.pending`) || "null");
         if (pending && /^[a-f0-9]{64}$/.test(pending.id) && typeof pending.peer === "string" && ["i_owe","peer_owes"].includes(pending.direction) && Number.isSafeInteger(pending.amount) && pending.amount > 0 && typeof pending.description === "string") {
@@ -237,7 +253,8 @@
   }
   function restoreDialogFocus() {
     if (!dialogReturnFocus || hostedDialog?.open || busy) return;
-    const selector = dialogReturnFocus.type === "delivery" ? `[data-record-event="${CSS.escape(dialogReturnFocus.peer)}"]` : '[data-action="invite-peer"]';
+    const attribute = {delivery:"data-record-event",rename:"data-rename-peer",message:"data-message-peer"}[dialogReturnFocus.type];
+    const selector = attribute ? `[${attribute}="${CSS.escape(dialogReturnFocus.peer)}"]` : '[data-action="invite-peer"]';
     const candidate = screen.querySelector(selector);
     const target = candidate && !candidate.disabled ? candidate : screen.querySelector('[data-action="invite-peer"]');
     if (target && !target.disabled) target.focus({preventScroll:true});
@@ -247,21 +264,26 @@
     if (!hosted || busy || !state) return;
     if (type === "invite") invitation = null;
     if (type === "delivery" && !pendingObligation && obligationDraft.peer !== peer) obligationDraft = {peer,direction:"peer_owes",amount:"",description:"",consent:false};
+    if (type === "rename" && !renameDrafts.has(peer)) renameDrafts.set(peer,peerName(peer));
+    dialogNoticeText = ""; dialogNoticeError = false;
     hostedModal = {type,peer}; dialogKey = "";
     syncHostedDialog();
   }
   function syncHostedDialog() {
     if (!hostedModal || !hostedDialog || !state) return;
-    const key = `${hostedModal.type}:${hostedModal.peer || ""}:${invitation?.invite_token || ""}`;
+    const key = `${hostedModal.type}:${hostedModal.peer || ""}:${invitation?.invite_token || ""}:${hostedModal.type === "message" ? pendingMessages.get(hostedModal.peer)?.id || "" : ""}`;
     if (key !== dialogKey) {
-      const title = hostedModal.type === "delivery" ? "Record a value delivery" : hostedModal.type === "accept" ? `${invitePreview?.inviter_name || "Your peer"} invited you` : invitation ? "Share your invitation" : "Invite a peer";
-      const body = hostedModal.type === "delivery" ? hostedEventsView(hostedModal.peer) : invitationView();
+      const title = hostedModal.type === "delivery" ? "Record a value delivery" : hostedModal.type === "rename" ? "Rename peer" : hostedModal.type === "message" ? `Message ${peerName(hostedModal.peer)}` : hostedModal.type === "accept" ? `${invitePreview?.inviter_name || "Your peer"} invited you` : invitation ? "Share your invitation" : "Invite a peer";
+      const body = hostedModal.type === "delivery" ? hostedEventsView(hostedModal.peer) : hostedModal.type === "rename" ? renamePeerView(hostedModal.peer) : hostedModal.type === "message" ? messagePeerView(hostedModal.peer) : invitationView();
       hostedDialog.innerHTML = `<div class="dialog-heading"><h2 id="dialog-title">${esc(title)}</h2><button type="button" class="secondary dialog-close" aria-label="Close dialog" data-action="close-dialog">×</button></div><div data-dialog-notice role="status" aria-live="polite"></div>${body}`;
       dialogKey = key;
+      const message = hostedDialog.querySelector("[data-dialog-notice]");
+      message.textContent = dialogNoticeText; message.classList.toggle("error",dialogNoticeError);
     }
-    for (const control of hostedDialog.querySelectorAll("input:not([readonly]),select,button")) control.disabled = busy || !online || (hostedModal.type === "delivery" && Boolean(pendingObligation || state.contacts?.find(c => c.peer === hostedModal.peer)?.reserved_by));
+    for (const control of hostedDialog.querySelectorAll("input:not([readonly]),textarea,select,button")) control.disabled = busy || !online || (hostedModal.type === "delivery" && Boolean(pendingObligation || state.contacts?.find(c => c.peer === hostedModal.peer)?.reserved_by)) || (hostedModal.type === "message" && pendingMessages.has(hostedModal.peer));
     // Closing a draft is always safe before submission, including while offline.
     for (const button of hostedDialog.querySelectorAll('[data-action="close-dialog"]')) button.disabled = busy;
+    for (const button of hostedDialog.querySelectorAll('[data-retry-message]')) button.disabled = busy;
     if (!hostedDialog.open) hostedDialog.showModal();
     const form = hostedDialog.querySelector("#new-obligation");
     if (form) form.querySelector("[data-obligation-preview]").textContent = eventPreview(state.contacts?.find(c => c.peer === hostedModal.peer),Number(obligationDraft.amount),obligationDraft.direction);
@@ -321,12 +343,14 @@
       const changed = JSON.stringify(next) !== JSON.stringify(state);
       const wasOffline = !online;
       state = next; fulfillmentChecks = checks; online = true; lastSeen = new Date();
+      reconcileMessages(next.messages || []);
       if (pendingObligation && (next.obligations || []).some(item => item.id === pendingObligation.id)) {
         if (hostedModal?.type === "delivery" && hostedModal.peer === pendingObligation.peer) closeHostedDialog(true);
         rememberPendingObligation(null);
         obligationDraft = {peer:obligationDraft.peer,direction:"i_owe",amount:"",description:"",consent:false};
       }
       if (changed || wasOffline || manual) render(); else updateConnection();
+      if (currentHistoryPeer()) void loadPeerHistory(currentHistoryPeer());
       if (wasOffline && !manual) announce("Connected. Displayed state has been refreshed from your node.");
       if (manual) announce("Refreshed from your node. Pending work stays pending until settlement evidence arrives.");
     } catch (error) {
@@ -413,13 +437,128 @@
     return heading + `<form id="new-obligation" class="card"><h2>Propose an obligation</h2><label for="obligation-peer">Peer</label><select id="obligation-peer" name="peer" ${control}>${contacts.map(c => `<option value="${esc(c.peer)}" ${c.peer === obligationDraft.peer ? "selected" : ""}>${esc(c.name || c.peer)}</option>`).join("")}</select><label for="obligation-direction">Who owes whom?</label><select id="obligation-direction" name="direction" ${control}><option value="i_owe" ${obligationDraft.direction === "i_owe" ? "selected" : ""}>I owe this peer</option><option value="peer_owes" ${obligationDraft.direction === "peer_owes" ? "selected" : ""}>This peer owes me</option></select><label for="obligation-amount">Obligation amount (whole TEST units)</label><input id="obligation-amount" name="amount" type="number" min="1" max="1000000000" step="1" required value="${esc(obligationDraft.amount)}" ${control}><label for="obligation-description">Description (optional)</label><input id="obligation-description" name="description" type="text" maxlength="200" value="${esc(obligationDraft.description)}" ${control}><p data-obligation-preview>${after === null ? "Enter an amount to preview your balance change." : `If approved, your balance with ${esc(contact.peer)} changes from ${esc(balanceText(contact.balance))} to ${esc(balanceText(after))}.`}</p><p class="subtle">The receiving creditor must grant enough credit in Peers before a new obligation can increase debt. Submitting reserves the relationship until your peer approves or declines; you cannot withdraw a submitted proposal. An unavailable peer can leave it reserved.</p><label class="consent"><input type="checkbox" name="consent" required ${obligationDraft.consent ? "checked" : ""} ${control}> I agree to propose this TEST obligation.</label><button type="submit" ${control}>Propose obligation</button>${pendingObligation ? '<p role="status">Proposal outcome not yet confirmed. Your original request is retained; refresh to check it before retrying.</p><button type="button" class="secondary" data-retry-obligation '+(!online || busy ? "disabled" : "")+'>Retry original proposal</button>' : ""}<p class="subtle">Proposing records your agreement. Your peer must approve the same terms. No real money moves.</p></form><h2>Recent obligations</h2><p class="subtle">All unresolved proposals and up to 100 recent completed or declined entries returned by your node. Starting fixture balances are not obligation entries.</p>${(state.obligations || []).length ? state.obligations.map(obligationCard).join("") : '<p class="empty">No obligation proposals yet.</p>'}`;
   }
 
+  function renamePeerView(peer) {
+    return `<form id="rename-peer" data-peer="${esc(peer)}"><label for="peer-private-name">Peer name</label><input id="peer-private-name" name="name" type="text" maxlength="80" required value="${esc(renameDrafts.get(peer) ?? peerName(peer))}"><p class="subtle">This name is only for you. It does not change your peer’s name or your balances.</p><div class="dialog-actions"><button type="submit">Save name</button><button type="button" class="secondary" data-action="close-dialog">Cancel</button></div></form>`;
+  }
+
+  function messagePeerView(peer) {
+    const pending = pendingMessages.get(peer);
+    return `<form id="send-message" data-peer="${esc(peer)}"><label for="peer-message">Message</label><textarea id="peer-message" name="text" rows="5" maxlength="2000" required placeholder="Write to ${esc(peerName(peer))}">${esc(pending?.text ?? messageDrafts.get(peer) ?? "")}</textarea>${pending ? `<p role="status">The send outcome is not confirmed yet. Retry the original message to avoid sending it twice.</p><div class="dialog-actions"><button type="button" data-retry-message="${esc(peer)}">Retry original message</button><button type="button" class="secondary" data-action="close-dialog">Close</button></div>` : '<div class="dialog-actions"><button type="submit">Send message</button><button type="button" class="secondary" data-action="close-dialog">Cancel</button></div>'}</form>`;
+  }
+
+  const currentHistoryPeer = () => {
+    if (!hosted || !page().startsWith("history/")) return null;
+    try { return decodeURIComponent(page().slice(8)); } catch (_) { return null; }
+  };
+  const historyEntryKey = entry => `${entry.type}:${entry.type === "message" ? entry.direction : ""}:${entry.id}`;
+  async function loadPeerHistory(peer, more = false) {
+    if (!hosted || !peer || !online || !state?.contacts?.some(c => c.peer === peer)) return;
+    let cache = peerHistories.get(peer);
+    if (!cache) { cache = {entries:[],loaded:false,loading:false,total:0,error:""}; peerHistories.set(peer,cache); }
+    if (cache.loading) return;
+    const generation = sessionGeneration;
+    cache.loading = true; cache.error = "";
+    const offset = more ? cache.entries.length : 0;
+    try {
+      const result = await api(`/api/contacts/${encodeURIComponent(peer)}/history?offset=${offset}`);
+      if (generation !== sessionGeneration || peerHistories.get(peer) !== cache) return;
+      if (!Array.isArray(result.entries)) throw new Error("The history response was incomplete.");
+      const entries = new Map(cache.entries.map(entry => [historyEntryKey(entry),entry]));
+      for (const entry of result.entries) entries.set(historyEntryKey(entry),entry);
+      cache.entries = [...entries.values()].sort((a,b) => Number(b.timestamp)-Number(a.timestamp) || historyEntryKey(b).localeCompare(historyEntryKey(a)));
+      cache.total = Number.isSafeInteger(result.total) ? result.total : cache.entries.length+(result.has_more ? 1 : 0);
+      cache.loaded = true;
+      reconcileMessages(result.entries.filter(entry => entry.type === "message"));
+    } catch (error) {
+      if (generation !== sessionGeneration || peerHistories.get(peer) !== cache) return;
+      cache.error = error.name === "AbortError" ? "History did not respond. Try again." : error.message;
+    } finally {
+      if (peerHistories.get(peer) === cache) {
+        cache.loading = false;
+        if (currentHistoryPeer() === peer) render();
+      }
+    }
+  }
+  function reconcileMessages(messages) {
+    for (const [peer,pending] of pendingMessages) {
+      const recorded = messages.find(item => item.peer === peer && item.direction === "outgoing" && item.id === pending.id && item.text === pending.text);
+      if (recorded) {
+        rememberPendingMessage(peer,null); messageDrafts.delete(peer);
+        if (hostedModal?.type === "message" && hostedModal.peer === peer) closeHostedDialog(true);
+        announce(recorded.status === "delivered" ? `Message delivered to ${peerName(peer)}.` : `Message queued for ${peerName(peer)}.`);
+      }
+    }
+  }
+  function historyTime(timestamp) {
+    const date = new Date(Number(timestamp)*1000);
+    return Number(timestamp) > 0 && Number.isFinite(date.getTime()) ? `<time datetime="${date.toISOString()}">${esc(date.toLocaleString())}</time>` : "";
+  }
+  function historyEntry(entry,peer) {
+    if (entry.type === "message") {
+      const outgoing = entry.direction === "outgoing";
+      const status = outgoing ? entry.status === "delivered" ? "Delivered" : "Queued for delivery" : "Received";
+      return `<article class="history-entry history-message" data-history-type="message" data-message-id="${esc(entry.id)}"><div class="history-entry-heading"><h2>${outgoing ? "You sent a message" : `${esc(peerName(peer))} sent a message`}</h2>${historyTime(entry.timestamp)}</div><p class="message-text">${esc(entry.text)}</p><p class="subtle">${status}</p></article>`;
+    }
+    if (entry.type === "delivery") return `<div class="history-entry" data-history-type="delivery"><div class="history-entry-heading"><span class="subtle">Value delivery</span>${historyTime(entry.timestamp)}</div>${economicEventCard(entry)}</div>`;
+    if (entry.type === "clearing" && entry.status === "committed") {
+      const change = entry.changes?.find(item => item.peer === peer);
+      if (!change) return "";
+      return `<article class="history-entry history-clearing" data-history-type="clearing"><div class="history-entry-heading"><h2>Loop clearing</h2>${historyTime(entry.timestamp)}</div><p>${esc(namedBalance(change.before,peer))} → ${esc(namedBalance(change.after,peer))}</p><p class="subtle">Your balance changed as part of clearing. Your net position is preserved.</p></article>`;
+    }
+    return "";
+  }
+  function hostedHistoryView(peer) {
+    const cache = peerHistories.get(peer);
+    return intro(`History with ${peerName(peer)}`, "") + '<a href="#overview">← Back to your peers</a>' + `<div class="history-actions"><button type="button" class="secondary" data-message-peer="${esc(peer)}" ${!online || busy ? "disabled" : ""}>Send message</button><button type="button" class="text-action" data-rename-peer="${esc(peer)}" ${!online || busy ? "disabled" : ""}>Rename</button></div>` +
+      (cache?.error ? `<p class="history-error" role="status">${esc(cache.error)}</p><button type="button" class="secondary" data-history-retry="${esc(peer)}">Retry history</button>` : "") +
+      (cache?.entries.length ? `<div class="peer-history-timeline">${cache.entries.map(entry => historyEntry(entry,peer)).join("")}</div>` : `<p class="empty">${cache?.loaded ? "No history with this peer yet." : "Loading history…"}</p>`) +
+      (cache && cache.entries.length < cache.total ? `<button type="button" class="secondary" data-history-more="${esc(peer)}" ${cache.loading ? "disabled" : ""}>Load earlier</button>` : "");
+  }
+
+  async function savePeerName(peer,name) {
+    if (busy || !online) return;
+    const generation = sessionGeneration;
+    preferenceGeneration++; busy = true; render();
+    try {
+      const result = await api(`/api/contacts/${encodeURIComponent(peer)}/rename`,{name});
+      if (generation !== sessionGeneration) return;
+      if (typeof result.name !== "string") throw new Error("The rename response was incomplete.");
+      const contact = state.contacts.find(c => c.peer === peer);
+      if (contact) contact.name = result.name;
+      renameDrafts.delete(peer); closeHostedDialog(true);
+      announce("Peer name saved for you.");
+      await refresh();
+    } catch (error) {
+      if (generation !== sessionGeneration) return;
+      announce(error.name === "AbortError" ? "The rename outcome is not confirmed. Try saving the same name again." : error.message,true);
+    } finally { if (generation === sessionGeneration) { busy = false; render(); } }
+  }
+  async function sendPeerMessage(peer,message) {
+    if (busy || !online) return;
+    const generation = sessionGeneration;
+    busy = true; render();
+    try {
+      const result = await api(`/api/contacts/${encodeURIComponent(peer)}/messages`,message);
+      if (generation !== sessionGeneration) return;
+      if (!result.message || result.message.id !== message.id) throw new Error("The message response was incomplete.");
+      state.messages = [result.message,...(state.messages || []).filter(item => !(item.id === message.id && item.peer === peer && item.direction === "outgoing"))];
+      rememberPendingMessage(peer,null); messageDrafts.delete(peer);
+      peerHistories.delete(peer); closeHostedDialog(true);
+      announce(`Message queued for ${peerName(peer)}.`);
+      await refresh();
+    } catch (error) {
+      if (generation !== sessionGeneration) return;
+      const uncertain = !error.status || error.status >= 500;
+      if (!uncertain) { rememberPendingMessage(peer,null); dialogKey = ""; }
+      announce(uncertain ? "The message send outcome is not confirmed. Check history or retry the original message." : error.message,true);
+    } finally { if (generation === sessionGeneration) { busy = false; render(); } }
+  }
+
   function contactHistory(peer) {
     const contact = state.contacts?.find(c => c.peer === peer) || state.balances.find(c => c.peer === peer);
     if (!contact) return intro("Contact unavailable", "This node returned no such direct contact.") + '<a href="#peers">Back to address book</a>';
     if (hosted) {
-      const events = (state.obligations || []).filter(item => item.peer === peer);
-      return intro(`Value deliveries with ${peerName(peer)}`, "Events change your balance only after both people agree.") + '<a href="#overview">← Back to your peers</a>' +
-        (events.length ? events.map(economicEventCard).join("") : '<p>No value deliveries yet.</p>');
+      return hostedHistoryView(peer);
     }
     const receiptIds = new Set((state.receipts || []).map(r => r.id));
     const entries = [...(state.receipts || []).map(r => ({...r,receipt:true})),...state.proposals.filter(p => !receiptIds.has(p.id))].filter(p => p.changes?.some(c => c.peer === peer));
@@ -484,7 +623,8 @@
   function simplePeerCard(contact) {
     const pending = (state.obligations || []).filter(item => item.peer === contact.peer && !["committed","aborted"].includes(item.status));
     const uncertain = pendingObligation?.peer === contact.peer;
-    return `<article class="peer-card" data-peer="${esc(contact.peer)}"><div class="peer-summary"><h2>${esc(contact.name || contact.peer)}</h2><p class="peer-balance">${esc(namedBalance(contact.balance,contact.peer))}</p></div>${peerComfortBar(contact)}<div class="peer-actions"><button class="secondary" data-record-event="${esc(contact.peer)}" ${!online || busy || contact.reserved_by || pendingObligation ? "disabled" : ""}>Record a value delivery</button><a class="peer-history" href="#history/${encodeURIComponent(contact.peer)}">View deliveries</a></div>${pending.length ? `<div class="peer-pending">${pending.map(economicEventCard).join("")}</div>` : ""}${uncertain ? `<div class="peer-pending"><p role="status">Your delivery request is not confirmed yet. Check before retrying.</p><button type="button" class="secondary" data-retry-obligation ${!online || busy ? "disabled" : ""}>Retry original delivery</button></div>` : ""}</article>`;
+    const lastMessage = (state.messages || []).filter(item => item.peer === contact.peer).sort((a,b) => Number(b.created_at)-Number(a.created_at))[0];
+    return `<article class="peer-card" data-peer="${esc(contact.peer)}"><div class="peer-summary"><div class="peer-name-line"><h2>${esc(contact.name || contact.peer)}</h2><button type="button" class="text-action" data-rename-peer="${esc(contact.peer)}" ${!online || busy ? "disabled" : ""}>Rename</button></div><p class="peer-balance">${esc(namedBalance(contact.balance,contact.peer))}</p>${lastMessage ? `<a class="peer-message-preview" href="#history/${encodeURIComponent(contact.peer)}">${lastMessage.direction === "outgoing" ? "You" : esc(peerName(contact.peer))}: ${esc(lastMessage.text.slice(0,80))}${lastMessage.text.length > 80 ? "…" : ""}</a>` : ""}</div>${peerComfortBar(contact)}<div class="peer-actions"><button class="secondary" data-record-event="${esc(contact.peer)}" ${!online || busy || contact.reserved_by || pendingObligation ? "disabled" : ""}>Record a value delivery</button><a class="peer-history" href="#history/${encodeURIComponent(contact.peer)}">View history</a><button type="button" class="text-action" data-message-peer="${esc(contact.peer)}" ${!online || busy ? "disabled" : ""}>Send message</button></div>${pending.length ? `<div class="peer-pending">${pending.map(economicEventCard).join("")}</div>` : ""}${uncertain ? `<div class="peer-pending"><p role="status">Your delivery request is not confirmed yet. Check before retrying.</p><button type="button" class="secondary" data-retry-obligation ${!online || busy ? "disabled" : ""}>Retry original delivery</button></div>` : ""}</article>`;
   }
 
   function hostedHome() {
@@ -734,6 +874,22 @@
     const form = event.target;
     if (!(form instanceof HTMLFormElement)) return;
     event.preventDefault();
+    if (hosted && form.id === "rename-peer") {
+      const name = String(new FormData(form).get("name") || "").trim();
+      if (!name) { announce("Enter a name for this peer.",true); return; }
+      renameDrafts.set(form.dataset.peer,name);
+      await savePeerName(form.dataset.peer,name); return;
+    }
+    if (hosted && form.id === "send-message") {
+      if (busy || !online || pendingMessages.has(form.dataset.peer)) return;
+      const text = String(new FormData(form).get("text") || "").trim();
+      if (!text || text.length > 2000) { announce("Write a message of up to 2,000 characters.",true); return; }
+      const id = Array.from(crypto.getRandomValues(new Uint8Array(32)),b => b.toString(16).padStart(2,"0")).join("");
+      messageDrafts.set(form.dataset.peer,text);
+      const message = {id,text};
+      rememberPendingMessage(form.dataset.peer,message);
+      await sendPeerMessage(form.dataset.peer,message); return;
+    }
     if (hosted && form.id === "create-invitation") {
       const values = new FormData(form);
       invitePeerName = String(values.get("peer_name") || "").trim();
@@ -795,6 +951,10 @@
   });
 
   document.addEventListener("input", event => {
+    const renameForm = event.target.closest("#rename-peer");
+    if (renameForm) { renameDrafts.set(renameForm.dataset.peer,event.target.value); return; }
+    const messageForm = event.target.closest("#send-message");
+    if (messageForm && !pendingMessages.has(messageForm.dataset.peer)) { messageDrafts.set(messageForm.dataset.peer,event.target.value); return; }
     if (hosted && event.target.closest("#create-invitation")) {
       if (event.target.name === "peer_name") invitePeerName = event.target.value;
       if (event.target.name === "max_trust") { inviteMaxTrust = event.target.value; hostedDialog.querySelector("[data-invite-policy]").textContent = `Your comfort zone: ${trustRange(inviteMaxTrust)}. Comfort clearing is automatic.`; }
@@ -837,6 +997,17 @@
   document.addEventListener("click", async event => {
     const button = event.target.closest("button");
     if (!button || button.disabled) return;
+    if (hosted && button.dataset.renamePeer) { openHostedDialog("rename",button.dataset.renamePeer); return; }
+    if (hosted && button.dataset.messagePeer) { openHostedDialog("message",button.dataset.messagePeer); return; }
+    if (hosted && button.dataset.retryMessage) {
+      const peer = button.dataset.retryMessage;
+      await refresh(true);
+      if (pendingMessages.has(peer)) await sendPeerMessage(peer,pendingMessages.get(peer));
+      return;
+    }
+    if (hosted && (button.dataset.historyMore || button.dataset.historyRetry)) {
+      await loadPeerHistory(button.dataset.historyMore || button.dataset.historyRetry,Boolean(button.dataset.historyMore)); return;
+    }
     if (hosted && button.dataset.action === "invite-peer") { openHostedDialog("invite"); return; }
     if (hosted && button.dataset.action === "close-dialog") { closeHostedDialog(); return; }
     if (hosted && button.dataset.action === "hosted-retry") { await bootstrapHosted(); return; }
@@ -902,7 +1073,7 @@
     }
   });
 
-  window.addEventListener("hashchange", () => { render(); loadInvitationFromHash(); });
+  window.addEventListener("hashchange", () => { render(); loadInvitationFromHash(); if (currentHistoryPeer()) void loadPeerHistory(currentHistoryPeer()); });
   window.addEventListener("offline", () => { online = false; render(); announce("Browser offline. Displayed balances may be stale. Pending requests need recovery, not a blind resubmission.", true); });
   window.addEventListener("online", () => refresh());
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
