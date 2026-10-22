@@ -207,7 +207,7 @@ def deploy(api, app, commit, archive, checksum, *, region='eu', dns=None,
     build = api.request('POST', base+'/builds', dict(source_blob=dict(url=source['get_url'], version=commit, checksum=checksum)))
     emit('building', app=app, commit=commit)
     build = waiter(lambda: api.request('GET', base+'/builds/'+build['id']),
-                   lambda value: value.get('status') == 'successful', ('failed',), timeout=1800)
+                   lambda value: value.get('status') in ('succeeded', 'successful'), ('failed',), timeout=1800)
     release_id = (build.get('release') or {}).get('id')
     if not release_id:
         raise DeploymentError('Build has no release; refusing to report deployment success')

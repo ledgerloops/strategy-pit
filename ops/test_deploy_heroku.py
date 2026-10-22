@@ -45,7 +45,7 @@ class FakeHeroku:
         if path.endswith('/builds'):
             return {'id': 'build'}
         if path.endswith('/builds/build'):
-            return {'id': 'build', 'status': 'successful', 'release': {'id': 'release'}}
+            return {'id': 'build', 'status': 'succeeded', 'release': {'id': 'release'}}
         if path.endswith('/releases/release'):
             return {'status': 'succeeded', 'version': 3}
         if path.endswith('/formation') and method == 'GET':
