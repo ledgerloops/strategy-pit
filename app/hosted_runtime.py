@@ -19,6 +19,7 @@ from urllib.request import Request, urlopen
 from private_node import Node, PROTOCOL
 
 NODE_ID = re.compile(r'n_[0-9a-f]{32}\Z')
+MAX_TRUST = 10**9
 
 
 class HostedRuntime:
@@ -63,6 +64,10 @@ class HostedRuntime:
         columns = {row[1] for row in db.execute('PRAGMA table_info(hosted_invites)')}
         if 'peer_name' not in columns:
             db.execute("ALTER TABLE hosted_invites ADD COLUMN peer_name TEXT NOT NULL DEFAULT ''")
+        if 'max_trust' not in columns:
+            db.execute('ALTER TABLE hosted_invites ADD COLUMN max_trust INTEGER NOT NULL DEFAULT 10')
+        if 'accepted_max_trust' not in columns:
+            db.execute('ALTER TABLE hosted_invites ADD COLUMN accepted_max_trust INTEGER')
 
     @staticmethod
     def _automatic_clearing_defaults(node):
@@ -144,7 +149,14 @@ class HostedRuntime:
             node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automation',?)", ('true' if enabled else 'false',))
         return dict(enabled=enabled)
 
-    def invite(self, node_id, peer_name=''):
+    @staticmethod
+    def _max_trust(value):
+        if type(value) is not int or not 0 <= value <= MAX_TRUST:
+            raise ValueError('Maximum trust must be a whole TEST amount between 0 and 1000000000')
+        return value
+
+    def invite(self, node_id, peer_name='', max_trust=10):
+        max_trust = self._max_trust(max_trust)
         if (not isinstance(peer_name, str) or len(peer_name) > 80 or
                 any(unicodedata.category(char) in ('Cc', 'Cf', 'Cs') for char in peer_name)):
             raise ValueError('Peer name must be at most 80 characters without control characters')
@@ -154,11 +166,12 @@ class HostedRuntime:
         with self.node(node_id) as node:
             config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
             node.db.execute('DELETE FROM hosted_invites WHERE expires<? AND accepted_by IS NULL', (time.time(),))
-            node.db.execute('INSERT INTO hosted_invites(token_hash,expires,peer_name) VALUES(?,?,?)',
-                            (hashlib.sha256(token.encode()).hexdigest(), expires, peer_name))
+            node.db.execute('INSERT INTO hosted_invites(token_hash,expires,peer_name,max_trust) VALUES(?,?,?,?)',
+                            (hashlib.sha256(token.encode()).hexdigest(), expires, peer_name, max_trust))
         invitation = node_id+'.'+token
         return dict(invite_token=invitation, expires_at=expires, inviter_name=config.get('label', ''),
-                    peer_name=peer_name, invite_url=self.origin+'/#invite='+quote(invitation, safe=''))
+                    peer_name=peer_name, max_trust=max_trust,
+                    invite_url=self.origin+'/#invite='+quote(invitation, safe=''))
 
     def _invitation(self, invitation):
         if not isinstance(invitation, str) or len(invitation) > 200 or '.' not in invitation:
@@ -170,17 +183,18 @@ class HostedRuntime:
         return issuer, hashlib.sha256(token.encode()).hexdigest()
 
     def preview_invite(self, invitation):
-        """Only names/expiry are disclosed to a bearer of an unused invitation."""
+        """Only names, offered trust and expiry reach an unused invite bearer."""
         issuer, token_hash = self._invitation(invitation)
         with self.node(issuer) as node:
-            row = node.db.execute('SELECT expires,accepted_by,peer_name FROM hosted_invites WHERE token_hash=?',
+            row = node.db.execute('SELECT expires,accepted_by,peer_name,max_trust FROM hosted_invites WHERE token_hash=?',
                                   (token_hash,)).fetchone()
             if not row or row['accepted_by'] is not None or row['expires'] < time.time():
                 raise ValueError('Invitation expired or unavailable')
             config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
-            return dict(inviter_name=config.get('label', ''), peer_name=row['peer_name'], expires_at=row['expires'])
+            return dict(inviter_name=config.get('label', ''), peer_name=row['peer_name'],
+                        max_trust=row['max_trust'], expires_at=row['expires'])
 
-    def _connect_local(self, node_id, peer, key):
+    def _connect_local(self, node_id, peer, key, max_trust=10):
         """Enrollment is a separate local action at each endpoint, at zero debt."""
         with self.node(node_id) as node:
             config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
@@ -191,7 +205,10 @@ class HostedRuntime:
             config['peers'][peer] = dict(url=self.origin+'/nodes/'+peer, key=key, balance=0)
             node.peers[peer] = config['peers'][peer]
             node.db.execute('INSERT INTO balances VALUES(?,0)', (peer,))
-            own = dict(revision=1,credit_limit=10,comfort_min=-10,comfort_max=10,auto_adjust=True)
+            # Positive balance means this peer owes us. Round the half bound
+            # down: whole TEST balances <= MAX/2 are exactly those <= MAX//2.
+            own = dict(revision=1, credit_limit=max_trust, comfort_min=-max_trust,
+                       comfort_max=max_trust//2, auto_adjust=True)
             node.db.execute('INSERT INTO contacts VALUES(?,?,NULL)', (peer,json.dumps(own)))
             node.enqueue(peer, dict(kind='preferences',protocol=PROTOCOL,preferences=own))
             node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))
@@ -206,7 +223,8 @@ class HostedRuntime:
                 config['peers'][peer]['name'] = name
                 node.db.execute("UPDATE meta SET v=? WHERE k='hosted_config'", (json.dumps(config),))
 
-    def accept_invite(self, node_id, invitation):
+    def accept_invite(self, node_id, invitation, max_trust=10):
+        max_trust = self._max_trust(max_trust)
         issuer, token_hash = self._invitation(invitation)
         if issuer == node_id:
             raise ValueError('Invite a different participant')
@@ -217,8 +235,14 @@ class HostedRuntime:
                 raise ValueError('Invitation expired or unavailable')
             if row['accepted_by'] not in (None,node_id):
                 raise ValueError('Invitation already accepted')
-            node.db.execute('UPDATE hosted_invites SET accepted_by=? WHERE token_hash=?',
-                            (node_id,token_hash))
+            # Fix the recipient's independent choice before either local
+            # enrollment. A crash/retry cannot substitute different bounds.
+            accepted_max_trust = row['accepted_max_trust']
+            if accepted_max_trust is None:
+                accepted_max_trust = max_trust if row['accepted_by'] is None else 10
+            node.db.execute('UPDATE hosted_invites SET accepted_by=?,accepted_max_trust=? WHERE token_hash=?',
+                            (node_id,accepted_max_trust,token_hash))
+            issuer_max_trust = row['max_trust']
             peer_name = row['peer_name']
             config = json.loads(node.db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()[0])
             inviter_name = config.get('label', '')
@@ -237,9 +261,9 @@ class HostedRuntime:
             enrollment.close()
         # Retrying the same invitation completes either half after a crash.
         # This is bilateral account enrollment, never a clearing decision.
-        self._connect_local(node_id,issuer,key)
+        self._connect_local(node_id,issuer,key,accepted_max_trust)
         self._name_local(node_id,issuer,inviter_name)
-        self._connect_local(issuer,node_id,key)
+        self._connect_local(issuer,node_id,key,issuer_max_trust)
         self._name_local(issuer,node_id,peer_name)
         return dict(ok=True,peer=issuer)
 

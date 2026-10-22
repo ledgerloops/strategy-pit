@@ -190,7 +190,8 @@ def create_app(*, stores=None, origin=None, development=False):
     @app.route('/api/contacts/invite',methods=['POST'])
     def invite():
         owner=account(True); body=payload()
-        return jsonify(runtime.invite(owner['node_id'],peer_name=body.get('peer_name','')))
+        return jsonify(runtime.invite(owner['node_id'],peer_name=body.get('peer_name',''),
+                                      max_trust=body.get('max_trust',10)))
 
     @app.post('/api/invitations/preview')
     def preview_invite():
@@ -200,8 +201,9 @@ def create_app(*, stores=None, origin=None, development=False):
 
     @app.post('/api/contacts/accept')
     def accept_invite():
-        owner=account(True)
-        return jsonify(runtime.accept_invite(owner['node_id'],payload().get('invite_token')))
+        owner=account(True); body=payload()
+        return jsonify(runtime.accept_invite(owner['node_id'],body.get('invite_token'),
+                                            max_trust=body.get('max_trust',10)))
 
     @app.post('/api/automation')
     def automation():

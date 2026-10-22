@@ -140,7 +140,27 @@ class HostedDemoGatewayTests(unittest.TestCase):
             response = self.client.post('/api/contacts/invite', base_url=ORIGIN,
                        headers={'Origin': ORIGIN, 'X-CSRF-Token': enrolled['csrf_token']}, json={'peer_name': 'Bob'})
             self.assertEqual(response.status_code, 200)
-            invite.assert_called_once_with(enrolled['account']['node_id'], peer_name='Bob')
+            invite.assert_called_once_with(enrolled['account']['node_id'], peer_name='Bob', max_trust=10)
+
+    def test_trust_choices_reach_invite_and_accept_from_current_cookie_account(self):
+        enrolled = self.start().get_json()
+        runtime = self.app.extensions['hosted_runtime']
+        headers = {'Origin': ORIGIN, 'X-CSRF-Token': enrolled['csrf_token']}
+        with patch.object(runtime, 'provision'), patch.object(runtime, 'invite', return_value={}) as invite, \
+                patch.object(runtime, 'accept_invite', return_value={}) as accept:
+            response = self.client.post('/api/contacts/invite', base_url=ORIGIN, headers=headers,
+                                       json={'peer_name': 'Bob', 'max_trust': 31})
+            self.assertEqual(response.status_code, 200)
+            invite.assert_called_once_with(enrolled['account']['node_id'], peer_name='Bob', max_trust=31)
+            response = self.client.post('/api/contacts/accept', base_url=ORIGIN, headers=headers,
+                                       json={'invite_token': 'opaque-token', 'max_trust': 13})
+            self.assertEqual(response.status_code, 200)
+            accept.assert_called_once_with(enrolled['account']['node_id'], 'opaque-token', max_trust=13)
+            accept.reset_mock()
+            response = self.client.post('/api/contacts/accept', base_url=ORIGIN, headers=headers,
+                                       json={'invite_token': 'legacy-token'})
+            self.assertEqual(response.status_code, 200)
+            accept.assert_called_once_with(enrolled['account']['node_id'], 'legacy-token', max_trust=10)
 
 
 @unittest.skipUnless(os.environ.get('LEDGERLOOPS_TEST_POSTGRES_DSN'),
@@ -204,6 +224,27 @@ class HostedGatewayTests(unittest.TestCase):
         invitation = self.post(first, '/api/contacts/invite', {})['invite_token']
         self.post(second, '/api/contacts/accept', {'invite_token': invitation})
         return invitation
+
+    def test_invitation_trust_is_independent_and_invalid_accept_does_not_consume_link(self):
+        alice, bob = self.enroll('Alice'), self.enroll('Bob')
+        invitation = self.post(alice, '/api/contacts/invite', {'peer_name': 'Bob', 'max_trust': 25})
+        for path, body in (('/api/contacts/invite', {'peer_name': 'Bob', 'max_trust': 10**9+1}),
+                           ('/api/contacts/accept', {'invite_token': invitation['invite_token'], 'max_trust': True})):
+            response = bob['client'].post(path, base_url=ORIGIN,
+                headers={'Origin': ORIGIN, 'X-CSRF-Token': bob['csrf_token']}, json=body)
+            self.assertEqual(response.status_code, 400)
+            self.assertIn('Maximum trust', response.get_json()['error'])
+        response = self.app.test_client().post('/api/invitations/preview', base_url=ORIGIN,
+                   headers={'Origin': ORIGIN}, json={'invite_token': invitation['invite_token']})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()['max_trust'], 25)
+        self.post(bob, '/api/contacts/accept', {'invite_token': invitation['invite_token'], 'max_trust': 9})
+        self.pump()
+        own_alice, own_bob = (self.get(user, '/api/state')['contacts'][0]['own'] for user in (alice, bob))
+        self.assertEqual((own_alice['credit_limit'], own_alice['comfort_min'], own_alice['comfort_max']), (25, -25, 12))
+        self.assertEqual((own_bob['credit_limit'], own_bob['comfort_min'], own_bob['comfort_max']), (9, -9, 4))
+        self.post(bob, '/api/contacts/accept', {'invite_token': invitation['invite_token'], 'max_trust': 100})
+        self.assertEqual(self.get(bob, '/api/state')['contacts'][0]['own'], own_bob)
 
     def deliver(self, request, timeout):
         self.deliveries.append((request.full_url, dict(request.header_items()), json.loads(request.data)))
@@ -276,7 +317,7 @@ class HostedGatewayTests(unittest.TestCase):
         alice, bob = self.enroll('Alice'), self.enroll('Bob')
         self.connect(alice, bob)
         self.pump()
-        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=True)
+        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=5, auto_adjust=True)
         for user in (alice, bob):
             state = self.get(user, '/api/state')
             self.assertTrue(state['automation']['enabled'])

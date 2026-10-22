@@ -261,29 +261,32 @@ class PostgresSnapshotTests(unittest.TestCase):
         for ident in (issuer, joiner):
             self.keys.append(runtime.key(ident))
             runtime.provision(dict(node_id=ident, name='Storage test account'))
-        invitation = runtime.invite(issuer)['invite_token']
+        invitation = runtime.invite(issuer, max_trust=22)['invite_token']
         connect_local = runtime._connect_local
 
-        def fail_second_endpoint(node_id, peer, key):
+        def fail_second_endpoint(node_id, peer, key, max_trust=10):
             if node_id == issuer:
                 raise RuntimeError('Simulated crash between endpoints')
-            connect_local(node_id, peer, key)
+            connect_local(node_id, peer, key, max_trust)
 
         with patch.object(runtime, '_connect_local', side_effect=fail_second_endpoint):
             with self.assertRaisesRegex(RuntimeError, 'between endpoints'):
-                runtime.accept_invite(joiner, invitation)
+                runtime.accept_invite(joiner, invitation, max_trust=9)
         with runtime.node(joiner) as node:
             retained_key = node.peers[issuer]['key']
         self.assertEqual(len(runtime.state(issuer)['contacts']), 0)
         # A new runtime knows nothing of prior memory; same invitation repairs only
         # missing enrollment. No cross-node transaction or key rotation is used.
         restarted = HostedRuntime(self.factory, 'https://example.test')
-        restarted.accept_invite(joiner, invitation)
+        restarted.accept_invite(joiner, invitation, max_trust=99)
         for ident, other in ((issuer, joiner), (joiner, issuer)):
             restarted.provision(dict(node_id=ident, name='Storage test account'))
             with restarted.node(ident) as node:
                 self.assertEqual(node.peers[other]['key'], retained_key)
                 self.assertEqual(node.balance(other), 0)
+                own = json.loads(node.db.execute('SELECT own FROM contacts WHERE peer=?', (other,)).fetchone()[0])
+                self.assertEqual(own['credit_limit'], 22 if ident == issuer else 9)
+                self.assertEqual(own['comfort_max'], 11 if ident == issuer else 4)
 
 
 if __name__ == '__main__':

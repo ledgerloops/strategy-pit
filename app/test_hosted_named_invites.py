@@ -48,7 +48,8 @@ class HostedNamedInviteTests(unittest.TestCase):
         self.assertEqual(url.query, '')
         self.assertEqual(parse_qs(url.fragment), {'invite': [invite['invite_token']]})
         preview = self.runtime.preview_invite(invite['invite_token'])
-        self.assertEqual(preview, dict(inviter_name='Alice', peer_name='Robert', expires_at=invite['expires_at']))
+        self.assertEqual(preview, dict(inviter_name='Alice', peer_name='Robert', max_trust=10,
+                                       expires_at=invite['expires_at']))
         with self.runtime.node(self.alice) as node:
             self.assertNotIn(node.token, json.dumps(preview))
         self.assertEqual(self.runtime.state(self.alice)['contacts'], [])
@@ -66,7 +67,7 @@ class HostedNamedInviteTests(unittest.TestCase):
     def test_new_defaults_apply_only_to_new_relationships(self):
         invitation = self.runtime.invite(self.alice, 'Bob')['invite_token']
         self.runtime.accept_invite(self.bob, invitation)
-        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=10, auto_adjust=True)
+        expected = dict(revision=1, credit_limit=10, comfort_min=-10, comfort_max=5, auto_adjust=True)
         self.assertEqual(self.contact(self.alice)['own'], expected)
         self.assertEqual(self.contact(self.bob)['own'], expected)
         with self.runtime.node(self.alice) as node:
@@ -140,19 +141,22 @@ class HostedNamedInviteTests(unittest.TestCase):
             self.assertEqual(node.db.execute("SELECT v FROM meta WHERE k='hosted_automatic_clearing_v1'").fetchone()[0], '[]')
 
     def test_retries_new_and_crossed_invites_preserve_names_keys_and_balances(self):
-        first = self.runtime.invite(self.alice, 'Robert')['invite_token']
-        crossed = self.runtime.invite(self.bob, 'Alicia')['invite_token']
-        self.runtime.accept_invite(self.bob, first)
+        first = self.runtime.invite(self.alice, 'Robert', max_trust=30)['invite_token']
+        crossed = self.runtime.invite(self.bob, 'Alicia', max_trust=90)['invite_token']
+        self.runtime.accept_invite(self.bob, first, max_trust=14)
+        original_preferences = {node_id: self.contact(node_id)['own'] for node_id in (self.alice, self.bob)}
         with self.runtime.node(self.alice) as node:
             original_key, original_token = node.peers[self.bob]['key'], node.token
             node.db.execute('UPDATE balances SET balance=-7 WHERE peer=?', (self.bob,))
-        self.runtime.accept_invite(self.bob, first)
-        self.runtime.accept_invite(self.alice, crossed)
-        other = self.runtime.invite(self.alice, 'Replace label')['invite_token']
-        self.runtime.accept_invite(self.bob, other)
+        self.runtime.accept_invite(self.bob, first, max_trust=100)
+        self.runtime.accept_invite(self.alice, crossed, max_trust=200)
+        other = self.runtime.invite(self.alice, 'Replace label', max_trust=300)['invite_token']
+        self.runtime.accept_invite(self.bob, other, max_trust=400)
         self.assertEqual(self.contact(self.alice)['name'], 'Robert')
         self.assertEqual(self.contact(self.bob)['name'], 'Alice')
         self.assertEqual(self.contact(self.alice)['balance'], -7)
+        for node_id in (self.alice, self.bob):
+            self.assertEqual(self.contact(node_id)['own'], original_preferences[node_id])
         with self.runtime.node(self.alice) as node:
             self.assertEqual(node.peers[self.bob]['key'], original_key)
             self.assertEqual(node.token, original_token)
@@ -171,9 +175,11 @@ class HostedNamedInviteTests(unittest.TestCase):
         self.runtime.provision(dict(node_id=self.alice, name='Replacement'))
         self.assertEqual(self.runtime.preview_invite(invitation)['inviter_name'], 'Alice')
         self.assertEqual(self.runtime.preview_invite(invitation)['peer_name'], '')
+        self.assertEqual(self.runtime.preview_invite(invitation)['max_trust'], 10)
         self.runtime.accept_invite(self.bob, invitation)
         self.assertEqual(self.contact(self.alice)['name'], '')
         self.assertEqual(self.contact(self.bob)['name'], 'Alice')
+        self.assertEqual(self.contact(self.alice)['own']['comfort_max'], 5)
 
     def test_name_validation_expiry_and_invalid_bearers(self):
         for value in (None, 12, 'x'*81, 'Bob\nSmith', 'Bob\x00', 'Bob\x7f', 'Bob\u202e'):
@@ -190,21 +196,68 @@ class HostedNamedInviteTests(unittest.TestCase):
                 self.runtime.accept_invite(self.bob, invite['invite_token'])
 
     def test_interrupted_connection_retry_preserves_intended_names(self):
-        invitation = self.runtime.invite(self.alice, 'Robert')['invite_token']
+        invitation = self.runtime.invite(self.alice, 'Robert', max_trust=25)['invite_token']
         connect = self.runtime._connect_local
 
-        def interrupted(node_id, peer, key):
+        def interrupted(node_id, peer, key, max_trust=10):
             if node_id == self.alice:
                 raise RuntimeError('Interrupted between endpoints')
-            connect(node_id, peer, key)
+            connect(node_id, peer, key, max_trust)
 
         with patch.object(self.runtime, '_connect_local', interrupted):
             with self.assertRaises(RuntimeError):
-                self.runtime.accept_invite(self.bob, invitation)
+                self.runtime.accept_invite(self.bob, invitation, max_trust=9)
         restarted = HostedRuntime(self.stores, self.runtime.origin)
-        restarted.accept_invite(self.bob, invitation)
+        restarted.accept_invite(self.bob, invitation, max_trust=99)
         self.assertEqual(self.contact(self.alice)['name'], 'Robert')
         self.assertEqual(self.contact(self.bob)['name'], 'Alice')
+        self.assertEqual(self.contact(self.alice)['own'], dict(revision=1, credit_limit=25,
+                         comfort_min=-25, comfort_max=12, auto_adjust=True))
+        self.assertEqual(self.contact(self.bob)['own'], dict(revision=1, credit_limit=9,
+                         comfort_min=-9, comfort_max=4, auto_adjust=True))
+
+    def test_independent_trust_is_shared_in_each_endpoints_signed_view(self):
+        invitation = self.runtime.invite(self.alice, 'Bob', max_trust=21)
+        self.assertEqual(invitation['max_trust'], 21)
+        self.assertEqual(self.runtime.preview_invite(invitation['invite_token'])['max_trust'], 21)
+        self.runtime.accept_invite(self.bob, invitation['invite_token'], max_trust=8)
+        for node_id in (self.alice, self.bob):
+            with self.runtime.node(node_id) as node:
+                messages = [(row['id'], row['peer'], node.peers[row['peer']]['key'],
+                             json.loads(row['data'])) for row in node.db.execute('SELECT * FROM outbox')]
+            for ident, peer, key, data in messages:
+                self.runtime.receive(peer, node_id, 'Bearer '+key, data)
+                with self.runtime.node(node_id) as node:
+                    node.db.execute('DELETE FROM outbox WHERE id=?', (ident,))
+        alice, bob = self.contact(self.alice), self.contact(self.bob)
+        self.assertEqual(alice['own'], dict(revision=1, credit_limit=21, comfort_min=-21,
+                                          comfort_max=10, auto_adjust=True))
+        self.assertEqual(bob['own'], dict(revision=1, credit_limit=8, comfort_min=-8,
+                                        comfort_max=4, auto_adjust=True))
+        self.assertEqual(alice['peer_preferences'], bob['own'])
+        self.assertEqual(bob['peer_preferences'], alice['own'])
+        self.assertEqual((alice['hard_min'], alice['hard_max']), (-8, 21))
+        self.assertEqual((alice['shared_comfort']['min'], alice['shared_comfort']['max']), (-4, 8))
+        self.assertEqual((bob['shared_comfort']['min'], bob['shared_comfort']['max']), (-8, 4))
+
+    def test_trust_validation_rejects_invalid_values_without_consuming_invitation(self):
+        invitation = self.runtime.invite(self.alice)['invite_token']
+        for value in (None, True, False, -1, 1.0, 0.5, '10', 10**9+1, {}, []):
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ValueError, 'Maximum trust'):
+                    self.runtime.invite(self.alice, 'Bob', max_trust=value)
+                with self.assertRaisesRegex(ValueError, 'Maximum trust'):
+                    self.runtime.accept_invite(self.bob, invitation, max_trust=value)
+                self.assertEqual(self.runtime.preview_invite(invitation)['max_trust'], 10)
+        self.runtime.accept_invite(self.bob, invitation, max_trust=0)
+        self.assertEqual(self.contact(self.bob)['own'], dict(revision=1, credit_limit=0,
+                         comfort_min=0, comfort_max=0, auto_adjust=True))
+
+    def test_maximum_trust_boundary_is_supported(self):
+        invitation = self.runtime.invite(self.alice, max_trust=10**9)['invite_token']
+        self.runtime.accept_invite(self.bob, invitation, max_trust=1)
+        self.assertEqual(self.contact(self.alice)['own']['credit_limit'], 10**9)
+        self.assertEqual(self.contact(self.bob)['own']['comfort_max'], 0)
 
 
 if __name__ == '__main__':
