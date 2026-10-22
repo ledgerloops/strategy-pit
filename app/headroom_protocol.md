@@ -18,7 +18,10 @@ zero-balance trustlines are eligible; unknown nodes and nonexistent relationship
 are not. Each participant checks its own two edge changes and conserved signed net
 position. There is no history-of-gains requirement or independent prohibition on
 increasing local exposure. The surrounding application still requires the proposal's
-actual approval; assistance eligibility alone does not override manual consent.
+actual approval. Standalone demos obtain it manually. Hosted demo nodes perform
+that approval automatically under their saved background-clearing policy, after
+checking bilateral assistance and exact current comfort/hard bounds; economic-event confirmation remains separate. Assistance eligibility alone does not
+change the standalone demo's manual consent rule.
 
 The alpha selects a safe subset of these permitted changes. For an operation amount
 `a > 0`, each affected balance moves by exactly `a`, and no edge crosses through zero.

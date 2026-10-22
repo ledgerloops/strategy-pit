@@ -1,7 +1,7 @@
 # LedgerLoops hashlock network app
 
 **22 October 2026 hosted alpha:** browser-cookie demo identities, durable PostgreSQL storage,
-named invitation links and bounded-surplus headroom clearing are now implemented.
+named invitation links and automatic background headroom clearing are implemented.
 See [hosted architecture and limits](HOSTED_ALPHA.md),
 [clearing theory and protocol](headroom_protocol.md) and
 [Heroku deployment](HEROKU_DEPLOYMENT.md). The target is `app.ledgerloops.com`;

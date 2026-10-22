@@ -622,3 +622,46 @@ receipt consistency and restart persistence of cookie identities/ledgers/pending
 reservations. Older deployed TEST accounts and balances are unchanged. Chrome
 also retained the existing user identity and showed only the named invite flow
 before its first peer. See [current deployment details](deployment-handoff.md).
+
+### 22 October 2026 — automatic hosted background clearing
+
+The user explicitly requested background discovery and clearing without finding
+loops or approving each clearing. Hosted demo defaults now enable node-local
+automation and bilateral assistance within the existing bounds. Economic events
+still require peer confirmation. The hosted Clearing route is status-only; the
+standalone research demo retains its manual discovery/approval controls.
+
+A versioned local migration upgrades only untouched revision-one legacy assistance
+defaults, preserving existing bounds, custom opt-outs, paused state, identities,
+keys, balances and protocol history. Reserved edges defer their preference upgrade
+until settlement finishes; no immutable approved snapshot or reservation is reset.
+The old node-wide default is upgraded once, with later explicit opt-outs retained.
+
+Real runtime ticks and browser/HTTP/PostgreSQL fixtures verify debt-reducing
+clearing after economic-event confirmations without manual clearing API calls.
+Discovery remains opportunistic and incomplete; unit-size adjustments can be
+gradual, and unavailable peers can leave durable work pending. No global optimum,
+bounded completion or hostile-peer safety claim is added.
+
+### 22 October 2026 — approved peer-list wireframes and value deliveries
+
+The user approved name-only onboarding, named invitations with independent MAX
+trust (10 TEST prefilled), own comfort [-MAX, floor(MAX/2)] and shared default
+[-5,5], and selected **Record a value delivery** for a goods/service balance delta.
+Invite and delivery forms are native modals, full screen on phones. Existing
+account identities, cookies, peer keys, ledgers and custom preferences are retained.
+
+Invite/accept MAX choices are validated and persisted independently before local
+enrollment, so retries after either endpoint crashes retain the first choice.
+The UI shows provider-to-recipient direction and the resulting balance before
+sending, preserves drafts through polling, and closes reconciled uncertain
+requests so a successful delivery cannot be accidentally posted as a new request.
+The previously verified automatic-clearing changes are included in this release.
+
+Validation before deployment: all 192 Python app tests pass with isolated real
+PostgreSQL; all three Chromium suites pass (including single-step invitation
+onboarding, same-tab acceptance, both delivery directions, Escape/draft/focus
+behavior, mobile layout, lost-response reconciliation, and zero browser clearing
+requests). Independent real-HTTP visual QA confirms native dialogs, asymmetric
+comfort bars and peer confirmation. Automatic clearing still uses local saved
+permissions and neighbour messages, not a centralized routing decision.

@@ -16,27 +16,33 @@ deployment; the deployment record must include the actual release and live check
   passkeys and sessions are retained; legacy passkey APIs remain available.
   Recovery-code issuance/redemption is disabled by default; the explicit server
   setting `LEDGERLOOPS_RECOVERY_CODES_ENABLED=1` restores the legacy feature.
-- Named invitations provide shareable `https://app.ledgerloops.com/#invite=…`
-  links, including the inviter's name and an optional intended peer name. The
-  secret stays in the URL fragment, outside server request paths. Its holder can
-  preview the names and expiry, then explicitly accept after starting a demo.
-  Display labels do not change routing identities or authorize balance changes.
-  Private invitations establish zero-balance direct relationships. No public roster
-  or network graph is supplied to nodes. Both endpoints set their own credit grants,
-  comfort zones and assistance preference before headroom can be used.
-- A simple hosted flow: enter your name, invite peers by name, then record an
-  economic event from a peer card. Navigation and advanced controls stay hidden
-  until a peer exists; clearing and limits live under Advanced afterward.
-  Each event changes a trustline balance and requires the other peer's approval;
-  it does not set an absolute balance. API/storage names retain `obligation` for
-  compatibility. New relationships start with 10 TEST credit, comfort [-10,10],
-  and assistance/automation off. Existing preferences are never reset.
+- Named invitations create private `https://app.ledgerloops.com/#invite=…` links
+  containing the inviter's name and intended peer name. The secret stays in the
+  fragment, outside server request paths. Preview discloses names, expiry and the
+  inviter's chosen maximum trust. An invited newcomer enters their name and own
+  maximum, then explicitly connects in one step. Returning browser identities
+  remain the same account; a display name is never an authentication credential.
+- Both parties independently select maximum trust, prefilled with 10 TEST. For
+  MAX, new local preferences are credit MAX and comfort [-MAX, floor(MAX/2)],
+  with bilateral assistance enabled. Default shared comfort is [-5,5]. Whole TEST
+  units round the positive half down for odd maxima. Existing relationship bounds,
+  keys, labels, custom opt-outs and balances remain unchanged.
+- Before the first peer, the home shows the name and an invitation action only.
+  The operational view lists peers, named balances and shared comfort bands.
+  **Invite a peer** and **Record a value delivery** open native modal dialogs
+  (full screen on phones), with keyboard dismissal and retained drafts.
+- A value delivery records goods or services moving from the selected provider
+  to their peer. Its TEST amount adds to the current balance; the form previews
+  exactly who will owe whom. Sending and confirming are explicit actions without
+  extra consent toggles. The other peer must confirm before posting. API/storage
+  names retain `obligation` for compatibility.
 - Real cancellation and [comfort-zone headroom clearing](headroom_protocol.md),
   with local reservations, context-bound SHA-256 fulfillment and durable retries.
-- Explicit optional background clearing. Enabling it allows own-node searches and
-  conditional approval of clearing only when both endpoints of each local edge
-  enable assistance and the quoted results stay inside shared comfort zones.
-  It never automatically approves a new obligation. Default is manual approval.
+  Hosted clearing runs automatically in the background within bilateral comfort
+  permissions; it never confirms new value deliveries. Discovery is opportunistic,
+  not exhaustive, and sleeping peers can leave work durably pending. The hosted
+  clearing view reports status without manual loop discovery or approval controls.
+  Standalone research controls remain available in the original local demo.
 
 The original local demo remains usable with its existing bearer tokens and data
 directory. Hosted sign-in uses cookies and never exposes those protocol credentials

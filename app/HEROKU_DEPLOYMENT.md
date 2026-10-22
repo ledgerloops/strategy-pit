@@ -90,8 +90,10 @@ demo identities only after `https://app.ledgerloops.com` works.
   cookie returns to the same account/node, while a separate isolated browser gets
   a new identity. Verify no passkey/recovery prompt appears. Check a named invitation
   link preserves inviter/peer names through signup and requires explicit acceptance.
-- Establish mutually accepted trustlines and comfort zones; propose and approve
-  TEST obligations, then run headroom clearing and inspect local receipts/history.
+- Establish mutually accepted trustlines, record and confirm TEST value deliveries,
+  then wait for background headroom clearing and inspect local receipts/history.
+  Verify no browser discovery or per-clearing approval is needed; automatic
+  clearing must never confirm a new value delivery on a peer's behalf.
 - Restart the web dyno and confirm account identity, obligations, balances
   and pending protocol state persist. Do not restore an old ledger snapshot to
   release reservations or discard pending work.

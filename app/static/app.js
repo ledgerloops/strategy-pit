@@ -7,6 +7,15 @@
   const hosted = window.LEDGERLOOPS_HOSTED === true || document.body.dataset.hosted === "true";
   if (hosted) document.body.classList.add("hosted-demo");
   let hostedAccount = null, csrfToken = "", invitation = null, invitationDraft = "", invitePeerName = "", invitePreview = null;
+  let inviteMaxTrust = "10", acceptMaxTrust = "10", hostedModal = null, dialogKey = "", dialogReturnFocus = null;
+  const hostedDialog = hosted ? document.createElement("dialog") : null;
+  if (hostedDialog) {
+    hostedDialog.id = "hosted-dialog";
+    hostedDialog.setAttribute("aria-labelledby","dialog-title");
+    document.body.append(hostedDialog);
+    hostedDialog.addEventListener("cancel",event => { event.preventDefault(); closeHostedDialog(); });
+    hostedDialog.addEventListener("close",() => { if (!hostedDialog.open) { hostedModal = null; dialogKey = ""; } });
+  }
   let incomingInvitation = hosted ? new URLSearchParams(location.hash.slice(1)).get("invite") : null;
   if (incomingInvitation) invitationDraft = incomingInvitation;
   const connectedIdentity = () => hosted ? Boolean(hostedAccount) : Boolean(token);
@@ -71,7 +80,7 @@
     const verified = fulfillmentChecks.get(receipt.id) === "verified";
     const released = receipt.status === "committed" && receipt.local_fulfilled === true;
     const explanation = verified ? "This browser verified that the released fulfillment matches the condition. Your node reports applying your local changes. This does not prove that every other node has applied theirs." : released ? "Your node reports applying the changes. This browser has not verified matching fulfillment evidence; investigate a verification failure before relying on the receipt." : p.status === "aborted" ? "Your node recorded an abort. No fulfillment was released in this receipt." : "Your approval is conditional on a matching fulfillment. The node retains reservations while it waits for a valid outcome.";
-    return `<div class="card"><h3>Conditional clearing</h3><p>${explanation}</p><details><summary>Local verification details</summary><p>Condition (SHA-256)<br><code>${esc(p.condition || "Not supplied")}</code></p>${released && typeof receipt.preimage === "string" ? `<p>Released fulfillment<br><code>${esc(receipt.preimage)}</code></p><p>Browser check: ${esc(fulfillmentChecks.get(receipt.id) || "unavailable")}</p>` : "<p>No released fulfillment is displayed.</p>"}<p class="subtle">These details concern your local ${hosted ? "economic event" : "obligation"} changes. They do not list a complete route or other participants.</p></details></div>`;
+    return `<div class="card"><h3>Conditional clearing</h3><p>${explanation}</p><details><summary>Local verification details</summary><p>Condition (SHA-256)<br><code>${esc(p.condition || "Not supplied")}</code></p>${released && typeof receipt.preimage === "string" ? `<p>Released fulfillment<br><code>${esc(receipt.preimage)}</code></p><p>Browser check: ${esc(fulfillmentChecks.get(receipt.id) || "unavailable")}</p>` : "<p>No released fulfillment is displayed.</p>"}<p class="subtle">These details concern your local ${hosted ? "value delivery" : "obligation"} changes. They do not list a complete route or other participants.</p></details></div>`;
   }
 
   async function verifyFulfillments(next) {
@@ -118,8 +127,10 @@
   function announce(text, error = false) {
     // Translate service vocabulary only in status copy; protocol keys and URLs
     // remain unchanged, as do participant names and descriptions in the UI.
-    notice.textContent = hosted ? String(text).replace(/\bObligations\b/g,"Economic events").replace(/\bobligations\b/g,"economic events").replace(/\bObligation\b/g,"Economic event").replace(/\bobligation\b/g,"economic event") : text;
+    notice.textContent = hosted ? String(text).replace(/\bObligations\b/g,"Value deliveries").replace(/\bobligations\b/g,"value deliveries").replace(/\bObligation\b/g,"Value delivery").replace(/\bobligation\b/g,"value delivery") : text;
     notice.classList.toggle("error", error);
+    const dialogNotice = hostedDialog?.querySelector("[data-dialog-notice]");
+    if (dialogNotice) { dialogNotice.textContent = notice.textContent; dialogNotice.classList.toggle("error",error); }
   }
 
   async function api(path, body) {
@@ -177,6 +188,7 @@
       const preview = await api("/api/invitations/preview",{invite_token:token});
       if (generation !== invitationPreviewGeneration || invitationDraft !== token) return;
       invitePreview = preview;
+      openHostedDialog("accept");
     } catch (error) {
       if (generation !== invitationPreviewGeneration || invitationDraft !== token) return;
       announce(error.message,true);
@@ -197,16 +209,66 @@
     return text;
   }
 
+  const maxTrustValue = value => Number.isSafeInteger(Number(value)) && Number(value) >= 0 ? Number(value) : 10;
+  const trustRange = value => `−${maxTrustValue(value)} to +${Math.floor(maxTrustValue(value)/2)} TEST`;
   function invitationView() {
     const control = !online || busy ? "disabled" : "";
+    if (hostedModal?.type === "accept") {
+      const name = invitePreview?.inviter_name || "your peer";
+      return `<p>${esc(name)} is happy for you to owe them up to ${esc(invitePreview?.max_trust ?? 10)} TEST.</p><form id="accept-invitation"><input name="invite_token" type="hidden" value="${esc(invitationDraft)}"><label for="accept-max-trust">Maximum ${esc(name)} may owe you</label><div class="trust-input"><input id="accept-max-trust" name="max_trust" type="number" min="0" max="1000000000" step="1" required value="${esc(acceptMaxTrust)}" ${control}><span>TEST</span></div><div class="trust-policy" data-accept-policy>${acceptPolicy()}</div><div class="dialog-actions"><button type="submit" ${!invitePreview || !online || busy ? "disabled" : ""}>Accept invitation</button><button type="button" class="secondary" data-action="close-dialog">Cancel</button></div></form>`;
+    }
     const url = invitation ? invitation.invite_url || `${location.origin}/#invite=${encodeURIComponent(invitation.invite_token)}` : "";
     const ownName = invitation?.inviter_name || hostedAccount?.name || "Your peer";
     const share = invitation ? `${ownName} invited${invitation.peer_name ? " " + invitation.peer_name : " you"} to LedgerLoops: ${url}` : "";
-    return `<section class="card"><h2>Connect with someone you know</h2><p>Share an invitation privately to establish a direct relationship. Each person sets their own limits; connecting creates no debt.</p><form id="create-invitation"><label for="invite-peer-name">Peer name</label><input id="invite-peer-name" name="peer_name" type="text" maxlength="80" value="${esc(invitePeerName)}" placeholder="Who are you inviting?" ${control}><button type="submit" ${control}>Create an invitation</button></form>${invitation ? `<p>${esc(ownName)} → ${esc(invitation.peer_name || "your invited peer")}</p><label>Invitation link<input readonly value="${esc(url)}" aria-label="Invitation link"></label><button type="button" class="secondary" data-action="copy-invitation">Copy invitation</button><p class="subtle">${esc(share)}</p><p class="subtle">Share only with your intended peer. Expires: ${esc(invitation.expires_at ? new Date(typeof invitation.expires_at === "number" ? invitation.expires_at*1000 : invitation.expires_at).toLocaleString() : "as stated by the server")}.</p>` : ""}${invitePreview ? `<h2>${esc(invitePreview.inviter_name)} invited you</h2><p>Accept to add ${esc(invitePreview.inviter_name)} as a direct peer. This creates no debt.</p>` : ""}${invitationDraft ? `<form id="accept-invitation"><input name="invite_token" type="hidden" value="${esc(invitationDraft)}"><button type="submit" ${!invitePreview || !online || busy ? "disabled" : ""}>Accept invitation</button></form>` : ""}</section>`;
+    if (invitation) return `<p>${esc(ownName)} → ${esc(invitation.peer_name || "your invited peer")}</p><p>Your maximum: ${esc(invitation.max_trust ?? inviteMaxTrust)} TEST. They choose their own maximum when accepting.</p><label for="invitation-link">Invitation link</label><input id="invitation-link" readonly value="${esc(url)}"><div class="dialog-actions"><button type="button" data-action="copy-invitation">Copy invitation</button><button type="button" class="secondary" data-action="close-dialog">Done</button></div><p class="subtle">${esc(share)}</p><p class="subtle">Share privately. Expires ${esc(new Date(invitation.expires_at*1000).toLocaleString())}.</p>`;
+    return `<form id="create-invitation"><label for="invite-peer-name">Their display name</label><input id="invite-peer-name" name="peer_name" type="text" maxlength="80" required value="${esc(invitePeerName)}" placeholder="e.g. Carol" ${control}><label for="invite-max-trust">Maximum they may owe you</label><div class="trust-input"><input id="invite-max-trust" name="max_trust" type="number" min="0" max="1000000000" step="1" required value="${esc(inviteMaxTrust)}" ${control}><span>TEST</span></div><p class="subtle">They choose their own maximum when they join.</p><div class="trust-policy" data-invite-policy>Your comfort zone: ${esc(trustRange(inviteMaxTrust))}.<br>Comfort clearing is automatic.</div><div class="dialog-actions"><button type="submit" ${control}>Create invite link</button><button type="button" class="secondary" data-action="close-dialog">Cancel</button></div></form>`;
+  }
+  function acceptPolicy() {
+    const own = maxTrustValue(acceptMaxTrust), peer = maxTrustValue(invitePreview?.max_trust ?? 10);
+    const lower = Math.max(-own,-Math.floor(peer/2),-peer), upper = Math.min(Math.floor(own/2),peer,own);
+    return `Your comfort zone: ${esc(trustRange(own))}.<br>Shared comfort: ${lower} to +${upper} TEST.<br>Comfort clearing is automatic.`;
+  }
+  function closeHostedDialog(force = false) {
+    if (busy && !force) return;
+    if (hostedModal) dialogReturnFocus = hostedModal;
+    hostedModal = null; dialogKey = "";
+    if (hostedDialog?.open) hostedDialog.close();
+    restoreDialogFocus();
+  }
+  function restoreDialogFocus() {
+    if (!dialogReturnFocus || hostedDialog?.open || busy) return;
+    const selector = dialogReturnFocus.type === "delivery" ? `[data-record-event="${CSS.escape(dialogReturnFocus.peer)}"]` : '[data-action="invite-peer"]';
+    const candidate = screen.querySelector(selector);
+    const target = candidate && !candidate.disabled ? candidate : screen.querySelector('[data-action="invite-peer"]');
+    if (target && !target.disabled) target.focus({preventScroll:true});
+    dialogReturnFocus = null;
+  }
+  function openHostedDialog(type,peer = null) {
+    if (!hosted || busy || !state) return;
+    if (type === "invite") invitation = null;
+    if (type === "delivery" && !pendingObligation && obligationDraft.peer !== peer) obligationDraft = {peer,direction:"peer_owes",amount:"",description:"",consent:false};
+    hostedModal = {type,peer}; dialogKey = "";
+    syncHostedDialog();
+  }
+  function syncHostedDialog() {
+    if (!hostedModal || !hostedDialog || !state) return;
+    const key = `${hostedModal.type}:${hostedModal.peer || ""}:${invitation?.invite_token || ""}`;
+    if (key !== dialogKey) {
+      const title = hostedModal.type === "delivery" ? "Record a value delivery" : hostedModal.type === "accept" ? `${invitePreview?.inviter_name || "Your peer"} invited you` : invitation ? "Share your invitation" : "Invite a peer";
+      const body = hostedModal.type === "delivery" ? hostedEventsView(hostedModal.peer) : invitationView();
+      hostedDialog.innerHTML = `<div class="dialog-heading"><h2 id="dialog-title">${esc(title)}</h2><button type="button" class="secondary dialog-close" aria-label="Close dialog" data-action="close-dialog">×</button></div><div data-dialog-notice role="status" aria-live="polite"></div>${body}`;
+      dialogKey = key;
+    }
+    for (const control of hostedDialog.querySelectorAll("input:not([readonly]),select,button")) control.disabled = busy || !online || (hostedModal.type === "delivery" && Boolean(pendingObligation || state.contacts?.find(c => c.peer === hostedModal.peer)?.reserved_by));
+    // Closing a draft is always safe before submission, including while offline.
+    for (const button of hostedDialog.querySelectorAll('[data-action="close-dialog"]')) button.disabled = busy;
+    if (!hostedDialog.open) hostedDialog.showModal();
+    const form = hostedDialog.querySelector("#new-obligation");
+    if (form) form.querySelector("[data-obligation-preview]").textContent = eventPreview(state.contacts?.find(c => c.peer === hostedModal.peer),Number(obligationDraft.amount),obligationDraft.direction);
   }
 
   function automationView() {
-    return `<section class="card"><h2>Background clearing</h2><p>${state.automation?.enabled ? "Enabled: your node can search for and approve eligible clearing while your browser is closed." : "Off: search and approve clearing yourself."}</p><p>Automatic clearing only uses relationships where both people enabled assistance and the quoted balances stay within agreed comfort zones. It never approves new ${hosted ? "economic events" : "obligations"} for you.</p><button data-action="automation" ${!online || busy ? "disabled" : ""}>${state.automation?.enabled ? "Turn off automatic clearing" : "Enable automatic clearing"}</button><p class="subtle">Turning this off stops new automatic approvals. It cannot revoke an approval already given or cancel pending settlement.</p></section>`;
+    return `<section class="card"><h2>Background clearing</h2><p>${state.automation?.enabled ? "Enabled: your node can search for and approve eligible clearing while your browser is closed." : "Paused: new automatic clearing is off. Already approved work still completes."}</p><p>Automatic clearing only uses relationships where both people enabled assistance and the quoted balances stay within agreed comfort zones. It never approves new ${hosted ? "value deliveries" : "obligations"} for you.</p><button data-action="automation" ${!online || busy ? "disabled" : ""}>${state.automation?.enabled ? "Turn off automatic clearing" : "Enable automatic clearing"}</button><p class="subtle">Turning this off stops new automatic approvals. It cannot revoke an approval already given or cancel pending settlement.</p></section>`;
   }
 
   async function invitationRequest(path, body) {
@@ -219,6 +281,7 @@
         invitation = result; announce("Invitation created. Share it privately with your intended peer.");
       } else {
         invitationDraft = ""; invitePreview = null; announce("Invitation accepted. Your direct relationship is being established; preferences synchronize through neighbour messages.");
+        closeHostedDialog(true);
         if (hosted) location.hash = "overview";
         await refresh();
       }
@@ -259,6 +322,7 @@
       const wasOffline = !online;
       state = next; fulfillmentChecks = checks; online = true; lastSeen = new Date();
       if (pendingObligation && (next.obligations || []).some(item => item.id === pendingObligation.id)) {
+        if (hostedModal?.type === "delivery" && hostedModal.peer === pendingObligation.peer) closeHostedDialog(true);
         rememberPendingObligation(null);
         obligationDraft = {peer:obligationDraft.peer,direction:"i_owe",amount:"",description:"",consent:false};
       }
@@ -354,8 +418,8 @@
     if (!contact) return intro("Contact unavailable", "This node returned no such direct contact.") + '<a href="#peers">Back to address book</a>';
     if (hosted) {
       const events = (state.obligations || []).filter(item => item.peer === peer);
-      return intro(`Economic events with ${peerName(peer)}`, "Events change your balance only after both people agree.") + '<a href="#overview">← Back to your peers</a>' +
-        (events.length ? events.map(economicEventCard).join("") : '<p>No economic events yet.</p>');
+      return intro(`Value deliveries with ${peerName(peer)}`, "Events change your balance only after both people agree.") + '<a href="#overview">← Back to your peers</a>' +
+        (events.length ? events.map(economicEventCard).join("") : '<p>No value deliveries yet.</p>');
     }
     const receiptIds = new Set((state.receipts || []).map(r => r.id));
     const entries = [...(state.receipts || []).map(r => ({...r,receipt:true})),...state.proposals.filter(p => !receiptIds.has(p.id))].filter(p => p.changes?.some(c => c.peer === peer));
@@ -389,7 +453,7 @@
     const control = locked ? "disabled" : "";
     const endpoint = value => value === 0 ? "Neither owes (0 TEST)" : balanceText(value);
     const signedRange = (min, max) => `${endpoint(min)} → ${endpoint(max)}`;
-    return `<article class="card contact"><h2>${esc(contact.name || contact.peer)}</h2><a href="#history/${encodeURIComponent(contact.peer)}">View history with ${esc(contact.name || contact.peer)}</a><p class="big">${esc(balanceText(contact.balance))}</p>${contact.reserved_by ? "<p class=\"tag\">Pending operation · preferences locked until outcome</p>" : ""}<p class="subtle">Negative: you owe this peer. Positive: this peer owes you. Zero: neither owes the other.</p><details class="contact-detail-summary"><summary>Saved limits and comfort details</summary><dl class="contact-summary"><dt>Your credit limit for this peer</dt><dd>${esc(amount(own.credit_limit))}</dd><dt>Peer’s credit limit for you</dt><dd>${peer ? esc(amount(peer.credit_limit)) : "Not received yet"}</dd><dt>Current permitted balance range</dt><dd>${contact.hard_min === null ? "Waiting for peer preferences" : esc(signedRange(contact.hard_min, contact.hard_max))}</dd><dt>Peer’s comfort range, from your viewpoint</dt><dd>${peer ? esc(signedRange(-peer.comfort_max, -peer.comfort_min)) : "Not received yet"}</dd><dt>Shared comfort zone · latest received preferences</dt><dd>${!shared ? "Waiting for peer preferences" : shared.empty ? "No shared comfort zone — your ranges do not overlap within the limits." : esc(signedRange(shared.min, shared.max))}</dd></dl></details>${outside ? "<aside>The current balance is outside the newly configured credit limits. Existing debt remains; saving a lower limit does not erase it.</aside>" : ""}<form data-contact="${esc(contact.peer)}" data-revision="${esc(draft?.expected_revision ?? own.revision)}"><h3>Your preferences</h3>${contactSliders(contact,values,index,locked)}<p class="subtle">For example, −5 to 2 means you are comfortable owing up to 5, or being owed up to 2. Your peer independently sets their own limit and comfort range.</p><label class="consent"><input name="auto_adjust" type="checkbox" ${values.auto_adjust ? "checked" : ""} ${control}> Allow this relationship to help comfort clearing</label><p class="subtle">This records your permission for neutral helping moves or increased exposure allowed by the comfort policy. Both peers must allow assistance, and each testnet proposal still requires your manual approval. It does not enable automatic execution.</p>${stale ? "<p role=\"alert\">Preferences changed since you began editing. Reload this contact before saving.</p>" : ""}<p class="subtle" data-contact-save role="status">${esc(save?.status || "Preferences save automatically when you release a control.")}</p>${save?.error && !stale ? `<button type="button" class="secondary" data-retry-contact="${esc(contact.peer)}" ${control}>Retry automatic save</button>` : ""}${draft && !save?.saving ? `<button type="button" class="secondary" data-reset-contact="${esc(contact.peer)}">Discard unsaved edits</button>` : ""}<p class="subtle">Revision ${esc(own.revision)}. Automatic saving shares your preferences with this direct peer; it does not change balances.</p></form></article>`;
+    return `<article class="card contact"><h2>${esc(contact.name || contact.peer)}</h2><a href="#history/${encodeURIComponent(contact.peer)}">View history with ${esc(contact.name || contact.peer)}</a><p class="big">${esc(balanceText(contact.balance))}</p>${contact.reserved_by ? "<p class=\"tag\">Pending operation · preferences locked until outcome</p>" : ""}<p class="subtle">Negative: you owe this peer. Positive: this peer owes you. Zero: neither owes the other.</p><details class="contact-detail-summary"><summary>Saved limits and comfort details</summary><dl class="contact-summary"><dt>Your credit limit for this peer</dt><dd>${esc(amount(own.credit_limit))}</dd><dt>Peer’s credit limit for you</dt><dd>${peer ? esc(amount(peer.credit_limit)) : "Not received yet"}</dd><dt>Current permitted balance range</dt><dd>${contact.hard_min === null ? "Waiting for peer preferences" : esc(signedRange(contact.hard_min, contact.hard_max))}</dd><dt>Peer’s comfort range, from your viewpoint</dt><dd>${peer ? esc(signedRange(-peer.comfort_max, -peer.comfort_min)) : "Not received yet"}</dd><dt>Shared comfort zone · latest received preferences</dt><dd>${!shared ? "Waiting for peer preferences" : shared.empty ? "No shared comfort zone — your ranges do not overlap within the limits." : esc(signedRange(shared.min, shared.max))}</dd></dl></details>${outside ? "<aside>The current balance is outside the newly configured credit limits. Existing debt remains; saving a lower limit does not erase it.</aside>" : ""}<form data-contact="${esc(contact.peer)}" data-revision="${esc(draft?.expected_revision ?? own.revision)}"><h3>Your preferences</h3>${contactSliders(contact,values,index,locked)}<p class="subtle">For example, −5 to 2 means you are comfortable owing up to 5, or being owed up to 2. Your peer independently sets their own limit and comfort range.</p><label class="consent"><input name="auto_adjust" type="checkbox" ${values.auto_adjust ? "checked" : ""} ${control}> Allow this relationship to help comfort clearing</label><p class="subtle">This records your permission for neutral helping moves or increased exposure allowed by the comfort policy. ${hosted ? "Both peers must allow assistance. Background clearing approves eligible adjustments within these limits automatically." : "Both peers must allow assistance, and each testnet proposal still requires your manual approval. It does not enable automatic execution."}</p>${stale ? "<p role=\"alert\">Preferences changed since you began editing. Reload this contact before saving.</p>" : ""}<p class="subtle" data-contact-save role="status">${esc(save?.status || "Preferences save automatically when you release a control.")}</p>${save?.error && !stale ? `<button type="button" class="secondary" data-retry-contact="${esc(contact.peer)}" ${control}>Retry automatic save</button>` : ""}${draft && !save?.saving ? `<button type="button" class="secondary" data-reset-contact="${esc(contact.peer)}">Discard unsaved edits</button>` : ""}<p class="subtle">Revision ${esc(own.revision)}. Automatic saving shares your preferences with this direct peer; it does not change balances.</p></form></article>`;
   }
 
   function namedBalance(value, peer) {
@@ -403,35 +467,52 @@
   function economicEventCard(item) {
     const review = !item.origin && item.status === "pending" && !item.approved;
     const control = !online || busy ? "disabled" : "";
-    const status = item.status === "committed" ? "Recorded" : item.status === "aborted" ? "Declined" : review ? "Please confirm" : item.origin ? "Waiting for your peer" : "Confirmation sent · waiting for recording";
-    return `<article class="economic-event ${item.status === "committed" ? "completed" : "pending"}" data-obligation="${esc(item.id)}"><h3>${esc(eventChange(item))}</h3><p class="event-status">${esc(status)}</p>${item.description ? `<p class="obligation-description">${esc(item.description)}</p>` : ""}<p class="subtle">${esc(namedBalance(item.before,item.peer))} → ${esc(namedBalance(item.after,item.peer))}</p>${item.reason ? `<p>${esc(item.reason)}</p>` : ""}${review ? `<form data-obligation-approve="${esc(item.id)}" data-digest="${esc(item.digest)}"><label class="consent"><input name="consent" type="checkbox" required ${control}> I agree to this economic event and balance change.</label><button type="submit" ${control}>Confirm event</button><button type="button" class="secondary" data-obligation-decline="${esc(item.id)}" data-digest="${esc(item.digest)}" ${control}>Decline event</button></form>` : ""}</article>`;
+    const status = item.status === "committed" ? "Recorded" : item.status === "aborted" ? "Declined" : review ? "Please confirm this delivery" : item.origin ? "Waiting for your peer" : "Confirmation sent · waiting for recording";
+    const delivery = item.direction === "i_owe" ? `${peerName(item.peer)} delivered value to you` : `You delivered value to ${peerName(item.peer)}`;
+    return `<article class="economic-event ${item.status === "committed" ? "completed" : "pending"}" data-obligation="${esc(item.id)}"><h3>${esc(delivery)} · ${esc(amount(item.amount))}</h3><p class="event-status">${esc(status)}</p>${item.description ? `<p class="obligation-description">${esc(item.description)}</p>` : ""}<p class="subtle">${esc(namedBalance(item.before,item.peer))} → ${esc(namedBalance(item.after,item.peer))}</p>${item.reason ? `<p>${esc(item.reason)}</p>` : ""}${review ? `<form data-obligation-approve="${esc(item.id)}" data-digest="${esc(item.digest)}"><button type="submit" ${control}>Confirm delivery</button><button type="button" class="secondary" data-obligation-decline="${esc(item.id)}" data-digest="${esc(item.digest)}" ${control}>Decline</button></form>` : ""}</article>`;
+  }
+
+  function peerComfortBar(contact) {
+    const shared = contact.shared_comfort;
+    if (!contact.peer_preferences || contact.hard_min === null || contact.hard_max === null) return '<p class="subtle">Waiting for your peer’s comfort zone…</p>';
+    const lo = Math.min(contact.hard_min,contact.balance,0), hi = Math.max(contact.hard_max,contact.balance,0), span = hi-lo;
+    const percent = n => span ? (n-lo)*100/span : 50;
+    const range = shared && !shared.empty ? `${shared.min} to ${shared.max} TEST` : "No shared comfort zone";
+    return `<div class="peer-comfort"><div class="peer-comfort-track" role="img" aria-label="${esc(namedBalance(contact.balance,contact.peer))}. Shared comfort: ${esc(range)}. Limits ${contact.hard_min} to ${contact.hard_max} TEST.">${shared && !shared.empty ? `<span class="peer-comfort-zone" style="left:${percent(shared.min)}%;width:${span ? (shared.max-shared.min)*100/span : 0}%"></span>` : ""}<span class="peer-comfort-zero" style="left:${percent(0)}%"></span><span class="peer-comfort-marker" style="left:${percent(contact.balance)}%"></span></div><div class="peer-comfort-labels"><span>${lo}</span>${lo < 0 && hi > 0 && percent(0) >= 20 && percent(0) <= 80 ? `<span class="peer-axis-zero-label" style="left:${percent(0)}%">0 TEST</span>` : ""}<span>${hi > 0 ? "+" : ""}${hi}</span></div><p class="subtle"><span class="comfort-swatch" aria-hidden="true"></span>Shared comfort: ${esc(range)}</p></div>`;
   }
 
   function simplePeerCard(contact) {
     const pending = (state.obligations || []).filter(item => item.peer === contact.peer && !["committed","aborted"].includes(item.status));
     const uncertain = pendingObligation?.peer === contact.peer;
-    return `<article class="card peer-card" data-peer="${esc(contact.peer)}"><h2>${esc(contact.name || contact.peer)}</h2><p class="peer-balance">${esc(namedBalance(contact.balance,contact.peer))}</p><button data-record-event="${esc(contact.peer)}" ${!online || busy || contact.reserved_by || pendingObligation ? "disabled" : ""}>Record an economic event</button><a class="peer-history" href="#history/${encodeURIComponent(contact.peer)}">View events</a>${pending.map(economicEventCard).join("")}${uncertain ? `<p role="status">Your event request is not confirmed yet. Check before retrying.</p><button type="button" class="secondary" data-retry-obligation ${!online || busy ? "disabled" : ""}>Retry original event</button>` : ""}</article>`;
+    return `<article class="peer-card" data-peer="${esc(contact.peer)}"><div class="peer-summary"><h2>${esc(contact.name || contact.peer)}</h2><p class="peer-balance">${esc(namedBalance(contact.balance,contact.peer))}</p></div>${peerComfortBar(contact)}<div class="peer-actions"><button class="secondary" data-record-event="${esc(contact.peer)}" ${!online || busy || contact.reserved_by || pendingObligation ? "disabled" : ""}>Record a value delivery</button><a class="peer-history" href="#history/${encodeURIComponent(contact.peer)}">View deliveries</a></div>${pending.length ? `<div class="peer-pending">${pending.map(economicEventCard).join("")}</div>` : ""}${uncertain ? `<div class="peer-pending"><p role="status">Your delivery request is not confirmed yet. Check before retrying.</p><button type="button" class="secondary" data-retry-obligation ${!online || busy ? "disabled" : ""}>Retry original delivery</button></div>` : ""}</article>`;
   }
 
   function hostedHome() {
     const contacts = state.contacts || [];
-    return intro(`Hello, ${hostedAccount?.name || state.node}.`, contacts.length ? "Your balances with people you know." : "") +
-      (contacts.length ? contacts.map(simplePeerCard).join("") : invitationView());
+    return `<div class="peers-heading"><div>${intro(contacts.length ? "Your peers" : `Hello, ${hostedAccount?.name || state.node}.`, "")}${contacts.length ? `<p class="automatic-status">${state.automation?.enabled && !state.paused ? "Clearing runs automatically in the background." : "Automatic clearing is paused for this node."}</p>` : ""}</div><button type="button" data-action="invite-peer" ${!online || busy ? "disabled" : ""}>Invite a peer</button></div>` + contacts.map(simplePeerCard).join("");
+  }
+
+  function automaticClearingView() {
+    const running = state.automation?.enabled && !state.paused;
+    const pending = (state.proposals || []).filter(proposal => ["searching","pending","approved"].includes(proposal.status));
+    return intro("Background clearing", running ? "Clearing runs automatically in the background." : "Automatic clearing is paused for this node.") +
+      '<div class="card"><p>Your node finds clearing opportunities and approves eligible adjustments within agreed comfort zones, even when this browser is closed.</p><p>Clearing preserves each person’s net position. New value deliveries still need peer confirmation.</p>' +
+      (pending.length ? `<p>${pending.length} clearing operation${pending.length === 1 ? " is" : "s are"} in progress.</p>` : '<p>Balances update when a clearing opportunity completes.</p>') +
+      '<a href="#activity">View clearing activity</a></div>';
   }
 
   function eventPreview(contact, value, direction) {
-    if (!contact || !Number.isSafeInteger(value) || value <= 0) return "Enter an amount to preview your balance change.";
-    const after = contact.balance + (direction === "i_owe" ? -value : value);
-    return `If confirmed: ${namedBalance(contact.balance,contact.peer)} → ${namedBalance(after,contact.peer)}. This adds an event to your current balance.`;
+    if (!contact || !Number.isSafeInteger(value) || value <= 0) return "Enter a value to preview your balance change.";
+    const after = Number(contact.balance) + (direction === "i_owe" ? -value : value);
+    const change = direction === "i_owe" ? `You will owe ${peerName(contact.peer)} ${amount(value)} more.` : `${peerName(contact.peer)} will owe you ${amount(value)} more.`;
+    return `${change} After confirmation: ${namedBalance(contact.balance,contact.peer)} → ${namedBalance(after,contact.peer)}.`;
   }
 
   function hostedEventsView(peer) {
     const contact = state.contacts?.find(item => item.peer === peer);
-    if (!contact) return hostedHome();
-    if (obligationDraft.peer !== peer && !pendingObligation) obligationDraft = {peer,direction:"i_owe",amount:"",description:"",consent:false};
+    if (!contact) return '<p>This peer is unavailable.</p>';
     const control = !online || busy || pendingObligation || contact.reserved_by ? "disabled" : "";
-    return intro("Record an economic event", `With ${peerName(peer)}. Both people confirm before the balance changes.`) + '<a href="#overview">← Back to your peers</a>' +
-      `<form id="new-obligation" class="card economic-event-form"><h2>${esc(peerName(peer))}</h2><input type="hidden" name="peer" value="${esc(peer)}"><label for="obligation-direction">How does this event change what you owe?</label><select id="obligation-direction" name="direction" ${control}><option value="i_owe" ${obligationDraft.direction === "i_owe" ? "selected" : ""}>I owe ${esc(peerName(peer))} more</option><option value="peer_owes" ${obligationDraft.direction === "peer_owes" ? "selected" : ""}>${esc(peerName(peer))} owes me more</option></select><label for="obligation-amount">Amount (whole TEST units)</label><input id="obligation-amount" name="amount" type="number" min="1" max="1000000000" step="1" required value="${esc(obligationDraft.amount)}" ${control}><label for="obligation-description">Description (optional)</label><input id="obligation-description" name="description" type="text" maxlength="200" value="${esc(obligationDraft.description)}" ${control}><p data-obligation-preview>${esc(eventPreview(contact,Number(obligationDraft.amount),obligationDraft.direction))}</p><label class="consent"><input type="checkbox" name="consent" required ${obligationDraft.consent ? "checked" : ""} ${control}> I agree to this economic event and balance change.</label><button type="submit" ${control}>Record event</button>${pendingObligation ? `<p role="status">Your event request is not confirmed yet.</p><button type="button" class="secondary" data-retry-obligation ${!online || busy ? "disabled" : ""}>Retry original event</button>` : ""}<p class="subtle">${esc(peerName(peer))} must confirm this event. No real money moves.</p></form>`;
+    return `<p>Between you and ${esc(peerName(peer))}</p><form id="new-obligation" class="economic-event-form"><input type="hidden" name="peer" value="${esc(peer)}"><label for="obligation-description">What was delivered?</label><input id="obligation-description" name="description" type="text" maxlength="200" placeholder="e.g. Bicycle repair" value="${esc(obligationDraft.description)}" ${control}><label for="obligation-direction">Who delivered value?</label><select id="obligation-direction" name="direction" ${control}><option value="peer_owes" ${obligationDraft.direction === "peer_owes" ? "selected" : ""}>You → ${esc(peerName(peer))}</option><option value="i_owe" ${obligationDraft.direction === "i_owe" ? "selected" : ""}>${esc(peerName(peer))} → You</option></select><label for="obligation-amount">Value in TEST</label><input id="obligation-amount" name="amount" type="number" min="1" max="1000000000" step="1" required value="${esc(obligationDraft.amount)}" ${control}><p class="delivery-preview" data-obligation-preview aria-live="polite">${esc(eventPreview(contact,Number(obligationDraft.amount),obligationDraft.direction))}</p><p class="subtle">${esc(peerName(peer))} must confirm before the balance changes.</p><div class="dialog-actions"><button type="submit" ${control}>Send for confirmation</button><button type="button" class="secondary" data-action="close-dialog">Cancel</button></div></form>`;
   }
 
   function renderHostedNavigation() {
@@ -442,13 +523,18 @@
     nav.dataset.ready = "true";
     connection.hidden = online;
     document.body.classList.toggle("hosted-onboarding",!hasPeers);
+    const brand = document.querySelector(".brand span");
+    if (brand) brand.textContent = "ledgerloops";
+    const tag = document.querySelector("header .tag");
+    if (tag) tag.textContent = hostedAccount?.name ? `${hostedAccount.name} · TEST demo` : "TEST demo";
     if (!nav.dataset.hostedShell) {
-      nav.innerHTML = '<a href="#overview">Home</a><a href="#peers">Invite someone</a><details><summary>Advanced</summary><a href="#preferences">Peer preferences</a><a href="#clearing">Clearing</a><a href="#activity">Activity and receipts</a><a href="#settings">Your node</a></details>';
+      nav.innerHTML = '<details><summary>More</summary><a href="#overview">Your peers</a><a href="#preferences">Peer preferences</a><a href="#clearing">Clearing</a><a href="#activity">Activity and receipts</a><a href="#settings">Your demo</a></details>';
       nav.dataset.hostedShell = "true";
     }
   }
 
   function render() {
+    syncHostedDialog();
     if (draggingControl && online && state) { renderPending = true; updateConnection(); return; }
     renderPending = false;
     const focused = document.activeElement;
@@ -472,6 +558,7 @@
     }
     if (hosted && !(state.contacts || []).length) {
       screen.innerHTML = hostedHome();
+      restoreDialogFocus();
       return;
     }
     const balances = state.balances;
@@ -486,23 +573,28 @@
         (Array.isArray(state.contacts) ? (state.contacts.length ? state.contacts.map(contactCard).join("") : "<p>No configured contacts yet.</p>") : `<div class="card">${balances.length ? balances.map(b => `<div class="row"><strong>${esc(b.peer)}</strong><span>${esc(balanceText(b.balance))}${b.reserved_by ? `<br><small>Reserved for pending clearing</small>` : ""}</span></div>`).join("") : "<p>No configured test peers yet.</p>"}</div><p>Contact preference editing is unavailable on this node version.</p>`) + (hosted ? invitationView() : "<aside>Peer identities and starting test balances are configured by the network operator. Invitations and ledger imports are not available yet.</aside>"),
       obligations: obligationsView,
       clearing: () => intro("Find a loop. Agree the changes.", "Discovery uses neighbour messages. Finding a loop does not approve or settle it.") +
-        `<form id="discover" class="card"><h2>Search for test clearing</h2>${comfortAvailable() || headroomAvailable() ? `<fieldset ${disabled() ? "disabled" : ""}><legend>What should this search do?</legend><label><input type="radio" name="mode" value="cancellation" ${searchMode === "cancellation" ? "checked" : ""}> Reduce existing debt</label>${headroomAvailable() ? `<label><input type="radio" name="mode" value="headroom" ${searchMode === "headroom" ? "checked" : ""}> Clear within comfort zones</label><p class="subtle">Use agreed headroom to clear loops and shorten debt paths. The alpha searches a limited set of improving adjustments; it does not guarantee all possible clearing.</p>` : ""}${comfortAvailable() ? `<label><input type="radio" name="mode" value="comfort" ${searchMode === "comfort" ? "checked" : ""}> Move toward shared comfort</label><p class="subtle">Comfort clearing can use credit in either direction, including agreed zero-balance relationships. Helping moves require bilateral assistance permission.</p>` : ""}<p class="subtle">${state.automation?.enabled ? `Your node may approve eligible clearing automatically under your saved permissions. ${hosted ? "Economic events" : "Obligations"} still need your approval.` : "Every proposal still needs your approval unless you enable automatic clearing in Your node."}</p></fieldset>` : ""}<label for="amount">${privateProtocol() ? "Exact amount (whole TEST units)" : "Maximum amount (whole TEST units)"}</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${privateProtocol() ? "<p class=\"subtle\">Search uses this exact amount. If no loop is found, a smaller amount may still clear.</p>" : ""}${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
+        `<form id="discover" class="card"><h2>Search for test clearing</h2>${comfortAvailable() || headroomAvailable() ? `<fieldset ${disabled() ? "disabled" : ""}><legend>What should this search do?</legend><label><input type="radio" name="mode" value="cancellation" ${searchMode === "cancellation" ? "checked" : ""}> Reduce existing debt</label>${headroomAvailable() ? `<label><input type="radio" name="mode" value="headroom" ${searchMode === "headroom" ? "checked" : ""}> Clear within comfort zones</label><p class="subtle">Use agreed headroom to clear loops and shorten debt paths. The alpha searches a limited set of improving adjustments; it does not guarantee all possible clearing.</p>` : ""}${comfortAvailable() ? `<label><input type="radio" name="mode" value="comfort" ${searchMode === "comfort" ? "checked" : ""}> Move toward shared comfort</label><p class="subtle">Comfort clearing can use credit in either direction, including agreed zero-balance relationships. Helping moves require bilateral assistance permission.</p>` : ""}<p class="subtle">${state.automation?.enabled ? `Your node may approve eligible clearing automatically under your saved permissions. ${hosted ? "Value deliveries" : "Obligations"} still need your approval.` : "Every proposal still needs your approval unless you enable automatic clearing in Your node."}</p></fieldset>` : ""}<label for="amount">${privateProtocol() ? "Exact amount (whole TEST units)" : "Maximum amount (whole TEST units)"}</label><input id="amount" name="amount" type="number" min="1" max="1000000000" step="1" value="1" required ${disabled() ? "disabled" : ""}><button type="submit" ${disabled() ? "disabled" : ""}>Discover a loop</button>${privateProtocol() ? "<p class=\"subtle\">Search uses this exact amount. If no loop is found, a smaller amount may still clear.</p>" : ""}${state.paused ? "<p>New clearing is paused. Resume in Your node.</p>" : ""}</form>${(state.searches || []).length ? `<div class="card"><h2>Search progress</h2>${state.searches.slice(0,5).map(s => `<p>${esc(s.status === "no_cycle_on_path" ? "No loop found on this path. Other paths may still contain opportunities." : s.status === "cycle_found" ? "Loop found — review participant proposals below." : "Searching — waiting for neighbour messages.")}</p>`).join("")}</div>` : ""}${proposals.length ? proposals.slice().reverse().map(proposalCard).join("") : "<p class=\"empty\">No proposals yet. Discovery may finish without finding a loop.</p>"}`,
       activity: () => intro("Activity and receipts", "A recorded local completion is distinct from approval or an unanswered request.") +
-        (receipts.length ? receipts.slice().reverse().map(r => `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(r.id) === "verified" : r.cycle_complete) ? "completed" : "pending"}"><h2>Test receipt</h2><span class="tag">${esc(statusText(r))}</span><p><code>${esc(r.id)}</code></p>${changesTable(r.changes)}${comfortTerms(r)}${hashlockDetails(r)}<button data-export="${esc(r.id)}" ${!online || busy ? "disabled" : ""}>Download receipt JSON</button><p class="subtle">Local testnet journal evidence. Not a bank payment or production settlement certificate.</p></article>`).join("") : "<p class=\"empty\">No receipts returned by your node.</p>") + `<h2>Proposal history</h2>${proposals.length ? proposals.slice().reverse().map(p => `<div class="card"><code>${esc(p.id)}</code><p>${esc(statusText(p))}</p></div>`).join("") : "<p>No proposals recorded.</p>"}` + (obligationsAvailable() ? `<h2>${hosted ? "Economic event" : "Obligation"} history</h2>${(state.obligations || []).length ? state.obligations.map(obligationCard).join("") : (hosted ? "<p>No economic events yet.</p>" : "<p>No obligation proposals yet.</p>")}` : ""),
+        (receipts.length ? receipts.slice().reverse().map(r => `<article class="card ${(privateProtocol() ? fulfillmentChecks.get(r.id) === "verified" : r.cycle_complete) ? "completed" : "pending"}"><h2>Test receipt</h2><span class="tag">${esc(statusText(r))}</span><p><code>${esc(r.id)}</code></p>${changesTable(r.changes)}${comfortTerms(r)}${hashlockDetails(r)}<button data-export="${esc(r.id)}" ${!online || busy ? "disabled" : ""}>Download receipt JSON</button><p class="subtle">Local testnet journal evidence. Not a bank payment or production settlement certificate.</p></article>`).join("") : "<p class=\"empty\">No receipts returned by your node.</p>") + `<h2>Proposal history</h2>${proposals.length ? proposals.slice().reverse().map(p => `<div class="card"><code>${esc(p.id)}</code><p>${esc(statusText(p))}</p></div>`).join("") : "<p>No proposals recorded.</p>"}` + (obligationsAvailable() ? `<h2>${hosted ? "Value delivery" : "Obligation"} history</h2>${(state.obligations || []).length ? state.obligations.map(obligationCard).join("") : (hosted ? "<p>No value deliveries yet.</p>" : "<p>No obligation proposals yet.</p>")}` : ""),
       settings: () => intro("Your node. Your permissions.", "The node exchanges messages while your browser is closed.") +
         `<div class="card"><div class="row"><strong>Node identity</strong><span class="node-id">${esc(state.node)}</span></div><div class="row"><strong>Mode / unit</strong><span>TESTNET / TEST</span></div><div class="row"><strong>Protocol</strong><span>${esc(protocolLabel())}</span></div><div class="row"><strong>Approval policy</strong><span>${state.automation?.enabled ? "Automatic within agreed comfort permissions" : "Ask each participant"}</span></div><button data-action="pause" ${!online || busy ? "disabled" : ""}>${state.paused ? "Resume new clearing" : "Pause new clearing"}</button><p>Pausing stops new work. Already admitted settlement messages still need recovery.</p></div>${hosted ? automationView() : ""}<div class="card"><h2>Connection</h2><p><code>${esc(location.origin)}</code></p><button class="secondary" data-action="refresh" ${busy ? "disabled" : ""}>Refresh node state</button>${hosted ? `<a class="button secondary" href="/login?manage=1">Demo identity</a><p class="subtle">This browser’s cookie remembers you. Clearing cookies or changing browsers starts a new identity. Demo reference: <code>${esc(hostedAccount.id)}</code>.</p>` : '<button class="secondary" data-action="disconnect">Disconnect this browser</button><p class="subtle">Disconnect clears this tab’s token and displayed state. It does not revoke the operator token, stop the node, or cancel pending clearing.</p>'}</div><aside>${hosted ? "Hosted TEST alpha. The operator can access node records and protocol credentials. This browser’s cookie remembers your demo identity. No real money moves." : "Test-only shared-secret authentication. The node operator holds the credentials and database. Backups, identity rotation and production key custody require further implementation and review."}</aside>`
     };
     if (hosted) {
       const preferences = views.peers;
       views.overview = hostedHome;
-      views.peers = () => intro("Invite someone", "Connect with someone you know.") + invitationView();
+      views.clearing = automaticClearingView;
+      views.peers = hostedHome;
       views.preferences = preferences;
     }
     let historyPeer = null;
     let eventPeer = null;
     if (page().startsWith("history/")) { try { historyPeer = decodeURIComponent(page().slice(8)); } catch (_) {} }
     if (hosted && page().startsWith("event/")) { try { eventPeer = decodeURIComponent(page().slice(6)); } catch (_) {} }
-    screen.innerHTML = eventPeer !== null ? hostedEventsView(eventPeer) : historyPeer !== null ? contactHistory(historyPeer) : (views[page()] || views.overview)();
+    screen.innerHTML = eventPeer !== null ? hostedHome() : historyPeer !== null ? contactHistory(historyPeer) : (views[page()] || views.overview)();
+    if (eventPeer !== null && !hostedModal) {
+      history.replaceState(null,"","/#overview");
+      openHostedDialog("delivery",eventPeer);
+    }
     if (editingObligation && editingField) {
       const field = document.querySelector("#new-obligation")?.elements.namedItem(editingField);
       if (field && !field.disabled) { field.focus({preventScroll:true}); if (selection) field.setSelectionRange(...selection); }
@@ -512,6 +604,7 @@
       const field = form?.elements.namedItem(editingField);
       if (field && !field.disabled) field.focus({preventScroll:true});
     }
+    restoreDialogFocus();
   }
 
   async function mutate(path, body, success) {
@@ -541,6 +634,7 @@
       if (proposing) {
         rememberPendingObligation(null);
         obligationDraft = {peer:body.peer,direction:"i_owe",amount:"",description:"",consent:false};
+        closeHostedDialog(true);
         if (hosted) location.hash = "overview";
       }
       announce(item?.status === "aborted" ? `Obligation not posted: ${item.reason || "proposal rejected"}.` : item?.applied_at ? "Obligation applied locally. Check its status for peer completion." : proposing ? "Obligation proposed. Waiting for your peer’s approval; no balance change yet." : "Your decision was recorded. Check the obligation status for posting progress.");
@@ -558,7 +652,7 @@
 
   function updateObligationDraft(form) {
     const values = new FormData(form);
-    obligationDraft = {peer:String(values.get("peer") || ""),direction:String(values.get("direction") || "i_owe"),amount:String(values.get("amount") || ""),description:String(values.get("description") || ""),consent:values.has("consent")};
+    obligationDraft = {peer:String(values.get("peer") || ""),direction:String(values.get("direction") || "i_owe"),amount:String(values.get("amount") || ""),description:String(values.get("description") || ""),consent:hosted || values.has("consent")};
     const contact = state?.contacts?.find(c => c.peer === obligationDraft.peer);
     const value = Number(obligationDraft.amount);
     form.querySelector("[data-obligation-preview]").textContent = contact && Number.isSafeInteger(value) && value > 0
@@ -641,14 +735,17 @@
     if (!(form instanceof HTMLFormElement)) return;
     event.preventDefault();
     if (hosted && form.id === "create-invitation") {
-      invitePeerName = String(new FormData(form).get("peer_name") || "").trim();
-      await invitationRequest("/api/contacts/invite",{peer_name:invitePeerName}); return;
+      const values = new FormData(form);
+      invitePeerName = String(values.get("peer_name") || "").trim();
+      inviteMaxTrust = String(values.get("max_trust"));
+      await invitationRequest("/api/contacts/invite",{peer_name:invitePeerName,max_trust:Number(inviteMaxTrust)}); return;
     }
     if (hosted && form.id === "accept-invitation") {
       invitationDraft = String(new FormData(form).get("invite_token") || "").trim();
+      acceptMaxTrust = String(new FormData(form).get("max_trust"));
       try {
         const token = invitationToken(invitationDraft);
-        if (token) await invitationRequest("/api/contacts/accept",{invite_token:token});
+        if (token) await invitationRequest("/api/contacts/accept",{invite_token:token,max_trust:Number(acceptMaxTrust)});
       } catch (error) { announce(error.message,true); }
       return;
     }
@@ -679,7 +776,7 @@
       await writeObligation("/api/obligations",body,true);
       return;
     }
-    if (form.dataset.obligationApprove && new FormData(form).has("consent")) {
+    if (form.dataset.obligationApprove && (hosted || new FormData(form).has("consent"))) {
       await writeObligation(`/api/obligations/${encodeURIComponent(form.dataset.obligationApprove)}/approve`,{digest:form.dataset.digest});
       return;
     }
@@ -698,8 +795,15 @@
   });
 
   document.addEventListener("input", event => {
-    if (hosted && event.target.closest("#create-invitation")) { invitePeerName = event.target.value; return; }
-    if (hosted && event.target.closest("#accept-invitation")) { invitationDraft = event.target.value; return; }
+    if (hosted && event.target.closest("#create-invitation")) {
+      if (event.target.name === "peer_name") invitePeerName = event.target.value;
+      if (event.target.name === "max_trust") { inviteMaxTrust = event.target.value; hostedDialog.querySelector("[data-invite-policy]").textContent = `Your comfort zone: ${trustRange(inviteMaxTrust)}. Comfort clearing is automatic.`; }
+      return;
+    }
+    if (hosted && event.target.closest("#accept-invitation")) {
+      if (event.target.name === "max_trust") { acceptMaxTrust = event.target.value; hostedDialog.querySelector("[data-accept-policy]").innerHTML = acceptPolicy(); }
+      return;
+    }
     const obligationForm = event.target.closest("#new-obligation");
     if (obligationForm && !pendingObligation) { updateObligationDraft(obligationForm); return; }
     if (event.target.name === "mode" && event.target.closest("#discover")) { searchMode=event.target.value; return; }
@@ -733,9 +837,11 @@
   document.addEventListener("click", async event => {
     const button = event.target.closest("button");
     if (!button || button.disabled) return;
+    if (hosted && button.dataset.action === "invite-peer") { openHostedDialog("invite"); return; }
+    if (hosted && button.dataset.action === "close-dialog") { closeHostedDialog(); return; }
     if (hosted && button.dataset.action === "hosted-retry") { await bootstrapHosted(); return; }
     if (hosted && button.dataset.recordEvent) {
-      location.hash = "event/" + encodeURIComponent(button.dataset.recordEvent);
+      openHostedDialog("delivery",button.dataset.recordEvent);
       return;
     }
     if (hosted && button.dataset.action === "copy-invitation" && invitation) {
