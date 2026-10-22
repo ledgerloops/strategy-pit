@@ -526,3 +526,34 @@ receipts, adds a second authenticator, and signs back into the same node. The
 separate hosted UI fixture and standalone authentication browser regression pass.
 Seven deployment-tool tests use mocked providers and temporary Git source; they
 are not live Heroku/DNS evidence. No performance benchmark was rerun.
+
+### 22 October 2026 — local Heroku deployment; canonical DNS pending
+
+The local worker deployed source commit
+`c0842818c79be39cb21630001b69b1e1c6d9a00e` to the new EU/Cedar Heroku-24 app
+`ledgerloops-alpha`, release **v5** (succeeded). Python buildpack and the release
+migration succeeded; one Basic web and one Basic worker are running with
+Essential-0 PostgreSQL. Existing older testnet apps and local demo data were not
+changed. Current recurring infrastructure cost is approximately USD 19/month
+before tax (two USD 7 Basic dynos plus USD 5 Essential-0 PostgreSQL).
+
+The provider source-upload API returned `SignatureDoesNotMatch`; the same pinned
+commit was successfully deployed through authenticated Heroku Git instead. All
+seven mocked deployment-tool tests pass, but the source-upload path still needs a
+live-provider compatibility fix. No secret values were changed or printed by the
+deployment script.
+
+The temporary hostname
+`https://ledgerloops-alpha-04de0bf47ef7.herokuapp.com/healthz` returns HTTP 200,
+`service: ledgerloops-alpha`, `status: ok`, `mode: TEST`, with expected security
+headers. Ordinary UI requests on that hostname correctly return HTTP 421, requiring
+the canonical application domain. Heroku separately reports both dynos up.
+
+Heroku custom domain `app.ledgerloops.com` is configured, with assigned target
+`fathomless-atoll-4r9cg1op2j5o4r1otfoqg951.herokudns.com`; ACM is enabled. DNS is
+authoritatively hosted by Cloudflare (`beau` / `meera` nameservers), but still
+resolves through the old apex alias. Cloudflare is signed out in Chrome; the user
+has been asked to complete sign-in before updating only the app CNAME to the
+assigned Heroku target, DNS-only. Root, mail and other records must be preserved.
+Canonical TLS, live account/settlement checks and restart persistence remain
+unverified; do not announce the canonical URL as ready yet.
