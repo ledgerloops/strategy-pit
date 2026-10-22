@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
-  <title>LedgerLoops · hosted alpha</title>
+  <title>LedgerLoops · TEST demo</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/hosted.css">
   <script src="/hosted.js" defer></script>
@@ -13,23 +13,29 @@
   <header><a class="brand" href="/"><img src="/logo.jpg" alt="LedgerLoops" width="96" height="58"><span>/ hosted alpha</span></a><span class="tag">TEST UNITS ONLY</span></header>
   <main class="account-main">
     <section aria-labelledby="account-title">
-      <p class="account-eyebrow">YOUR RELATIONSHIPS. YOUR LIMITS.</p>
-      <h1 id="account-title">A little less debt<br>going around.</h1>
-      <p class="account-lead">Invite people you know and record economic events together in TEST units.</p>
-      <aside class="operator-notice"><strong>A hosted experiment, with operator access.</strong> The operator can access your node’s records and protocol credentials. This browser’s cookie keeps your demo identity; hosted data is accessible to the operator. No real money moves.</aside>
+      <h1 id="account-title">Welcome to LedgerLoops</h1>
       <div id="account-notice" role="status" aria-live="polite"></div>
-      <section id="invitation-preview" class="card" hidden>
-        <h2 id="invitation-title"></h2>
-        <p id="invitation-description"></p>
-      </section>
       <section id="account-entry" hidden>
         <form id="create-account" class="card">
-          <h2>Join the TEST alpha</h2>
+          <section id="invitation-preview" hidden>
+            <h2 id="invitation-title"></h2>
+            <p id="invitation-description"></p>
+          </section>
           <label for="display-name">Your display name</label>
           <input id="display-name" name="display_name" type="text" autocomplete="nickname" maxlength="80" required>
-          <p>This demo remembers you with a cookie in this browser. No password or passkey needed.</p>
-          <button id="start-demo" type="submit">Start demo</button>
-          <p class="subtle">Return in the same browser to open your node. Clearing its cookies or switching browsers starts a different identity. There is no account recovery.</p>
+          <p id="existing-identity" class="subtle" hidden>This browser is already connected to your demo identity.</p>
+          <section id="invitation-trust" hidden>
+            <label for="maximum-trust">Your maximum trust <span class="subtle">(TEST)</span></label>
+            <input id="maximum-trust" name="max_trust" type="number" min="0" max="1000000000" step="1" value="10" aria-describedby="trust-explanation">
+            <p id="trust-explanation" class="subtle">Choose your own limit for this relationship. Connecting creates no debt.</p>
+            <div class="trust-preview" aria-live="polite">
+              <p id="inviter-trust"></p>
+              <p id="own-comfort"></p>
+              <p id="shared-comfort"></p>
+            </div>
+          </section>
+          <button id="start-demo" type="submit">Continue</button>
+          <p class="subtle identity-note">This browser remembers you with a cookie. Clearing cookies or using another browser starts a new identity.</p>
         </form>
       </section>
       <section id="account-management" class="card" hidden>
@@ -39,9 +45,9 @@
         <p>This browser’s cookie opens your existing node. It stays after you close the browser. Clearing cookies or using a different browser starts a new identity; there is no account recovery.</p>
         <a class="button secondary" href="/">Open my node</a>
       </section>
+      <p class="subtle operator-notice">TEST demo. No real money moves. The hosting operator can access demo records and protocol credentials.</p>
     </section>
   </main>
-  <footer>Experimental TEST network. Only enter TEST economic events. Clearing is neighbour-private in the protocol; the hosting operator still controls the runtime.</footer>
   <noscript>JavaScript and cookies are required to use this demo. No action has been taken.</noscript>
 </body>
 </html>
