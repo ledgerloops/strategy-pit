@@ -665,3 +665,13 @@ behavior, mobile layout, lost-response reconciliation, and zero browser clearing
 requests). Independent real-HTTP visual QA confirms native dialogs, asymmetric
 comfort bars and peer confirmation. Automatic clearing still uses local saved
 permissions and neighbour messages, not a centralized routing decision.
+
+Deployed successfully as **Heroku v9**, source
+`24f95c73ef5ed05961a5f9536e5f781fd67dd9e5`, at the canonical HTTPS origin.
+Live labeled-TEST checks passed invitation/MAX defaults, cookies, confirmed value
+deliveries and automatic2-to-1 clearing without manual loop controls. An actual
+single-dyno restart retained a pending delivery, cookies and ledgers; declining
+that fixture request drained its reservations and the briefly paused fixture
+nodes were resumed. ExistingTEST identities,balances,deliveries and historical
+receipts remain; automatic aborted search attempts append audit rows normally.
+Heroku reports exactly one up Basic web.1 dyno. See deployment handoff for detail.

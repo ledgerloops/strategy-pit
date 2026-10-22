@@ -1,11 +1,12 @@
 # LedgerLoops hashlock network app
 
 **22 October 2026 hosted alpha:** browser-cookie demo identities, durable PostgreSQL storage,
-named invitation links and automatic background headroom clearing are implemented.
+named trust invitations, peer comfort bars, value delivery dialogs and automatic
+background headroom clearing are implemented.
 See [hosted architecture and limits](HOSTED_ALPHA.md),
 [clearing theory and protocol](headroom_protocol.md) and
-[Heroku deployment](HEROKU_DEPLOYMENT.md). The target is `app.ledgerloops.com`;
-implementation and local tests do not establish that this domain is deployed.
+[Heroku deployment](HEROKU_DEPLOYMENT.md). The verified current deployment is [app.ledgerloops.com](https://app.ledgerloops.com);
+see [release and live verification](../docs/deployment-handoff.md).
 The original token-based local demos below remain supported.
 
 The app now runs a separate **neighbour-private hashlock v2 testnet**: a responsive client, local consent, context-bound SHA-256 fulfillment, durable SQLite state and real neighbour HTTP messages. Participants keep only their incoming/outgoing neighbours for a proposal; no participant list or exact loop length is sent. This implements the honest-peer experimental scope of [issue 004](../docs/issues/004-neighbour-private-hashlock-settlement.md), not a production or Byzantine-safe payment system.

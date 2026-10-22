@@ -6,6 +6,59 @@ Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task 
 
 ## Current demo release — 22 October 2026
 
+**Heroku v9**, source `24f95c73ef5ed05961a5f9536e5f781fd67dd9e5`, is live at
+**https://app.ledgerloops.com**. Verified after restart: one **Basic web.1** dyno
+is up, supervising HTTP and the background worker. Essential-0 PostgreSQL remains.
+
+The user approved the peer-list wireframes and the phrase **Record a value
+delivery**, then asked for Invite a peer and delivery forms to be modals. The
+implementation uses native desktop dialogs, full screen on phones, with Escape,
+logical focus restoration after polling, retained drafts and inline errors.
+
+Without an invite, onboarding asks only for a display name and Continue. With an
+invite, it shows both names, the inviter's maximum and an editable recipient
+maximum; one explicit Connect creates/reuses the cookie identity and accepts.
+Both independently select MAX, prefilled 10 TEST. New own preferences are credit
+MAX, comfort [-MAX, floor(MAX/2)], assistance enabled; default shared comfort is
+[-5,5]. Odd maxima round the positive half down because TEST balances are whole
+units. Invitation acceptance fixes each first choice durably so crash retries or
+crossed invitations cannot replace established bounds or keys.
+
+The home shows only the name and invitation action until a peer exists. It then
+shows the peer list, named balances, shared comfort bars and per-peer delivery
+action. A delivery selects its goods/service provider, description and TEST value,
+previews the balance delta, and needs the peer's explicit confirmation. No extra
+consent toggle is required. Sending, confirming and declining remain separate
+from automatic clearing; API/storage names remain `obligation`.
+
+Hosted automation now defaults on and searches/approves eligible debt-reducing
+headroom clearing in the background under bilateral comfort permissions. A
+versioned migration enables only untouched legacy defaults, preserving custom
+opt-outs, hard/comfort bounds, pauses, keys, balances and pinned reservations.
+Existing accounts and cookie identities are retained. Discovery is opportunistic
+and incomplete; unit-size moves can be gradual and unavailable peers can stall
+work. Hosted clearing is status-only; standalone research controls remain.
+
+Validation: **192 Python app tests** and **three isolated Chromium suites** passed.
+Independent desktop/mobile real-HTTP visual QA checked native dialogs, focus,
+drafts, asymmetric limits, direction and confirmation. Lost-response regression
+checks that reconciliation closes a successfully recorded request instead of
+leaving a stale form available for duplicate submission.
+
+Live canonical HTTPS checks with three clearly labeled Value Delivery TEST
+accounts verified protected persistent-cookie reuse, named links/previews,
+independent invitation limits, own [-10,5]/shared [-5,5], confirmed deliveries and
+**automatic 2-to-1 clearing with no browser discovery/clearing-approval calls**.
+Local completed receipts verified. A pending delivery, identities and ledger
+survived an actual single-dyno restart; normal decline then drained reservations.
+Only those fixture nodes were paused briefly for the exact restart snapshot and
+resumed afterward. Existing deployment TEST identities, balances, delivery records
+and historical receipts were independently verified unchanged. Automatic failed
+search attempts legitimately append aborted receipts; verification compares old
+receipts by ID instead of requiring the entire journal to stop growing.
+
+## Previous demo release — v8
+
 **Heroku v8**, source `7b6771317c293ed75e077ff83107a04274127f26`, is live at
 **https://app.ledgerloops.com**, still on one Basic web dyno plus Essential-0
 PostgreSQL. This release supersedes the passkey-first UI described in the older
