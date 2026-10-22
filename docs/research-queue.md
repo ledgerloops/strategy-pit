@@ -461,3 +461,18 @@ node decisions use only their own stores and neighbour messages. No cross-node
 SQL settlement or graph-informed repair is allowed. Passkeys plus session cookies
 and Heroku web/workers with durable node-scoped storage are proposals, not deployed
 features. No app code, demo credentials or frozen measurements changed.
+
+### 22 October 2026 — conditional return of earlier clearing gains
+
+The user clarified willingness to give back a local clearing gain when the whole
+adjustment reduces total debt. Historical allowances have no time expiry; the
+next posted transaction or effective settings change resets the affected trustline.
+The [recent-gain policy](../experiments/RECENT-GAIN-POLICY.md) and isolated local
+consent model keep signed per-trustline baselines, preserve current comfort gates
+and never raise baselines through clearing. Six focused tests pass, including the
+requested 7-to-3-to-2 competing-loop repair and an opposing 2-to-3 case that proves
+local willingness alone is insufficient. This is not live settlement authorization.
+
+Private verification of aggregate improvement remains necessary: no global
+observer result is fed to runtime nodes. Production integration also needs durable
+epoch-bound approvals and reservations. No app code or frozen benchmark changed.

@@ -169,6 +169,11 @@ increases. The current local nonexpansion rule must therefore be replaced or the
 claimed optimum restricted; simply renaming it does not solve the counterexample.
 Permission to move within limits and actual authorization must be specified.
 
+The follow-up [recent-gain policy](RECENT-GAIN-POLICY.md) models willingness to
+restore prior cleared exposure on the same trustlines, conditional on aggregate
+improvement. Its offline fixture repairs the 3-to-2 example. It also demonstrates
+why historical allowance alone cannot establish that the complete loop improves.
+
 The nodes must establish aggregate benefit without requiring remote identities,
 a route, membership size or recoverable exact loop length. Sending a plain sum
 of marginal costs can expose length in special cases, so the theorem is not a
