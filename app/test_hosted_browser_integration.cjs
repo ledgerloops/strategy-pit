@@ -1,4 +1,4 @@
-/* Real Chromium WebAuthn + real Flask + PostgreSQL + real neighbour HTTP delivery.
+/* Real Chromium + real Flask + PostgreSQL + real neighbour HTTP delivery.
  * Starts a disposable isolated test server; never touches a user's running demo.
  * Run with LEDGERLOOPS_TEST_POSTGRES_DSN pointing to a local TEST database.
  */
@@ -44,15 +44,11 @@ async function until(read, predicate, message, timeout=20000) {
     });
     browser = await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_PATH || '/usr/bin/chromium'});
     const pageErrors = [];
-    async function pageWithAuthenticator() {
+    async function demoPage() {
       const context = await browser.newContext();
       const page = await context.newPage();
       page.on('pageerror',error => pageErrors.push(error.message));
-      const cdp = await context.newCDPSession(page);
-      await cdp.send('WebAuthn.enable');
-      const {authenticatorId} = await cdp.send('WebAuthn.addVirtualAuthenticator',{options:{protocol:'ctap2',transport:'internal',
-        hasResidentKey:true,hasUserVerification:true,isUserVerified:true,automaticPresenceSimulation:true}});
-      return {page,context,cdp,authenticatorId};
+      return {page,context};
     }
     async function api(user, route, body) {
       return user.page.evaluate(async ({route,body}) => {
@@ -68,22 +64,23 @@ async function until(read, predicate, message, timeout=20000) {
       },{route,body});
     }
     async function enroll(name) {
-      const user = await pageWithAuthenticator();
+      const user = await demoPage();
       await user.page.goto(origin);
       await user.page.waitForURL('**/login');
+      await user.page.getByLabel('Your display name').waitFor();
+      assert.equal(await user.page.getByRole('heading',{name:'Welcome back',exact:true}).count(),0);
+      assert.equal(await user.page.locator('#recover-account, #recovery-bundle, #sign-in, #add-passkey').count(),0);
       await user.page.getByLabel('Your display name').fill(name);
       await user.page.getByLabel('I understand this is TEST data').check();
-      await user.page.getByRole('button',{name:'Create an account with a passkey'}).click();
-      await user.page.getByRole('heading',{name:'Save your account recovery details'}).waitFor();
-      user.recovery = (await user.page.locator('#bundle-codes').textContent()).split('\n');
-      assert.equal(user.recovery.length,8);
-      await user.page.getByLabel('I saved my account reference').check();
-      await user.page.getByRole('button',{name:'Continue to my node'}).click();
+      await user.page.getByRole('button',{name:'Start demo',exact:true}).click();
       await user.page.getByRole('heading',{name:`Hello, ${name}.`}).waitFor();
       const session = await api(user,'/api/session');
       user.account = session.account;
       const cookie = (await user.context.cookies()).find(item => item.name === '__Host-ledgerloops_session');
-      assert.ok(cookie && cookie.secure && cookie.httpOnly && cookie.sameSite === 'Lax');
+      assert.ok(cookie && cookie.secure && cookie.httpOnly && cookie.sameSite === 'Lax' && cookie.expires > Date.now()/1000);
+      const reused = await api(user,'/auth/demo/start',{display_name:'Do not replace existing identity'});
+      assert.equal(reused.account.id,user.account.id);
+      assert.equal(reused.account.name,name);
       assert.equal(await user.page.evaluate(() => document.cookie.includes('__Host-ledgerloops_session')),false);
       assert.equal(await user.page.getByLabel('Node access token').count(),0);
       return user;
@@ -93,10 +90,14 @@ async function until(read, predicate, message, timeout=20000) {
     const [alice,bob,carol] = users;
     async function connect(first,second) {
       await first.page.getByRole('link',{name:'02 / Peers'}).click();
+      await first.page.getByLabel('Peer name',{exact:true}).fill(second.account.name);
       await first.page.getByRole('button',{name:'Create an invitation'}).click();
-      const input = first.page.getByLabel('Invitation code',{exact:true});
+      const input = first.page.getByLabel('Invitation link',{exact:true});
       await input.waitFor();
       const invitation = await input.inputValue();
+      const url = new URL(invitation);
+      assert.equal(url.origin,origin);
+      assert.ok(url.hash.startsWith('#invite='));
       await second.page.getByRole('link',{name:'02 / Peers'}).click();
       await second.page.getByLabel('Invitation from your peer').fill(invitation);
       await second.page.getByRole('button',{name:'Accept invitation'}).click();
@@ -173,23 +174,55 @@ async function until(read, predicate, message, timeout=20000) {
     }
 
     await alice.page.goto(origin+'/#settings');
-    await alice.page.getByRole('link',{name:'Passkeys and recovery'}).click();
-    // A second passkey is a different authenticator. Re-enrolling the same
-    // authenticator correctly fails the backend's excludeCredentials check.
-    await alice.cdp.send('WebAuthn.removeVirtualAuthenticator',{authenticatorId:alice.authenticatorId});
-    await alice.cdp.send('WebAuthn.addVirtualAuthenticator',{options:{protocol:'ctap2',transport:'internal',
-      hasResidentKey:true,hasUserVerification:true,isUserVerified:true,automaticPresenceSimulation:true}});
-    await alice.page.getByRole('button',{name:'Add another passkey'}).click();
-    await alice.page.waitForFunction(() => document.querySelector('#account-notice').textContent.includes('Another passkey'));
-    await alice.page.getByRole('button',{name:'Sign out',exact:true}).click();
-    await alice.page.waitForURL('**/login');
-    await alice.page.getByRole('button',{name:'Sign in with a passkey'}).click();
+    await alice.page.getByRole('link',{name:'Demo identity',exact:true}).click();
+    await alice.page.getByRole('heading',{name:'Your account',exact:true}).waitFor();
+    assert.equal(await alice.page.locator('#add-passkey, #sign-out, #recovery-bundle').count(),0);
+    await alice.page.goto(origin+'/login');
+    await alice.page.waitForURL(origin+'/');
     await alice.page.getByRole('heading',{name:'Hello, Browser Alice.'}).waitFor();
     assert.equal((await api(alice,'/api/session')).account.node_id,alice.account.node_id);
     assert.equal((await api(alice,'/api/state')).balances.find(b => b.peer === carol.account.node_id).balance,-1);
+    const secondTab = await alice.context.newPage();
+    await secondTab.goto(origin+'/login');
+    await secondTab.waitForURL(origin+'/');
+    await secondTab.getByRole('heading',{name:'Hello, Browser Alice.'}).waitFor();
+    await secondTab.close();
+    // Restore the browser's persistent cookies in another isolated session.
+    const reopened = await browser.newContext({storageState:await alice.context.storageState()});
+    const reopenedPage = await reopened.newPage();
+    await reopenedPage.goto(origin+'/login');
+    await reopenedPage.waitForURL(origin+'/');
+    await reopenedPage.getByRole('heading',{name:'Hello, Browser Alice.'}).waitFor();
+    const reopenedSession = await reopenedPage.evaluate(async () => (await fetch('/api/session')).json());
+    assert.equal(reopenedSession.account.id,alice.account.id);
+    await reopened.close();
+    await alice.page.goto(origin+'/#peers');
+    await alice.page.getByLabel('Peer name',{exact:true}).fill('Browser Dana');
+    await alice.page.getByRole('button',{name:'Create an invitation',exact:true}).click();
+    const newInvite = await alice.page.getByLabel('Invitation link',{exact:true}).inputValue();
+    const newcomer = await demoPage();
+    const acceptRequests = [];
+    newcomer.page.on('request',request => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/contacts/accept') acceptRequests.push(request);
+    });
+    await newcomer.page.goto(newInvite);
+    await newcomer.page.getByRole('heading',{name:'Browser Alice invited you',exact:true}).waitFor();
+    await newcomer.page.getByLabel('Your display name').waitFor();
+    assert.equal(await newcomer.page.getByLabel('Your display name').inputValue(),'Browser Dana');
+    assert.equal(await newcomer.page.getByRole('heading',{name:'Welcome back',exact:true}).count(),0);
+    assert.equal(acceptRequests.length,0,'Preview must not accept the invitation');
+    await newcomer.page.getByLabel('I understand this is TEST data').check();
+    await newcomer.page.getByRole('button',{name:'Start demo',exact:true}).click();
+    await newcomer.page.getByLabel('Invitation from your peer').waitFor();
+    assert.equal((await api(newcomer,'/api/state')).contacts.length,0,'Joining must not silently connect peers');
+    assert.equal(acceptRequests.length,0,'Demo enrollment must not accept the invitation');
+    await newcomer.page.getByRole('button',{name:'Accept invitation',exact:true}).click();
+    await until(() => api(newcomer,'/api/state'),state => state.contacts.some(contact => contact.peer === alice.account.node_id),'Named invite did not connect the new demo identity');
+    assert.equal(acceptRequests.length,1);
+    await newcomer.context.close();
     assert.deepEqual(pageErrors,[]);
     assert.deepEqual(workerErrors,[]);
-    console.log('PASS actual hosted browser: real PostgreSQL/passkeys/sessions, invitations, autosave, obligations, HTTP headroom 2→1, receipt verification and stable re-login');
+    console.log('PASS actual hosted browser: real PostgreSQL/persistent cookie identity, invitations, autosave, obligations, HTTP headroom 2→1, receipt verification and stable browser identity');
   } finally {
     if (browser) await browser.close();
     child.kill('SIGTERM');
