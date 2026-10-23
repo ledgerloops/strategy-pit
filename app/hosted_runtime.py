@@ -450,6 +450,24 @@ class HostedRuntime:
                         (json.dumps(dict(fingerprint=fingerprint, attempts=attempts)),))
         node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_next_search',?)", (str(now+delay),))
 
+    def _tick_hint(self, node):
+        """Infrastructure wake hints from this actor's own committed state.
+
+        Registry versions independently wake new incoming work. Idle actors
+        need no half-second full-image download merely to inspect an old timer.
+        """
+        retry = bool(node.db.execute('SELECT 1 FROM outbox LIMIT 1').fetchone())
+        next_search = None
+        enabled = node.db.execute("SELECT v FROM meta WHERE k='hosted_automation'").fetchone()
+        if enabled and enabled[0] == 'true' and not node.paused():
+            active = node.db.execute("SELECT count(*) FROM proposals WHERE status IN ('searching','pending')").fetchone()[0]
+            if active < 2 and self._can_originate(node):
+                wake = node.db.execute("SELECT v FROM meta WHERE k='hosted_next_search'").fetchone()
+                previous = node.db.execute("SELECT v FROM meta WHERE k='hosted_search_backoff'").fetchone()
+                changed = previous and json.loads(previous[0])['fingerprint'] != self._search_fingerprint(node)
+                next_search = time.time() if changed or not wake else float(wake[0])
+        return dict(retry_outbox=retry, next_search_at=next_search)
+
     def tick(self, node_id):
         """One local wakeup. No global graph/counter or other node object."""
         with self.node(node_id) as node:
@@ -486,7 +504,9 @@ class HostedRuntime:
                 peer=node.peers[row['peer']]
                 outgoing.append(dict(id=row['id'],url=peer['url'].rstrip('/')+'/peer/message',
                                      key=peer['key'],peer=row['peer'],body=row['data']))
+            hint = self._tick_hint(node)
         # Network delivery never holds local/remote database locks together.
+        acknowledged = []
         for item in outgoing:
             request=Request(item['url'],data=item['body'].encode(),headers={
                 'Content-Type':'application/json','Authorization':'Bearer '+item['key'],'X-Peer-ID':node_id})
@@ -497,14 +517,27 @@ class HostedRuntime:
                         continue
             except (URLError,OSError,TimeoutError):
                 continue
+            acknowledged.append((item, time.time()))
+        if acknowledged:
+            # A batch needs one durable local image replacement, rather than
+            # one per envelope. A crash before this commit retains every outbox
+            # row; receivers safely deduplicate those identical message retries.
             with self.node(node_id) as node:
-                data = json.loads(item['body'])
-                if data.get('kind') == MESSAGE_KIND:
-                    node.db.execute("""UPDATE hosted_messages SET status='delivered',
-                        delivered_at=coalesce(delivered_at,?)
-                        WHERE peer=? AND id=? AND direction='outgoing'""",
-                        (time.time(), item['peer'], data['id']))
-                node.db.execute('DELETE FROM outbox WHERE id=?',(item['id'],))
+                for item, acknowledged_at in acknowledged:
+                    data = json.loads(item['body'])
+                    if data.get('kind') == MESSAGE_KIND:
+                        node.db.execute("""UPDATE hosted_messages SET status='delivered',
+                            delivered_at=coalesce(delivered_at,?)
+                            WHERE peer=? AND id=? AND direction='outgoing'""",
+                            (acknowledged_at, item['peer'], data['id']))
+                    node.db.execute('DELETE FROM outbox WHERE id=?',(item['id'],))
+                hint = self._tick_hint(node)
+        return hint
 
     def scheduled_nodes(self):
         return [key[5:] for key in self.stores.list_nodes() if key.startswith('node:')]
+
+    def scheduled_node_versions(self):
+        """Registry metadata for wakeups, never an input to node decisions."""
+        return {key[5:]: version for key, version in self.stores.node_versions().items()
+                if key.startswith('node:')}
