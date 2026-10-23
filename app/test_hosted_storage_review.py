@@ -41,6 +41,18 @@ class SnapshotWriteAmplificationReview(unittest.TestCase):
         self.assertEqual(self.snapshot(key), before,
                          'No logical or SQLite image change must create new PostgreSQL/TOAST versions')
 
+    def test_wakeup_registry_observes_commits_without_publishing_or_loading_images(self):
+        key, db = self.node()
+        before = self.snapshot(key)
+        for _ in range(3):
+            versions = self.factory.node_versions()
+            self.assertEqual(versions[key], before[0])
+            self.assertIsInstance(versions[key], int)
+        self.assertEqual(self.snapshot(key), before)
+        with db:
+            db.execute('UPDATE counter SET n=23')
+        self.assertEqual(self.factory.node_versions()[key], before[0]+1)
+
     def test_repeated_hosted_state_reads_keep_exact_image_version_and_timestamp(self):
         prefix = 'storage-review-'+secrets.token_hex(16)+':'
         stores = gateway.ScopedStores(self.factory, prefix)

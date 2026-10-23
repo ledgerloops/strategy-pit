@@ -118,6 +118,16 @@ class PgStoreFactory:
             return [row[0] for row in connection.execute(
                 f'SELECT node_id FROM {TABLE} ORDER BY node_id')]
 
+    def node_versions(self):
+        """Small infrastructure wakeup registry; no ledger images or decisions.
+
+        A changed version signals that an actor may have new durable work.
+        The actor still reloads and locks only its own snapshot when it runs.
+        """
+        with self._pool.connection() as connection:
+            return dict(connection.execute(
+                f'SELECT node_id,version FROM {TABLE} ORDER BY node_id'))
+
     def close(self):
         self._pool.close()
 
