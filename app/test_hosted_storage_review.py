@@ -6,7 +6,10 @@ must not discard genuine schema or PRAGMA migrations.
 """
 import os
 import secrets
+import time
 import unittest
+
+from psycopg.errors import LockNotAvailable
 
 from hosted_runtime import HostedRuntime
 from hosted_storage import TABLE
@@ -53,6 +56,37 @@ class SnapshotWriteAmplificationReview(unittest.TestCase):
             self.assertEqual(runtime.state(account['node_id']), initial)
         self.assertEqual(self.snapshot(key), before,
                          'Read-only Node initialization and hosted schema checks must not republish snapshots')
+
+    def test_row_lock_timeout_rolls_back_and_same_contender_recovers(self):
+        key, holder = self.node()
+        holder.execute('UPDATE counter SET n=17')
+        before = self.snapshot(key)
+        contender = self.factory.connection(key)
+        self.connections.append(contender)
+        entered = False
+        with self.assertRaisesRegex(ValueError, 'rollback uncommitted holder'):
+            with holder:
+                holder.execute('UPDATE counter SET n=999')
+                began = time.monotonic()
+                with self.assertRaises(LockNotAvailable):
+                    with contender:
+                        entered = True
+                        contender.execute('UPDATE counter SET n=1234')
+                elapsed = time.monotonic()-began
+                self.assertGreaterEqual(elapsed, 3.5, 'An independent connection must actually wait for the held row')
+                self.assertLess(elapsed, 12, 'The configured lock timeout must bound the blocked transaction')
+                self.assertFalse(entered, 'A failed snapshot lock must not expose a stale local image')
+                raise ValueError('rollback uncommitted holder')
+        self.assertEqual(self.snapshot(key), before,
+                         'Neither a timed-out contender nor a rolled-back holder may publish partial state')
+        self.assertEqual(contender.execute('SELECT n FROM counter').fetchone()[0], 17)
+        with contender:
+            contender.execute('UPDATE counter SET n=n+1')
+            contender.execute("INSERT INTO outbox VALUES('after-timeout')")
+        self.assertEqual(holder.execute('SELECT n FROM counter').fetchone()[0], 18)
+        self.assertEqual(holder.execute('SELECT id FROM outbox').fetchall(), [('after-timeout',)])
+        self.assertEqual(self.snapshot(key)[0], before[0]+1,
+                         'The same adapter must commit exactly one later counter/outbox transaction')
 
     def test_zero_row_change_schema_and_pragma_migrations_remain_durable(self):
         key, db = self.node()
