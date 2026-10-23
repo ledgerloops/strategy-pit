@@ -4,7 +4,52 @@
 Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task cwd
 `/Users/michieldejong/Documents/Codex/2026-10-22/ledg`.
 
-## Current demo release — 22 October 2026
+## Current demo release — 23 October 2026
+
+**Heroku v13**, source `3c189e9068884ebb1bd7e3f8294a7a4d48501348`, is live at
+**https://app.ledgerloops.com**. Exactly one **Basic web.1** dyno is up, supervising
+HTTP and background delivery; maintenance is off and Essential-0 remains attached.
+No paid upgrade, credential rotation or data reseed was performed.
+
+This release repairs the storage incident: idle deadline writes and impossible
+one-sided search origins had repeatedly rewritten complete SQLite images, leaving
+hundreds of MB of dead PostgreSQL TOAST space and failed-search journals. Searches
+now require the existing node-local necessary origin condition and back off to
+five minutes while balances/preferences are unchanged. No audit history is deleted.
+Small version-only registry polling wakes changed nodes without constantly loading
+all ledger images. Actors keep their own retry deadlines and a 60-second safety
+heartbeat. Acknowledgments are committed in one own-node batch, with unchanged
+receiver deduplication; binary snapshot reads avoid hex wire expansion. Smaller
+expiring pools and bounded transaction/lock waits leave maintenance headroom.
+
+Before physical compaction, every stored image/version was backed up privately.
+The supervised web/worker dyno was fully stopped, stale connections reset and the
+snapshot table compacted. All 14 image hashes and versions matched exactly before
+and after. Allocated database size fell from 739,632,415 to 32,916,767 bytes; the
+resumed application subsequently reuses space for normal protocol work. Heroku's
+initially stale `pg:info` summary refreshed from **700 MB / 1 GB (68.35%)** to
+**63.4 MB (6.19%)**, with **9/20 connections**. Direct SQL remains the current-size
+check when provider summary metrics lag. After v13 recovery drained, two direct
+samples 50 seconds apart both measured **89,531,679 bytes (85.4 MiB, under 9% of
+the allowance)** with all 14 versions unchanged, zero blocked connections and
+8–10 connections including the inspection session.
+
+Validation: **222 Python app tests** passed with isolated real PostgreSQL, plus
+real Chromium/Flask/PostgreSQL integration using the production scheduler class.
+Regressions cover idle image/version stability, schema/PRAGMA persistence, bounded
+row-lock rollback and recovery, incoming writes during a tick, retry deadlines,
+restart wakeups, batched ACK partial failure and crash-before-ACK deduplication.
+Browser checks still pass automatic clearing, named invitations, value deliveries,
+private aliases, messages and combined history.
+
+Live post-v13 checks passed with only the worker's existing labeled TEST accounts:
+protected cookies/identities, private aliases, balances, delivery records, messages
+and historical clearing receipts survived the restart. Six session/state requests
+completed in **0.124–0.290 seconds**, compared with the earlier 30-second page
+request timeouts. The older deployment TEST accounts and receipts were separately
+verified preserved. No test message was sent to a human peer.
+
+## Previous demo release — v11 (22 October 2026)
 
 **Heroku v11**, source `2ac9a37b12eef4b67757db22fd956338802245e7`, is live at
 **https://app.ledgerloops.com**. Verified after restart: one **Basic web.1** dyno

@@ -769,3 +769,17 @@ the registry scheduler. A restart rebuilds all scheduling from durable nodes.
 ACKs for up to five successful deliveries now publish one sender image per batch;
 crash-before-ACK retries preserve the existing receiver deduplication semantics.
 Binary snapshot reads avoid BYTEA hex expansion on the wire.
+
+
+The performance follow-up deployed as **Heroku v13**, source
+`3c189e9068884ebb1bd7e3f8294a7a4d48501348`. All **222 Python app tests** and
+real Chromium/Flask/PostgreSQL integration using the actual scheduler passed.
+Heroku summary metrics refreshed to 63.4 MB (6.19%), 9/20 connections. After v13
+recovery activity, direct SQL measured 89,531,679 bytes (85.4 MiB, under 9%) in
+both samples 50 seconds apart; every snapshot version stayed unchanged and no
+connections were blocked. The sample included the read-only verification session.
+Live TEST session/state requests completed in 0.124–0.290 seconds. Existing TEST
+cookies, aliases, balances, delivery/message records and clearing history passed;
+older deployment TEST identities and historical receipts passed independently.
+One Basic web.1 remains up, maintenance off, Essential-0 unchanged. The isolated
+local PostgreSQL test daemon was stopped after verification.
