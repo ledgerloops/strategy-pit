@@ -21,7 +21,7 @@ def create_app(*, stores=None, origin=None, development=False):
     parsed=urlsplit(origin)
     if parsed.scheme != 'https' and not development:
         raise ValueError('Hosted alpha requires HTTPS')
-    stores=stores or PgStoreFactory(os.environ['DATABASE_URL'],max_connections=4)
+    stores=stores or PgStoreFactory(os.environ['DATABASE_URL'],max_connections=3)
     stores.create('accounts')
     auth=HostedAuth(stores.connection('accounts'),origin=origin,rp_id=parsed.hostname,development=development,
                     recovery_codes_enabled=os.environ.get('LEDGERLOOPS_RECOVERY_CODES_ENABLED') == '1')

@@ -58,6 +58,12 @@ deployment; the deployment record must include the actual release and live check
   not exhaustive, and sleeping peers can leave work durably pending. The hosted
   clearing view reports status without manual loop discovery or approval controls.
   Standalone research controls remain available in the original local demo.
+  Hosted searches only originate where the existing strict origin surplus rule
+  can be met locally (both positive and negative eligible exposure). Other nodes
+  still forward, approve and recover admitted work. Repeated unsuccessful searches
+  with unchanged balances/preferences back off to five minutes; own balance or
+  exchanged preference changes restart fast attempts. Idle wakes do not publish
+  new whole-database snapshots merely to move a clock deadline.
 
 The original local demo remains usable with its existing bearer tokens and data
 directory. Hosted sign-in uses cookies and never exposes those protocol credentials
@@ -142,3 +148,27 @@ hashlock fulfillment. Browser tests cover persistent demo cookies, distinct brow
 identities, named invitation links through signup and explicit acceptance, while
 preserving standalone authentication. Legacy WebAuthn signatures remain tested. See [deployment runbook](HEROKU_DEPLOYMENT.md) for execution commands
 and live checks required before calling the target deployed.
+
+## Capacity and storage maintenance
+
+The PostgreSQL snapshot adapter retains complete SQLite images and skips writes
+when their serialized bytes are identical. It preserves schema/PRAGMA migrations
+even if SQLite reports zero changed rows. Idle constructor/provision/state reads
+are covered by exact image/version stability tests. Do not replace byte equality
+with a row-change-count heuristic or discard protocol inbox/audit records.
+
+Repeated whole-image updates can leave substantial dead PostgreSQL TOAST space.
+A stalled snapshot reader holding a row lock also prevents vacuum from retiring
+old versions. Application connections now bound statements to 30 seconds, lock
+waits to five seconds and idle transactions to 30 seconds. Unused pool connections
+expire after 30 seconds; the two web workers and background worker each cap their
+pool at three, leaving headroom within the Essential-0 connection limit.
+
+For physical reclamation, first keep a mode-0600 private backup of every stored
+image and its version/checksum. Maintenance mode alone does not stop background
+work: stop the single supervised web dyno before sampling image hashes and running
+`VACUUM (FULL, ANALYZE) ledgerloops_node_snapshots`. Compare all stored image hashes,
+versions and identities afterward, then restore exactly one Basic web dyno and
+disable maintenance mode. This briefly stops the demo but removes no records.
+Check live health, sessions, balances, messages and durable pending work afterward;
+never restore an older ledger snapshot just to remove reservations.

@@ -85,7 +85,12 @@ class PgStoreFactory:
         from psycopg_pool import ConnectionPool
         self._pool = ConnectionPool(
             conninfo=dsn, min_size=0, max_size=max_connections, timeout=timeout,
-            kwargs={'autocommit': True}, open=True,
+            # A disconnected or wedged client must not retain a snapshot row
+            # lock indefinitely and prevent vacuum from reclaiming old images.
+            kwargs={'autocommit': True, 'options':
+                    '-c statement_timeout=30000 -c lock_timeout=5000 '
+                    '-c idle_in_transaction_session_timeout=30000'},
+            max_idle=30, open=True,
         )
 
     def initialize(self):

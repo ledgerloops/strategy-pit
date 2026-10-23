@@ -717,3 +717,32 @@ combined peer-only history and unchanged financial records. An actual restart of
 the single Basic web dyno retained cookies, aliases and message history; the TEST
 alias was restored afterward. Older TEST balances, deliveries and receipt records
 were independently verified preserved. No human peer was sent a test message.
+
+### 23 October 2026 — PostgreSQL capacity incident
+
+The owner received a storage warning. `heroku pg:info --app ledgerloops-alpha`
+showed a rise from 460 MB to 700 MB of the 1 GB Essential-0 allowance. Direct
+PostgreSQL inspection measured 733,889,823 allocated bytes, 14 snapshot records,
+about 101 MB of logical SQLite images but only 23.5 MB of compressed live payload.
+The rest was predominantly dead/allocated TOAST and index space from whole-image
+rewrites. A private mode-0600 backup of every image/version was saved before repair.
+
+The old scheduler wrote a changing deadline every two to six seconds even when no
+search could start, and one-sided/degree-one nodes originated thousands of doomed
+searches overnight. Read-only constructor/state/provision operations were verified
+NOT to change snapshots. The runtime now avoids idle timer writes, uses the exact
+local necessary origin condition (both exposures must shrink under the existing
+strict origin certificate), and backs unchanged unsuccessful attempts off to five
+minutes. Balance/preferences changes restart fast attempts; existing forwarding,
+approval, delivery and recovery remain active. No protocol history is deleted.
+
+The live inspection also found an owned SELECT stalled in ClientWrite for over
+four minutes, holding a row lock and blocking other application transactions. It
+was terminated only after checking its role, query prefix, wait state and age.
+New bounded statement/lock/idle-transaction times and smaller expiring connection
+pools prevent long-lived lock pileups. A real timeout regression verifies rollback
+preserves prior image/version and the same adapter can subsequently commit safely.
+
+Physical compaction will be performed only with the supervised web/worker dyno
+stopped, checking exact image hashes/versions for every record before and after.
+The plan and one-Basic-dyno formation are retained; no paid upgrade is requested.

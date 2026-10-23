@@ -13,7 +13,7 @@ def main():
     stopped=threading.Event()
     for signum in (signal.SIGTERM,signal.SIGINT):
         signal.signal(signum,lambda *_: stopped.set())
-    stores=PgStoreFactory(os.environ['DATABASE_URL'],max_connections=4)
+    stores=PgStoreFactory(os.environ['DATABASE_URL'],max_connections=3)
     runtime=HostedRuntime(stores,os.environ.get('PUBLIC_ORIGIN','https://app.ledgerloops.com'))
     pending={}
     try:
