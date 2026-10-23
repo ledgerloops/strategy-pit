@@ -17,11 +17,13 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 from private_node import Node, PROTOCOL
+from headroom_policy import edge_allowed as headroom_edge_allowed
 
 NODE_ID = re.compile(r'n_[0-9a-f]{32}\Z')
 MAX_TRUST = 10**9
 MESSAGE_PROTOCOL = 'hosted-message-v1'
 MESSAGE_KIND = 'hosted_message'
+SEARCH_RETRY_MAX = 300
 
 
 class HostedRuntime:
@@ -115,8 +117,9 @@ class HostedRuntime:
                 deferred.append(peer)
                 continue
             node.set_preferences(peer, dict(own, expected_revision=own['revision'], auto_adjust=True))
-        node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automatic_clearing_v1',?)",
-                        (json.dumps(deferred),))
+        value = json.dumps(deferred)
+        if not marker or marker[0] != value:
+            node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automatic_clearing_v1',?)", (value,))
 
     @contextmanager
     def node(self, node_id):
@@ -388,6 +391,65 @@ class HostedRuntime:
                 node.receive(sender,data)
         return dict(ok=True)
 
+    @staticmethod
+    def _search_fingerprint(node):
+        """Eligibility changes are local balances and exchanged preferences.
+
+        Failed searches, received probes and outbox retries deliberately do not
+        reset the backoff: they reveal no new local clearing capacity.
+        """
+        terms = [(row['peer'], row['balance'], json.loads(row['own']),
+                  json.loads(row['peer_preferences']) if row['peer_preferences'] else None)
+                 for row in node.db.execute('''SELECT peer,balance,own,peer_preferences
+                     FROM balances JOIN contacts USING(peer) ORDER BY peer''')]
+        return hashlib.sha256(json.dumps(terms, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+    @staticmethod
+    def _can_originate(node):
+        """A headroom origin must reduce both of its incident exposures.
+
+        The existing origin surplus rule requires local cost -2a. Each quoted
+        edge changes exposure by exactly +/-a, so both must decrease: one
+        positive and one negative balance on distinct unreserved neighbours.
+        Zero edges may still help forward someone else's search.
+        """
+        signs = set()
+        for row in node.db.execute('''SELECT b.peer,b.balance FROM balances b
+                LEFT JOIN reservations r USING(peer) WHERE r.peer IS NULL AND b.balance<>0'''):
+            before = row['balance']
+            after = before-1 if before > 0 else before+1
+            try:
+                term = node.edge_terms(row['peer'], before, after)
+            except ValueError:
+                continue
+            if headroom_edge_allowed(before, after, term['own_preferences'], term['peer_preferences']):
+                signs.add(1 if before > 0 else -1)
+                if len(signs) == 2:
+                    return True
+        return False
+
+    def _search_if_due(self, node):
+        now = time.time()
+        previous = node.db.execute("SELECT v FROM meta WHERE k='hosted_search_backoff'").fetchone()
+        previous = json.loads(previous[0]) if previous else None
+        fingerprint = self._search_fingerprint(node)
+        changed = previous and previous['fingerprint'] != fingerprint
+        wake = node.db.execute("SELECT v FROM meta WHERE k='hosted_next_search'").fetchone()
+        if wake and float(wake[0]) > now and not changed:
+            return
+        active = node.db.execute("SELECT count(*) FROM proposals WHERE status IN ('searching','pending')").fetchone()[0]
+        if active >= 2 or not self._can_originate(node):
+            return
+        # A changed balance or exchanged preference restarts fast attempts.
+        # Otherwise exponential retry still explores remote changes periodically
+        # without writing unbounded failed-probe journals every few seconds.
+        attempts = min(8, previous['attempts']+1) if previous and not changed else 1
+        node.discover(1, mode='headroom')
+        delay = min(SEARCH_RETRY_MAX, 4*2**(attempts-1)+secrets.randbelow(1000)/1000)
+        node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_search_backoff',?)",
+                        (json.dumps(dict(fingerprint=fingerprint, attempts=attempts)),))
+        node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_next_search',?)", (str(now+delay),))
+
     def tick(self, node_id):
         """One local wakeup. No global graph/counter or other node object."""
         with self.node(node_id) as node:
@@ -416,17 +478,7 @@ class HostedRuntime:
                                       and zone['min'] <= change['after'] <= zone['max'])
                     if permitted:
                         node.approve(row['id'],data.get('digest'))
-                wake=node.db.execute("SELECT v FROM meta WHERE k='hosted_next_search'").fetchone()
-                if not wake or float(wake[0]) <= time.time():
-                    active=node.db.execute("SELECT count(*) FROM proposals WHERE status IN ('searching','pending')").fetchone()[0]
-                    # Check local starting eligibility before entering discover's
-                    # nested transaction. An expected no-candidate exception
-                    # would otherwise roll back the whole local wakeup.
-                    if active < 2 and any(node.headroom_candidate(1,direction)[0]
-                                          is not None for direction in (1,-1)):
-                        node.discover(1,mode='headroom')
-                    node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_next_search',?)",
-                                    (str(time.time()+2+secrets.randbelow(4000)/1000),))
+                self._search_if_due(node)
             outgoing=[]
             # Chats to an unavailable peer cannot sit ahead of financial
             # protocol work merely because their outbox rows were queued first.
