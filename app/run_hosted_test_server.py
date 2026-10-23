@@ -18,6 +18,7 @@ from werkzeug.serving import make_server
 from psycopg.conninfo import conninfo_to_dict
 from hosted_server import create_app
 from hosted_storage import PgStoreFactory, TABLE
+from hosted_worker import WakeupSchedule
 
 
 class ScopedStores:
@@ -32,6 +33,10 @@ class ScopedStores:
 
     def list_nodes(self):
         return [key[len(self.prefix):] for key in self.factory.list_nodes() if key.startswith(self.prefix)]
+
+    def node_versions(self):
+        return {key[len(self.prefix):]: version for key, version in self.factory.node_versions().items()
+                if key.startswith(self.prefix)}
 
 
 def main():
@@ -62,17 +67,14 @@ def main():
     web.start()
 
     def schedule():
-        pending = {}
+        wakeups = WakeupSchedule()
         with ThreadPoolExecutor(max_workers=3) as pool:
             while not stopped.wait(.1):
-                for node_id, future in list(pending.items()):
-                    if future.done():
-                        if future.exception():
-                            print(json.dumps({'worker_error': type(future.exception()).__name__}), flush=True)
-                        del pending[node_id]
-                for node_id in runtime.scheduled_nodes():
-                    if node_id not in pending:
-                        pending[node_id] = pool.submit(runtime.tick, node_id)
+                for node_id, (_version, future) in list(wakeups.pending.items()):
+                    if future.done() and future.exception():
+                        print(json.dumps({'worker_error': type(future.exception()).__name__}), flush=True)
+                wakeups.collect()
+                wakeups.dispatch(runtime.scheduled_node_versions(), pool, runtime.tick)
 
     worker = threading.Thread(target=schedule, daemon=True)
     worker.start()
