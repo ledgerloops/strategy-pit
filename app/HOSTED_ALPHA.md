@@ -64,6 +64,10 @@ deployment; the deployment record must include the actual release and live check
   with unchanged balances/preferences back off to five minutes; own balance or
   exchanged preference changes restart fast attempts. Idle wakes do not publish
   new whole-database snapshots merely to move a clock deadline.
+  Infrastructure polls only snapshot identity/version metadata every half second.
+  Changed versions wake their actor promptly; unchanged actors wait for their
+  own search/outbox retry deadline, with a bounded 60-second safety heartbeat.
+  Registry metadata never supplies another actor's balances or a routing decision.
 
 The original local demo remains usable with its existing bearer tokens and data
 directory. Hosted sign-in uses cookies and never exposes those protocol credentials
@@ -163,6 +167,9 @@ old versions. Application connections now bound statements to 30 seconds, lock
 waits to five seconds and idle transactions to 30 seconds. Unused pool connections
 expire after 30 seconds; the two web workers and background worker each cap their
 pool at three, leaving headroom within the Essential-0 connection limit.
+Snapshot downloads use PostgreSQL's binary BYTEA format to avoid hex expansion.
+Successful outgoing acknowledgments are coalesced into one own-node commit per
+batch; receiver deduplication still makes retry after a crash safe.
 
 For physical reclamation, first keep a mode-0600 private backup of every stored
 image and its version/checksum. Maintenance mode alone does not stop background

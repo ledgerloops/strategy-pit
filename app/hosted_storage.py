@@ -185,7 +185,9 @@ class PostgresSnapshotConnection:
                     self._pg.execute('SET LOCAL synchronous_commit = on')
                     row = self._pg.execute(
                         f'SELECT version, image FROM {TABLE} WHERE node_id=%s FOR UPDATE',
-                        (self._node_id,)).fetchone()
+                        # Binary BYTEA avoids doubling large images into hex
+                        # text on the wire before decoding them back to bytes.
+                        (self._node_id,), binary=True).fetchone()
                     if row is None:
                         raise ValueError('Node storage has not been provisioned')
                     self._version, self._before = row[0], bytes(row[1])
