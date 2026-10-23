@@ -783,3 +783,14 @@ cookies, aliases, balances, delivery/message records and clearing history passed
 older deployment TEST identities and historical receipts passed independently.
 One Basic web.1 remains up, maintenance off, Essential-0 unchanged. The isolated
 local PostgreSQL test daemon was stopped after verification.
+
+
+### 23 October 2026 — portable development handoff
+
+At the owner's request, updated [the handoff](deployment-handoff.md) for a fresh
+laptop/task: branch checkout, deployed v13 source versus later documentation
+commits, runtime/test setup, existing deployment/state preservation, local-only
+private artifacts and the deferred recovery decision in GitHub #45/research #006.
+Marked the original pre-deployment cloud instructions as archived. The handoff
+requires no private cookie/backup export or recovery implementation to resume
+source development. This update changes documentation only; v13 stays deployed.

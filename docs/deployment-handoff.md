@@ -1,8 +1,120 @@
-# Handoff to Ledgerloops (local)
+# LedgerLoops development and deployment handoff
 
-22 October 2026. User explicitly requested this handoff to **Ledgerloops (local)**.
-Destination task ID: `01a1630a-dff7-7eb1-b90d-6179ea6a385a`, host `local`, task cwd
-`/Users/michieldejong/Documents/Codex/2026-10-22/ledg`.
+Updated **23 October 2026** for continuing on another laptop. This opening section
+and the current v13 release record supersede the historical deployment checkpoints
+below. The original local task was `01a1630a-dff7-7eb1-b90d-6179ea6a385a`; a new
+machine can start a fresh task using this document and the checked-out repository.
+
+## Continue on another laptop
+
+Repository: **https://github.com/ledgerloops/strategy-pit**. Working branch:
+**`research/mdg2-local-improvement`**. This branch contains the complete current
+source, research records, operational documentation and latest recovery issue.
+Use the latest pushed branch tip; the deployed runtime is separately pinned below.
+
+```sh
+git clone --branch research/mdg2-local-improvement https://github.com/ledgerloops/strategy-pit.git
+cd strategy-pit
+git status --short
+```
+
+For an existing checkout, preserve its local changes, then fetch and inspect this
+branch before updating it. Read `AGENTS.md`, this document, and the latest entries
+in [the research queue](research-queue.md). The current product behavior is in
+[HOSTED_ALPHA.md](../app/HOSTED_ALPHA.md), with deployment operations in
+[HEROKU_DEPLOYMENT.md](../app/HEROKU_DEPLOYMENT.md). Keep routing and acceptance
+node-local as described in those documents and the protocol notes.
+
+Suggested opening prompt for the next coding assistant:
+
+> Continue LedgerLoops from the latest research/mdg2-local-improvement branch.
+> Read AGENTS.md, docs/deployment-handoff.md and the latest research queue entries.
+> The live app is Heroku ledgerloops-alpha at https://app.ledgerloops.com, release
+> v13 on one Basic dyno with Essential-0 PostgreSQL. Preserve all existing state.
+> Account recovery is deferred and documented in GitHub issue #45; ask what work
+> to tackle next before implementing a recovery mechanism.
+
+All implementation and documentation changes from this session are committed.
+There is no in-progress recovery implementation to finish automatically.
+
+## Latest product decision — account recovery is deferred
+
+The owner explicitly chose to leave recovery unchanged pending design work.
+[GitHub issue #45 — Account recovery: standard server-assisted options and
+peer-assisted exploration](https://github.com/ledgerloops/strategy-pit/issues/45)
+is also recorded in [research issue 006](issues/006-account-recovery.md).
+
+Separate cookie-only demo limitations, hosted account recovery, and requirements
+for LedgerLoops generally. Conventional server-assisted recovery (for example a
+reset/sign-in link to a previously verified email address) can solve part of the
+hosted case. Peer-assisted recovery needs brainstorming and prototypes first.
+Multiple accounts/devices per trustline endpoint and partial restoration of
+relationships are possibilities, not selected designs.
+
+Retain the two central concerns: one endorsement must not reveal an address book
+that an impostor could use to solicit more reset links; and an endpoint owner who
+can mint the other side's restore token could control both sides of a trustline.
+Two account approvals are not evidence of two independent people or real economic
+value delivery. The issue records the remaining permissions, privacy and proof
+boundaries. It does not authorize implementation, data migration or resets.
+
+## Credentials, user state and machine-specific files
+
+The hosted PostgreSQL database is authoritative. Reuse the existing Heroku app,
+canonical origin and DNS. Preserve accounts, keys, cookies, peer labels, limits,
+balances, messages, receipts, reservations and pending protocol work across updates.
+Keep exactly one Basic web dyno supervising HTTP and the background worker, and
+the existing Essential-0 database unless the owner changes that decision.
+
+Authenticate GitHub and Heroku on the new machine through their normal account
+flows or available connected tools. Production credentials, database URLs, private
+node keys and identity cookies are not in Git. Capture credentials privately when
+needed; do not print full config dumps or commit tokens, database exports or logs
+containing private records. The deployment tool accepts `HEROKU_API_KEY` through
+its environment; inspect its read-only `--check` mode before a future deployment.
+
+This Mac's private TEST account credentials, exact-image capacity backups, scratch
+smoke scripts and virtualenv live outside the repository under
+`/Users/michieldejong/Documents/Codex/2026-10-22/ledg/work/`. They are not portable
+Git dependencies. The full approved UX is implemented in tracked app source; the
+conversation's local wireframe visualization is not needed to build it.
+
+Opening the app on another laptop creates a different browser context. Source-code
+handoff does not transfer the original identity cookie. Private-profile identities
+remain stored server-side, but automatic demo recovery is still absent.
+
+## Verify changes on a new machine
+
+Use Python **3.12** and the pinned `requirements.txt`. Provision a disposable
+loopback PostgreSQL test database (PostgreSQL 17 was used in the latest local
+validation), then set `LEDGERLOOPS_TEST_POSTGRES_DSN` to that test database only.
+The former local test daemon on port 49201 was stopped; provision your own rather
+than assuming it is running or using the production database for tests.
+
+```sh
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+# Set LEDGERLOOPS_TEST_POSTGRES_DSN to your disposable local test database.
+PGCLIENTENCODING=UTF8 .venv/bin/python -m unittest discover -s app -p 'test_*.py' -q
+```
+
+A run without the test DSN skips PostgreSQL fixtures and does not reproduce the
+full validation. The latest complete run passed **222 Python app tests**.
+
+For real-browser integration, provide Node.js, the Playwright module, a Chromium
+executable in `CHROMIUM_PATH`, and the same test DSN. From the repository root:
+
+```sh
+PGCLIENTENCODING=UTF8 PYTHON="$PWD/.venv/bin/python" node app/test_hosted_browser_integration.cjs
+```
+
+Set `NODE_PATH` if Playwright is installed outside the normal module lookup path.
+The fixture starts isolated HTTP/PostgreSQL-backed nodes and now uses the actual
+production worker scheduler. It passed automatic clearing, invitations, value
+deliveries, private labels, messages and history. Keep mutating tests isolated from
+the user's live browser and records. Initial live read-only checks can use
+`heroku pg:info --app ledgerloops-alpha` and the canonical `/healthz` endpoint.
+Storage figures below are observations from 23 October, not ongoing monitoring.
 
 ## Current demo release — 23 October 2026
 
@@ -217,7 +329,13 @@ was subsequently corrected to recognize the provider's actual `succeeded` status
 unit tests and three real subprocess supervisor lifecycle tests pass. The earlier
 cloud handoff below remains historical context, not the current deployment status.
 
-## Request and current external state
+## Archived cloud handoff — before the local deployment
+
+The remainder records the earlier cloud task before local deployment. Its claims
+about missing credentials, deployment status, passkey UI and remaining steps are
+historical; follow the current sections above when resuming.
+
+### Original request and external state
 
 The user authorized documenting and implementing comfort-zone clearing and working
 until the alpha is deployed using Heroku. The final canonical URL is
@@ -312,7 +430,7 @@ Use the appropriate Chromium path on the local host. See the research queue for
 the final counts from the checkpoint validation. Frozen benchmark sources/results
 were not changed or rerun, and no new performance comparison is claimed.
 
-## Continue through deployment
+## Archived initial deployment checklist
 
 1. Inspect the local worker's available tools and read the Browser skill. Verify
    the connected browser is Chrome before interacting. Use the existing signed-in
