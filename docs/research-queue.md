@@ -740,9 +740,32 @@ The live inspection also found an owned SELECT stalled in ClientWrite for over
 four minutes, holding a row lock and blocking other application transactions. It
 was terminated only after checking its role, query prefix, wait state and age.
 New bounded statement/lock/idle-transaction times and smaller expiring connection
-pools prevent long-lived lock pileups. A real timeout regression verifies rollback
+pools reduce lock pileups and leave maintenance connection headroom. A real timeout regression verifies rollback
 preserves prior image/version and the same adapter can subsequently commit safely.
 
-Physical compaction will be performed only with the supervised web/worker dyno
-stopped, checking exact image hashes/versions for every record before and after.
-The plan and one-Basic-dyno formation are retained; no paid upgrade is requested.
+Heroku v12 (source `9ee91cad7e0d691ffd7c935619c6490e9a385f66`) deployed the
+scheduler write/backoff and connection changes. With maintenance enabled and the
+supervised web/worker dyno fully stopped, stale provider connections were reset
+and `VACUUM (FULL, ANALYZE)` reclaimed the snapshot table. Database size fell from
+739,632,415 to 32,916,767 bytes. All 14 complete stored image hashes and versions
+matched exactly before/after compaction. The private backup remains outside Git.
+Exactly one Basic web dyno and prior maintenance mode were restored. Live HTTPS
+health and the older TEST cookie identities, balances, deliveries and historical
+receipts passed. After recovery activity, allocated storage stabilized at
+66,471,199 bytes with every snapshot version unchanged across a 50-second sample.
+Heroku's `pg:info` summary still showed its stale 700 MB measurement at that point;
+the newer figures came directly from `pg_database_size(current_database())`.
+The Essential-0 plan and one-Basic-dyno formation are retained; no paid upgrade
+was performed.
+
+
+Follow-up performance investigation found full-image background polling competing
+with HTTP requests (including 30-second page timeouts) even after idle writes
+stopped. Infrastructure now polls only `(node_id, version)` every half second and
+retains the pre-dispatch version so writes arriving during a tick cannot be lost.
+The actor supplies only its own retry deadline/outbox-presence hint; unchanged
+idle actors retain a bounded 60-second heartbeat. No balance or graph data enters
+the registry scheduler. A restart rebuilds all scheduling from durable nodes.
+ACKs for up to five successful deliveries now publish one sender image per batch;
+crash-before-ACK retries preserve the existing receiver deduplication semantics.
+Binary snapshot reads avoid BYTEA hex expansion on the wire.
