@@ -63,8 +63,8 @@ deployment; the deployment record must include the actual release and live check
   still forward, approve and recover admitted work. Repeated unsuccessful searches
   with unchanged balances/preferences back off to five minutes; own balance or
   exchanged preference changes restart fast attempts. Idle wakes do not publish
-  new whole-database snapshots merely to move a clock deadline.
-  Infrastructure polls only snapshot identity/version metadata every half second.
+  new durable writes merely to move a clock deadline.
+  Infrastructure polls only actor registry identity/version metadata every half second.
   Changed versions wake their actor promptly; unchanged actors wait for their
   own search/outbox retry deadline, with a bounded 60-second safety heartbeat.
   Registry metadata never supplies another actor's balances or a routing decision.
@@ -126,15 +126,17 @@ alongside a background worker that recovers outboxes and initiates explicitly
 enabled local work. `hosted_single.py` supervises both process groups: either
 service exiting fails the dyno, and termination stops both with bounded cleanup.
 There is no separately billed worker dyno. PostgreSQL
-is authoritative for accounts and every node. The current compatibility adapter
-stores each private in-memory SQLite image in a separate PostgreSQL row, committing
-the ledger and outbox together before success. There are no authoritative SQLite
-files on an ephemeral dyno. See [storage semantics and tests](HOSTED_STORAGE.md).
+is authoritative for accounts and every node. Hosted storage uses native tables
+with a required `owner_node_id`, composite keys and forced row-level security.
+Each actor locks its own small registry row while updating ledger records and
+outgoing work in one PostgreSQL transaction. Hosted operations do not open,
+deserialize or rewrite SQLite databases. Existing installations require the
+explicit offline [snapshot migration](HOSTED_STORAGE.md) before this code starts.
 
-This preserves local protocol semantics but incurs O(node-state-size) storage I/O
-per operation. It is a small TEST alpha design, not a scale claim. Account/passkey
-data are separate from node ledgers. Python capability scoping is not hostile-code
-sandboxing or confidentiality from the operator, who can access node data, keys
+Account/passkey and enrollment tables have separate infrastructure scopes. RLS
+protects against omitted owner predicates, not hostile backend code or an
+operator who controls database credentials and scope selection. The operator
+can still access node data, keys
 and hashlock secrets. The enrollment UI discloses that access before account creation.
 
 Missing peers can leave reservations pending indefinitely. Restart/retry is supported;
@@ -155,27 +157,21 @@ and live checks required before calling the target deployed.
 
 ## Capacity and storage maintenance
 
-The PostgreSQL snapshot adapter retains complete SQLite images and skips writes
-when their serialized bytes are identical. It preserves schema/PRAGMA migrations
-even if SQLite reports zero changed rows. Idle constructor/provision/state reads
-are covered by exact image/version stability tests. Do not replace byte equality
-with a row-change-count heuristic or discard protocol inbox/audit records.
+Native row triggers mark actual inserts, deletes and changed updates; the actor
+version advances once per changed outer transaction. Read-only operations,
+identical updates and ignored inserts do not wake other workers. Protocol records
+are not pruned merely to reduce database size. Monitor row/index growth and
+PostgreSQL vacuum behavior as history grows.
 
-Repeated whole-image updates can leave substantial dead PostgreSQL TOAST space.
-A stalled snapshot reader holding a row lock also prevents vacuum from retiring
-old versions. Application connections now bound statements to 30 seconds, lock
+Application connections bound statements to 30 seconds, lock
 waits to five seconds and idle transactions to 30 seconds. Unused pool connections
 expire after 30 seconds; the two web workers and background worker each cap their
 pool at three, leaving headroom within the Essential-0 connection limit.
-Snapshot downloads use PostgreSQL's binary BYTEA format to avoid hex expansion.
 Successful outgoing acknowledgments are coalesced into one own-node commit per
 batch; receiver deduplication still makes retry after a crash safe.
 
-For physical reclamation, first keep a mode-0600 private backup of every stored
-image and its version/checksum. Maintenance mode alone does not stop background
-work: stop the single supervised web dyno before sampling image hashes and running
-`VACUUM (FULL, ANALYZE) ledgerloops_node_snapshots`. Compare all stored image hashes,
-versions and identities afterward, then restore exactly one Basic web dyno and
-disable maintenance mode. This briefly stops the demo but removes no records.
-Check live health, sessions, balances, messages and durable pending work afterward;
-never restore an older ledger snapshot just to remove reservations.
+Legacy images remain retained and fenced after migration; they are not the live
+store. Do not resume the old binary or restore stale images after native ledger
+operations. See the migration runbook for the stop/import/verify/cutover boundary.
+Test backups and recovery against peer-visible protocol state, not only database
+integrity. Maintenance mode alone does not stop background work.

@@ -1,5 +1,14 @@
 # LedgerLoops development and deployment handoff
 
+## Native storage change awaiting deployment
+
+The native PostgreSQL storage change replaces the SQLite-image adapter with
+owner-scoped relational tables and forced RLS. It requires an explicit offline
+import before startup against existing data; see [the storage runbook](../app/HOSTED_STORAGE.md).
+The release records below describe the historical deployed snapshot architecture,
+not evidence that the native migration has been applied. Preserve all existing
+accounts, keys, balances, pending reservations and protocol work during cutover.
+
 Updated **23 October 2026** for continuing on another laptop. This opening section
 and the current v13 release record supersede the historical deployment checkpoints
 below. The original local task was `01a1630a-dff7-7eb1-b90d-6179ea6a385a`; a new
