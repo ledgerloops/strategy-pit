@@ -6,6 +6,14 @@
 
 Written after direct discussion with the user. This is an adaptation of the public private-hashlock-v2/comfort design, not a verified description of the hosted Postgres backend. No application or protocol code is changed.
 
+## Product rationale and first scope
+
+Ontola wants to test-drive its in-house Atomic product in a useful application. LedgerLoops is a suitable case because it combines local-first interaction with explicit bilateral financial agreement and double-spend prevention. Useful applicability and learning about Atomic are sufficient reasons for the experiment; a cheaper replacement for PostgreSQL or a complete backend rewrite is not a prerequisite.
+
+The first concrete scope is browser-to-Heroku synchronization: local views of trustlines and history, offline drafts or requests, and live updates from the hosted actor. The browser must use Atomic's local store and subscriptions to obtain those benefits; a server-only database swap would not deliver them. Peer-to-peer transports and moving protocol storage into `atomic_lib` remain separate possible steps.
+
+The two logs, current-state views, checkpoints, Agent identities and permissions are application data modeled directly as Atomic Resources. This is a way to exercise Atomic's resource model, persistence, history, subscriptions and sync while keeping transaction validity explicit. It does not require treating a CRDT scalar as a spendable balance or making every device a simultaneous settlement writer.
+
 ## Recommendation
 
 Use two sender-owned message-log Resources per trustline: Alice appends to the Alice-to-Bob log and Bob appends to the Bob-to-Alice log. Each log has a JSON array of signed protocol messages. The other peer reads and processes new valid entries. This simpler representation follows the user's suggestion in our design discussion.
@@ -13,6 +21,25 @@ Use two sender-owned message-log Resources per trustline: Alice appends to the A
 Keep a trustline descriptor and derived view, but do not let concurrent assignments to a shared `balance` or `status` field decide settlement. Each node runs a serialized local protocol actor that validates messages and owns its reservations and decisions. A separate Resource for every message is an optional representation, not required for correct delivery.
 
 This can remove the need to build a separate HTTP message-delivery mechanism. It does not remove the LedgerLoops settlement state machine or automatically replace its transactional storage. Native nodes can meet over Iroh, browsers can meet over WebRTC, and an AtomicServer can provide an optional always-online meeting point. Closed browsers cannot run unattended clearing.
+
+## Relationship to SNAP half-ledgers
+
+The user's earlier [SNAP overview](https://github.com/ledgerloops/snap-checker/blob/79c1d129ee4ba358587b53c3306617dc62aa2139/README.md) describes a `ChannelWatcher` combining two directional `SimplexWatcher`s, each accounting for committed and pending transfers. Its [protocol notes](https://github.com/ledgerloops/snap-checker/blob/79c1d129ee4ba358587b53c3306617dc62aa2139/protocol.md) distinguish proposal receipt (`Proposing -> Proposed`), acceptance/confirmation (`Accepting -> Accepted`) and rejection/confirmation (`Rejecting -> Rejected`). This is conceptual lineage, not a claim that the historical code or its timing rules have been validated for reuse.
+
+The proposed Atomic logs are authored by sender. Alice's log contains both proposals she makes and replies to Bob's proposals; Bob's log does the converse. These two outbound logs carry evidence for the two directional transfer half-ledgers, but a log is not itself just the list of transfers proposed in one direction. A reducer consumes the relevant messages from both logs to calculate each half-ledger and the bilateral state.
+
+The baseline to discuss is bilateral acknowledgment of each transaction's exact identity, amount, unit, condition and predecessor/terms. Alice's signed proposal and Bob's signed acceptance can express both parties' consent; a final confirmation establishes the proposer's observation rather than asking Alice for the same consent again. Rejecting a proposal is a separate outcome. Acknowledgments must not require an endless acknowledgment-of-acknowledgment exchange.
+
+Atomic synchronization acknowledgments establish transport/storage progress, not necessarily application processing, acceptance or financial finality. Existing SNAP receipt/confirmation phases might remain explicit log entries or be represented partly by durable processed-frontier acknowledgments/checkpoints. That simplification requires an explicit state machine and recovery argument; it is not implied by Atomic having delivered a Commit. Conditional loop fulfillment still follows its reserved, consented hashlock transition rather than a fresh manual decision at each retransmission.
+
+## Design questions for the next discussion
+
+- **Agreement boundary:** choose the exact point at which proposal plus counterparty acceptance binds the bilateral ledger, what the proposer confirmation establishes, and when each party moves an amount between pending/reserved and accepted balances. Keep replica convergence and application finality distinct.
+- **Who acknowledges:** define whether each transaction needs a fresh human action, an agent applying a previously approved policy, or delegated hosted execution. Two-party agreement does not inherently mean two people clicking on every message. Do not silently turn existing manual consent into automatic approval.
+- **Writer authority:** choose which actor can emit binding messages for each half-ledger. Browser-to-Heroku sync can carry device-authored drafts to a hosted authority that serializes admitted transactions. Giving the browser and Heroku the same signing key and simultaneous offline writer rights does not prevent double-spending. Offline binding writes would require a separate allocation/fencing design.
+- **Use of Atomic evidence:** decide whether independent message signatures remain the default or a stricter retained-Commit proof mode could serve the same purpose. Both must cover exact business meaning after batching, snapshot replication and recovery; the existing snapshot-trust path does not by itself prove every author's consent.
+- **Depth of integration:** start with Atomic Resources as the persistent/synchronized half-ledger representation and state views. Decide separately whether the deterministic reducer and crash-safe reservation/state/outbound-intent updates should move into `atomic_lib`. Keeping SQL initially is an implementation option, not the product objective.
+- **First useful exercise:** synchronize one participant's browser with its hosted node, demonstrate offline viewing and queued requests, and make pending versus accepted state visible. Then exercise two-party acknowledgment and recovery, followed by three-peer conditional loop resolution. Record both useful behavior and Atomic API gaps; this is not contingent on first proving a full backend migration.
 
 ## Existing implementation facts
 
@@ -159,6 +186,8 @@ Run one fenced logical settlement writer per node. The same Agent key active on 
 ## Implementation and verification checklist
 
 - [ ] Confirm the hosted LedgerLoops protocol/schema and define the exact compatibility target.
+- [ ] Review the historical SNAP half-ledger lifecycle and choose transaction consent, receipt and final-confirmation boundaries without assuming historical implementation correctness.
+- [ ] Specify manual versus delegated acknowledgment and the browser/hosted writer-authority boundary for the initial browser-to-Heroku exercise.
 - [ ] Specify descriptor handshake, canonical message bytes, sender sequences/hash chains, identity mapping, exact amounts, signature verification and accepted-state transitions.
 - [ ] Specify current-state caches, signed post-state fields, agreed checkpoint cuts, trusted bootstrap/restore freshness and archival/retention policy.
 - [ ] Verify directional reservation bounds for arbitrary commit/abort subsets and orders, exact-once release, lowered-limit excess and pinned preference revisions.
