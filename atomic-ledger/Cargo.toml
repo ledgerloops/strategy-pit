@@ -1,0 +1,21 @@
+[package]
+name = "ledgerloops-atomic"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+# Custom storage constructor: ontola/atomic-server#2371.
+atomic_lib = { git = "https://github.com/ontola/atomic-server", rev = "633d2ab62c5eab41b91c95b7a34478b88fe77cc8", default-features = false, features = ["db"] }
+base64 = "0.22"
+ed25519-dalek = "2"
+native-tls = "0.2"
+postgres = "0.19"
+postgres-native-tls = "0.5"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "sync"] }
+
+[dev-dependencies]
+tempfile = "3"

@@ -30,5 +30,8 @@ build/
 __pycache__/
 *.py[cod]
 
+# Atomic engine build artifacts
+/atomic-ledger/target/
+
 # Runtime locks for resumable research campaigns
 experiments/results/*-state.json.lock
