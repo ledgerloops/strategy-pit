@@ -18,6 +18,7 @@ from urllib.request import Request, urlopen
 
 from private_node import Node, PROTOCOL
 from headroom_policy import edge_allowed as headroom_edge_allowed
+from node import is_postgres, write_meta
 
 NODE_ID = re.compile(r'n_[0-9a-f]{32}\Z')
 MAX_TRUST = 10**9
@@ -43,14 +44,15 @@ class HostedRuntime:
         db = self.stores.connection(key)
         try:
             with db:
-                tables = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-                previous = db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone() if 'meta' in tables else None
+                has_meta = (True if is_postgres(db) else
+                            'meta' in {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE type='table'")})
+                previous = db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone() if has_meta else None
                 if previous:
                     self._invite_schema(db)
                     return
                 config = dict(node=account['node_id'], token=secrets.token_urlsafe(32),
                               mode='testnet', peers={}, label=account['name'])
-                node = Node(config, ':memory:', connection=db)
+                node = Node(config, None, connection=db)
                 db.execute("INSERT INTO meta VALUES('hosted_config',?)", (json.dumps(config),))
                 db.execute("INSERT INTO meta VALUES('hosted_automation','true')")
                 db.execute("INSERT INTO meta VALUES('hosted_automatic_clearing_v1','[]')")
@@ -62,6 +64,8 @@ class HostedRuntime:
     @staticmethod
     def _invite_schema(db):
         """Add invitation metadata without replacing provisioned node state."""
+        if is_postgres(db):
+            return  # Native schema upgrades run at release, not actor load.
         db.execute('''CREATE TABLE IF NOT EXISTS hosted_invites(
             token_hash TEXT PRIMARY KEY,expires REAL NOT NULL,
             accepted_by TEXT,peer_key TEXT,peer_name TEXT NOT NULL DEFAULT '')''')
@@ -75,6 +79,8 @@ class HostedRuntime:
 
     @staticmethod
     def _message_schema(db):
+        if is_postgres(db):
+            return
         db.execute('''CREATE TABLE IF NOT EXISTS hosted_messages(
             id TEXT NOT NULL,peer TEXT NOT NULL,direction TEXT NOT NULL,text TEXT NOT NULL,
             status TEXT NOT NULL,created_at REAL NOT NULL,sent_at REAL,received_at REAL,
@@ -104,7 +110,7 @@ class HostedRuntime:
                     pending.append(row['peer'])
             # The demo's newly requested policy replaces its old node-wide
             # default once. Subsequent explicit automation=false is retained.
-            node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automation','true')")
+            write_meta(node.db, 'hosted_automation', 'true')
         deferred = []
         for peer in pending:
             row = node.db.execute('SELECT own FROM contacts WHERE peer=?', (peer,)).fetchone()
@@ -119,7 +125,7 @@ class HostedRuntime:
             node.set_preferences(peer, dict(own, expected_revision=own['revision'], auto_adjust=True))
         value = json.dumps(deferred)
         if not marker or marker[0] != value:
-            node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automatic_clearing_v1',?)", (value,))
+            write_meta(node.db, 'hosted_automatic_clearing_v1', value)
 
     @contextmanager
     def node(self, node_id):
@@ -131,7 +137,7 @@ class HostedRuntime:
                 row = db.execute("SELECT v FROM meta WHERE k='hosted_config'").fetchone()
                 if not row:
                     raise ValueError('Node not provisioned')
-                n = Node(json.loads(row[0]), ':memory:', connection=db)
+                n = Node(json.loads(row[0]), None, connection=db)
                 try:
                     self._invite_schema(db)
                     self._message_schema(db)
@@ -161,7 +167,7 @@ class HostedRuntime:
         if type(enabled) is not bool:
             raise ValueError('enabled must be boolean')
         with self.node(node_id) as node:
-            node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_automation',?)", ('true' if enabled else 'false',))
+            write_meta(node.db, 'hosted_automation', 'true' if enabled else 'false')
         return dict(enabled=enabled)
 
     @staticmethod
@@ -327,10 +333,14 @@ class HostedRuntime:
             # Filter meaningful outcomes and the direct peer before materializing
             # receipts, so thousands of failed background probes cannot hide a
             # completed clearing or another peer's history.
-            for row in node.db.execute('''SELECT data FROM receipts
+            receipt_query = ('''SELECT data FROM receipts
+                    WHERE data::jsonb->>'status'='committed' AND EXISTS(
+                    SELECT 1 FROM jsonb_array_elements(receipts.data::jsonb->'changes') AS change(value)
+                    WHERE change.value->>'peer'=?)''' if is_postgres(node.db) else '''SELECT data FROM receipts
                     WHERE json_extract(data,'$.status')='committed' AND EXISTS(
                     SELECT 1 FROM json_each(receipts.data,'$.changes') AS change
-                    WHERE json_extract(change.value,'$.peer')=?)''', (peer,)):
+                    WHERE json_extract(change.value,'$.peer')=?)''')
+            for row in node.db.execute(receipt_query, (peer,)):
                 item = json.loads(row['data'])
                 entries.append(dict(item, type='clearing', timestamp=item['decided_at']))
             entries.sort(key=lambda item: (item['timestamp'], item['type'], item['id'], item.get('direction', '')), reverse=True)
@@ -366,9 +376,10 @@ class HostedRuntime:
         enrollment=self.stores.connection('enrollment')
         try:
             with enrollment:
-                enrollment.execute('CREATE TABLE IF NOT EXISTS channel_keys(pair TEXT PRIMARY KEY,secret TEXT NOT NULL)')
+                if not is_postgres(enrollment):
+                    enrollment.execute('CREATE TABLE IF NOT EXISTS channel_keys(pair TEXT PRIMARY KEY,secret TEXT NOT NULL)')
                 pair=json.dumps(sorted((issuer,node_id)))
-                enrollment.execute('INSERT OR IGNORE INTO channel_keys VALUES(?,?)',(pair,secrets.token_urlsafe(32)))
+                enrollment.execute('INSERT INTO channel_keys VALUES(?,?) ON CONFLICT DO NOTHING',(pair,secrets.token_urlsafe(32)))
                 key=enrollment.execute('SELECT secret FROM channel_keys WHERE pair=?',(pair,)).fetchone()[0]
         finally:
             enrollment.close()
@@ -446,9 +457,9 @@ class HostedRuntime:
         attempts = min(8, previous['attempts']+1) if previous and not changed else 1
         node.discover(1, mode='headroom')
         delay = min(SEARCH_RETRY_MAX, 4*2**(attempts-1)+secrets.randbelow(1000)/1000)
-        node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_search_backoff',?)",
-                        (json.dumps(dict(fingerprint=fingerprint, attempts=attempts)),))
-        node.db.execute("INSERT OR REPLACE INTO meta VALUES('hosted_next_search',?)", (str(now+delay),))
+        write_meta(node.db, 'hosted_search_backoff',
+                   json.dumps(dict(fingerprint=fingerprint, attempts=attempts)))
+        write_meta(node.db, 'hosted_next_search', str(now+delay))
 
     def _tick_hint(self, node):
         """Infrastructure wake hints from this actor's own committed state.
@@ -500,7 +511,8 @@ class HostedRuntime:
             outgoing=[]
             # Chats to an unavailable peer cannot sit ahead of financial
             # protocol work merely because their outbox rows were queued first.
-            for row in node.db.execute("SELECT * FROM outbox ORDER BY CASE WHEN json_extract(data,'$.kind')=? THEN 1 ELSE 0 END,rowid LIMIT 5", (MESSAGE_KIND,)):
+            kind_expression = "data::jsonb->>'kind'" if is_postgres(node.db) else "json_extract(data,'$.kind')"
+            for row in node.db.execute(f"SELECT * FROM outbox ORDER BY CASE WHEN {kind_expression}=? THEN 1 ELSE 0 END,rowid LIMIT 5", (MESSAGE_KIND,)):
                 peer=node.peers[row['peer']]
                 outgoing.append(dict(id=row['id'],url=peer['url'].rstrip('/')+'/peer/message',
                                      key=peer['key'],peer=row['peer'],body=row['data']))

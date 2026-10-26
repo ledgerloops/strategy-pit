@@ -9,6 +9,7 @@ import time
 from urllib.parse import urlsplit
 
 from flask import Flask, jsonify, request, send_from_directory
+from psycopg import IntegrityError as PostgresIntegrityError
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from hosted_auth import HostedAuth, AuthError, COOKIE_NAME
@@ -98,6 +99,7 @@ def create_app(*, stores=None, origin=None, development=False):
     @app.errorhandler(KeyError)
     @app.errorhandler(TypeError)
     @app.errorhandler(sqlite3.IntegrityError)
+    @app.errorhandler(PostgresIntegrityError)
     def bad_input(error):
         return jsonify(error=str(error) if isinstance(error,ValueError) else 'Invalid request'),400
 

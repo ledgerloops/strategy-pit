@@ -48,6 +48,8 @@ def validate_request(values):
 
 class Obligations:
     def initialize_obligations(self):
+        if getattr(self.db, 'dialect', None) == 'postgres':
+            return  # Release migrations provision native tables.
         self.db.execute('''CREATE TABLE IF NOT EXISTS obligations(
             id TEXT PRIMARY KEY,peer TEXT NOT NULL,data TEXT NOT NULL,digest TEXT NOT NULL,
             status TEXT NOT NULL,origin INTEGER NOT NULL,approved INTEGER NOT NULL,

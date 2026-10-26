@@ -1,8 +1,8 @@
 """Passkey accounts and opaque browser sessions for the hosted TEST alpha.
 
 Only authentication/account metadata lives here: no node balances, credentials,
-hashlocks or clearing decisions. ``db`` is a SQLite-compatible transactional
-connection (the hosted adapter persists it to PostgreSQL). All mutating HTTP
+hashlocks or clearing decisions. ``db`` is a transactional SQL connection;
+hosted storage uses native, actor-scoped PostgreSQL tables. All mutating HTTP
 routes must pass the exact browser Origin; cookie-authenticated ones also pass
 the session CSRF token. The gateway sets the returned session token in a Secure,
 HttpOnly, SameSite=Lax, Path=/ __Host-ledgerloops_session cookie, never in JSON.
@@ -70,26 +70,27 @@ class HostedAuth:
         self.recovery_codes_enabled = recovery_codes_enabled
         self.lock = threading.RLock()
         with self.lock, self.db:
-            self.db.executescript('''
-            CREATE TABLE IF NOT EXISTS auth_accounts(
-                id TEXT PRIMARY KEY, node_id TEXT NOT NULL UNIQUE,
-                name TEXT NOT NULL, created INTEGER NOT NULL);
-            CREATE TABLE IF NOT EXISTS auth_credentials(
-                id TEXT PRIMARY KEY, account_id TEXT NOT NULL,
-                public_key TEXT NOT NULL, sign_count INTEGER NOT NULL,
-                created INTEGER NOT NULL);
-            CREATE TABLE IF NOT EXISTS auth_challenges(
-                id TEXT PRIMARY KEY, kind TEXT NOT NULL, challenge TEXT NOT NULL,
-                context TEXT NOT NULL, expires INTEGER NOT NULL, consumed INTEGER NOT NULL DEFAULT 0);
-            CREATE TABLE IF NOT EXISTS auth_sessions(
-                token_hash TEXT PRIMARY KEY, account_id TEXT NOT NULL,
-                csrf TEXT NOT NULL, expires INTEGER NOT NULL);
-            CREATE TABLE IF NOT EXISTS auth_recovery(
-                code_hash TEXT PRIMARY KEY, account_id TEXT NOT NULL,
-                consumed INTEGER NOT NULL DEFAULT 0);
-            CREATE INDEX IF NOT EXISTS auth_credentials_account ON auth_credentials(account_id);
-            CREATE INDEX IF NOT EXISTS auth_sessions_account ON auth_sessions(account_id);
-            ''')
+            if getattr(self.db, 'dialect', None) != 'postgres':
+                self.db.executescript('''
+                CREATE TABLE IF NOT EXISTS auth_accounts(
+                    id TEXT PRIMARY KEY, node_id TEXT NOT NULL UNIQUE,
+                    name TEXT NOT NULL, created INTEGER NOT NULL);
+                CREATE TABLE IF NOT EXISTS auth_credentials(
+                    id TEXT PRIMARY KEY, account_id TEXT NOT NULL,
+                    public_key TEXT NOT NULL, sign_count INTEGER NOT NULL,
+                    created INTEGER NOT NULL);
+                CREATE TABLE IF NOT EXISTS auth_challenges(
+                    id TEXT PRIMARY KEY, kind TEXT NOT NULL, challenge TEXT NOT NULL,
+                    context TEXT NOT NULL, expires INTEGER NOT NULL, consumed INTEGER NOT NULL DEFAULT 0);
+                CREATE TABLE IF NOT EXISTS auth_sessions(
+                    token_hash TEXT PRIMARY KEY, account_id TEXT NOT NULL,
+                    csrf TEXT NOT NULL, expires INTEGER NOT NULL);
+                CREATE TABLE IF NOT EXISTS auth_recovery(
+                    code_hash TEXT PRIMARY KEY, account_id TEXT NOT NULL,
+                    consumed INTEGER NOT NULL DEFAULT 0);
+                CREATE INDEX IF NOT EXISTS auth_credentials_account ON auth_credentials(account_id);
+                CREATE INDEX IF NOT EXISTS auth_sessions_account ON auth_sessions(account_id);
+                ''')
 
     def check_origin(self, origin):
         if origin != self.origin:
