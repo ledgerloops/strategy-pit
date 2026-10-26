@@ -1,0 +1,52 @@
+name: Atomic ledger engine
+
+on:
+  pull_request:
+    paths:
+      - 'atomic-ledger/**'
+      - '.github/workflows/atomic-ledger.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres-test-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      LEDGERLOOPS_TEST_POSTGRES_DSN: postgresql://ledgerloops_ci:actor-test-only@localhost:5432/ledgerloops_atomic_test
+    defaults:
+      run:
+        working-directory: atomic-ledger
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.98.1
+        with:
+          components: rustfmt, clippy
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config postgresql-client
+      - name: Create a test owner that cannot bypass RLS
+        env:
+          PGPASSWORD: postgres-test-only
+        run: |
+          psql -h localhost -U postgres -v ON_ERROR_STOP=1 -c "CREATE ROLE ledgerloops_ci LOGIN PASSWORD 'actor-test-only' NOSUPERUSER NOBYPASSRLS"
+          psql -h localhost -U postgres -v ON_ERROR_STOP=1 -c 'CREATE DATABASE ledgerloops_atomic_test OWNER ledgerloops_ci'
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - name: Protocol, capacity and resource recovery tests
+        run: cargo test --locked
+      - name: PostgreSQL durability, atomic batches, leases and RLS
+        run: cargo test --locked -- --ignored

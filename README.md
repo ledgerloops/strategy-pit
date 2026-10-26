@@ -31,6 +31,11 @@ The [runnable hashlock app](app/README.md) connects a responsive client to indep
 
 The [obligation entry demo](app/OBLIGATIONS.md) starts with zero balances and supports proposing, approving and listing bilateral TEST obligations, then clearing an entered three-node cycle. Obligation entries and clearing receipts appear in contact history.
 
+The [Atomic backend foundation](atomic-ledger/README.md) implements signed bilateral
+messages, durable Atomic actor Resources and a PostgreSQL storage adapter. The
+hosted application has not switched to it; the guide records the remaining
+integration and migration gates.
+
 ## Meet the animals
 
 These are research prototypes from several generations. Early animals explored loop discovery and message ordering; later ones attempted negotiation and settlement. Their descriptions explain what we learned, rather than establish a performance ranking. The historical source links point to the last snapshot before the older implementations were removed.
