@@ -12,6 +12,8 @@ The [issue tracker in `docs/issues/`](docs/issues/README.md) records proposals, 
 
 The [one-unit retention research note](experiments/HEADROOM-ONE-UNIT-RETENTION.md) preserves an offline Headroom reference and counterexamples. Product work now focuses on [comfort zones](app/COMFORT.md); Headroom remains a debt-reduction baseline with different bounds and objectives.
 
+The [Atomic Sync transport proposal](docs/issues/006-atomic-sync-transport.md) explores two sender-owned message-log Resources per trustline while preserving local settlement decisions and crash recovery. It is a design proposal, not an implemented transport.
+
 ## From research to real use
 
 The [product roadmap](docs/product-roadmap.md) proposes a community clearing assistant, a durable peer protocol, and staged pilots with explicit release gates. The next milestone is a three-node crash-recovery testnet alongside a read-only user demo.
