@@ -1,8 +1,10 @@
 # Laptop deployment handoff: native PostgreSQL storage
 
-Status: ready for an authenticated local worker; **not deployed from the cloud**.
-The user explicitly authorized deployment of PR #47, then requested the deployment
-be handed to a worker on their laptop while Atomic development continues in cloud.
+Status: **deployed from the laptop on 27 October 2026 as Heroku v14**. The
+running application source is exactly `d7a1fab55aeb2f9bf92ac0a09b6b960084c641e2`.
+The current release record below supersedes the original execution checklist.
+The user authorized deployment of PR #47 and its offline migration; Atomic
+work remains separate and was excluded.
 
 - Repository: `ledgerloops/strategy-pit`.
 - PR: https://github.com/ledgerloops/strategy-pit/pull/47
@@ -11,6 +13,67 @@ be handed to a worker on their laptop while Atomic development continues in clou
 - Existing app: **`ledgerloops-alpha`**, canonical origin **https://app.ledgerloops.com**.
 - Validation: 251 application tests, 8 deployment-tooling tests and native PostgreSQL CI passed. The unchanged legacy Node/Jest job reports no tests.
 - Cloud has no Heroku credential or database URL. Use the laptop's normal authenticated CLI/API session; never copy credentials into chat, Git or task summaries.
+
+## Verified local cutover result — 27 October 2026
+
+- Live application: **https://app.ledgerloops.com**, Heroku **ledgerloops-alpha**,
+  successful release **v14**, source **d7a1fab55aeb2f9bf92ac0a09b6b960084c641e2**.
+- Exactly **one Basic web dyno** supervises HTTP and background work. Maintenance
+  is off; the existing **Essential-0** database, credentials, origin and DNS remain.
+  PR #47 was deployed at the tested pin without merging unrelated work or Atomic.
+- Before any import, maintenance was enabled and every app writer was stopped.
+  A full provider backup was captured and downloaded privately. The complete
+  archive was decoded successfully, independently restored into a dedicated
+  disposable local PostgreSQL database, and all **17** restored scope identities,
+  image hashes, versions and timestamps matched the frozen production baseline.
+  Backup exports and verification records are mode 0600, outside Git.
+- The offline importer migrated **17 scopes / 127,282 rows**, including accounts,
+  enrollment and every actor. An independent comparison then checked every
+  native tuple against the retained source: **323 scope/table combinations**
+  across all **19 domain tables**, with every stored column, rowid/order, missing
+  table and allowed invitation default accounted for. Every value matched.
+- All source hashes/versions remained identical; migration markers, old-writer
+  fence and release readiness passed. All 19 domain tables force RLS, unscoped
+  reads returned no rows, and the actual runtime role is neither superuser nor
+  BYPASSRLS. It remains the ordinary object owner used by the existing release
+  initializer; this is not a claim that runtime DDL authority has been removed.
+- Before opening the router, the actual native application gateway accepted the
+  **9 existing worker TEST cookies**, with their original accounts, node state
+  and relationship history. Those read-only checks changed no registry versions.
+- Canonical HTTPS health and live existing-cookie checks passed after reopening.
+  Private aliases, balances, delivery/message records and historical clearing
+  receipts were preserved. Six observed session/state requests took
+  **0.125–0.281 seconds**; older deployment TEST accounts were checked separately.
+- A message between known labeled worker TEST peers was submitted twice using
+  the same ID. It was delivered once, acknowledged and stored in native rows at
+  both endpoints; their native registry versions advanced. Financial records
+  remained unchanged, and **all 17 legacy images, versions and timestamps stayed
+  exactly unchanged**. No message was sent to a human peer.
+- An actual single-dyno restart retained the native message, acknowledgment,
+  existing cookies, financial records and history; the legacy hashes still
+  matched. Pending protocol rows/secrets were included in the exact offline
+  preservation check; none were discarded or force-released.
+- Local validation passed **251 application tests**, **8 deployment-tool tests**,
+  and the real Chromium/Flask/PostgreSQL integration against native storage with
+  an ordinary non-BYPASSRLS test role. The browser fixture covered invitations,
+  value-delivery consent, automatic 2-to-1 clearing, labels, messages and history.
+
+Direct PostgreSQL inspection after live native processing measured **211,141,919
+bytes (about 201 MiB)**, **17 native scopes / 17 completed migration markers**,
+6 connections including the audit connection, and zero blocked connections.
+This includes the deliberately retained legacy images alongside native tables.
+Heroku's summary still showed the older 82.5 MB / one-table sample at that time;
+use fresh direct measurements when provider metrics lag. The plan was not upgraded.
+
+**Recovery boundary:** normal work now changes native rows. The retained legacy
+images are stale recovery evidence, not a usable live fallback. Preserve the fence,
+markers and backups. An old-code restart or snapshot restore is unsafe after native
+processing; stop writers and plan a state-preserving recovery if a problem arises.
+Account recovery UX remains deferred in [issue #45](https://github.com/ledgerloops/strategy-pit/issues/45).
+
+## Original deployment plan
+
+The following checklist records the reviewed procedure used for this cutover.
 
 ## Goal and boundaries
 

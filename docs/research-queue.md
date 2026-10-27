@@ -794,3 +794,32 @@ private artifacts and the deferred recovery decision in GitHub #45/research #006
 Marked the original pre-deployment cloud instructions as archived. The handoff
 requires no private cookie/backup export or recovery implementation to resume
 source development. This update changes documentation only; v13 stays deployed.
+
+
+### 27 October 2026 — completed native PostgreSQL production cutover
+
+At the owner's request, deployed PR #47's exact tested source
+`d7a1fab55aeb2f9bf92ac0a09b6b960084c641e2` to **Heroku v14** on
+`ledgerloops-alpha`. Maintenance stopped every writer; a private full database
+backup was archive-checked and independently restored locally, with all 17
+snapshot hashes/versions/timestamps matching. Imported **17 scopes / 127,282
+rows**, then compared all 323 scope/table combinations (19 native tables) exactly
+against source, including rowids, credentials, history and pending protocol data.
+RLS, ordinary runtime role, old-writer fence and release readiness passed.
+
+The native gateway accepted 9 existing worker TEST cookies without changing
+versions before opening the router. Live canonical checks preserved old accounts,
+aliases, balances, deliveries, messages and historical receipts. A duplicated
+TEST message request yielded one delivered record at both native endpoints and
+advanced native versions while every retained legacy image/version/timestamp
+stayed identical. An actual single-dyno restart preserved that new message/ACK,
+cookies and financial state. All **251 app tests**, **8 operations tests** and
+real Chromium/native-PostgreSQL integration passed. No human peer received a test
+message. One Basic dyno, Essential-0, origin, DNS and existing credentials remain;
+maintenance is off. Atomic work and deferred account-recovery work were excluded.
+
+Direct DB measurement was 211,141,919 bytes (~201 MiB), including retained legacy
+images. Provider summary metrics were still stale. Native processing makes old
+images stale: retain fences/backups and use a state-preserving recovery plan rather
+than rolling back to snapshot code. Full evidence and resume instructions are in
+[the native deployment handoff](native-postgres-deployment-handoff.md).
