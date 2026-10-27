@@ -29,6 +29,39 @@ The deployment preserves existing configuration and node/account credentials.
 It refuses to rewrite a different existing `PUBLIC_ORIGIN`, since that can break
 registered passkeys. It never recreates a database merely to reset state.
 
+## Native PostgreSQL cutover for an existing app
+
+The native-table release cannot run concurrently with the old snapshot runtime.
+Before deploying it to an existing app:
+
+1. Put the app into maintenance and stop **all** web and worker writers. Do not
+   leave a legacy standalone worker or a supervised background process running.
+2. Retain and verify a backup; preserve existing accounts, node credentials and
+   pending protocol state. Do not reseed fixtures or rotate keys.
+3. From the reviewed new source in a controlled administrative environment,
+   configure the existing database DSN through the normal secret mechanism and
+   run `python app/migrate_postgres_snapshots.py --confirm-offline`. Include every
+   scope, including accounts and enrollment, before resuming service.
+4. Verify native records, migration markers and protocol state against the
+   retained originals without printing secrets. The migration retains old images
+   and installs a fence against old-runtime writes to migrated scopes.
+5. Deploy the exact native-table commit and allow its ordinary release/schema
+   checks to run. Start only native runtime processes, verify account continuity
+   and pending work, then leave maintenance.
+
+Use a runtime database role without superuser or `BYPASSRLS` attributes. Actor
+transactions explicitly reject those roles; an administrative migration
+connection may have stronger privileges, so the importer scopes its own checks
+with explicit owner predicates rather than relying only on RLS.
+
+See [native storage and migration](HOSTED_STORAGE.md) for scope selection,
+idempotent retries and rollback limits. The release process refuses unmigrated
+legacy scopes; it does not automatically convert data or initialize a replacement
+identity. Do not remove that guard to make an incomplete cutover start. Once the
+native runtime has accepted changes, rolling back code to snapshot storage would
+reactivate stale state and is unsafe. This procedure requires a separately
+reviewed deployment; developing the migration does not authorize running it live.
+
 ## API deployment
 
 From the repository root, check access first:

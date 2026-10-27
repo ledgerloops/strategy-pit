@@ -9,7 +9,7 @@ import threading
 import time
 from pathlib import Path
 from http.server import ThreadingHTTPServer
-from node import Node as TransportNode, make_handler, MAX_AMOUNT
+from node import Node as TransportNode, make_handler, MAX_AMOUNT, is_postgres
 from comfort import validate_preferences, shared_comfort, allows_balance, discomfort, comfort_move
 from obligations import Obligations
 from headroom_policy import edge_allowed as headroom_edge_allowed, pair_surplus
@@ -64,39 +64,48 @@ class Node(Obligations):
             raise ValueError('Distinct client and neighbour credentials required')
         self.lock = threading.RLock()
         self.db = connection if connection is not None else sqlite3.connect(database, check_same_thread=False)
-        self.db.row_factory = sqlite3.Row
-        tables = {r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
-        if tables:
+        if is_postgres(self.db):
+            from storage_rows import Row
+            self.db.row_factory = Row
+            has_state = self.db.execute('SELECT 1 FROM meta LIMIT 1').fetchone()
+            version = self.db.execute("SELECT v FROM meta WHERE k='protocol'").fetchone()
+        else:
+            self.db.row_factory = sqlite3.Row
+            tables = {r[0] for r in self.db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            has_state = bool(tables)
             version = self.db.execute("SELECT v FROM meta WHERE k='protocol'").fetchone() if 'meta' in tables else None
+        if has_state:
             if not version or version[0] != PROTOCOL:
-                self.db.close()
+                if connection is None:
+                    self.db.close()
                 raise ValueError('Incompatible database: create a fresh private-hashlock-v2 testnet')
-        self.db.executescript('''PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;
-        CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY,v TEXT);
-        CREATE TABLE IF NOT EXISTS balances(peer TEXT PRIMARY KEY,balance INTEGER NOT NULL);
-        CREATE TABLE IF NOT EXISTS proposals(id TEXT PRIMARY KEY,data TEXT NOT NULL,status TEXT NOT NULL,approved INTEGER DEFAULT 0,prev TEXT,next TEXT,origin INTEGER DEFAULT 0,prepared INTEGER DEFAULT 0,ready_seen INTEGER DEFAULT 0,ready_forwarded INTEGER DEFAULT 0,next_rejected INTEGER DEFAULT 0);
-        CREATE TABLE IF NOT EXISTS private_secrets(id TEXT PRIMARY KEY,preimage TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS reservations(peer TEXT PRIMARY KEY,proposal TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS outbox(id TEXT PRIMARY KEY,peer TEXT NOT NULL,data TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS inbox(id TEXT PRIMARY KEY);
-        CREATE TABLE IF NOT EXISTS searches(id TEXT PRIMARY KEY,status TEXT NOT NULL);
-        CREATE TABLE IF NOT EXISTS contacts(peer TEXT PRIMARY KEY, own TEXT NOT NULL, peer_preferences TEXT);
-        CREATE TABLE IF NOT EXISTS receipts(id TEXT PRIMARY KEY,data TEXT NOT NULL);
-        ''')
+        if not is_postgres(self.db):
+            self.db.executescript('''PRAGMA journal_mode=WAL; PRAGMA synchronous=FULL;
+            CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY,v TEXT);
+            CREATE TABLE IF NOT EXISTS balances(peer TEXT PRIMARY KEY,balance INTEGER NOT NULL);
+            CREATE TABLE IF NOT EXISTS proposals(id TEXT PRIMARY KEY,data TEXT NOT NULL,status TEXT NOT NULL,approved INTEGER DEFAULT 0,prev TEXT,next TEXT,origin INTEGER DEFAULT 0,prepared INTEGER DEFAULT 0,ready_seen INTEGER DEFAULT 0,ready_forwarded INTEGER DEFAULT 0,next_rejected INTEGER DEFAULT 0);
+            CREATE TABLE IF NOT EXISTS private_secrets(id TEXT PRIMARY KEY,preimage TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS reservations(peer TEXT PRIMARY KEY,proposal TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS outbox(id TEXT PRIMARY KEY,peer TEXT NOT NULL,data TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS inbox(id TEXT PRIMARY KEY);
+            CREATE TABLE IF NOT EXISTS searches(id TEXT PRIMARY KEY,status TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS contacts(peer TEXT PRIMARY KEY, own TEXT NOT NULL, peer_preferences TEXT);
+            CREATE TABLE IF NOT EXISTS receipts(id TEXT PRIMARY KEY,data TEXT NOT NULL);
+            ''')
         self.initialize_obligations()
         with self.db:
             identity = self.db.execute("SELECT v FROM meta WHERE k='node'").fetchone()
             if identity and identity[0] != self.name:
                 raise ValueError('Database belongs to another node')
-            self.db.execute("INSERT OR IGNORE INTO meta VALUES('protocol',?)", (PROTOCOL,))
-            self.db.execute("INSERT OR IGNORE INTO meta VALUES('node',?)", (self.name,))
-            self.db.execute("INSERT OR IGNORE INTO meta VALUES('paused','false')")
+            self.db.execute("INSERT INTO meta VALUES('protocol',?) ON CONFLICT DO NOTHING", (PROTOCOL,))
+            self.db.execute("INSERT INTO meta VALUES('node',?) ON CONFLICT DO NOTHING", (self.name,))
+            self.db.execute("INSERT INTO meta VALUES('paused','false') ON CONFLICT DO NOTHING")
             for peer, config in self.peers.items():
                 if type(config['balance']) is not int or abs(config['balance']) > MAX_AMOUNT:
                     raise ValueError('Bounded integer TEST balance required')
                 if not config['url'].startswith(('http://', 'https://')):
                     raise ValueError('HTTP(S) neighbour URL required')
-                self.db.execute('INSERT OR IGNORE INTO balances VALUES(?,?)', (peer, config['balance']))
+                self.db.execute('INSERT INTO balances VALUES(?,?) ON CONFLICT DO NOTHING', (peer, config['balance']))
             for peer in self.peers:
                 existing = self.db.execute('SELECT 1 FROM contacts WHERE peer=?',(peer,)).fetchone()
                 if not existing:
@@ -448,7 +457,7 @@ class Node(Obligations):
         receipt=dict(data,status=status,node=self.name,mode='testnet',unit='TEST',local_fulfilled=decision=='fulfill',decided_at=time.time())
         if decision == 'fulfill':
             receipt['preimage']=preimage
-        self.db.execute('INSERT OR IGNORE INTO receipts VALUES(?,?)',(row['id'],json.dumps(receipt)))
+        self.db.execute('INSERT INTO receipts VALUES(?,?) ON CONFLICT DO NOTHING',(row['id'],json.dumps(receipt)))
 
     def receive(self,sender,data):
         if sender not in self.peers:

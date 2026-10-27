@@ -7,6 +7,7 @@ def main():
     stores=PgStoreFactory(os.environ['DATABASE_URL'],max_connections=1)
     try:
         stores.initialize()
+        stores.assert_ready()
         stores.create('accounts')
     finally:
         stores.close()

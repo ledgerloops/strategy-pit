@@ -1,19 +1,30 @@
 # LedgerLoops development and deployment handoff
 
-Updated **23 October 2026** for continuing on another laptop. This opening section
-and the current v13 release record supersede the historical deployment checkpoints
+## Native storage deployed — 27 October 2026
+
+Heroku **v14**, source `d7a1fab55aeb2f9bf92ac0a09b6b960084c641e2`, now runs
+owner-scoped native PostgreSQL tables with forced RLS. The offline migration and
+live verification are complete; see [the cutover record](native-postgres-deployment-handoff.md).
+All accounts, keys, balances, history, reservations and pending protocol records
+were preserved. Keep the retained legacy images and fences: those images are
+now stale recovery evidence, and an old-code rollback would be unsafe.
+
+Updated **27 October 2026** for continuing on another laptop. This opening section
+and the current v14 release record supersede the historical deployment checkpoints
 below. The original local task was `01a1630a-dff7-7eb1-b90d-6179ea6a385a`; a new
 machine can start a fresh task using this document and the checked-out repository.
 
 ## Continue on another laptop
 
 Repository: **https://github.com/ledgerloops/strategy-pit**. Working branch:
-**`research/mdg2-local-improvement`**. This branch contains the complete current
-source, research records, operational documentation and latest recovery issue.
+**`feat/native-postgres-storage`** for the deployed native-table application and
+latest operational handoff. It is based on `research/mdg2-local-improvement`, which
+contains the earlier snapshot-storage release. Use the native branch to resume
+deployment work; Atomic development is separate.
 Use the latest pushed branch tip; the deployed runtime is separately pinned below.
 
 ```sh
-git clone --branch research/mdg2-local-improvement https://github.com/ledgerloops/strategy-pit.git
+git clone --branch feat/native-postgres-storage https://github.com/ledgerloops/strategy-pit.git
 cd strategy-pit
 git status --short
 ```
@@ -27,10 +38,11 @@ node-local as described in those documents and the protocol notes.
 
 Suggested opening prompt for the next coding assistant:
 
-> Continue LedgerLoops from the latest research/mdg2-local-improvement branch.
+> Continue LedgerLoops from the latest feat/native-postgres-storage branch.
 > Read AGENTS.md, docs/deployment-handoff.md and the latest research queue entries.
 > The live app is Heroku ledgerloops-alpha at https://app.ledgerloops.com, release
-> v13 on one Basic dyno with Essential-0 PostgreSQL. Preserve all existing state.
+> v14 on one Basic dyno with Essential-0 PostgreSQL. Read
+> docs/native-postgres-deployment-handoff.md for the completed native cutover. Preserve all existing state.
 > Account recovery is deferred and documented in GitHub issue #45; ask what work
 > to tackle next before implementing a recovery mechanism.
 
@@ -99,7 +111,9 @@ PGCLIENTENCODING=UTF8 .venv/bin/python -m unittest discover -s app -p 'test_*.py
 ```
 
 A run without the test DSN skips PostgreSQL fixtures and does not reproduce the
-full validation. The latest complete run passed **222 Python app tests**.
+full validation. The latest native complete run passed **251 Python app tests**. Use an ordinary
+non-superuser, non-BYPASSRLS role owning the disposable test database, following
+`.github/workflows/native-postgres.yml`.
 
 For real-browser integration, provide Node.js, the Playwright module, a Chromium
 executable in `CHROMIUM_PATH`, and the same test DSN. From the repository root:
@@ -114,9 +128,32 @@ production worker scheduler. It passed automatic clearing, invitations, value
 deliveries, private labels, messages and history. Keep mutating tests isolated from
 the user's live browser and records. Initial live read-only checks can use
 `heroku pg:info --app ledgerloops-alpha` and the canonical `/healthz` endpoint.
-Storage figures below are observations from 23 October, not ongoing monitoring.
+Storage figures below are dated observations, not ongoing monitoring.
 
-## Current demo release — 23 October 2026
+## Current demo release — 27 October 2026
+
+**Heroku v14**, source `d7a1fab55aeb2f9bf92ac0a09b6b960084c641e2`, is live at
+**https://app.ledgerloops.com**, on the same single Basic web dyno and Essential-0
+database. The [native PostgreSQL cutover record](native-postgres-deployment-handoff.md)
+contains the complete backup, import, verification and recovery boundary.
+
+All **17 scopes / 127,282 rows** were migrated and compared exactly before normal
+processing. Existing accounts, cookies, credentials, keys, aliases, balances,
+preferences, history and pending work were preserved. Live message delivery now
+updates native rows while all retained legacy images stay unchanged; a real dyno
+restart preserved those new native records. All **251 application tests**, **8
+operations tests** and actual Chromium integration passed. Account recovery stays
+deferred in issue #45. Atomic WIP was not deployed.
+
+Original images are now stale recovery evidence. Keep their migration fences and
+backups; reverting to old snapshot code is unsafe after native processing begins.
+Storage was about **201 MiB** including retained legacy images in the final direct
+measurement. Provider summary metrics may lag. The environment and verification
+instructions above still apply, using a disposable ordinary-role PostgreSQL test
+owner as described in `.github/workflows/native-postgres.yml`; the latest complete
+suite has 251 tests rather than the historical 222-test v13 checkpoint below.
+
+## Previous demo release — v13 (23 October 2026)
 
 **Heroku v13**, source `3c189e9068884ebb1bd7e3f8294a7a4d48501348`, is live at
 **https://app.ledgerloops.com**. Exactly one **Basic web.1** dyno is up, supervising

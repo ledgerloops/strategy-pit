@@ -17,6 +17,23 @@ MAX_AMOUNT = 10**12
 MAX_PATH = 32
 
 
+def is_postgres(db):
+    """Native hosted storage; local standalone demos still use SQLite."""
+    return getattr(db, 'dialect', None) == 'postgres'
+
+
+def write_meta(db, key, value):
+    """Update one actor-local setting without deleting and reinserting its row."""
+    if is_postgres(db):
+        db.execute('''INSERT INTO meta(k,v) VALUES(?,?)
+            ON CONFLICT(owner_node_id,k) DO UPDATE SET v=excluded.v
+            WHERE meta.v IS DISTINCT FROM excluded.v''', (key, value))
+    else:
+        db.execute('''INSERT INTO meta(k,v) VALUES(?,?)
+            ON CONFLICT(k) DO UPDATE SET v=excluded.v
+            WHERE meta.v IS NOT excluded.v''', (key, value))
+
+
 class Node:
     def __init__(self, config, database):
         if config.get('mode') != 'testnet':
@@ -51,15 +68,15 @@ class Node:
             identity = self.db.execute("SELECT v FROM meta WHERE k='node'").fetchone()
             if identity and identity[0] != self.name:
                 raise ValueError('Database belongs to another node')
-            self.db.execute("INSERT OR IGNORE INTO meta VALUES('node',?)", (self.name,))
-            self.db.execute("INSERT OR IGNORE INTO meta VALUES('paused','false')")
+            self.db.execute("INSERT INTO meta VALUES('node',?) ON CONFLICT DO NOTHING", (self.name,))
+            self.db.execute("INSERT INTO meta VALUES('paused','false') ON CONFLICT DO NOTHING")
             for peer, data in self.peers.items():
                 balance = data['balance']
                 if type(balance) is not int or abs(balance) > MAX_AMOUNT:
                     raise ValueError('Balances must be bounded integer TEST units')
                 if not data['url'].startswith(('http://','https://')):
                     raise ValueError('Peer URL must be HTTP(S)')
-                self.db.execute('INSERT OR IGNORE INTO balances VALUES(?,?)', (peer,balance))
+                self.db.execute('INSERT INTO balances VALUES(?,?) ON CONFLICT DO NOTHING', (peer,balance))
             stored = {r[0] for r in self.db.execute('SELECT peer FROM balances')}
             if stored != set(self.peers):
                 raise ValueError('Changing peers requires a new testnet database')
@@ -231,7 +248,7 @@ class Node:
         self.db.execute('UPDATE proposals SET status=? WHERE id=?',(status,data['id']))
         self.db.execute('DELETE FROM reservations WHERE proposal=?',(data['id'],))
         receipt = dict(local,status=status,unit='TEST',mode='testnet',node=self.name,committed_at=time.time(),cycle_complete=False)
-        self.db.execute('INSERT OR IGNORE INTO receipts VALUES(?,?)',(data['id'],json.dumps(receipt)))
+        self.db.execute('INSERT INTO receipts VALUES(?,?) ON CONFLICT DO NOTHING',(data['id'],json.dumps(receipt)))
 
     def receive(self,sender,data):
         if sender not in self.peers:
